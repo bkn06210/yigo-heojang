@@ -5,6 +5,7 @@ CLAUDE.md
 # 민감정보
 application.properties
 application-*.properties
+db.properties
 .env
 .env.*
 *.key
