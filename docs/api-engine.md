@@ -11,7 +11,12 @@
   ```
   ```json
   // 실패
-  { "success": false, "code": "UNAUTHORIZED", "message": "인증이 필요합니다.", "errors": [] }
+  {
+    "success": false,
+    "code": "UNAUTHORIZED",
+    "message": "인증이 필요합니다.",
+    "errors": []
+  }
   ```
   `data`는 성공 응답에만, `errors`는 실패 응답에만 존재한다.
   `errors`는 유효성 검증 오류가 여러 건일 때 담는 배열. 엔진 API는 대부분 빈 배열이지만 형태는 팀 규약에 맞춘다.
@@ -23,6 +28,7 @@
 - **인증**: 모든 엔드포인트는 `Authorization: Bearer <JWT>` 헤더 필수. 회원 id는 토큰에서 추출(요청 body에 안 넣음).
 - **필드 표기**: DB는 snake_case, API JSON은 camelCase (MyBatis `mapUnderscoreToCamelCase`로 변환).
 - **금액 단위**: 원(정수). 혜택/할인액 계산 시 원 미만은 **절사(버림)** — 표시 규칙이 아니라 계산·저장 값 기준(테스트 기댓값 포함).
+  DB 컬럼은 `BIGINT`, DTO는 `Long`. 아래 표의 `int` 표기는 "정수"라는 뜻이며 자바 `int`가 아니다.
 - **비율 표기**: 달성률·이용률 등 계산 비율(%)은 소수 첫째 자리까지, **반올림**.
 - **소유권 검증**: 모든 리소스 접근은 토큰의 회원 id로 소유권을 검증한다. 타인 소유 리소스 요청은 403이 아니라 **404 NOT_FOUND**로 응답한다 (리소스 존재 여부 비노출).
 - **화면 표기**: "AI 추천/AI 브리핑" 대신 **"추천 결과/추천 근거"**로 표기. 계산·판단은 엔진이 하고 LLM은 표현만 담당하므로, 금액·추천을 AI가 만든 것처럼 라벨링하지 않는다.
@@ -127,28 +133,28 @@ Content-Type: application/json
 
 #### ✔ Response 필드 설명
 
-| 필드명                                  | 타입         | 설명                                                     |
-| --------------------------------------- | ------------ | -------------------------------------------------------- |
-| recommendations[].rank                  | int          | 추천 순위(1이 최적)                                      |
-| recommendations[].userCardId            | int          | 보유 카드 id                                             |
-| recommendations[].cardName              | string       | 카드명                                                   |
-| recommendations[].expectedBenefit       | int          | 예상 혜택액(원). DISCOUNT/POINT=계산값(원 미만 절사), SPECIAL_PRICE=혜택값(정가−특가) 데이터 사용, GIFT=0(금액 비교 제외) |
-| recommendations[].isEstimate            | bool         | true=예상(정률+구간), false=확정(정액/상한도달)          |
-| recommendations[].benefitKind           | string       | DISCOUNT / SPECIAL_PRICE / GIFT / RETROACTIVE            |
-| recommendations[].reason                | string       | 추천 근거(엔진 생성)                                     |
-| recommendations[].dynamicSwitch         | bool         | 동적 전환이면 true — 한도·횟수 제한이 없다고 가정한 1위와 실제 1위가 다를 때, 실제 1위 카드에 표시 |
-| futureOptimization                      | object\|null | 실적 미달 경고. 없으면 null                              |
-| futureOptimization.userCardId           | int          | 대상 보유 카드 id                                        |
-| futureOptimization.cardName             | string       | 카드명                                                   |
-| futureOptimization.remainingPerformance | int          | 실적까지 남은 금액                                       |
-| futureOptimization.message              | string       | 경고 문구                                                |
-| pointGuide                              | object\|null | 결제 직전 **금융포인트 잔액** 안내. 없으면 null. 여러 브랜드 보유 시 **소멸 임박 우선, 동률이면 잔액 최대** 1개 선택 |
-| pointGuide.pointBrandName               | string       | 금융포인트사명 (예: 마이신한포인트)                      |
-| pointGuide.usablePoint                  | int          | 보유 잔액(이 결제에 사용 가능)                           |
-| pointGuide.message                      | string       | 안내 문구                                                |
-| membershipEarn[]                        | array        | 결제 가맹점에서 적립되는 **등록 멤버십** 안내. **merchantId가 있을 때만** 산출, 없으면(카테고리만/장소 미정) 항상 [] |
-| membershipEarn[].pointBrandName         | string       | 멤버십명 (예: CJ ONE)                                    |
-| membershipEarn[].message                | string       | 적립 안내 문구                                           |
+| 필드명                                  | 타입         | 설명                                                                                                                      |
+| --------------------------------------- | ------------ | ------------------------------------------------------------------------------------------------------------------------- |
+| recommendations[].rank                  | int          | 추천 순위(1이 최적)                                                                                                       |
+| recommendations[].userCardId            | int          | 보유 카드 id                                                                                                              |
+| recommendations[].cardName              | string       | 카드명                                                                                                                    |
+| recommendations[].expectedBenefit       | int          | 예상 혜택액(원). **카드당 혜택 1개만 적용한 값**(합산 아님 — 매칭된 혜택 중 최댓값, 동점이면 benefit_id 오름차순). DISCOUNT/POINT=계산값(원 미만 절사), SPECIAL_PRICE=혜택값(정가−특가) 데이터 사용, GIFT=0(금액 비교 제외) |
+| recommendations[].isEstimate            | bool         | true=예상(정률+구간), false=확정(정액/상한도달)                                                                           |
+| recommendations[].benefitKind           | string       | DISCOUNT(할인) / POINT(적립) / SPECIAL_PRICE(특가) / GIFT(증정) / RETROACTIVE(사후정산, 추천 계산 제외)                    |
+| recommendations[].reason                | string       | 추천 근거(엔진 생성)                                                                                                      |
+| recommendations[].dynamicSwitch         | bool         | 동적 전환이면 true — 한도·횟수 제한이 없다고 가정한 1위와 실제 1위가 다를 때, 실제 1위 카드에 표시                        |
+| futureOptimization                      | object\|null | 실적 미달 경고. 없으면 null                                                                                               |
+| futureOptimization.userCardId           | int          | 대상 보유 카드 id                                                                                                         |
+| futureOptimization.cardName             | string       | 카드명                                                                                                                    |
+| futureOptimization.remainingPerformance | int          | 실적까지 남은 금액                                                                                                        |
+| futureOptimization.message              | string       | 경고 문구                                                                                                                 |
+| pointGuide                              | object\|null | 결제 직전 **금융포인트 잔액** 안내. 없으면 null. 여러 브랜드 보유 시 **소멸 임박 우선, 동률이면 잔액 최대** 1개 선택      |
+| pointGuide.pointBrandName               | string       | 금융포인트사명 (예: 마이신한포인트)                                                                                       |
+| pointGuide.usablePoint                  | int          | 보유 잔액(이 결제에 사용 가능)                                                                                            |
+| pointGuide.message                      | string       | 안내 문구                                                                                                                 |
+| membershipEarn[]                        | array        | 결제 가맹점에서 적립되는 **등록 멤버십** 안내. **merchantId가 있을 때만** 산출, 없으면(카테고리만/장소 미정) 항상 []      |
+| membershipEarn[].pointBrandName         | string       | 멤버십명 (예: CJ ONE)                                                                                                     |
+| membershipEarn[].message                | string       | 적립 안내 문구                                                                                                            |
 
 > 포인트 안내 구분: `pointGuide`는 **금융포인트**(카드사, 잔액 조회 가능) 기준. **멤버십**(CJ ONE 등)은 잔액 미연동 → 잔액 대신 `membershipEarn`(등록 시 적립 가능 안내)만.
 
@@ -219,6 +225,7 @@ Authorization: Bearer <JWT>
         "targetPerformance": 500000,
         "remainingPerformance": 50000,
         "achievementRate": 90.0,
+        "performanceMet": true,
         "sharedLimit": 20000,
         "sharedLimitUsed": 8000,
         "benefitsSummary": [
@@ -242,27 +249,28 @@ Authorization: Bearer <JWT>
 
 #### ✔ Response 필드 설명
 
-| 필드명                                   | 타입         | 설명                                                                                           |
-| ---------------------------------------- | ------------ | ---------------------------------------------------------------------------------------------- |
+| 필드명                                   | 타입         | 설명                                                                                                                                      |
+| ---------------------------------------- | ------------ | ----------------------------------------------------------------------------------------------------------------------------------------- |
 | briefing                                 | object\|null | 홈 상단 브리핑 — 실적 달성이 가장 임박한 카드 안내. 판단·문구 모두 엔진 생성. 실적 조건 없는 카드(target=0)는 후보 제외. 대상 없으면 null |
-| briefing.userCardId                      | int          | 가장 임박한 보유 카드 id                                                                       |
-| briefing.cardName                        | string       | 카드명                                                                                         |
-| briefing.achievementRate                 | float        | 해당 카드 달성률(%)                                                                            |
-| briefing.remainingPerformance            | int          | 남은 실적 금액                                                                                 |
-| briefing.message                         | string       | 브리핑 문구 (엔진 템플릿 생성)                                                                 |
-| cards[].userCardId                       | int          | 보유 카드 id                                                                                   |
-| cards[].cardName                         | string       | 카드명                                                                                         |
-| cards[].yearMonth                        | string       | 기준 연월                                                                                      |
-| cards[].currentMonthSpending             | int          | 이번 달 누적 실적 인정액                                                                       |
-| cards[].targetPerformance                | int          | 실적 목표 금액 — 당월 누적으로 아직 도달하지 못한 가장 낮은 구간의 최소실적금액. 전 구간 도달 시 최고 구간 금액(달성률 ≥100%) |
-| cards[].remainingPerformance             | int          | 남은 실적 금액(target − current). 초과 달성 시 음수가 아니라 **0으로 클램프**                  |
-| cards[].achievementRate                  | float\|null  | 실적 달성률(%), 계산값. 실적 조건 없는 카드(target=0)는 **null** — 화면은 "실적 조건 없음" 표기 |
-| cards[].sharedLimit                      | int          | 현재 구간의 월 통합할인한도                                                                    |
-| cards[].sharedLimitUsed                  | int          | 통합한도 소진액                                                                                |
-| cards[].benefitsSummary[]                | array        | 홈 위젯 "남은 혜택" 표시용 — 잔여 한도가 남은 혜택 요약. 상세는 3번                            |
-| cards[].benefitsSummary[].benefitId      | int          | 혜택 id                                                                                        |
-| cards[].benefitsSummary[].benefitName    | string       | 혜택명 (예: 교통 10% 할인)                                                                     |
-| cards[].benefitsSummary[].remainingLimit | int\|null    | 잔여 한도(한도 없으면 null)                                                                    |
+| briefing.userCardId                      | int          | 가장 임박한 보유 카드 id                                                                                                                  |
+| briefing.cardName                        | string       | 카드명                                                                                                                                    |
+| briefing.achievementRate                 | float        | 해당 카드 달성률(%)                                                                                                                       |
+| briefing.remainingPerformance            | int          | 남은 실적 금액                                                                                                                            |
+| briefing.message                         | string       | 브리핑 문구 (엔진 템플릿 생성)                                                                                                            |
+| cards[].userCardId                       | int          | 보유 카드 id                                                                                                                              |
+| cards[].cardName                         | string       | 카드명                                                                                                                                    |
+| cards[].yearMonth                        | string       | 기준 연월                                                                                                                                 |
+| cards[].currentMonthSpending             | int          | 이번 달 누적 실적 인정액                                                                                                                  |
+| cards[].targetPerformance                | int          | 실적 목표 금액 — 당월 누적으로 아직 도달하지 못한 가장 낮은 구간의 최소실적금액. 전 구간 도달 시 최고 구간 금액(달성률 ≥100%)             |
+| cards[].remainingPerformance             | int          | 남은 실적 금액(target − current). 초과 달성 시 음수가 아니라 **0으로 클램프**                                                             |
+| cards[].achievementRate                  | float\|null  | 실적 달성률(%), 계산값. 실적 조건 없는 카드(target=0)는 **null** — 화면은 "실적 조건 없음" 표기                                           |
+| cards[].performanceMet                   | bool         | 현재 실적 충족 여부 — 전월실적으로 판정된 구간의 `min_performance_amount > 0`이면 true. false면 `require_performance=Y` 혜택은 이번 달 적용되지 않는다 |
+| cards[].sharedLimit                      | int\|null     | 현재 구간의 월 통합할인한도. **null=통합한도 없는 카드**(혜택별 개별한도만 적용), 0=혜택 없음                                             |
+| cards[].sharedLimitUsed                  | int          | 통합한도 소진액                                                                                                                           |
+| cards[].benefitsSummary[]                | array        | 홈 위젯 "남은 혜택" 표시용 — 잔여 한도가 남은 혜택 요약. 상세는 3번                                                                       |
+| cards[].benefitsSummary[].benefitId      | int          | 혜택 id                                                                                                                                   |
+| cards[].benefitsSummary[].benefitName    | string       | 혜택명 (예: 교통 10% 할인)                                                                                                                |
+| cards[].benefitsSummary[].remainingLimit | int\|null    | 잔여 한도(한도 없으면 null). **묶음 한도 소속이면 그룹 기준 잔여액** — 3번의 `limitGroupCode` 참조                                        |
 
 ---
 
@@ -316,16 +324,36 @@ Authorization: Bearer <JWT>
     "currentMonthSpending": 400000,
     "remainingPerformance": 100000,
     "achievementRate": 80.0,
+    "performanceMet": true,
     "sharedLimit": 20000,
     "sharedLimitUsed": 8000,
     "benefits": [
       {
         "benefitId": 55,
         "benefitName": "편의점/약국 All Day 10% 할인",
-        "usedValue": 8000,
+        "limitGroupCode": null,
+        "usedAmount": 8000,
         "monthlyLimit": 10000,
         "remainingLimit": 2000,
         "usageRate": 80.0
+      },
+      {
+        "benefitId": 61,
+        "benefitName": "통신요금 10% 할인",
+        "limitGroupCode": "LIVING3",
+        "usedAmount": 3000,
+        "monthlyLimit": 5000,
+        "remainingLimit": 2000,
+        "usageRate": 60.0
+      },
+      {
+        "benefitId": 62,
+        "benefitName": "공과금 10% 할인",
+        "limitGroupCode": "LIVING3",
+        "usedAmount": 3000,
+        "monthlyLimit": 5000,
+        "remainingLimit": 2000,
+        "usageRate": 60.0
       }
     ]
   },
@@ -335,29 +363,35 @@ Authorization: Bearer <JWT>
 
 #### ✔ Response 필드 설명 — `CardMonthlyStatus`
 
-| 필드명                    | 타입      | 설명                                                  |
-| ------------------------- | --------- | ----------------------------------------------------- |
-| userCardId                | int       | 보유 카드 id                                          |
-| cardName                  | string    | 카드명                                                |
-| yearMonth                 | string    | 기준 연월                                             |
-| prevMonthPerformance      | int       | 전월 실적(현재 구간·한도 판정 기준, 엔진 계산)        |
-| targetPerformance         | int       | 실적 목표 금액 — 당월 누적으로 아직 도달하지 못한 가장 낮은 구간의 최소실적금액. 전 구간 도달 시 최고 구간 금액(달성률 ≥100%) |
-| currentMonthSpending      | int       | 이번 달 누적 실적 인정액                              |
-| remainingPerformance      | int       | 남은 실적 금액(target − current). 초과 달성 시 음수가 아니라 **0으로 클램프** |
-| achievementRate           | float\|null | 실적 달성률(%), 계산값. 실적 조건 없는 카드(target=0)는 **null** — 화면은 "실적 조건 없음" 표기 |
-| sharedLimit               | int       | 현재 구간의 월 통합할인한도                           |
-| sharedLimitUsed           | int       | 통합한도 소진액                                       |
-| benefits[].benefitId      | int       | 혜택 id                                               |
-| benefits[].benefitName    | string    | 혜택명                                                |
-| benefits[].usedValue      | int       | 이번 달 누적 혜택액                                   |
-| benefits[].monthlyLimit   | int\|null | 혜택 월 한도(없으면 null)                             |
-| benefits[].remainingLimit | int\|null | 잔여 한도(monthlyLimit − usedValue, 한도 없으면 null) |
-| benefits[].usageRate      | float\|null | 혜택 이용률(%), 계산값. 한도 없으면(monthlyLimit=null) **null**                |
+| 필드명                    | 타입        | 설명                                                                                                                          |
+| ------------------------- | ----------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| userCardId                | int         | 보유 카드 id                                                                                                                  |
+| cardName                  | string      | 카드명                                                                                                                        |
+| yearMonth                 | string      | 기준 연월                                                                                                                     |
+| prevMonthPerformance      | int         | 전월 실적(현재 구간·한도 판정 기준, 엔진 계산)                                                                                |
+| targetPerformance         | int         | 실적 목표 금액 — 당월 누적으로 아직 도달하지 못한 가장 낮은 구간의 최소실적금액. 전 구간 도달 시 최고 구간 금액(달성률 ≥100%) |
+| currentMonthSpending      | int         | 이번 달 누적 실적 인정액                                                                                                      |
+| remainingPerformance      | int         | 남은 실적 금액(target − current). 초과 달성 시 음수가 아니라 **0으로 클램프**                                                 |
+| achievementRate           | float\|null | 실적 달성률(%), 계산값. 실적 조건 없는 카드(target=0)는 **null** — 화면은 "실적 조건 없음" 표기                               |
+| performanceMet            | bool        | 현재 실적 충족 여부 — 전월실적으로 판정된 구간의 `min_performance_amount > 0`이면 true. false면 `require_performance=Y` 혜택은 이번 달 적용되지 않는다 |
+| sharedLimit               | int\|null    | 현재 구간의 월 통합할인한도. **null=통합한도 없는 카드**(혜택별 개별한도만 적용), 0=혜택 없음                                 |
+| sharedLimitUsed           | int         | 통합한도 소진액                                                                                                               |
+| benefits[].benefitId      | int         | 혜택 id                                                                                                                       |
+| benefits[].benefitName    | string      | 혜택명                                                                                                                        |
+| benefits[].usedAmount      | int         | 이번 달 누적 혜택액. 묶음 소속이면 **그룹 전체 누적액**                                                                        |
+| benefits[].limitGroupCode | string\|null | 묶음 한도 코드. **같은 코드를 가진 혜택들은 한도를 공유한다** — 아래 세 값이 전부 그룹 기준으로 내려간다. null이면 이 혜택 단독 |
+| benefits[].monthlyLimit   | int\|null   | 혜택 월 한도(없으면 null). 묶음 소속이면 **그룹 공유 한도**                                                                    |
+| benefits[].remainingLimit | int\|null   | 잔여 한도(monthlyLimit − usedAmount, 한도 없으면 null). 묶음 소속이면 **그룹 기준 잔여액** — 묶인 혜택들이 같은 값을 갖는다     |
+| benefits[].usageRate      | float\|null | 혜택 이용률(%), 계산값. 한도 없으면(monthlyLimit=null) **null**. 묶음 소속이면 그룹 기준 이용률                                |
+
+> **묶음 한도 표시 주의** — `limitGroupCode`가 같은 혜택들은 한도를 공유하므로 `monthlyLimit`·`usedAmount`·`remainingLimit`·`usageRate`가 모두 같은 값으로 내려간다.
+> 화면에서 혜택마다 따로 더하면 한도가 실제보다 몇 배로 보인다(위 예시: 5,000원 지갑 하나인데 10,000원으로 보임).
+> 프론트는 같은 코드끼리 묶어 한 줄로 표시하거나, 그룹 잔여액을 한 번만 노출해야 한다.
 
 ### 📌 이 API 고유 에러
 
-| 에러코드  | 설명                          | HTTP Status |
-| --------- | ----------------------------- | ----------- |
+| 에러코드  | 설명                                                                                       | HTTP Status |
+| --------- | ------------------------------------------------------------------------------------------ | ----------- |
 | NOT_FOUND | 해당 보유 카드를 찾을 수 없음 — **타인 소유 카드 포함** (소유권 불일치도 404, 존재 비노출) | 404         |
 
 ---
@@ -395,12 +429,12 @@ Authorization: Bearer <JWT>
 
 | 원칙                       | 내용                                                                                                                                                            |
 | -------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 소급 재계산 금지           | 취소돼도 **다른 거래**의 applied_benefit_id·discount_amount는 불변. 이미 승인된 거래에 할인이 뒤늦게 붙지 않는다(실제 카드사 동작과 동일). 과거 기록은 불변      |
-| 취소 건 기여분만 역산 차감 | 당월누적실적 −, 통합한도사용 −, 혜택별 사용액 −, 적용횟수 − (월 전체 재계산 아님)                                                                                |
-| 복원 정책: **복원함**      | 실적·통합한도·개별한도·횟수 모두 차감(복원). 상시 혜택은 취소 시 사용액 차감이 카드사 공식 기준(BC 부가서비스 기준). 미복원 사례는 프로모션 특약 영역 → 범위 밖  |
-| 복원분은 이후부터          | 복원된 여유는 **이후 추천부터** 반영 (소급 없음)                                                                                                                 |
-| 전액 취소만                | 부분 취소는 범위 밖                                                                                                                                              |
-| 당월 취소만                | 전월 거래 취소는 범위 밖 — 전월실적 변경 시 실적구간·통합한도 전체 재판정이 필요하므로 별도 판단 전까지 미처리                                                   |
+| 소급 재계산 금지           | 취소돼도 **다른 거래**의 applied_benefit_id·discount_amount는 불변. 이미 승인된 거래에 할인이 뒤늦게 붙지 않는다(실제 카드사 동작과 동일). 과거 기록은 불변     |
+| 취소 건 기여분만 역산 차감 | 당월누적실적 −, 통합한도사용 −, 혜택별 사용액 −, 적용횟수 − (월 전체 재계산 아님)                                                                               |
+| 복원 정책: **복원함**      | 실적·통합한도·개별한도·횟수 모두 차감(복원). 상시 혜택은 취소 시 사용액 차감이 카드사 공식 기준(BC 부가서비스 기준). 미복원 사례는 프로모션 특약 영역 → 범위 밖 |
+| 복원분은 이후부터          | 복원된 여유는 **이후 추천부터** 반영 (소급 없음)                                                                                                                |
+| 전액 취소만                | 부분 취소는 범위 밖                                                                                                                                             |
+| 당월 취소만                | 전월 거래 취소는 범위 밖 — 전월실적 변경 시 실적구간·통합한도 전체 재판정이 필요하므로 별도 판단 전까지 미처리                                                  |
 
 > 각주: `최종적용일시`는 이력이 없어 되돌리지 않는다 — 취소 당일의 일1회 판정만 보수적으로 동작(허용).
 > 표기: 청구할인은 월말 확정이므로 월중 값은 전부 예상치다. 취소로 숫자가 바뀌는 게 정상이며, 화면은 `isEstimate`로 예상 표기한다.
@@ -463,7 +497,7 @@ Content-Type: application/json
       {
         "benefitId": 55,
         "benefitName": "편의점/약국 All Day 10% 할인",
-        "usedValue": 6610,
+        "usedAmount": 6610,
         "monthlyLimit": 10000,
         "remainingLimit": 3390,
         "usageRate": 66.1
@@ -476,10 +510,10 @@ Content-Type: application/json
 
 ### 📌 이 API 고유 에러
 
-| 에러코드         | 설명                         | HTTP Status |
-| ---------------- | ---------------------------- | ----------- |
+| 에러코드         | 설명                                                                                 | HTTP Status |
+| ---------------- | ------------------------------------------------------------------------------------ | ----------- |
 | NOT_FOUND        | 해당 소비내역을 찾을 수 없음 — **타인 소유 포함** (소유권 불일치도 404, 존재 비노출) | 404         |
-| ALREADY_CANCELED | 이미 취소된 소비내역         | 409         |
+| ALREADY_CANCELED | 이미 취소된 소비내역                                                                 | 409         |
 
 ---
 
@@ -568,10 +602,13 @@ Authorization: Bearer <JWT>
 | 404  | NOT_FOUND         | 대상 없음(보유카드/소비내역) | `"해당 보유 카드를 찾을 수 없습니다."` |
 
 ```json
-{ "success": false, "code": "UNAUTHORIZED", "message": "인증이 필요합니다.", "errors": [] }
+{
+  "success": false,
+  "code": "UNAUTHORIZED",
+  "message": "인증이 필요합니다.",
+  "errors": []
+}
 ```
-
-> 에러 code 목록은 팀 공동 문서로 관리한다(각자 임의 추가 금지). 프론트는 message가 아닌 code로 분기한다.
 
 ---
 
