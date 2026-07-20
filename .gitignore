@@ -24,3 +24,8 @@ target/
 # OS
 .DS_Store
 Thumbs.db
+
+# 로컬 전용 SQL — 남의 담당 테이블 스텁 등, 레포에 올리지 않는다
+# 04_external_stub.sql: user_card/app_user 임시 스텁(이재혁 담당).
+#   내 DDL의 FK가 참조해서 로컬 실행에는 필요하지만, 확정본과 충돌하므로 커밋 제외.
+backend/db/04_external_stub.sql
