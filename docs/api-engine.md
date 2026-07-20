@@ -4,11 +4,22 @@
 
 ## 공통 규약
 
-- **응답 봉투**: 모든 응답은 아래 형태로 감싼다.
+- **응답 봉투**: 성공과 실패의 필드 구성이 다르다.
   ```json
+  // 성공
   { "success": true, "code": "SUCCESS", "data": { ... }, "message": null }
   ```
+  ```json
+  // 실패
+  { "success": false, "code": "UNAUTHORIZED", "message": "인증이 필요합니다.", "errors": [] }
+  ```
+  `data`는 성공 응답에만, `errors`는 실패 응답에만 존재한다.
+  `errors`는 유효성 검증 오류가 여러 건일 때 담는 배열. 엔진 API는 대부분 빈 배열이지만 형태는 팀 규약에 맞춘다.
 - **code**: 기계 판독용 결과 코드. 성공은 `SUCCESS`, 실패는 에러 코드(하단 공통 에러 응답 참고). **프론트 분기는 message(문구)가 아니라 code로 한다** — 문구는 자유롭게 바뀔 수 있다.
+- **code 명명 규칙**: 공통 코드(`UNAUTHORIZED`, `NOT_FOUND`, `INVALID_PARAMETER`, `CONFLICT`)를 기본으로 사용한다.
+  도메인 고유 코드는 공통 코드로 표현이 불가능하고 프론트가 별도 분기를 해야 할 때만 추가한다.
+  (예: `ALREADY_CANCELED` — "이미 취소됨"은 공통 코드로 표현 불가하고 프론트 처리가 달라 정당한 추가)
+  기능명 기반 코드(`XXX_READ_FAILED` 등)를 API마다 새로 만들지 않는다. code 목록은 팀 공동 문서로 관리한다.
 - **인증**: 모든 엔드포인트는 `Authorization: Bearer <JWT>` 헤더 필수. 회원 id는 토큰에서 추출(요청 body에 안 넣음).
 - **필드 표기**: DB는 snake_case, API JSON은 camelCase (MyBatis `mapUnderscoreToCamelCase`로 변환).
 - **금액 단위**: 원(정수). 혜택/할인액 계산 시 원 미만은 **절사(버림)** — 표시 규칙이 아니라 계산·저장 값 기준(테스트 기댓값 포함).
@@ -557,7 +568,7 @@ Authorization: Bearer <JWT>
 | 404  | NOT_FOUND         | 대상 없음(보유카드/소비내역) | `"해당 보유 카드를 찾을 수 없습니다."` |
 
 ```json
-{ "success": false, "code": "UNAUTHORIZED", "data": null, "message": "인증이 필요합니다." }
+{ "success": false, "code": "UNAUTHORIZED", "message": "인증이 필요합니다.", "errors": [] }
 ```
 
 > 에러 code 목록은 팀 공동 문서로 관리한다(각자 임의 추가 금지). 프론트는 message가 아닌 code로 분기한다.
