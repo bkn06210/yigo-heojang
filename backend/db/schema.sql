@@ -21,6 +21,51 @@
 
 SET NAMES utf8mb4;
 
+-- ────────────────────────────────────────────────────────────
+-- ⚠ 초기화 — 아래 DROP은 기존 테이블과 데이터를 전부 지운다.
+--   개발·시연 환경에서 스키마를 반복 적용하기 위한 것이다. 운영에서는 쓰지 않는다.
+--
+-- FOREIGN_KEY_CHECKS를 잠시 끄는 이유:
+--   FK가 걸린 테이블은 참조하는 쪽을 먼저 지워야 해서, 켜둔 채로는 삭제 순서를
+--   의존 관계의 역순으로 정확히 맞춰야 한다. 테이블이 하나 늘 때마다 순서를 다시
+--   따져야 하고 틀리면 실행이 깨진다. 검사를 끄면 순서와 무관하게 삭제된다.
+--   (CREATE는 순서가 그대로 중요하다 — 참조 대상이 먼저 있어야 하므로)
+-- ────────────────────────────────────────────────────────────
+SET FOREIGN_KEY_CHECKS = 0;
+
+DROP TABLE IF EXISTS notification_setting;
+DROP TABLE IF EXISTS notification;
+DROP TABLE IF EXISTS member_preferred_merchant;
+DROP TABLE IF EXISTS member_preferred_category;
+DROP TABLE IF EXISTS membership_register;
+DROP TABLE IF EXISTS point_usage_place;
+DROP TABLE IF EXISTS point_history;
+DROP TABLE IF EXISTS point_wallet;
+DROP TABLE IF EXISTS point_provider;
+DROP TABLE IF EXISTS user_benefit_usage;
+DROP TABLE IF EXISTS user_card_monthly_state;
+DROP TABLE IF EXISTS recommend_input;
+DROP TABLE IF EXISTS payment;
+DROP TABLE IF EXISTS expense;
+DROP TABLE IF EXISTS benefit_exclusion;
+DROP TABLE IF EXISTS benefit_tier_limit;
+DROP TABLE IF EXISTS benefit;
+DROP TABLE IF EXISTS performance_exclusion;
+DROP TABLE IF EXISTS performance_tier;
+DROP TABLE IF EXISTS user_card;
+DROP TABLE IF EXISTS merchant;
+DROP TABLE IF EXISTS category;
+DROP TABLE IF EXISTS card;
+DROP TABLE IF EXISTS member_term_agreement;
+DROP TABLE IF EXISTS term_version;
+DROP TABLE IF EXISTS term;
+DROP TABLE IF EXISTS refresh_token;
+DROP TABLE IF EXISTS password_reset_verification;
+DROP TABLE IF EXISTS member_withdrawal;
+DROP TABLE IF EXISTS member;
+
+SET FOREIGN_KEY_CHECKS = 1;
+
 -- ════════════════════════════════════════════════════════════
 -- 1. 회원 · 인증
 -- ════════════════════════════════════════════════════════════
