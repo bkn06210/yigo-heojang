@@ -27,8 +27,8 @@
 --   또 월이 넘어가면 확정되어 변하지 않는 값이라, 집계 스냅샷으로 저장하는 게 정당하다.
 --   (반면 달성률은 이 값 나누기 한 번이라 저장할 이유가 없다)
 --
---   ★ 단, 이 값은 전월 행의 current_month_amount와 같은 값이다. 즉 복사본이다.
---     원본은 "전월 행의 current_month_amount"이고 이 컬럼은 그것을 당겨온 캐시다.
+--   ★ 단, 이 값은 전월 행의 current_performance_amount와 같은 값이다. 즉 복사본이다.
+--     원본은 "전월 행의 current_performance_amount"이고 이 컬럼은 그것을 당겨온 캐시다.
 --     전월 행이 없을 때(가입 첫 달, 마이데이터 과거분 적재)만 소비내역 합산으로 채운다.
 --     둘이 어긋나도 DB는 막지 못하므로, 전월 거래를 수정·취소하는 기능이 생기면
 --     반드시 다음 달 행의 이 값도 같이 고쳐야 한다. (현재는 당월 취소만 지원하므로 미발생)
@@ -38,12 +38,12 @@
 --   저장해두면 구간 데이터를 고쳤을 때 옛 판정이 남아 어긋난다.
 -- ------------------------------------------------------------
 CREATE TABLE user_card_monthly_state (
-    user_card_id            BIGINT        NOT NULL COMMENT '보유카드 ID',
-    base_year_month         CHAR(7)       NOT NULL COMMENT '기준 연월 (YYYY-MM)',
-    prev_performance_amount BIGINT        NOT NULL DEFAULT 0 COMMENT '전월실적(원). 실적제외 규칙 적용 후 합산액',
-    current_month_amount    BIGINT        NOT NULL DEFAULT 0 COMMENT '당월 누적 실적인정액(원). 다음 달 전월실적이 된다',
-    shared_limit_used       BIGINT        NOT NULL DEFAULT 0 COMMENT '통합할인한도 사용액(원)',
-    updated_at              DATETIME      NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '수정일시',
+    user_card_id               BIGINT   NOT NULL COMMENT '보유카드 ID',
+    base_year_month            CHAR(7)  NOT NULL COMMENT '기준 연월 (YYYY-MM)',
+    prev_performance_amount    BIGINT   NOT NULL DEFAULT 0 COMMENT '전월실적(원). 실적제외 규칙 적용 후 합산액',
+    current_performance_amount BIGINT   NOT NULL DEFAULT 0 COMMENT '당월 누적 실적인정액(원). 다음 달 전월실적이 된다',
+    shared_limit_used          BIGINT   NOT NULL DEFAULT 0 COMMENT '통합할인한도 사용액(원)',
+    updated_at                 DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '수정일시',
     PRIMARY KEY (user_card_id, base_year_month),
     CONSTRAINT fk_user_card_monthly_state_user_card FOREIGN KEY (user_card_id) REFERENCES user_card (user_card_id)
 ) ENGINE = InnoDB
