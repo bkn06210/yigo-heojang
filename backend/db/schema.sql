@@ -336,6 +336,9 @@ CREATE TABLE benefit (
     limit_group_code     VARCHAR(30)   NULL COMMENT '묶음 한도 코드. 같은 카드 내 같은 코드끼리 monthly_limit 공유',
     monthly_count_limit  INT           NULL COMMENT '월 최대 적용 횟수',
     daily_count_limit    INT           NULL COMMENT '일 최대 적용 횟수',
+    -- 일 단위 금액 한도. 횟수(daily_count_limit)와 축이 다르다.
+    -- 약관 예) "월 적립한도 3만점, 일 적립한도 1만점" — 횟수로는 표현할 수 없다.
+    daily_limit          BIGINT        NULL COMMENT '일 최대 혜택액(원). NULL=일 한도 없음',
     use_shared_limit     CHAR(1)       NOT NULL DEFAULT 'Y' COMMENT '카드 통합할인한도를 함께 소진하는가: Y | N',
 
     -- 계산에 절대 쓰지 않는다. 스키마로 표현하지 못한 약관 단서를 원문 그대로 남기는 칸.
