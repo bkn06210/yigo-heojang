@@ -629,12 +629,11 @@ INSERT INTO notification_setting (
     notification_setting_id, member_id,
     performance_shortage_enabled,
     benefit_limit_enabled,
-    point_expire_enabled,
     updated_at
 ) VALUES
-    (1, 1, 1, 1, 1, '2026-07-20 18:00:00'),
-    (2, 2, 0, 1, 0, '2026-07-18 10:00:00'),
-    (3, 3, 0, 0, 0, '2026-07-10 14:00:00');
+    (1, 1, 1, 1, '2026-07-20 18:00:00'),
+    (2, 2, 0, 1, '2026-07-18 10:00:00'),
+    (3, 3, 0, 0, '2026-07-10 14:00:00');
 
 INSERT INTO notification (
     notification_id, member_id, user_card_id, benefit_id,

@@ -265,6 +265,10 @@ CREATE TABLE performance_tier (
     CONSTRAINT fk_performance_tier_card FOREIGN KEY (card_id) REFERENCES card (card_id)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT '실적구간별 통합할인한도';
 
+-- 제외값이 대분류 코드면 하위 중분류 결제까지 제외한다. 혜택 대상(target_category_id)이
+-- 대분류면 하위까지 적용되는 것과 대칭이다. 한쪽만 상향 매칭하면 같은 계층을 두 규칙이
+-- 다르게 해석하게 된다.
+--
 -- 카드사가 전월실적 값을 주지 않으므로 엔진이 직접 계산한다.
 --   전월실적 = 지난달 소비내역 합계 − 여기 걸린 제외 항목
 --
@@ -416,6 +420,9 @@ CREATE TABLE expense (
     amount             BIGINT       NOT NULL COMMENT '결제금액 = 카드 승인액(포인트 차감 후)',
     payment_date       DATETIME     NOT NULL COMMENT '결제일시',
     input_type         VARCHAR(30)  NOT NULL COMMENT '입력 구분: MANUAL | PAYMENT',
+    -- 취소 건은 실적·혜택 계산에서 제외한다(약관의 실적 제외 대상에 '취소금액'이 있다).
+    -- 물리 삭제하지 않고 상태만 바꾸므로 엔진이 이 값을 보고 걸러야 한다.
+    payment_status     VARCHAR(20)  NOT NULL DEFAULT 'APPROVED' COMMENT '결제 상태: APPROVED | CANCELED',
     applied_benefit_id BIGINT       NULL COMMENT '적용된 혜택 ID. 엔진이 채운다. 카드당 1개만 적용되므로 단수',
     discount_amount    BIGINT       NOT NULL DEFAULT 0 COMMENT '실제 받은 할인/적립액. 엔진이 채운다',
     -- 전월실적 계산에 필요하다. 카드 약관은 특정 결제수단과 무이자할부를
@@ -467,14 +474,16 @@ CREATE TABLE payment (
 CREATE TABLE recommend_input (
     recommend_input_id BIGINT       NOT NULL AUTO_INCREMENT COMMENT '추천입력 ID',
     member_id          BIGINT       NOT NULL COMMENT '회원 ID',
-    category_id        BIGINT       NOT NULL COMMENT '카테고리 ID',
-    merchant_name      VARCHAR(100) NULL COMMENT '가맹점명',
+    category_id        BIGINT       NULL COMMENT '카테고리 ID. merchantId·categoryId 둘 다 없이 요청할 수 있어 NULL 허용',
+    merchant_id        BIGINT       NULL COMMENT '가맹점 ID. 요청이 merchantId로 오므로 id로 저장한다',
+    merchant_name      VARCHAR(100) NULL COMMENT '가맹점명(표시용)',
     expected_amount    BIGINT       NOT NULL COMMENT '결제예상금액',
     input_at           DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '입력일시',
     PRIMARY KEY (recommend_input_id),
     KEY idx_recommend_input_member (member_id, input_at),
     CONSTRAINT fk_recommend_input_member   FOREIGN KEY (member_id)   REFERENCES member (member_id),
-    CONSTRAINT fk_recommend_input_category FOREIGN KEY (category_id) REFERENCES category (category_id)
+    CONSTRAINT fk_recommend_input_category FOREIGN KEY (category_id) REFERENCES category (category_id),
+    CONSTRAINT fk_recommend_input_merchant FOREIGN KEY (merchant_id) REFERENCES merchant (merchant_id)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT '결제추천 입력 기록';
 
 -- ════════════════════════════════════════════════════════════
@@ -489,6 +498,10 @@ CREATE TABLE recommend_input (
 --   원본은 전월 행이고, 전월 행이 없을 때(가입 첫 달, 마이데이터 과거분 적재)만
 --   소비내역 합산으로 채운다. 전월 거래를 수정·취소하는 기능이 생기면
 --   반드시 다음 달 행의 이 값도 같이 고쳐야 한다.
+-- 월 롤오버 — 새 달 행은 조회·추천·결제 어느 시점이든 없으면 그때 만든다(lazy 생성).
+--   prev_performance_amount는 전월 행의 current_performance_amount에서 가져오고,
+--   전월 행이 없으면 소비내역을 실적제외 규칙 적용해 합산한다.
+--   행이 없다고 0으로 두면 실적 구간이 0원으로 판정되어 실적 조건부 혜택이 전부 사라진다.
 -- 적용 실적구간(tier)은 저장하지 않는다 — prev_performance_amount로 항상 도출된다.
 CREATE TABLE user_card_monthly_state (
     user_card_id               BIGINT   NOT NULL COMMENT '보유카드 ID',
@@ -513,6 +526,7 @@ CREATE TABLE user_benefit_usage (
     used_count        INT      NOT NULL DEFAULT 0 COMMENT '당월 누적 적용 횟수',
     last_applied_date DATE     NULL COMMENT '마지막 적용 일자. 일 단위 횟수 리셋 판정용',
     daily_used_count  INT      NOT NULL DEFAULT 0 COMMENT 'last_applied_date 당일의 적용 횟수',
+    daily_used_amount BIGINT   NOT NULL DEFAULT 0 COMMENT 'last_applied_date 당일의 누적 혜택액(원). benefit.daily_limit 판정용',
     updated_at        DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '수정일시',
     PRIMARY KEY (user_card_id, benefit_id, base_year_month),
     KEY idx_user_benefit_usage_benefit (benefit_id),
@@ -662,7 +676,6 @@ CREATE TABLE notification_setting (
     member_id                    BIGINT     NOT NULL COMMENT '회원 ID. 회원당 1개',
     performance_shortage_enabled TINYINT(1) NOT NULL DEFAULT 1 COMMENT '카드 실적 부족 알림 수신 여부',
     benefit_limit_enabled        TINYINT(1) NOT NULL DEFAULT 1 COMMENT '혜택 한도 임박/소진 알림 수신 여부',
-    point_expire_enabled         TINYINT(1) NOT NULL DEFAULT 1 COMMENT '포인트 소멸 알림 수신 여부',
     updated_at                   DATETIME   NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '수정일시',
     PRIMARY KEY (notification_setting_id),
     UNIQUE KEY uk_notification_setting_member (member_id),
