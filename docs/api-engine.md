@@ -221,7 +221,7 @@ Authorization: Bearer <JWT>
         "userCardId": 12,
         "cardName": "삼성 ID ON",
         "yearMonth": "2026-07",
-        "currentMonthSpending": 450000,
+        "currentPerformanceAmount": 450000,
         "targetPerformance": 500000,
         "remainingPerformance": 50000,
         "achievementRate": 90.0,
@@ -260,7 +260,7 @@ Authorization: Bearer <JWT>
 | cards[].userCardId                       | int          | 보유 카드 id                                                                                                                              |
 | cards[].cardName                         | string       | 카드명                                                                                                                                    |
 | cards[].yearMonth                        | string       | 기준 연월                                                                                                                                 |
-| cards[].currentMonthSpending             | int          | 이번 달 누적 실적 인정액                                                                                                                  |
+| cards[].currentPerformanceAmount             | int          | 이번 달 누적 실적 인정액                                                                                                                  |
 | cards[].targetPerformance                | int          | 실적 목표 금액 — 당월 누적으로 아직 도달하지 못한 가장 낮은 구간의 최소실적금액. 전 구간 도달 시 최고 구간 금액(달성률 ≥100%)             |
 | cards[].remainingPerformance             | int          | 남은 실적 금액(target − current). 초과 달성 시 음수가 아니라 **0으로 클램프**                                                             |
 | cards[].achievementRate                  | float\|null  | 실적 달성률(%), 계산값. 실적 조건 없는 카드(target=0)는 **null** — 화면은 "실적 조건 없음" 표기                                           |
@@ -319,9 +319,9 @@ Authorization: Bearer <JWT>
     "userCardId": 12,
     "cardName": "삼성 ID ON",
     "yearMonth": "2026-07",
-    "prevMonthPerformance": 520000,
+    "prevPerformanceAmount": 520000,
     "targetPerformance": 500000,
-    "currentMonthSpending": 400000,
+    "currentPerformanceAmount": 400000,
     "remainingPerformance": 100000,
     "achievementRate": 80.0,
     "performanceMet": true,
@@ -368,9 +368,9 @@ Authorization: Bearer <JWT>
 | userCardId                | int         | 보유 카드 id                                                                                                                  |
 | cardName                  | string      | 카드명                                                                                                                        |
 | yearMonth                 | string      | 기준 연월                                                                                                                     |
-| prevMonthPerformance      | int         | 전월 실적(현재 구간·한도 판정 기준, 엔진 계산)                                                                                |
+| prevPerformanceAmount      | int         | 전월 실적(현재 구간·한도 판정 기준, 엔진 계산)                                                                                |
 | targetPerformance         | int         | 실적 목표 금액 — 당월 누적으로 아직 도달하지 못한 가장 낮은 구간의 최소실적금액. 전 구간 도달 시 최고 구간 금액(달성률 ≥100%) |
-| currentMonthSpending      | int         | 이번 달 누적 실적 인정액                                                                                                      |
+| currentPerformanceAmount      | int         | 이번 달 누적 실적 인정액                                                                                                      |
 | remainingPerformance      | int         | 남은 실적 금액(target − current). 초과 달성 시 음수가 아니라 **0으로 클램프**                                                 |
 | achievementRate           | float\|null | 실적 달성률(%), 계산값. 실적 조건 없는 카드(target=0)는 **null** — 화면은 "실적 조건 없음" 표기                               |
 | performanceMet            | bool        | 현재 실적 충족 여부 — 전월실적으로 판정된 구간의 `min_performance_amount > 0`이면 true. false면 `require_performance=Y` 혜택은 이번 달 적용되지 않는다 |
@@ -486,9 +486,9 @@ Content-Type: application/json
     "userCardId": 12,
     "cardName": "삼성 ID ON",
     "yearMonth": "2026-07",
-    "prevMonthPerformance": 520000,
+    "prevPerformanceAmount": 520000,
     "targetPerformance": 500000,
-    "currentMonthSpending": 386100,
+    "currentPerformanceAmount": 386100,
     "remainingPerformance": 113900,
     "achievementRate": 77.2,
     "sharedLimit": 20000,
