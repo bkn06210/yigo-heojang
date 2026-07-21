@@ -8,134 +8,133 @@
 
 ### 소비·결제 파트
 
-| 위치 | 변경 | 이유 |
-|---|---|---|
-| 결제 처리 | `recommendationId` → `isRecommendBased` | 추천 결과를 저장하지 않기로 해서 참조할 추천번호가 없다 |
-| 결제 처리 | 요청에 `merchantId` 추가 | 엔진은 가맹점 혜택을 id로 찾는다. 이름 문자열은 표기 차이로 매칭이 깨진다 |
-| 결제 처리 | 요청에 `paymentType`·`interestFreeYn` 추가 | 카드 약관은 특정 결제수단·무이자할부를 전월실적에서 제외한다. 없으면 실적이 조용히 과다 계산된다 |
-| 결제 처리 | Business Rules에 엔진 호출 2건 명시 | 혜택 계산(적용혜택·할인액 저장)과 상태 갱신(실적·한도 가산). **이 갱신이 없으면 결제해도 다음 추천이 안 바뀐다** |
-| 결제 처리·조회 | 경로 `/api/mock-payments` → `/api/payments`, `mockPaymentId` → `paymentId` | 이름에 구현 방식(mock)이 박히면 실서비스 전환 시 경로까지 바뀐다. Mock 여부는 `paymentChannel` 값으로 구분 |
-| 소비내역 | `inputType` 값 `MOCK_PAYMENT` → `PAYMENT` | 위와 같은 이유 |
-| 소비내역 조회 | `merchantId`, `appliedBenefitId`, `appliedBenefitName` 노출 | 거래별로 어떤 혜택을 받았는지 보여주려면 필요하다 |
-| 소비내역 | 직접등록·수정·삭제 3개 삭제 | 협의 결과. 소비내역은 결제와 마이데이터 동기화로만 생긴다 |
-| 소비내역 | **마이데이터 거래 동기화** 신규 추가 | 취소는 사용자가 지우는 게 아니라 동기화로 감지되는 사실이다. 이 엔드포인트가 없으면 취소 반영 경로가 없다 |
-| 포인트 | 소멸 관련 필드 제거 (`expiringPoint`, `expiredAt`, `expiringSoon`) | 포인트 소멸은 범위 밖으로 정했고, 스키마에 만료일 컬럼이 없어 값을 만들 수 없다 |
-| 포인트 | `pointType` 값 `SAVE, USE`로 한정 | 스키마의 값 집합과 맞춤 |
-| 포인트 | `pointBrandId/Name` → `pointProviderId/Name` | 테이블이 `point_provider`다 |
+| 위치           | 변경                                                                       | 이유                                                                                                             |
+| -------------- | -------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| 결제 처리      | `recommendationId` → `isRecommendBased`                                    | 추천 결과를 저장하지 않기로 해서 참조할 추천번호가 없다                                                          |
+| 결제 처리      | 요청에 `merchantId` 추가                                                   | 엔진은 가맹점 혜택을 id로 찾는다. 이름 문자열은 표기 차이로 매칭이 깨진다                                        |
+| 결제 처리      | 요청에 `paymentType`·`interestFreeYn` 추가                                 | 카드 약관은 특정 결제수단·무이자할부를 전월실적에서 제외한다. 없으면 실적이 조용히 과다 계산된다                 |
+| 결제 처리      | Business Rules에 엔진 호출 2건 명시                                        | 혜택 계산(적용혜택·할인액 저장)과 상태 갱신(실적·한도 가산). **이 갱신이 없으면 결제해도 다음 추천이 안 바뀐다** |
+| 결제 처리·조회 | 경로 `/api/mock-payments` → `/api/payments`, `mockPaymentId` → `paymentId` | 이름에 구현 방식(mock)이 박히면 실서비스 전환 시 경로까지 바뀐다. Mock 여부는 `paymentChannel` 값으로 구분       |
+| 소비내역       | `inputType` 값 `MOCK_PAYMENT` → `PAYMENT`                                  | 위와 같은 이유                                                                                                   |
+| 소비내역 조회  | `merchantId`, `appliedBenefitId`, `appliedBenefitName` 노출                | 거래별로 어떤 혜택을 받았는지 보여주려면 필요하다                                                                |
+| 소비내역       | 직접등록·수정·삭제 3개 삭제                                                | 협의 결과. 소비내역은 결제와 마이데이터 동기화로만 생긴다                                                        |
+| 소비내역       | **마이데이터 거래 동기화** 신규 추가                                       | 취소는 사용자가 지우는 게 아니라 동기화로 감지되는 사실이다. 이 엔드포인트가 없으면 취소 반영 경로가 없다        |
+| 포인트         | 소멸 관련 필드 제거 (`expiringPoint`, `expiredAt`, `expiringSoon`)         | 포인트 소멸은 범위 밖으로 정했고, 스키마에 만료일 컬럼이 없어 값을 만들 수 없다                                  |
+| 포인트         | `pointType` 값 `SAVE, USE`로 한정                                          | 스키마의 값 집합과 맞춤                                                                                          |
+| 포인트         | `pointBrandId/Name` → `pointProviderId/Name`                               | 테이블이 `point_provider`다                                                                                      |
 
 ### 회원·카드 파트
 
-| 위치 | 변경 | 이유 |
-|---|---|---|
-| 보유 카드 상세 | 실적·혜택 필드명을 엔진 현황 API와 통일 | 같은 값을 두 이름으로 내려주면 프론트가 파서를 두 벌 갖는다 |
-| 보유 카드 상세 | "계산 결과를 조회한다" → "엔진 현황 서비스를 호출해 받은 값을 내려준다" | 조회할 저장된 결과가 없다(파생값은 저장하지 않는다). 실적 계산이 두 벌이 되면 화면마다 숫자가 갈린다 |
-| 보유 카드 상세 | `calculatedAt`, `available` 삭제 | 저장 컬럼이 없고, `available`은 산출 규칙이 정의된 적이 없다 |
-| 보유 카드 목록 | `performanceAchieved` → `performanceMet` | 위와 같은 이유 |
-| 카드별 혜택 상세 | `applicableMerchants` 배열 삭제 | 혜택 1건은 대상이 하나다. 약관이 여러 대상을 열거하면 대상마다 혜택 행이 따로 있고 `limitGroupCode`로 묶인다 |
-| 카드별 혜택 상세 | `requiredPerformanceAmount` → `requirePerformance`(Y/N) | 실적 요구 금액은 혜택이 아니라 **카드 단위**(실적구간)라 혜택별로 다를 수 없다 |
-| 카드별 혜택 상세 | `benefitType`/`calculationType` → `benefitKind`/`calcMethod` | 컬럼명과 맞춤 |
-| 약관 목록 | 응답 봉투 `result` → `data` | 나머지 45개와 팀 규약이 `data`다 |
-| 대표카드 설정 | 경로에서 `/v1/` 제거 | 이 엔드포인트만 붙어 있었다 |
-| 알림 단건 삭제 | `/api/notification/{id}` → `/api/notifications/{id}` | 나머지 알림 API는 복수형이다 |
-| 멤버십 해제 | `{membershipId}` → `{membershipRegisterId}` | 같은 리소스인데 상세 조회와 이름이 달랐다 |
-| 전체 | 에러 코드 오타 8개 | `CATEGORY_NOT_GOUND`, `uSER_CARD_ACCESS_DENIED` 등. 코드 문자열이 정확해야 프론트가 분기한다 |
-| 전체 | JSON 문법 오류·코드블록 누락 | 예시가 한 문단으로 뭉개지거나 파싱이 안 되던 것 |
+| 위치             | 변경                                                                    | 이유                                                                                                         |
+| ---------------- | ----------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| 보유 카드 상세   | 실적·혜택 필드명을 엔진 현황 API와 통일                                 | 같은 값을 두 이름으로 내려주면 프론트가 파서를 두 벌 갖는다                                                  |
+| 보유 카드 상세   | "계산 결과를 조회한다" → "엔진 현황 서비스를 호출해 받은 값을 내려준다" | 조회할 저장된 결과가 없다(파생값은 저장하지 않는다). 실적 계산이 두 벌이 되면 화면마다 숫자가 갈린다         |
+| 보유 카드 상세   | `calculatedAt`, `available` 삭제                                        | 저장 컬럼이 없고, `available`은 산출 규칙이 정의된 적이 없다                                                 |
+| 보유 카드 목록   | `performanceAchieved` → `performanceMet`                                | 위와 같은 이유                                                                                               |
+| 카드별 혜택 상세 | `applicableMerchants` 배열 삭제                                         | 혜택 1건은 대상이 하나다. 약관이 여러 대상을 열거하면 대상마다 혜택 행이 따로 있고 `limitGroupCode`로 묶인다 |
+| 카드별 혜택 상세 | `requiredPerformanceAmount` → `requirePerformance`(Y/N)                 | 실적 요구 금액은 혜택이 아니라 **카드 단위**(실적구간)라 혜택별로 다를 수 없다                               |
+| 카드별 혜택 상세 | `benefitType`/`calculationType` → `benefitKind`/`calcMethod`            | 컬럼명과 맞춤                                                                                                |
+| 약관 목록        | 응답 봉투 `result` → `data`                                             | 나머지 45개와 팀 규약이 `data`다                                                                             |
+| 대표카드 설정    | 경로에서 `/v1/` 제거                                                    | 이 엔드포인트만 붙어 있었다                                                                                  |
+| 알림 단건 삭제   | `/api/notification/{id}` → `/api/notifications/{id}`                    | 나머지 알림 API는 복수형이다                                                                                 |
+| 멤버십 해제      | `{membershipId}` → `{membershipRegisterId}`                             | 같은 리소스인데 상세 조회와 이름이 달랐다                                                                    |
+| 전체             | 에러 코드 오타 8개                                                      | `CATEGORY_NOT_GOUND`, `uSER_CARD_ACCESS_DENIED` 등. 코드 문자열이 정확해야 프론트가 분기한다                 |
+| 전체             | JSON 문법 오류·코드블록 누락                                            | 예시가 한 문단으로 뭉개지거나 파싱이 안 되던 것                                                              |
 
 ### 아직 정하지 못한 것
 
-| 항목 | 내용 |
-|---|---|
-| BIN 검증 | 보유 카드 등록의 `CARD_BIN_MISMATCH` 규칙 — `card` 테이블에 BIN 컬럼이 없어 구현 불가. 컬럼을 추가할지 규칙을 뺄지 협의 필요 |
-| 가맹점 목록 API | 추천 API가 `merchantId`를 받는데 가맹점 목록을 주는 엔드포인트가 없다 |
-| 멤버십 적립처 | `point_usage_place`에 `merchant_id`가 없어 "이 가맹점에서 적립되는 멤버십"을 판정할 수 없다 |
-| 소유권 위반 응답 | 엔진은 404(리소스 존재 비노출), 다른 파트는 403. 하나로 정해야 한다 |
+| 항목             | 내용                                                                                                                         |
+| ---------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| BIN 검증         | 보유 카드 등록의 `CARD_BIN_MISMATCH` 규칙 — `card` 테이블에 BIN 컬럼이 없어 구현 불가. 컬럼을 추가할지 규칙을 뺄지 협의 필요 |
+| 가맹점 목록 API  | 추천 API가 `merchantId`를 받는데 가맹점 목록을 주는 엔드포인트가 없다                                                        |
+| 멤버십 적립처    | `point_usage_place`에 `merchant_id`가 없어 "이 가맹점에서 적립되는 멤버십"을 판정할 수 없다                                  |
+| 소유권 위반 응답 | 엔진은 404(리소스 존재 비노출), 다른 파트는 403. 하나로 정해야 한다                                                          |
 
 ---
 
-
 ## 엔드포인트 목록
 
-| #  | 그룹             | 메서드   | 경로                                         | 기능명                                  | 담당    | 상태코드       |
-| -- | ---------------- | -------- | -------------------------------------------- | --------------------------------------- | ------- | -------------- |
-| 1  | Auth             | `GET`    | `/api/terms`                                 | 약관 목록 조회                          | 재혁 이 | 200 OK         |
-| 2  | Auth             | `POST`   | `/api/auth/signup`                           | 회원가입                                | 재혁 이 | 201 Created    |
-| 3  | Auth             | `POST`   | `/api/auth/login`                            | 로그인                                  | 재혁 이 | 200 OK         |
-| 4  | Auth             | `POST`   | `/api/auth/password/reset-link`              | 인증 코드 요청 (비밀번호 찾기)          | 재혁 이 | 202 Accepted   |
-| 5  | Auth             | `POST`   | `/api/auth/password/verify-code`             | 인증 번호 검증 (비밀번호 찾기)          | 재혁 이 | 200 OK         |
-| 6  | Auth             | `POST`   | `/api/auth/password/resets`                  | 새 비밀번호 설정 (비밀번호 찾기)        | 재혁 이 | 204 No Content |
-| 7  | Auth             | `POST`   | `/api/members/check-email`                   | 이메일(아이디) 중복 확인                | 재혁 이 | 200 OK         |
-| 8  | Auth             | `GET`    | `/api/members/me`                            | 회원정보 조회                           | 재혁 이 | 200 OK         |
-| 9  | Main             | `GET`    | `/api/notifications`                         | 알림 목록 조회                          | 재혁 이 | 200 OK         |
-| 10 | Main             | `PATCH`  | `/api/notifications/read`                    | 모든 알림 읽음                          | 재혁 이 | 200 OK         |
-| 11 | Main             | `DELETE` | `/api/notifications/{notificationId}`         | 단건 알림 삭제                          | 재혁 이 | 200 OK         |
-| 12 | Main             | `DELETE` | `/api/notifications`                         | 모든 알림 삭제                          | 재혁 이 | 200 OK         |
-| 13 | Card             | `GET`    | `/api/user-cards`                            | 보유 카드 목록 조회                     | 재혁 이 | 200 OK         |
-| 14 | Card             | `DELETE` | `/api/user-cards/{userCardId}`               | 보유 카드 삭제                          | 재혁 이 | 204 No Content |
-| 15 | Card             | `GET`    | `/api/user-cards/{userCardId}`               | 보유 카드 상세 조회                     | 재혁 이 | 200 OK         |
-| 16 | Card             | `POST`   | `/api/user-cards`                            | 보유 카드 등록                          | 재혁 이 | 201 Created    |
-| 17 | Card             | `PATCH`  | `/api/user-cards/{userCardId}/main`       | 대표 카드 설정                          | 재혁 이 | -              |
-| 18 | Point/Mem        | `GET`    | `/api/cards/{cardId}/benefits`               | 카드별 혜택 상세 조회                   | 재혁 이 | 200 OK         |
-| 19 | Settings         | `GET`    | `/api/members/me`                            | 회원 정보 조회                          | 재혁 이 | 200 OK         |
-| 20 | Settings         | `PATCH`  | `/api/members/me`                            | 회원 정보 수정                          | 재혁 이 | 200 OK         |
-| 21 | Settings         | `POST`   | `/api/auth/logout`                           | 로그아웃                                | 재혁 이 | 204 No Content |
-| 22 | Settings         | `PATCH`  | `/api/members/me/password`                   | 비밀번호 변경                           | 재혁 이 | 204 No Content |
-| 23 | Settings         | `GET`    | `/api/notification-settings`                 | 알림 설정 조회                          | 재혁 이 | 200 OK         |
-| 24 | Settings         | `PATCH`  | `/api/notification-settings`                 | 알림 설정 수정                          | 재혁 이 | 200 OK         |
-| 25 | Settings         | `GET`    | `/api/members/me/personalization`            | 개인화 설정 조회                        | 재혁 이 | 200 OK         |
-| 26 | Settings         | `PATCH`  | `/api/members/me/personalization`            | 개인화 설정 수정                        | 재혁 이 | 204 No Content |
-| 27 | Settings         | `DELETE` | `/api/members/me`                            | 회원탈퇴                                | 재혁 이 | 204 No Content |
-| 28 | -                | `POST`   | `/api/auth/token`                            | 토큰 재발급                             | 재혁 이 | 200 OK         |
-| 29 | Transaction      | `GET`    | `/api/transactions`                          | 소비내역 목록 조회                      | 허강상  | 200 OK         |
-| 30 | Transaction      | `GET`    | `/api/transactions/{expenseId}`              | 소비내역 상세 조회                      | 허강상  | 200 OK         |
-| 31 | Transaction      | `POST`   | `/api/transactions/sync`                     | 마이데이터 거래 동기화                  | 허강상  | 200 OK         |
-| 32 | Transaction      | `GET`    | `/api/expense-categories`                    | 소비카테고리 목록 조회                  | 허강상  | 200 OK         |
-| 33 | Payment          | `POST`   | `/api/payments`                              | 결제 처리                               | 허강상  | 201 Created    |
-| 34 | Payment          | `GET`    | `/api/payments/{paymentId}`                  | 결제 결과 조회                          | 허강상  | 200 OK         |
-| 35 | Point/Membership | `GET`    | `/api/points`                                | 포인트 목록 조회                        | 허강상  | 200 OK         |
-| 36 | Point/Membership | `GET`    | `/api/points/history`                        | 포인트 내역 조회                        | 허강상  | 200 OK         |
-| 37 | Point/Membership | `GET`    | `/api/points/{pointProviderId}/usage-places` | 포인트 사용처 조회                      | 허강상  | 200 OK         |
-| 38 | Point/Membership | `GET`    | `/api/memberships/providers`                 | 멤버십 등록 가능 목록 및 기본 추천 조회 | 허강상  | 200 OK         |
-| 39 | Point/Membership | `POST`   | `/api/memberships`                           | 멤버십 등록                             | 허강상  | 201 Created    |
-| 40 | Point/Membership | `DELETE` | `/api/memberships/{membershipRegisterId}`            | 멤버십 등록 해제                        | 허강상  | 200 OK         |
-| 41 | Point/Membership | `GET`    | `/api/memberships/{membershipRegisterId}`    | 멤버십 상세 조회                        | 허강상  | 200 OK         |
-| 42 | -                | `POST`   | `/api/recommendations`                       | 결제 직전 최적 카드 추천                | 현준 고 | 200 OK         |
-| 43 | -                | `GET`    | `/api/cards/monthly-status`                  | 보유 카드 전체 현황                     | 현준 고 | 200 OK         |
-| 44 | -                | `GET`    | `/api/cards/{userCardId}/monthly-status`     | 보유 카드 상세 현황                     | 현준 고 | 200 OK         |
-| 45 | -                | `POST`   | `/api/settlements/cancel`                    | 결제 취소 상태 갱신                     | 현준 고 | 200 OK         |
-| 46 | -                | `GET`    | `/api/points/recommendations`                | 포인트 추천                             | 현준 고 | 200 OK         |
+| #   | 그룹             | 메서드   | 경로                                         | 기능명                                  | 담당    | 상태코드       |
+| --- | ---------------- | -------- | -------------------------------------------- | --------------------------------------- | ------- | -------------- |
+| 1   | Auth             | `GET`    | `/api/terms`                                 | 약관 목록 조회                          | 재혁 이 | 200 OK         |
+| 2   | Auth             | `POST`   | `/api/auth/signup`                           | 회원가입                                | 재혁 이 | 201 Created    |
+| 3   | Auth             | `POST`   | `/api/auth/login`                            | 로그인                                  | 재혁 이 | 200 OK         |
+| 4   | Auth             | `POST`   | `/api/auth/password/reset-link`              | 인증 코드 요청 (비밀번호 찾기)          | 재혁 이 | 202 Accepted   |
+| 5   | Auth             | `POST`   | `/api/auth/password/verify-code`             | 인증 번호 검증 (비밀번호 찾기)          | 재혁 이 | 200 OK         |
+| 6   | Auth             | `POST`   | `/api/auth/password/resets`                  | 새 비밀번호 설정 (비밀번호 찾기)        | 재혁 이 | 204 No Content |
+| 7   | Auth             | `POST`   | `/api/members/check-email`                   | 이메일(아이디) 중복 확인                | 재혁 이 | 200 OK         |
+| 8   | Auth             | `GET`    | `/api/members/me`                            | 회원정보 조회                           | 재혁 이 | 200 OK         |
+| 9   | Main             | `GET`    | `/api/notifications`                         | 알림 목록 조회                          | 재혁 이 | 200 OK         |
+| 10  | Main             | `PATCH`  | `/api/notifications/read`                    | 모든 알림 읽음                          | 재혁 이 | 200 OK         |
+| 11  | Main             | `DELETE` | `/api/notifications/{notificationId}`        | 단건 알림 삭제                          | 재혁 이 | 200 OK         |
+| 12  | Main             | `DELETE` | `/api/notifications`                         | 모든 알림 삭제                          | 재혁 이 | 200 OK         |
+| 13  | Card             | `GET`    | `/api/user-cards`                            | 보유 카드 목록 조회                     | 재혁 이 | 200 OK         |
+| 14  | Card             | `DELETE` | `/api/user-cards/{userCardId}`               | 보유 카드 삭제                          | 재혁 이 | 204 No Content |
+| 15  | Card             | `GET`    | `/api/user-cards/{userCardId}`               | 보유 카드 상세 조회                     | 재혁 이 | 200 OK         |
+| 16  | Card             | `POST`   | `/api/user-cards`                            | 보유 카드 등록                          | 재혁 이 | 201 Created    |
+| 17  | Card             | `PATCH`  | `/api/user-cards/{userCardId}/main`          | 대표 카드 설정                          | 재혁 이 | 204 NoContent  |
+| 18  | Point/Mem        | `GET`    | `/api/cards/{cardId}/benefits`               | 카드별 혜택 상세 조회                   | 재혁 이 | 200 OK         |
+| 19  | Settings         | `GET`    | `/api/members/me`                            | 회원 정보 조회                          | 재혁 이 | 200 OK         |
+| 20  | Settings         | `PATCH`  | `/api/members/me`                            | 회원 정보 수정                          | 재혁 이 | 200 OK         |
+| 21  | Settings         | `POST`   | `/api/auth/logout`                           | 로그아웃                                | 재혁 이 | 204 No Content |
+| 22  | Settings         | `PATCH`  | `/api/members/me/password`                   | 비밀번호 변경                           | 재혁 이 | 204 No Content |
+| 23  | Settings         | `GET`    | `/api/notification-settings`                 | 알림 설정 조회                          | 재혁 이 | 200 OK         |
+| 24  | Settings         | `PATCH`  | `/api/notification-settings`                 | 알림 설정 수정                          | 재혁 이 | 200 OK         |
+| 25  | Settings         | `GET`    | `/api/members/me/personalization`            | 개인화 설정 조회                        | 재혁 이 | 200 OK         |
+| 26  | Settings         | `PATCH`  | `/api/members/me/personalization`            | 개인화 설정 수정                        | 재혁 이 | 204 No Content |
+| 27  | Settings         | `DELETE` | `/api/members/me`                            | 회원탈퇴                                | 재혁 이 | 204 No Content |
+| 28  | -                | `POST`   | `/api/auth/token`                            | 토큰 재발급                             | 재혁 이 | 200 OK         |
+| 29  | Transaction      | `GET`    | `/api/transactions`                          | 소비내역 목록 조회                      | 허강상  | 200 OK         |
+| 30  | Transaction      | `GET`    | `/api/transactions/{expenseId}`              | 소비내역 상세 조회                      | 허강상  | 200 OK         |
+| 31  | Transaction      | `POST`   | `/api/transactions/sync`                     | 마이데이터 거래 동기화                  | 허강상  | 200 OK         |
+| 32  | Transaction      | `GET`    | `/api/expense-categories`                    | 소비카테고리 목록 조회                  | 허강상  | 200 OK         |
+| 33  | Payment          | `POST`   | `/api/payments`                              | 결제 처리                               | 허강상  | 201 Created    |
+| 34  | Payment          | `GET`    | `/api/payments/{paymentId}`                  | 결제 결과 조회                          | 허강상  | 200 OK         |
+| 35  | Point/Membership | `GET`    | `/api/points`                                | 포인트 목록 조회                        | 허강상  | 200 OK         |
+| 36  | Point/Membership | `GET`    | `/api/points/history`                        | 포인트 내역 조회                        | 허강상  | 200 OK         |
+| 37  | Point/Membership | `GET`    | `/api/points/{pointProviderId}/usage-places` | 포인트 사용처 조회                      | 허강상  | 200 OK         |
+| 38  | Point/Membership | `GET`    | `/api/memberships/providers`                 | 멤버십 등록 가능 목록 및 기본 추천 조회 | 허강상  | 200 OK         |
+| 39  | Point/Membership | `POST`   | `/api/memberships`                           | 멤버십 등록                             | 허강상  | 201 Created    |
+| 40  | Point/Membership | `DELETE` | `/api/memberships/{membershipRegisterId}`    | 멤버십 등록 해제                        | 허강상  | 200 OK         |
+| 41  | Point/Membership | `GET`    | `/api/memberships/{membershipRegisterId}`    | 멤버십 상세 조회                        | 허강상  | 200 OK         |
+| 42  | -                | `POST`   | `/api/recommendations`                       | 결제 직전 최적 카드 추천                | 현준 고 | 200 OK         |
+| 43  | -                | `GET`    | `/api/cards/monthly-status`                  | 보유 카드 전체 현황                     | 현준 고 | 200 OK         |
+| 44  | -                | `GET`    | `/api/cards/{userCardId}/monthly-status`     | 보유 카드 상세 현황                     | 현준 고 | 200 OK         |
+| 45  | -                | `POST`   | `/api/settlements/cancel`                    | 결제 취소 상태 갱신                     | 현준 고 | 200 OK         |
+| 46  | -                | `GET`    | `/api/points/recommendations`                | 포인트 추천                             | 현준 고 | 200 OK         |
 
 ## 공통 에러 코드
 
 ### 1) 요청 검증
 
-| **HTTP** | **코드** | **설명** |
-| --- | --- | --- |
-| 400 | `INPUT_INVALID` | Request Body 입력값 검증 실패 |
-| 400 | `QUERY_PARAMETER_INVALID` | Query Parameter 검증 실패 |
-| 400 | `PATH_PARAMETER_INVALID` | Path Variable 검증 실패 |
-| 400 | `ENUM_VALUE_INVALID` | 지원하지 않는 열거형 값 |
-| 400 | `RESOURCE_STATE_INVALID` | 현재 리소스 상태에서 요청 수행 불가 |
+| **HTTP** | **코드**                  | **설명**                            |
+| -------- | ------------------------- | ----------------------------------- |
+| 400      | `INPUT_INVALID`           | Request Body 입력값 검증 실패       |
+| 400      | `QUERY_PARAMETER_INVALID` | Query Parameter 검증 실패           |
+| 400      | `PATH_PARAMETER_INVALID`  | Path Variable 검증 실패             |
+| 400      | `ENUM_VALUE_INVALID`      | 지원하지 않는 열거형 값             |
+| 400      | `RESOURCE_STATE_INVALID`  | 현재 리소스 상태에서 요청 수행 불가 |
 
 ### 2) 인증 및 권한
 
-| **HTTP** | **코드** | **설명** |
-| --- | --- | --- |
-| 401 | `ACCESS_TOKEN_INVALID` | Access Token (누락 되었거나 형식·서명 등이 유효하지 않음) |
-| 401 | `ACCESS_TOKEN_EXPIRED` | Access Token 만료 |
-| 401 | `REFRESH_TOKEN_FAILED` | Refresh Token (없음, 만료, 유효하지 않음, 폐기) |
-| 403 | `ACCESS_DENIED` | 인증됐지만 해당 리소스 접근 권한 없음 |
+| **HTTP** | **코드**               | **설명**                                                  |
+| -------- | ---------------------- | --------------------------------------------------------- |
+| 401      | `ACCESS_TOKEN_INVALID` | Access Token (누락 되었거나 형식·서명 등이 유효하지 않음) |
+| 401      | `ACCESS_TOKEN_EXPIRED` | Access Token 만료                                         |
+| 401      | `REFRESH_TOKEN_FAILED` | Refresh Token (없음, 만료, 유효하지 않음, 폐기)           |
+| 403      | `ACCESS_DENIED`        | 인증됐지만 해당 리소스 접근 권한 없음                     |
 
 ### 3) 서버 오류
 
-| **HTTP** | **코드** | **설명** |
-| --- | --- | --- |
-| 500 | `SERVER_INTERNAL_ERROR` | 서버 에러 |
+| **HTTP** | **코드**                | **설명**  |
+| -------- | ----------------------- | --------- |
+| 500      | `SERVER_INTERNAL_ERROR` | 서버 에러 |
 
 ### 4) 리소스 예외
 
-| **HTTP** | **코드** | **설명** |
-| --- | --- | --- |
-| 404 | `NOT_FOUND` | 요청한 리소스가 존재하지 않음 |
+| **HTTP** | **코드**    | **설명**                      |
+| -------- | ----------- | ----------------------------- |
+| 404      | `NOT_FOUND` | 요청한 리소스가 존재하지 않음 |
 
 > 💡 어떤 데이터가 없는지는 `message`에 세부 내용을 적어서 프론트에 보낸다.
 
@@ -947,40 +946,43 @@ GET /api/user-cards
 **Response**
 
 보유 카드가 있는 경우:
+
 ```json
 {
-"success": true,
-"code": "SUCCESS",
-"message": "보유 카드 목록 조회에 성공했습니다.",
-"data": {
-"userCards": [
-{
-"userCardId": 15,
-"cardId": 1,
-"cardName": "신한카드 Mr.Life",
-"issuerName": "신한카드",
-"cardType": "CREDIT",
-"maskedCardNumber": "****-****-****-5678",
-"imageUrl": "https://example.com/images/cards/1.png",
-"achievementRate": 80.0,
-"performanceMet": false,
-"registeredAt": "2026-07-18T12:30:00"
-}
-],
-"totalCount": 1
-}
+  "success": true,
+  "code": "SUCCESS",
+  "message": "보유 카드 목록 조회에 성공했습니다.",
+  "data": {
+    "userCards": [
+      {
+        "userCardId": 15,
+        "cardId": 1,
+        "cardName": "신한카드 Mr.Life",
+        "issuerName": "신한카드",
+        "cardType": "CREDIT",
+        "maskedCardNumber": "****-****-****-5678",
+        "imageUrl": "https://example.com/images/cards/1.png",
+        "achievementRate": 80.0,
+        "performanceMet": false,
+        "registeredAt": "2026-07-18T12:30:00"
+      }
+    ],
+    "totalCount": 1
+  }
 }
 ```
+
 보유 카드가 없는 경우:
+
 ```json
 {
-"success": true,
-"code": "SUCCESS",
-"message": "보유 카드 목록 조회에 성공했습니다.",
-"data": {
-"userCards": [],
-"totalCount": 0
-}
+  "success": true,
+  "code": "SUCCESS",
+  "message": "보유 카드 목록 조회에 성공했습니다.",
+  "data": {
+    "userCards": [],
+    "totalCount": 0
+  }
 }
 ```
 
@@ -1188,11 +1190,38 @@ PATCH /api/user-cards/{userCardId}/main
 
 현재 로그인한 회원의 특정 보유 카드를 홈 화면에 표시할 대표 카드로 설정한다.
 
-**화면** W*Main*홈 · **라우트** /home · **권한** USER · **담당** 재혁 이
+**화면** W*Main*홈 · **라우트** /home · **권한** USER · **담당** 재혁 이 **상태 코드** 204 No Content
+
+**Business Rules**
+
+- 로그인한 회원만 대표 카드를 설정할 수 있다.
+- 본인이 보유한 카드만 대표 카드로 설정할 수 있다.
+- 카드 상태가 `ACTIVE`인 보유 카드만 대표 카드로 설정할 수 있다.
+- 회원당 대표 카드는 최대 1개만 허용한다.
+- 새로운 카드를 대표 카드로 설정하면, 같은 회원의 기존 대표 카드는 자동 해제한다.
+- 이미 대표 카드로 설정된 카드를 다시 설정해도 성공 처리할 수 있다.
+- 새로운 대표 카드 설정 시 `user_cards.is_representative_card`를 `true`로 변경한다.
+  -> 기존 대표 카드는 `user_cards.is_representative_card`를 `false`로 변경한다.
+- 대표 카드 설정 처리는 트랜잭션으로 처리한다.
 
 **Request**
 
 없음
+
+**고유 에러**
+
+`USER_CARD_ACCESS_DENIED(403) USER_CARD_NOT_FOUND(404) USER_CARD_DELETED(409) MEMBER_STATUS_INVALID(409)`
+
+**Error Response Format**
+
+```json
+{
+  "success": false,
+  "code": "USER_CARD_ACCESS_DENIED",
+  "message": "해당 보유 카드에 접근할 수 없습니다.",
+  "errors": []
+}
+```
 
 ## Point/Mem
 
@@ -1226,60 +1255,63 @@ GET /api/cards/{cardId}/benefits
 **Response**
 
 혜택이 있는 경우:
+
 ```json
 {
-"success": true,
-"code": "SUCCESS",
-"message": "카드 혜택 상세 조회에 성공했습니다.",
-"data": {
-"cardId": 1,
-"cardName": "생활 할인 카드",
-"benefits": [
-{
-"benefitId": 101,
-"benefitName": "카페 10% 청구할인",
-"targetType": "CATEGORY",
-"categoryCode": "CAFE",
-"categoryName": "카페",
-"merchantName": null,
-"benefitKind": "DISCOUNT",
-"calcMethod": "RATE",
-"benefitValue": 10,
-"requirePerformance": "Y",
-"limitGroupCode": null,
-"monthlyLimit": 5000
-},
-{
-"benefitId": 102,
-"benefitName": "GS25 5% 적립",
-"targetType": "MERCHANT",
-"categoryCode": null,
-"categoryName": null,
-"merchantName": "GS25",
-"benefitKind": "POINT",
-"calcMethod": "RATE",
-"benefitValue": 5,
-"requirePerformance": "Y",
-"limitGroupCode": "CVS_GROUP",
-"monthlyLimit": 3000
-}
-],
-"totalCount": 2
-}
+  "success": true,
+  "code": "SUCCESS",
+  "message": "카드 혜택 상세 조회에 성공했습니다.",
+  "data": {
+    "cardId": 1,
+    "cardName": "생활 할인 카드",
+    "benefits": [
+      {
+        "benefitId": 101,
+        "benefitName": "카페 10% 청구할인",
+        "targetType": "CATEGORY",
+        "categoryCode": "CAFE",
+        "categoryName": "카페",
+        "merchantName": null,
+        "benefitKind": "DISCOUNT",
+        "calcMethod": "RATE",
+        "benefitValue": 10,
+        "requirePerformance": "Y",
+        "limitGroupCode": null,
+        "monthlyLimit": 5000
+      },
+      {
+        "benefitId": 102,
+        "benefitName": "GS25 5% 적립",
+        "targetType": "MERCHANT",
+        "categoryCode": null,
+        "categoryName": null,
+        "merchantName": "GS25",
+        "benefitKind": "POINT",
+        "calcMethod": "RATE",
+        "benefitValue": 5,
+        "requirePerformance": "Y",
+        "limitGroupCode": "CVS_GROUP",
+        "monthlyLimit": 3000
+      }
+    ],
+    "totalCount": 2
+  }
 }
 ```
+
 혜택이 없는 경우:
+
 ```json
 {
-"success": true,
-"code": "SUCCESS",
-"message": "카드 혜택 상세 조회에 성공했습니다.",
-"data": {
-"cardId": 1,
-"cardName": "생활 할인 카드",
-"benefits": [],
-"totalCount": 0
-}
+  "success": true,
+  "code": "SUCCESS",
+  "message": "카드 혜택 상세 조회에 성공했습니다.",
+  "data": {
+    "cardId": 1,
+    "cardName": "생활 할인 카드",
+    "benefits": [],
+    "totalCount": 0
+  }
 }
 ```
 
@@ -2382,7 +2414,6 @@ POST /api/transactions/sync
 ```
 
 > 카드사 최신 거래 수집 및 취소 반영
-
 
 ### 37. 소비카테고리 목록 조회
 
