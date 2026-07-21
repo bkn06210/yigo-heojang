@@ -120,7 +120,7 @@
       "_needs_review": [
         "use_shared_limit"
       ],
-      "_blocker": "targets가 5개다. 열거된 브랜드만 대상이라 STREAMING 카테고리로 뭉개면 왓챠·애플TV까지 과다 적용된다"
+      "_blocker": "targets가 5개다. 열거된 브랜드만 대상이라 SUBSCRIPTION_STREAMING 카테고리로 뭉개면 왓챠·애플TV까지 과다 적용된다"
     },
     {
       "benefit_name": "이동통신요금 5% 청구할인",
@@ -198,7 +198,7 @@
     },
     {
       "exclusion_type": "CATEGORY",
-      "exclusion_value": "APT_MAINTENANCE",
+      "exclusion_value": "APARTMENT_FEE",
       "_source": "아파트관리비"
     },
     {
@@ -263,7 +263,7 @@
   ],
   "_schema_gap": {
     "title": "한 혜택이 여러 가맹점을 겨냥한다",
-    "detail": "쇼핑멤버십(2), OTT(5), 이동통신(4)이 각각 여러 브랜드를 열거한다. 현재 benefit.target_merchant_id는 단수라 표현할 수 없다. 카테고리로 올리면(STREAMING, TELECOM) 열거되지 않은 브랜드까지 과다 적용된다.",
+    "detail": "쇼핑멤버십(2), OTT(5), 이동통신(4)이 각각 여러 브랜드를 열거한다. 현재 benefit.target_merchant_id는 단수라 표현할 수 없다. 카테고리로 올리면(SUBSCRIPTION_STREAMING, TELECOM) 열거되지 않은 브랜드까지 과다 적용된다.",
     "options": [
       "A. 혜택을 가맹점 수만큼 쪼갠다 (11행). limit_group_code로 한도는 정확히 유지되지만 화면 혜택 목록이 11줄이 된다",
       "B. benefit_target(benefit_id, target_type, target_category_id, target_merchant_id) 다대다 테이블로 분리. benefit 1행 유지"
