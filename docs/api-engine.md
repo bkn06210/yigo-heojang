@@ -13,7 +13,7 @@
   // 실패
   {
     "success": false,
-    "code": "UNAUTHORIZED",
+    "code": "ACCESS_TOKEN_INVALID",
     "message": "인증이 필요합니다.",
     "errors": []
   }
@@ -21,7 +21,7 @@
   `data`는 성공 응답에만, `errors`는 실패 응답에만 존재한다.
   `errors`는 유효성 검증 오류가 여러 건일 때 담는 배열. 엔진 API는 대부분 빈 배열이지만 형태는 팀 규약에 맞춘다.
 - **code**: 기계 판독용 결과 코드. 성공은 `SUCCESS`, 실패는 에러 코드(하단 공통 에러 응답 참고). **프론트 분기는 message(문구)가 아니라 code로 한다** — 문구는 자유롭게 바뀔 수 있다.
-- **code 명명 규칙**: 공통 코드(`UNAUTHORIZED`, `NOT_FOUND`, `INVALID_PARAMETER`, `CONFLICT`)를 기본으로 사용한다.
+- **code 명명 규칙**: 공통 코드(`INPUT_INVALID`, `ACCESS_TOKEN_INVALID`, `ACCESS_TOKEN_EXPIRED`, `ACCESS_DENIED`, `NOT_FOUND`, `SERVER_INTERNAL_ERROR`)를 기본으로 사용한다.
   도메인 고유 코드는 공통 코드로 표현이 불가능하고 프론트가 별도 분기를 해야 할 때만 추가한다.
   (예: `ALREADY_CANCELED` — "이미 취소됨"은 공통 코드로 표현 불가하고 프론트 처리가 달라 정당한 추가)
   기능명 기반 코드(`XXX_READ_FAILED` 등)를 API마다 새로 만들지 않는다. code 목록은 팀 공동 문서로 관리한다.
@@ -82,7 +82,7 @@ Content-Type: application/json
 #### ✔ Request Body
 
 ```json
-{ "merchantId": 205, "expectedAmount": 11900 }
+{ "merchantId": 205, "expectedAmount": 11900, "paymentType": "CARD" }
 ```
 
 #### ✔ Request 필드 설명
@@ -92,6 +92,11 @@ Content-Type: application/json
 | merchantId     | int  | N    | 가맹점 id. 있으면 가맹점 직접 혜택까지 계산        |
 | categoryId     | int  | N    | 카테고리 id (merchantId 없을 때 폴백)              |
 | expectedAmount | int  | Y    | 결제 예상금액. 5천원 단위 구간 대표값(중간값) 권장 |
+| paymentType    | string | N | 결제수단(CARD, SIMPLE_PAY 등). `require_payment_type`이 걸린 혜택 판정용 |
+
+- `paymentType`은 선택값이다. `require_payment_type`이 걸린 혜택(예: 간편결제 전용)을 판정하는 데 쓴다.
+  **미입력이면 결제수단 조건이 걸린 혜택을 제외**하고 계산한다. 받을 수 있을지 확실하지 않은 혜택을
+  추천에 넣어 실제보다 큰 금액을 보여주면 안 되기 때문이다. 결제 확정 시에는 실제 수단으로 다시 계산한다.
 
 ### 📌 Response
 
@@ -116,13 +121,13 @@ Content-Type: application/json
     ],
     "futureOptimization": null,
     "pointGuide": {
-      "pointBrandName": "마이신한포인트",
+      "pointProviderName": "마이신한포인트",
       "usablePoint": 97842,
       "message": "마이신한포인트 97,842P 보유 중. 이 결제에 사용할 수 있습니다."
     },
     "membershipEarn": [
       {
-        "pointBrandName": "CJ ONE",
+        "pointProviderName": "CJ ONE",
         "message": "CJ ONE 멤버십이 등록되어 있어요. 올리브영 결제 시 적립됩니다. 결제 후 적립 여부를 확인해 보세요."
       }
     ]
@@ -148,12 +153,12 @@ Content-Type: application/json
 | futureOptimization.cardName             | string       | 카드명                                                                                                                    |
 | futureOptimization.remainingPerformance | int          | 실적까지 남은 금액                                                                                                        |
 | futureOptimization.message              | string       | 경고 문구                                                                                                                 |
-| pointGuide                              | object\|null | 결제 직전 **금융포인트 잔액** 안내. 없으면 null. 여러 브랜드 보유 시 **소멸 임박 우선, 동률이면 잔액 최대** 1개 선택      |
-| pointGuide.pointBrandName               | string       | 금융포인트사명 (예: 마이신한포인트)                                                                                       |
+| pointGuide                              | object\|null | 결제 직전 **금융포인트 잔액** 안내. 없으면 null. 여러 브랜드 보유 시 **잔액 최대** 1개 선택 (포인트 소멸은 범위 밖)      |
+| pointGuide.pointProviderName               | string       | 금융포인트사명 (예: 마이신한포인트)                                                                                       |
 | pointGuide.usablePoint                  | int          | 보유 잔액(이 결제에 사용 가능)                                                                                            |
 | pointGuide.message                      | string       | 안내 문구                                                                                                                 |
 | membershipEarn[]                        | array        | 결제 가맹점에서 적립되는 **등록 멤버십** 안내. **merchantId가 있을 때만** 산출, 없으면(카테고리만/장소 미정) 항상 []      |
-| membershipEarn[].pointBrandName         | string       | 멤버십명 (예: CJ ONE)                                                                                                     |
+| membershipEarn[].pointProviderName         | string       | 멤버십명 (예: CJ ONE)                                                                                                     |
 | membershipEarn[].message                | string       | 적립 안내 문구                                                                                                            |
 
 > 포인트 안내 구분: `pointGuide`는 **금융포인트**(카드사, 잔액 조회 가능) 기준. **멤버십**(CJ ONE 등)은 잔액 미연동 → 잔액 대신 `membershipEarn`(등록 시 적립 가능 안내)만.
@@ -164,7 +169,7 @@ Content-Type: application/json
 
 | 에러코드          | 설명                                                          | HTTP Status |
 | ----------------- | ------------------------------------------------------------- | ----------- |
-| INVALID_PARAMETER | expectedAmount 누락                                           | 400         |
+| INPUT_INVALID | expectedAmount 누락                                           | 400         |
 | NOT_FOUND         | 존재하지 않는 merchantId/categoryId (무시하지 않고 명시 실패) | 404         |
 
 ---
@@ -380,7 +385,7 @@ Authorization: Bearer <JWT>
 | benefits[].benefitName    | string      | 혜택명                                                                                                                        |
 | benefits[].usedAmount      | int         | 이번 달 누적 혜택액. 묶음 소속이면 **그룹 전체 누적액**                                                                        |
 | benefits[].limitGroupCode | string\|null | 묶음 한도 코드. **같은 코드를 가진 혜택들은 한도를 공유한다** — 아래 세 값이 전부 그룹 기준으로 내려간다. null이면 이 혜택 단독 |
-| benefits[].monthlyLimit   | int\|null   | 혜택 월 한도(없으면 null). 묶음 소속이면 **그룹 공유 한도**                                                                    |
+| benefits[].monthlyLimit   | int\|null   | 혜택 월 한도(없으면 null). 묶음 소속이면 **그룹 공유 한도**. 실적구간별 한도가 있으면(`benefit_tier_limit`) **판정된 구간의 한도**를 내려준다 |
 | benefits[].remainingLimit | int\|null   | 잔여 한도(monthlyLimit − usedAmount, 한도 없으면 null). 묶음 소속이면 **그룹 기준 잔여액** — 묶인 혜택들이 같은 값을 갖는다     |
 | benefits[].usageRate      | float\|null | 혜택 이용률(%), 계산값. 한도 없으면(monthlyLimit=null) **null**. 묶음 소속이면 그룹 기준 이용률                                |
 
@@ -457,14 +462,14 @@ Content-Type: application/json
 #### ✔ Request Body
 
 ```json
-{ "consumptionId": 3001 }
+{ "expenseId": 3001 }
 ```
 
 #### ✔ Request 필드 설명
 
 | 필드명        | 타입 | 필수 | 설명               |
 | ------------- | ---- | ---- | ------------------ |
-| consumptionId | int  | Y    | 취소된 소비내역 id |
+| expenseId | int  | Y    | 취소된 소비내역 id |
 
 #### ✔ 처리
 
@@ -491,12 +496,14 @@ Content-Type: application/json
     "currentPerformanceAmount": 386100,
     "remainingPerformance": 113900,
     "achievementRate": 77.2,
+    "performanceMet": true,
     "sharedLimit": 20000,
     "sharedLimitUsed": 6610,
     "benefits": [
       {
         "benefitId": 55,
         "benefitName": "편의점/약국 All Day 10% 할인",
+        "limitGroupCode": null,
         "usedAmount": 6610,
         "monthlyLimit": 10000,
         "remainingLimit": 3390,
@@ -555,18 +562,17 @@ Authorization: Bearer <JWT>
   "data": {
     "usage": [
       {
-        "pointBrandId": 1,
-        "pointBrandName": "마이신한포인트",
+        "pointProviderId": 1,
+        "pointProviderName": "마이신한포인트",
         "usablePoint": 97842,
         "suggestedMerchant": "올리브영",
-        "reason": "최근 올리브영 방문 이력이 있어 사용을 추천합니다.",
-        "expiringSoon": false
+        "reason": "최근 올리브영 방문 이력이 있어 사용을 추천합니다."
       }
     ],
     "unregistered": [
       {
-        "pointBrandId": 4,
-        "pointBrandName": "해피포인트",
+        "pointProviderId": 4,
+        "pointProviderName": "해피포인트",
         "reason": "최근 파리바게트 결제가 잦은데 해피포인트가 미등록입니다. 등록 시 적립 가능."
       }
     ]
@@ -579,14 +585,13 @@ Authorization: Bearer <JWT>
 
 | 필드명                        | 타입   | 설명                       |
 | ----------------------------- | ------ | -------------------------- |
-| usage[].pointBrandId          | int    | 보유 금융포인트사 id       |
-| usage[].pointBrandName        | string | 보유 금융포인트사명        |
+| usage[].pointProviderId          | int    | 보유 금융포인트사 id       |
+| usage[].pointProviderName        | string | 보유 금융포인트사명        |
 | usage[].usablePoint           | int    | 사용 가능 포인트(잔액)     |
 | usage[].suggestedMerchant     | string | 추천 사용처                |
 | usage[].reason                | string | 추천 근거 (소비 이력 기반) |
-| usage[].expiringSoon          | bool   | 소멸 임박 여부             |
-| unregistered[].pointBrandId   | int    | 미등록 멤버십사 id         |
-| unregistered[].pointBrandName | string | 멤버십사명                 |
+| unregistered[].pointProviderId   | int    | 미등록 멤버십사 id         |
+| unregistered[].pointProviderName | string | 멤버십사명                 |
 | unregistered[].reason         | string | 추천 근거 (소비 분석 결과) |
 
 > ⚠️합의필요: 포인트/멤버십 데이터(포인트사·잔액·등록 여부)와, 그 데이터+소비내역을 **분석해 추천을 생성**하는 로직의 담당 경계를 팀에서 확정 필요.
@@ -597,14 +602,14 @@ Authorization: Bearer <JWT>
 
 | 상태 | code              | 상황                         | message 예시                           |
 | ---- | ----------------- | ---------------------------- | -------------------------------------- |
-| 400  | INVALID_PARAMETER | 필수값 누락/형식 오류        | `"expectedAmount는 필수입니다."`       |
-| 401  | UNAUTHORIZED      | 인증 실패(토큰 없음/만료)    | `"인증이 필요합니다."`                 |
+| 400  | INPUT_INVALID | 필수값 누락/형식 오류        | `"expectedAmount는 필수입니다."`       |
+| 401  | ACCESS_TOKEN_INVALID / ACCESS_TOKEN_EXPIRED | 인증 실패(토큰 없음·만료) | `"인증이 필요합니다."` |
 | 404  | NOT_FOUND         | 대상 없음(보유카드/소비내역) | `"해당 보유 카드를 찾을 수 없습니다."` |
 
 ```json
 {
   "success": false,
-  "code": "UNAUTHORIZED",
+  "code": "ACCESS_TOKEN_INVALID",
   "message": "인증이 필요합니다.",
   "errors": []
 }
