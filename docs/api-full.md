@@ -2605,14 +2605,14 @@ GET /api/payments/{paymentId}
 
 **고유 에러**
 
-`UNAUTHORIZED(401) MOCK_+PYAMENT_NOT_FOUND(404) MOCK_PAYMENT_ACCESS_DENIED(403) MOCK_PAYMNENT_READ_FAILED(500)`
+`ACCESS_TOKEN_INVALID(401) PAYMENT_NOT_FOUND(404) PAYMENT_ACCESS_DENIED(403) PAYMENT_READ_FAILED(500)`
 
 **Error Response Format**
 
 ```json
 {
   "success": false,
-  "code": "MOCK_PAYMENT_NOT_FOUND",
+  "code": "PAYMENT_NOT_FOUND",
   "message": "결제 정보를 찾을 수 없습니다.",
   "errors": []
 }
