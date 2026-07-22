@@ -74,6 +74,20 @@
             <version>4.0.1</version>
             <scope>provided</scope>
         </dependency>
+
+        <!-- 단위 테스트: JUnit 5 (계산 엔진은 Spring/DB 없이 순수 자바로 테스트) -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>5.10.2</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <version>3.25.3</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -89,6 +103,13 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
                 <version>3.4.0</version>
+            </plugin>
+            <!-- 버전 명시 필수: Maven 기본 surefire(2.x)는 JUnit Platform을 몰라
+                 테스트를 0건 실행하고도 BUILD SUCCESS가 뜬다(조용한 스킵) -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.2.5</version>
             </plugin>
         </plugins>
     </build>
