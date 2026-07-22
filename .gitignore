@@ -24,3 +24,10 @@ target/
 # OS
 .DS_Store
 Thumbs.db
+
+
+# 카드사 약관 원문 — 저작권상 레포에 올리지 않는다.
+# card_term_document.source_url로 재취득 가능하고, 추출 결과는 시드 SQL로 커밋된다.
+ai-server/ingest/raw/
+# PDF 페이지 렌더링 (중간 산출물, 재생성 가능)
+ai-server/ingest/out/*.png
