@@ -1,5 +1,6 @@
 package com.wallet.engine.calculator;
 
+import com.wallet.engine.model.PerformanceProgress;
 import com.wallet.engine.model.PerformanceStatus;
 import com.wallet.engine.model.PerformanceTier;
 import org.junit.jupiter.api.DisplayName;
@@ -132,6 +133,98 @@ class PerformanceTierResolverTest {
             PerformanceStatus status = resolver.judge(threeTiers(), 100000L);
 
             assertThat(status.sharedMonthlyLimit()).isZero();
+        }
+    }
+
+    @Nested
+    @DisplayName("실적 진행률")
+    class Progress {
+
+        @Test
+        void 아직_도달하지_못한_가장_낮은_구간이_목표다() {
+            PerformanceProgress progress = resolver.progressOf(threeTiers(), 100000L);
+
+            assertThat(progress.targetPerformance()).isEqualTo(200000L);
+        }
+
+        @Test
+        void 중간_구간을_넘으면_그_다음_구간이_목표가_된다() {
+            PerformanceProgress progress = resolver.progressOf(threeTiers(), 250000L);
+
+            assertThat(progress.targetPerformance()).isEqualTo(300000L);
+        }
+
+        @Test
+        void 전_구간을_달성하면_최고_구간이_목표다() {
+            PerformanceProgress progress = resolver.progressOf(threeTiers(), 400000L);
+
+            assertThat(progress.targetPerformance()).isEqualTo(300000L);
+        }
+
+        @Test
+        void 남은_실적은_목표에서_당월_누적을_뺀_값이다() {
+            PerformanceProgress progress = resolver.progressOf(threeTiers(), 120000L);
+
+            assertThat(progress.remainingPerformance()).isEqualTo(80000L);
+        }
+
+        @Test
+        void 초과_달성하면_남은_실적은_음수가_아니라_0이다() {
+            PerformanceProgress progress = resolver.progressOf(threeTiers(), 400000L);
+
+            assertThat(progress.remainingPerformance()).isZero();
+        }
+
+        @Test
+        void 실적_조건이_없는_카드는_달성률이_0이_아니라_null이다() {
+            // 구간이 0원 하나뿐 — "실적 조건 없음"과 "0% 달성"은 화면에서 다르다
+            PerformanceProgress progress = resolver.progressOf(zeroOnly(), 500000L);
+
+            assertThat(progress.achievementRate()).isNull();
+        }
+
+        @Test
+        void 실적_조건이_없는_카드는_목표도_0이고_남은_실적도_0이다() {
+            PerformanceProgress progress = resolver.progressOf(zeroOnly(), 500000L);
+
+            assertThat(progress.targetPerformance()).isZero();
+            assertThat(progress.remainingPerformance()).isZero();
+        }
+
+        @Test
+        void 달성률은_소수점_첫째_자리까지_반올림한다() {
+            // 목표 30만, 당월 25만 → 83.33...% → 83.3
+            PerformanceProgress progress = resolver.progressOf(threeTiers(), 250000L);
+
+            assertThat(progress.achievementRate()).isEqualByComparingTo("83.3");
+        }
+
+        @Test
+        void 전_구간을_달성하면_달성률은_100_이상이다() {
+            PerformanceProgress progress = resolver.progressOf(threeTiers(), 600000L);
+
+            assertThat(progress.achievementRate()).isEqualByComparingTo("200.0");
+        }
+    }
+
+    @Nested
+    @DisplayName("두 축이 섞이지 않는다")
+    class TwoAxes {
+
+        @Test
+        void 전월실적과_당월누적이_다르면_충족_여부와_목표가_따로_판정된다() {
+            // 전월 52만(50만 구간 충족)인데 당월 40만(50만 미달, 달성률 80%)인 상황
+            List<PerformanceTier> tiers = List.of(
+                    new PerformanceTier(4L, 0L, 0L),
+                    new PerformanceTier(5L, 300000L, 30000L),
+                    new PerformanceTier(6L, 500000L, 50000L));
+
+            PerformanceStatus status = resolver.judge(tiers, 520000L);
+            PerformanceProgress progress = resolver.progressOf(tiers, 400000L);
+
+            assertThat(status.performanceMet()).isTrue();
+            assertThat(progress.targetPerformance()).isEqualTo(500000L);
+            assertThat(progress.achievementRate()).isEqualByComparingTo("80.0");
         }
     }
 

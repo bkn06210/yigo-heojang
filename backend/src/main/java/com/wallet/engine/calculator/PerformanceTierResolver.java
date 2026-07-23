@@ -1,8 +1,11 @@
 package com.wallet.engine.calculator;
 
+import com.wallet.engine.model.PerformanceProgress;
 import com.wallet.engine.model.PerformanceStatus;
 import com.wallet.engine.model.PerformanceTier;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 
 /**
@@ -53,5 +56,37 @@ public final class PerformanceTierResolver {
     public PerformanceStatus judge(List<PerformanceTier> tiers, long prevPerformanceAmount) {
         PerformanceTier tier = resolve(tiers, prevPerformanceAmount);
         return new PerformanceStatus(tier.tierId(), tier.minPerformanceAmount(), tier.sharedMonthlyLimit());
+    }
+
+    /**
+     * 당월누적 축 — 다음 목표 구간까지 얼마나 왔는지 계산한다(현황 조회 화면용).
+     *
+     * 목표는 아직 넘지 못한 가장 낮은 구간이고, 전 구간을 이미 넘었으면 최고 구간이다.
+     * 목표가 0원이면(구간이 0원 하나뿐 = 실적 조건 없는 카드) 달성률은 0.0이 아니라 null이다 —
+     * "실적 조건 없음"과 "실적 0% 달성"은 화면에서 다르게 보여야 한다.
+     */
+    public PerformanceProgress progressOf(List<PerformanceTier> tiers, long currentPerformanceAmount) {
+        if (tiers == null || tiers.isEmpty()) {
+            throw new IllegalArgumentException("실적구간 목록은 비어 있을 수 없다");
+        }
+        if (currentPerformanceAmount < 0) {
+            throw new IllegalArgumentException("실적 금액은 음수일 수 없다: " + currentPerformanceAmount);
+        }
+        long highest = Long.MIN_VALUE;
+        Long nextTarget = null;
+        for (PerformanceTier tier : tiers) {
+            long min = tier.minPerformanceAmount();
+            highest = Math.max(highest, min);
+            if (min > currentPerformanceAmount && (nextTarget == null || min < nextTarget)) {
+                nextTarget = min;
+            }
+        }
+        long target = (nextTarget != null) ? nextTarget : highest;
+        long remaining = Math.max(0L, target - currentPerformanceAmount);
+        BigDecimal rate = (target == 0)
+                ? null
+                : BigDecimal.valueOf(currentPerformanceAmount * 100)
+                        .divide(BigDecimal.valueOf(target), 1, RoundingMode.HALF_UP);
+        return new PerformanceProgress(target, remaining, rate);
     }
 }
