@@ -43,11 +43,14 @@
         <property name="mapperLocations" value="classpath*:mappers/**/*.xml"/>
     </bean>
 
-    <!-- 매퍼 인터페이스 자동 스캔·등록.
-         basePackage만 com.wallet로 두면 스캐너가 그 아래 '모든 인터페이스'를 매퍼 프록시로 등록한다
-         → 엔진 계산기 쪽 인터페이스까지 가짜 매퍼 빈이 되어 기동이 깨진다.
-         annotationClass로 @Mapper가 붙은 것만 등록하도록 좁힌다. basePackage를 특정 dao 패키지로
-         제한하는 방식보다 견고하다 — DAO가 도메인별로 흩어져도 애노테이션만 따라간다. -->
+    <!-- 매퍼 인터페이스 자동 스캔·등록 — 두 방식을 모두 허용한다(파트별 컨벤션 차이 수용).
+         (1) 패키지가 *.mapper 이면 등록(애노테이션 불필요)  (2) 위치와 무관하게 @Mapper가 붙었으면 등록.
+         basePackage만 com.wallet로 두면 매퍼 아닌 인터페이스까지 가짜 매퍼 빈이 되므로 두 스캐너 모두
+         범위를 좁혀 둔다. 두 조건에 다 걸리는 매퍼는 MyBatis가 중복 등록을 건너뛴다. -->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage" value="com.wallet.**.mapper"/>
+        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
+    </bean>
     <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
         <property name="basePackage" value="com.wallet"/>
         <property name="annotationClass" value="org.apache.ibatis.annotations.Mapper"/>
