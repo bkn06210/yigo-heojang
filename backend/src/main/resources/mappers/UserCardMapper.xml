@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.wallet.engine.dao.UserCardMapper">
+
+    <select id="findActiveCards"
+            resultType="com.wallet.engine.dao.dto.UserCardRow">
+        SELECT user_card_id,
+               card_id
+        FROM user_card
+        WHERE member_id = #{memberId}
+          AND card_status = 'ACTIVE'
+    </select>
+
+</mapper>
