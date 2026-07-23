@@ -45,7 +45,7 @@
 
     <!-- 매퍼 인터페이스 자동 스캔·등록 (현재 인터페이스 없음 → 다음 단계에서 채움) -->
     <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
-        <property name="basePackage" value="com.wallet"/>
+        <property name="basePackage" value="com.wallet.**.mapper"/>
         <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
     </bean>
 
@@ -55,5 +55,10 @@
         <property name="dataSource" ref="dataSource"/>
     </bean>
     <tx:annotation-driven transaction-manager="transactionManager"/>
+
+    <!-- 비밀번호 해시/검증 -->
+    <bean id="passwordEncoder"
+          class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder">
+    </bean>
 
 </beans>
