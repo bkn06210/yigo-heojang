@@ -79,14 +79,37 @@ public enum ErrorCode {
 
 
     // =========================================================================
-    //  4. 서버 오류 (Server Error)
+    //  4. 서버 오류 (Server)
     // =========================================================================
 
     /** 서버 내부 에러 */
     SERVER_INTERNAL_ERROR(
         HttpStatus.INTERNAL_SERVER_ERROR,
         "SERVER_INTERNAL_ERROR",
-        "서버 내부 오류가 발생했습니다.");
+        "서버 내부 오류가 발생했습니다."),
+
+    // =========================================================================
+    //  5. 회원 (Member)
+    // =========================================================================
+
+    /** 이메일 또는 비밀번호 불일치 */
+    LOGIN_CREDENTIAL_MISMATCH(
+        HttpStatus.UNAUTHORIZED,
+        "LOGIN_CREDENTIAL_MISMATCH",
+            "아이디 또는 비밀번호가 일치하지 않습니다."),
+
+    /** 정지된 회원 */
+    MEMBER_SUSPENDED(
+        HttpStatus.FORBIDDEN,
+        "MEMBER_SUSPENDED",
+        "정지된 회원입니다."),
+
+    /** 탈퇴한 회원 */
+    MEMBER_WITHDRAWN(
+        HttpStatus.FORBIDDEN,
+        "MEMBER_WITHDRAWN",
+        "탈퇴한 회원입니다.");
+    
 
     private final HttpStatus status;
     private final String code;
