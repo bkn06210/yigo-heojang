@@ -48,13 +48,6 @@
          basePackage만 com.wallet로 두면 매퍼 아닌 인터페이스까지 가짜 매퍼 빈이 되므로 두 스캐너 모두
          범위를 좁혀 둔다. 두 조건에 다 걸리는 매퍼는 MyBatis가 중복 등록을 건너뛴다. -->
     <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
-<<<<<<< Updated upstream
-        <property name="basePackage" value="com.wallet.**.mapper"/>
-        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
-    </bean>
-    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
-=======
->>>>>>> Stashed changes
         <property name="basePackage" value="com.wallet"/>
         <property name="annotationClass" value="org.apache.ibatis.annotations.Mapper"/>
         <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
