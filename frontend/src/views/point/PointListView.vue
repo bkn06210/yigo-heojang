@@ -30,11 +30,6 @@ const refreshPoint = async () => {
 
 }
 
-const refreshPoint = async () => {
-  console.log('포인트 데이터 갱신')
-}
-
-
 
 // 멤버십 추가 화면 이동
 const goMembershipRegister = () => {
