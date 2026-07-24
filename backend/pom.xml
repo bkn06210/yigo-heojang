@@ -145,6 +145,15 @@
             <artifactId>hibernate-validator</artifactId>
             <version>6.2.5.Final</version>
         </dependency>
+
+        <!-- 통합 테스트: Spring 테스트 컨텍스트로 실 MySQL에 매퍼·서비스를 물려 검증.
+             순수 계산기는 이 의존성 없이 돌지만, DAO는 DB 연결이 필요하다. -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <version>${spring.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
