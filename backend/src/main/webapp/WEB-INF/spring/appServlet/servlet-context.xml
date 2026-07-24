@@ -16,6 +16,19 @@
          → 별도 뷰리졸버(JSP 등) 없이 @RestController 반환값이 JSON으로 나간다. -->
     <mvc:annotation-driven/>
 
+    <!-- CORS 전역 설정. 프론트(Vue 개발서버)는 다른 오리진(포트)이라 브라우저가 교차 출처 요청을
+         막는데, 여기서 허용 오리진을 명시해 풀어준다.
+         allowed-headers="*" 로 JWT의 Authorization 헤더까지 허용해야 토큰 요청의 preflight가 통과한다.
+         allow-credentials="true" 를 쓰면 allowed-origins 에 "*" 를 못 쓰므로 오리진을 명시한다.
+         운영 배포 시에는 localhost:5173 을 실제 프론트 도메인으로 바꾼다. -->
+    <mvc:cors>
+        <mvc:mapping path="/api/**"
+                     allowed-origins="http://localhost:5173"
+                     allowed-methods="GET,POST,PUT,PATCH,DELETE,OPTIONS"
+                     allowed-headers="*"
+                     allow-credentials="true"/>
+    </mvc:cors>
+
     <!-- 컨트롤러만 스캔 (서비스 계층은 root-context가 담당).
          use-default-filters=false + @Controller 포함 → @RestController도 함께 등록됨. -->
     <context:component-scan base-package="com.wallet"/>
