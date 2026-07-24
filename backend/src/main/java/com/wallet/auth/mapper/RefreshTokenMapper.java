@@ -9,7 +9,6 @@ import com.wallet.auth.domain.RefreshToken;
 
 @Mapper
 public interface RefreshTokenMapper {
-
     void insert(
         @Param("memberId") Long memberId,
         @Param("tokenHash") String tokenHash,
