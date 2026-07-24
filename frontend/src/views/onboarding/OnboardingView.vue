@@ -45,7 +45,7 @@ const goSignup = () => {
   // 최초 실행 온보딩 완료 저장
   localStorage.setItem('onboardingDone', 'true')
 
-  router.push('/auth/signup')
+  router.push('/auth/terms')
 }
 
 
