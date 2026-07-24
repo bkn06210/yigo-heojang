@@ -18,9 +18,6 @@
 
     <!-- 컨트롤러만 스캔 (서비스 계층은 root-context가 담당).
          use-default-filters=false + @Controller 포함 → @RestController도 함께 등록됨. -->
-    <context:component-scan base-package="com.wallet" use-default-filters="false">
-        <context:include-filter type="annotation"
-            expression="org.springframework.stereotype.Controller"/>
-    </context:component-scan>
+    <context:component-scan base-package="com.wallet"/>
 
 </beans>
