@@ -8,10 +8,14 @@ import java.time.LocalDateTime;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.wallet.auth.domain.RefreshToken;
 import com.wallet.auth.mapper.RefreshTokenMapper;
 
 @Service
 public class RefreshTokenService {
+    private static final String REVOKE_REASON_LOGOUT = "LOGOUT";
+    private static final String REVOKE_REASON_REISSUED = "REISSUED";
+
     private final RefreshTokenMapper refreshTokenMapper;
 
     public RefreshTokenService(RefreshTokenMapper refreshTokenMapper) {
@@ -20,11 +24,25 @@ public class RefreshTokenService {
 
     @Transactional
     public void replace(Long memberId, String refreshToken, LocalDateTime expiresAt) {
-        refreshTokenMapper.revokeAllByMemberId(memberId, "REISSUED");
+        refreshTokenMapper.revokeAllByMemberId(memberId, REVOKE_REASON_REISSUED);
 
         String tokenHash = hash(refreshToken);
 
         refreshTokenMapper.insert(memberId, tokenHash, expiresAt);
+    }
+
+    @Transactional(readOnly = true)
+    public RefreshToken findValidToken(String refreshToken) {
+        String tokenHash = hash(refreshToken);
+
+        return refreshTokenMapper.findValidTokenByHash(tokenHash);
+    }
+
+    @Transactional
+    public void revokeByToken(String refreshToken) {
+        String tokenHash = hash(refreshToken);
+
+        refreshTokenMapper.revokeByHash(tokenHash, REVOKE_REASON_LOGOUT);
     }
 
     private String hash(String token) {

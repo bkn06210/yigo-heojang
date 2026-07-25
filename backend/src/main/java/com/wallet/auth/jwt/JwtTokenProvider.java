@@ -33,8 +33,8 @@ public class JwtTokenProvider {
     private final String refreshTokenSecret =
         "this-is-a-sample-secret-key-for-refresh-token-issue-please-change";
 
-    private final long accessTokenValidityInSeconds = 1800L;  // 30분
-    private final long refreshTokenValidityInSeconds = 60L * 60L * 24L * 14L; // 14일
+    private final long accessTokenValidityInSeconds = 60L * 10L;  // 10분
+    private final long refreshTokenValidityInSeconds = 60L * 60L * 12L; // 12시간
 
     private SecretKey getAccessSigningKey() {
         return Keys.hmacShaKeyFor(accessTokenSecret.getBytes(StandardCharsets.UTF_8));
