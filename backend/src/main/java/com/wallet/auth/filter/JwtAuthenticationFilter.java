@@ -8,6 +8,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.lang.NonNull;
@@ -15,12 +17,14 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.wallet.auth.jwt.JwtTokenProvider;
+import com.wallet.common.ApiResponse;
+import com.wallet.common.ErrorCode;
 
 @RequiredArgsConstructor
 @Component("jwtAuthenticationFilter")
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-     // 인증된 회원 id를 request에 저장할 때 사용할 key.
+    // 인증된 회원 id를 request에 저장할 때 사용할 key.
     public static final String AUTHENTICATED_MEMBER_ID = "authenticatedMemberId";
 
     private static final String AUTHORIZATION_HEADER = "Authorization";
@@ -44,6 +48,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     );
 
     private final JwtTokenProvider jwtTokenProvider;
+    private final ObjectMapper objectMapper;
 
     @Override
     protected void doFilterInternal(
@@ -58,14 +63,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         String accessToken = extractAccessToken(request);
 
-        // TODO: 다음 커밋에서 인증 실패 JSON 응답 처리 적용. 현재는 sendError로만 응답.
         if (accessToken == null) {
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+            writeErrorResponse(response, ErrorCode.ACCESS_TOKEN_INVALID);
             return;
         }
 
         if (!jwtTokenProvider.validateAccessToken(accessToken)) {
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+            writeErrorResponse(response, ErrorCode.ACCESS_TOKEN_INVALID);
             return;
         }
 
@@ -120,5 +124,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         return authorizationHeader != null
             && authorizationHeader.startsWith(BEARER_PREFIX)
             && authorizationHeader.length() > BEARER_PREFIX.length();
+    }
+
+    private void writeErrorResponse(HttpServletResponse response, ErrorCode errorCode) throws IOException {
+        response.setStatus(errorCode.getStatus().value());
+        response.setContentType("application/json;charset=UTF-8");
+
+        ApiResponse<Void> errorResponse = ApiResponse.error(errorCode);
+        String responseBody = objectMapper.writeValueAsString(errorResponse);
+
+        response.getWriter().write(responseBody);
     }
 }
