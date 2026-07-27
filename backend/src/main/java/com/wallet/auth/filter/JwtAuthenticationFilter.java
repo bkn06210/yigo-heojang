@@ -1,6 +1,7 @@
 package com.wallet.auth.filter;
 
 import java.io.IOException;
+import java.util.Set;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -9,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -21,23 +23,73 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private static final String AUTHORIZATION_HEADER = "Authorization";
     private static final String BEARER_PREFIX = "Bearer ";
 
+    // CORS preflight 요청은 브라우저의 사전 확인용이므로, Access Token이 없어도 인증 필터를 통과시켜야 한다.
+    private static final String OPTIONS_METHOD = "OPTIONS";
+
+    // Access Token 없이 접근 가능한 API 경로 목록.
+    private static final Set<String> PUBLIC_PATHS = Set.of(
+        "/api/auth/login",
+        "/api/auth/token"
+        // TODO: 아래 API들은 구현 시점에 점진적으로 예외 경로에 추가할 것
+//        "/api/health",
+//        "/api/terms",
+//        "/api/auth/signup",
+//        "/api/members/check-email",
+//        "/api/auth/password/reset-link",
+//        "/api/auth/password/verify-code",
+//        "/api/auth/password/resets"
+    );
+
     private final JwtTokenProvider jwtTokenProvider;
 
     @Override
     protected void doFilterInternal(
-        HttpServletRequest request,
-        HttpServletResponse response,
-        FilterChain filterChain
+        @NonNull HttpServletRequest request,
+        @NonNull HttpServletResponse response,
+        @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
+        if (isPublicRequest(request)) {
+            filterChain.doFilter(request, response);
+            return;
+        }
 
         String accessToken = extractAccessToken(request);
 
-        // TODO: 다음 커밋에서 인증 제외 경로를 먼저 판단한다.
         // TODO: 이후 커밋에서 Access Token 검증 및 memberId 저장을 추가한다.
         // TODO: 이후 커밋에서 인증 실패 JSON 응답 처리를 추가한다.
 
         filterChain.doFilter(request, response);
     }
+
+    // 현재 요청이 인증 없이 접근 가능한 요청인지 확인한다.
+    private boolean isPublicRequest(HttpServletRequest request) {
+        return isPreflightRequest(request) || isPublicPath(request);
+    }
+
+    // CORS preflight 요청인지 확인한다.
+    private boolean isPreflightRequest(HttpServletRequest request) {
+        return OPTIONS_METHOD.equalsIgnoreCase(request.getMethod());
+    }
+
+    // 요청 URI가 공개 API 경로에 해당하는지 확인한다.
+    private boolean isPublicPath(HttpServletRequest request) {
+        String requestPath = getRequestPath(request);
+        return PUBLIC_PATHS.contains(requestPath);
+    }
+
+
+    // context path를 제외한 실제 요청 경로를 구한다.
+    private String getRequestPath(HttpServletRequest request) {
+        String requestUri = request.getRequestURI();
+        String contextPath = request.getContextPath();
+
+        if (contextPath == null || contextPath.isEmpty()) {
+            return requestUri;
+        }
+
+        return requestUri.substring(contextPath.length());
+    }
+
 
     private String extractAccessToken(HttpServletRequest request) {
         String authorizationHeader = request.getHeader(AUTHORIZATION_HEADER);
