@@ -2,6 +2,8 @@ package com.wallet.auth.service;
 
 import java.time.LocalDateTime;
 
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,25 +19,14 @@ import com.wallet.common.exception.BusinessException;
 import com.wallet.member.domain.Member;
 import com.wallet.member.mapper.MemberMapper;
 
+@RequiredArgsConstructor
 @Service
 public class AuthService {
     private final MemberMapper memberMapper;
     private final JwtTokenProvider jwtTokenProvider;
     private final PasswordEncoder passwordEncoder;
     private final RefreshTokenService refreshTokenService;
-
-    public AuthService(
-        MemberMapper memberMapper,
-        JwtTokenProvider jwtTokenProvider,
-        PasswordEncoder passwordEncoder,
-        RefreshTokenService refreshTokenService
-    ) {
-        this.memberMapper = memberMapper;
-        this.jwtTokenProvider = jwtTokenProvider;
-        this.passwordEncoder = passwordEncoder;
-        this.refreshTokenService = refreshTokenService;
-    }
-
+    
     @Transactional
     public LoginResult login(LoginRequest request) {
         Member member = memberMapper.findByEmail(request.email());
