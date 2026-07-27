@@ -12,6 +12,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.RequiredArgsConstructor;
 
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -68,16 +70,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
-        if (!jwtTokenProvider.validateAccessToken(accessToken)) {
+        try {
+            jwtTokenProvider.validateAccessTokenOrThrow(accessToken);
+
+            Long memberId = jwtTokenProvider.getMemberIdFromAccessToken(accessToken);
+            request.setAttribute(AUTHENTICATED_MEMBER_ID, memberId);
+
+            filterChain.doFilter(request, response);
+        } catch (ExpiredJwtException e) {
+            writeErrorResponse(response, ErrorCode.ACCESS_TOKEN_EXPIRED);
+        } catch (JwtException | IllegalArgumentException e) {
             writeErrorResponse(response, ErrorCode.ACCESS_TOKEN_INVALID);
-            return;
         }
-
-        Long memberId = jwtTokenProvider.getMemberIdFromAccessToken(accessToken);
-
-        request.setAttribute(AUTHENTICATED_MEMBER_ID, memberId);
-
-        filterChain.doFilter(request, response);
     }
 
     // 현재 요청이 인증 없이 접근 가능한 요청인지 확인한다.
