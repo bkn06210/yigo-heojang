@@ -20,6 +20,9 @@ import com.wallet.auth.jwt.JwtTokenProvider;
 @Component("jwtAuthenticationFilter")
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
+     // 인증된 회원 id를 request에 저장할 때 사용할 key.
+    public static final String AUTHENTICATED_MEMBER_ID = "authenticatedMemberId";
+
     private static final String AUTHORIZATION_HEADER = "Authorization";
     private static final String BEARER_PREFIX = "Bearer ";
 
@@ -55,8 +58,20 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         String accessToken = extractAccessToken(request);
 
-        // TODO: 이후 커밋에서 Access Token 검증 및 memberId 저장을 추가한다.
-        // TODO: 이후 커밋에서 인증 실패 JSON 응답 처리를 추가한다.
+        // TODO: 다음 커밋에서 인증 실패 JSON 응답 처리 적용. 현재는 sendError로만 응답.
+        if (accessToken == null) {
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+            return;
+        }
+
+        if (!jwtTokenProvider.validateAccessToken(accessToken)) {
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+            return;
+        }
+
+        Long memberId = jwtTokenProvider.getMemberIdFromAccessToken(accessToken);
+
+        request.setAttribute(AUTHENTICATED_MEMBER_ID, memberId);
 
         filterChain.doFilter(request, response);
     }
