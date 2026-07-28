@@ -2,9 +2,14 @@ package com.wallet.auth.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
+import java.time.LocalDateTime;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -13,9 +18,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import com.wallet.auth.domain.RefreshToken;
 import com.wallet.auth.dto.LoginMemberResponse;
 import com.wallet.auth.dto.LoginRequest;
-import com.wallet.auth.dto.LoginResponse;
+import com.wallet.auth.dto.LoginResult;
+import com.wallet.auth.dto.TokenResponse;
 import com.wallet.auth.jwt.JwtTokenProvider;
 import com.wallet.common.ErrorCode;
 import com.wallet.common.exception.BusinessException;
@@ -27,6 +34,7 @@ class AuthServiceTest {
     private MemberMapper memberMapper;
     private JwtTokenProvider jwtTokenProvider;
     private PasswordEncoder passwordEncoder;
+    private RefreshTokenService refreshTokenService;
     private AuthService authService;
 
     @BeforeEach
@@ -34,8 +42,14 @@ class AuthServiceTest {
         memberMapper = mock(MemberMapper.class);
         jwtTokenProvider = mock(JwtTokenProvider.class);
         passwordEncoder = new BCryptPasswordEncoder();
+        refreshTokenService = mock(RefreshTokenService.class);
 
-        authService = new AuthService(memberMapper, jwtTokenProvider, passwordEncoder);
+        authService = new AuthService(
+            memberMapper,
+            jwtTokenProvider,
+            passwordEncoder,
+            refreshTokenService
+        );
     }
 
     @Test
@@ -58,25 +72,39 @@ class AuthServiceTest {
         when(jwtTokenProvider.createAccessToken(member))
             .thenReturn("access.token.value");
 
+        when(jwtTokenProvider.createRefreshToken(member.getMemberId()))
+            .thenReturn("refresh.token.value");
+
         when(jwtTokenProvider.getAccessTokenValidityInSeconds())
             .thenReturn(1800L);
 
+        when(jwtTokenProvider.getRefreshTokenValidityInSeconds())
+            .thenReturn(1209600L);
+
         // when
-        LoginResponse response = authService.login(request);
+        LoginResult result = authService.login(request);
 
         // then
-        assertThat(response).isNotNull();
-        assertThat(response.accessToken()).isEqualTo("access.token.value");
-        assertThat(response.tokenType()).isEqualTo("Bearer");
-        assertThat(response.expiresIn()).isEqualTo(1800L);
+        assertThat(result).isNotNull();
+        assertThat(result.accessToken()).isEqualTo("access.token.value");
+        assertThat(result.refreshToken()).isEqualTo("refresh.token.value");
+        assertThat(result.tokenType()).isEqualTo("Bearer");
+        assertThat(result.expiresIn()).isEqualTo(1800L);
 
-        LoginMemberResponse loginMember = response.member();
+        LoginMemberResponse loginMember = result.member();
         assertThat(loginMember.memberId()).isEqualTo(1L);
         assertThat(loginMember.email()).isEqualTo("user@example.com");
         assertThat(loginMember.name()).isEqualTo("이재혁");
 
         verify(memberMapper).findByEmail("user@example.com");
         verify(jwtTokenProvider).createAccessToken(member);
+        verify(jwtTokenProvider).createRefreshToken(member.getMemberId());
+
+        verify(refreshTokenService).replace(
+            eq(member.getMemberId()),
+            eq("refresh.token.value"),
+            any(LocalDateTime.class)
+        );
     }
 
     @Test
@@ -99,6 +127,12 @@ class AuthServiceTest {
             .isEqualTo(ErrorCode.LOGIN_CREDENTIAL_MISMATCH);
 
         verify(memberMapper).findByEmail("unknown@example.com");
+
+        verify(refreshTokenService, never()).replace(
+            any(),
+            any(),
+            any()
+        );
     }
 
     @Test
@@ -129,6 +163,12 @@ class AuthServiceTest {
             .isEqualTo(ErrorCode.LOGIN_CREDENTIAL_MISMATCH);
 
         verify(memberMapper).findByEmail("user@example.com");
+
+        verify(refreshTokenService, never()).replace(
+            any(),
+            any(),
+            any()
+        );
     }
 
     @Test
@@ -159,6 +199,12 @@ class AuthServiceTest {
             .isEqualTo(ErrorCode.MEMBER_WITHDRAWN);
 
         verify(memberMapper).findByEmail("user@example.com");
+
+        verify(refreshTokenService, never()).replace(
+            any(),
+            any(),
+            any()
+        );
     }
 
     @Test
@@ -189,6 +235,134 @@ class AuthServiceTest {
             .isEqualTo(ErrorCode.MEMBER_SUSPENDED);
 
         verify(memberMapper).findByEmail("user@example.com");
+
+        verify(refreshTokenService, never()).replace(
+            any(),
+            any(),
+            any()
+        );
+    }
+
+    @Test
+    @DisplayName("토큰 재발급 성공 - 유효한 Refresh Token이면 새로운 Access Token을 반환한다")
+    void reissueAccessToken_success() {
+        // given
+        String refreshToken = "refresh.token.value";
+        Long memberId = 1L;
+
+        RefreshToken savedToken = new RefreshToken();
+        ReflectionTestUtils.setField(savedToken, "memberId", memberId);
+
+        Member member = createMember(
+            memberId,
+            "user@example.com",
+            passwordEncoder.encode("1234"),
+            "이재혁",
+            "ACTIVE"
+        );
+
+        when(jwtTokenProvider.validateRefreshToken(refreshToken))
+            .thenReturn(true);
+
+        when(jwtTokenProvider.getMemberIdFromRefreshToken(refreshToken))
+            .thenReturn(memberId);
+
+        when(refreshTokenService.findValidToken(refreshToken))
+            .thenReturn(savedToken);
+
+        when(memberMapper.findById(memberId))
+            .thenReturn(member);
+
+        when(jwtTokenProvider.createAccessToken(member))
+            .thenReturn("new.access.token");
+
+        when(jwtTokenProvider.getAccessTokenValidityInSeconds())
+            .thenReturn(1800L);
+
+        // when
+        TokenResponse response = authService.reissueAccessToken(refreshToken);
+
+        // then
+        assertThat(response.accessToken()).isEqualTo("new.access.token");
+        assertThat(response.tokenType()).isEqualTo("Bearer");
+        assertThat(response.expiresIn()).isEqualTo(1800L);
+
+        verify(jwtTokenProvider).validateRefreshToken(refreshToken);
+        verify(jwtTokenProvider).getMemberIdFromRefreshToken(refreshToken);
+        verify(refreshTokenService).findValidToken(refreshToken);
+        verify(memberMapper).findById(memberId);
+        verify(jwtTokenProvider).createAccessToken(member);
+    }
+
+    @Test
+    @DisplayName("토큰 재발급 실패 - DB에 유효한 Refresh Token이 없으면 REFRESH_TOKEN_FAILED 예외가 발생한다")
+    void reissueAccessToken_fail_whenTokenNotFoundInDatabase() {
+        // given
+        String refreshToken = "refresh.token.value";
+
+        when(jwtTokenProvider.validateRefreshToken(refreshToken))
+            .thenReturn(true);
+
+        when(jwtTokenProvider.getMemberIdFromRefreshToken(refreshToken))
+            .thenReturn(1L);
+
+        when(refreshTokenService.findValidToken(refreshToken))
+            .thenReturn(null);
+
+        // when
+        BusinessException exception = assertThrows(
+            BusinessException.class,
+            () -> authService.reissueAccessToken(refreshToken)
+        );
+
+        // then
+        assertThat(exception.getErrorCode())
+            .isEqualTo(ErrorCode.REFRESH_TOKEN_FAILED);
+
+        verify(refreshTokenService).findValidToken(refreshToken);
+    }
+
+    @Test
+    @DisplayName("로그아웃 성공 - 유효한 Refresh Token이면 토큰을 폐기한다")
+    void logout_success() {
+        // given
+        String refreshToken = "refresh.token.value";
+
+        when(jwtTokenProvider.validateRefreshToken(refreshToken))
+            .thenReturn(true);
+
+        // when
+        authService.logout(refreshToken);
+
+        // then
+        verify(jwtTokenProvider).validateRefreshToken(refreshToken);
+        verify(refreshTokenService).revokeByToken(refreshToken);
+    }
+
+    @Test
+    @DisplayName("로그아웃 - Refresh Token이 없으면 아무 작업도 하지 않는다")
+    void logout_whenRefreshTokenIsNull() {
+        // when
+        authService.logout(null);
+
+        // then
+        verify(refreshTokenService, never()).revokeByToken(any());
+    }
+
+    @Test
+    @DisplayName("로그아웃 - 유효하지 않은 Refresh Token이면 DB 폐기를 수행하지 않는다")
+    void logout_whenInvalidRefreshToken() {
+        // given
+        String refreshToken = "invalid.refresh.token";
+
+        when(jwtTokenProvider.validateRefreshToken(refreshToken))
+            .thenReturn(false);
+
+        // when
+        authService.logout(refreshToken);
+
+        // then
+        verify(refreshTokenService, never()).revokeByToken(any());
     }
 
     private Member createMember(
