@@ -123,7 +123,7 @@ CREATE TABLE refresh_token (
     token_hash       VARCHAR(255) NOT NULL COMMENT '토큰 단방향 해시',
     expires_at       DATETIME     NOT NULL COMMENT '만료일시',
     revoked_at       DATETIME     NULL COMMENT '폐기일시. NULL이면 유효',
-    revoke_reason    ENUM('LOGOUT','PASSWORD_CHANGED','PASSWORD_RESET','MEMBER_WITHDRAWN') NULL COMMENT '폐기 사유',
+    revoke_reason    ENUM('REISSUED', 'LOGOUT','PASSWORD_CHANGED','PASSWORD_RESET','MEMBER_WITHDRAWN') NULL COMMENT '폐기 사유',
     created_at       DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '발급일시',
     PRIMARY KEY (refresh_token_id),
     UNIQUE KEY uk_refresh_token_hash (token_hash),
