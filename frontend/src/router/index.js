@@ -7,9 +7,7 @@ import LoginView from '@/views/auth/LoginView.vue'
 import PasswordChangeView from '@/views/auth/PasswordChangeView.vue'
 
 // Onboarding
-import OnboardingStep1View from '@/views/onboarding/OnboardingStep1View.vue'
-import OnboardingStep2View from '@/views/onboarding/OnboardingStep2View.vue'
-import OnboardingRecommendView from '@/views/onboarding/OnboardingRecommendView.vue'
+import OnboardingView from '@/views/onboarding/OnboardingView.vue'
 
 // Main
 import GuestMainView from '@/views/main/GuestMainView.vue'
@@ -67,9 +65,7 @@ const routes = [
   { path: '/auth/password-change', component: PasswordChangeView },
 
   // Onboarding
-  { path: '/onboarding/step1', component: OnboardingStep1View },
-  { path: '/onboarding/step2', component: OnboardingStep2View },
-  { path: '/onboarding/recommend', component: OnboardingRecommendView },
+  {path: '/onboarding', component: OnboardingView},
 
   // Main
   { path: '/main/guest', component: GuestMainView },

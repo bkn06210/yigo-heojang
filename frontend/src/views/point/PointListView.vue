@@ -17,12 +17,14 @@ const refreshPoint = async () => {
   console.log('포인트 데이터 갱신 시작');
 
   // 지금은 테스트용
-  await new Promise((resolve) => {
-    setTimeout(resolve, 2000);
-  });
+  await new Promise(resolve => {
+    setTimeout(resolve, 2000)
+  })
 
-  console.log('포인트 데이터 갱신 완료');
-};
+  console.log('포인트 데이터 갱신 완료')
+
+}
+
 
 // 멤버십 추가 화면 이동
 const goMembershipRegister = () => {
