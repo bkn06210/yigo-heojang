@@ -13,6 +13,8 @@ import java.nio.charset.StandardCharsets;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.MalformedJwtException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockFilterChain;
@@ -21,9 +23,6 @@ import org.springframework.mock.web.MockHttpServletResponse;
 
 import com.wallet.auth.jwt.JwtTokenProvider;
 import com.wallet.common.ErrorCode;
-
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.MalformedJwtException;
 
 class JwtAuthenticationFilterTest {
 
@@ -246,5 +245,24 @@ class JwtAuthenticationFilterTest {
 
         verify(jwtTokenProvider).validateAccessTokenOrThrow(accessToken);
         verify(jwtTokenProvider).getMemberIdFromAccessToken(accessToken);
+    }
+
+    @Test
+    @DisplayName("로그아웃 요청 - Access Token 없이 필터를 통과한다")
+    void doFilter_success_whenLogoutPath() throws Exception {
+        // given
+        MockHttpServletRequest request = new MockHttpServletRequest("POST", "/api/auth/logout");
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        MockFilterChain filterChain = new MockFilterChain();
+
+        // when
+        jwtAuthenticationFilter.doFilter(request, response, filterChain);
+
+        // then
+        assertThat(response.getStatus()).isEqualTo(200);
+        assertThat(filterChain.getRequest()).isNotNull();
+
+        verify(jwtTokenProvider, never()).validateAccessTokenOrThrow(anyString());
+        verify(jwtTokenProvider, never()).getMemberIdFromAccessToken(anyString());
     }
 }

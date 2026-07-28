@@ -38,6 +38,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     // Access Token 없이 접근 가능한 API 경로 목록.
     private static final Set<String> PUBLIC_PATHS = Set.of(
         "/api/auth/login",
+        "/api/auth/logout",
         "/api/auth/token"
         // TODO: 아래 API들은 구현 시점에 점진적으로 예외 경로에 추가할 것
 //        "/api/health",
