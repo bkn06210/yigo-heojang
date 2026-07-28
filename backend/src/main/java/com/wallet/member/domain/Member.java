@@ -7,6 +7,7 @@ public class Member {
     private String email;
     private String password;  // 해시된 비밀번호
     private String name;
+    private String nickname;
     private String memberStatus;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
@@ -27,6 +28,8 @@ public class Member {
     public String getName() {
         return name;
     }
+
+    public String getNickname() { return nickname; }
 
     public String getMemberStatus() {
         return memberStatus;

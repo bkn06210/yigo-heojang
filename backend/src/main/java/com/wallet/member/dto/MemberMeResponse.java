@@ -8,6 +8,7 @@ public record MemberMeResponse(
     Long memberId,
     String email,
     String name,
+    String nickname,
     String memberStatus,
     LocalDateTime createdAt,
     LocalDateTime updatedAt
@@ -18,6 +19,7 @@ public record MemberMeResponse(
             member.getMemberId(),
             member.getEmail(),
             member.getName(),
+            member.getNickname(),
             member.getMemberStatus(),
             member.getCreatedAt(),
             member.getUpdatedAt()

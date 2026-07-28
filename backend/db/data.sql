@@ -21,22 +21,22 @@ START TRANSACTION;
 -- ============================================================
 
 INSERT INTO member (
-    member_id, email, password_hash, name, member_status,
+    member_id, email, password_hash, name, nickname, member_status,
     created_at, updated_at, withdrawn_at
 ) VALUES
     (1, 'active@example.com',
      '$2a$10$Exc5x/juU54pWSz1Wo8E7Opgva7S.1W5uq6in1D/BH.krG3gKs93C',
-     '김활성', 'ACTIVE',
+     '김활성', '별명A', 'ACTIVE',
      '2026-06-01 09:00:00', '2026-07-20 10:00:00', NULL),
 
     (2, 'suspended@example.com',
      '$2a$10$Exc5x/juU54pWSz1Wo8E7Opgva7S.1W5uq6in1D/BH.krG3gKs93C',
-     '이정지', 'SUSPENDED',
+     '이정지', '별명B', 'SUSPENDED',
      '2026-06-05 09:00:00', '2026-07-18 15:00:00', NULL),
 
     (3, 'withdrawn@example.com',
      '$2a$10$Exc5x/juU54pWSz1Wo8E7Opgva7S.1W5uq6in1D/BH.krG3gKs93C',
-     '박탈퇴', 'WITHDRAWN',
+     '박탈퇴', '별명C', 'WITHDRAWN',
      '2026-05-01 09:00:00', '2026-07-10 14:00:00', '2026-07-10 14:00:00');
 
 INSERT INTO member_withdrawal (
