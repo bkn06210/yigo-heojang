@@ -11,6 +11,10 @@ public interface MemberMapper {
 
     Member findById(@Param("memberId") Long memberId);
 
+    boolean existsByEmail(@Param("email") String email);
+    
+    int insertMember(Member member);
+
     int updateMemberInfo(
         @Param("memberId") Long memberId,
         @Param("nickname") String nickname
