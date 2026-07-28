@@ -20,7 +20,14 @@ import java.time.YearMonth;
 import java.util.List;
 
 /**
- * 전월실적 판정 서비스 — 순수 계산기 두 개를 DAO 조회로 연결한다.
+ * 전월실적 스냅샷 생성·보정 서비스 — 지난달 거래를 재합산해 실적 구간을 판정한다.
+ *
+ * <b>추천·현황 조회 경로에서는 호출하지 않는다.</b> 전월실적은 이미
+ * user_card_monthly_state.prev_performance_amount에 집계값으로 저장돼 있고, 읽기 경로는
+ * 그 컬럼을 읽는다(CardStateAssembler.resolvePrevPerformanceAmount). 여기서 거래를 다시
+ * 합산하는 것은 그 저장값을 <b>만들거나 보정할 때</b>다 — 정산의 월 롤오버, 마이데이터 최초 적재,
+ * 데이터 정합성 보정이 호출자다. 조회할 때마다 부르면 저장 컬럼을 둔 의미가 사라지고
+ * 카드 수만큼 거래 전량 스캔이 발생한다.
  *
  * 계산기(PerformanceAmountCalculator, PerformanceTierResolver)는 Spring·DB·시계를 모른다.
  * 이 서비스가 "어느 달인가"를 정해 기간 경계를 만들고, 조회 결과를 assembler로 도메인 모델로
@@ -30,9 +37,9 @@ import java.util.List;
  * 계산기를 프레임워크에서 떼어 두려는 설계(순수성)를 유지하기 위함이다.
  */
 @Service
-public class PerformanceEvaluationService {
+public class PerformanceSnapshotService {
 
-    private static final Logger log = LoggerFactory.getLogger(PerformanceEvaluationService.class);
+    private static final Logger log = LoggerFactory.getLogger(PerformanceSnapshotService.class);
 
     private final PerformanceMapper performanceMapper;
     private final PerformanceInputAssembler assembler;
@@ -40,8 +47,8 @@ public class PerformanceEvaluationService {
     private final PerformanceAmountCalculator amountCalculator = new PerformanceAmountCalculator();
     private final PerformanceTierResolver tierResolver = new PerformanceTierResolver();
 
-    public PerformanceEvaluationService(PerformanceMapper performanceMapper,
-                                        PerformanceInputAssembler assembler) {
+    public PerformanceSnapshotService(PerformanceMapper performanceMapper,
+                                      PerformanceInputAssembler assembler) {
         this.performanceMapper = performanceMapper;
         this.assembler = assembler;
     }

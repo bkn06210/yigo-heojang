@@ -39,7 +39,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations = "file:src/main/webapp/WEB-INF/spring/root-context.xml")
 @Transactional
-class PerformanceEvaluationServiceIntegrationTest {
+class PerformanceSnapshotServiceIntegrationTest {
 
     // 기준월. 전월실적은 이 달의 직전 달(2026-07) 거래로 계산한다. 시계에 의존하지 않도록 고정한다.
     private static final YearMonth BASE_MONTH = YearMonth.of(2026, 8);
@@ -48,7 +48,7 @@ class PerformanceEvaluationServiceIntegrationTest {
     private PerformanceMapper performanceMapper;
 
     @Autowired
-    private PerformanceEvaluationService performanceEvaluationService;
+    private PerformanceSnapshotService performanceSnapshotService;
 
     private JdbcTemplate jdbc;
 
@@ -99,7 +99,7 @@ class PerformanceEvaluationServiceIntegrationTest {
         // E1(20만, 인정) + E2(15만, 인정) = 35만. E3(간편결제)·E4(무이자)는 제외.
         // 35만 ≥ 30만 → 상위 구간(tierHigh), 통합한도 1만, 실적 충족.
         PerformanceStatus status =
-                performanceEvaluationService.evaluate(userCardId, cardId, BASE_MONTH);
+                performanceSnapshotService.evaluate(userCardId, cardId, BASE_MONTH);
 
         assertThat(status.tierId()).isEqualTo(tierHighId);
         assertThat(status.minPerformanceAmount()).isEqualTo(300_000L);
