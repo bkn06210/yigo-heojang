@@ -70,17 +70,29 @@ public class JwtTokenProvider {
             .compact();
     }
 
+    // token이 유효한지 true/false만 필요한 곳에서 사용
     public boolean validateAccessToken(String token) {
         try {
-            Jwts.parserBuilder()
-                .setSigningKey(getAccessSigningKey())
-                .build()
-                .parseClaimsJws(token);
-
+            validateAccessTokenOrThrow(token);
             return true;
         } catch (JwtException | IllegalArgumentException e) {
             return false;
         }
+    }
+
+    /**
+     * Access Token을 검증하고, 실패 원인을 호출한 쪽에서 구분할 수 있도록 예외를 그대로 던진다.
+     *
+     * 기존 validateAccessToken()은 모든 JWT 예외를 내부에서 잡고 false만 반환한다.
+     *
+     * 그래서 인증 필터에서는 이 메서드를 사용해 ExpiredJwtException을 따로 잡고,
+     * 만료 토큰은 ACCESS_TOKEN_EXPIRED로 응답할 수 있게 한다.
+     */
+    public void validateAccessTokenOrThrow(String token) {
+        Jwts.parserBuilder()
+            .setSigningKey(getAccessSigningKey())
+            .build()
+            .parseClaimsJws(token);
     }
 
     public boolean validateRefreshToken(String token) {

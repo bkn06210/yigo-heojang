@@ -5,23 +5,22 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
 
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.wallet.auth.domain.RefreshToken;
 import com.wallet.auth.mapper.RefreshTokenMapper;
 
+@RequiredArgsConstructor
 @Service
 public class RefreshTokenService {
     private static final String REVOKE_REASON_LOGOUT = "LOGOUT";
     private static final String REVOKE_REASON_REISSUED = "REISSUED";
 
     private final RefreshTokenMapper refreshTokenMapper;
-
-    public RefreshTokenService(RefreshTokenMapper refreshTokenMapper) {
-        this.refreshTokenMapper = refreshTokenMapper;
-    }
-
+    
     @Transactional
     public void replace(Long memberId, String refreshToken, LocalDateTime expiresAt) {
         refreshTokenMapper.revokeAllByMemberId(memberId, REVOKE_REASON_REISSUED);
