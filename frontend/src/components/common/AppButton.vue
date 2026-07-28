@@ -1,4 +1,7 @@
 <script setup>
+
+const emit = defineEmits(['click'])
+
 defineProps({
   text: {
     type: String,
@@ -24,6 +27,7 @@ defineProps({
     class="app-button"
     :class="[type, size]"
     :disabled="disabled"
+    @click="$emit('click')"
   >
     {{ text }}
   </button>
@@ -58,8 +62,8 @@ defineProps({
 }
 
 .secondary {
-  background-color: #f3f4f6;
-  color: #333;
+  background-color: #f1f1f1;
+  color: #777;
 }
 
 .outline {

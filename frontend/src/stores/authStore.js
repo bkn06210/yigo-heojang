@@ -1,64 +1,152 @@
-//로그인 상태 관리 전용 저장소
+// src/stores/authStore.js
 
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 
 
-// 로그인 사용자 상태 관리 Store
 export const useAuthStore = defineStore(
   'auth',
   () => {
 
-
-    // 로그인 토큰 저장
-    // 로그인 성공 후 백엔드에서 받은 accessToken 저장 예정
-    const token = ref(null)
-
-
-    // 로그인 사용자 정보 저장
-    const user = ref(null)
+    // 초기 상태 복원
+    const token = ref(
+      localStorage.getItem('token') || null
+    )
 
 
+    const getStoredUser = () => {
 
-    // 로그인 처리
-    // 추후 LoginView에서 호출
-    const setLogin = (loginToken, userInfo) => {
-
-      token.value = loginToken
-      user.value = userInfo
+      const savedUser =
+        localStorage.getItem('user')
 
 
-      // 새로고침해도 유지되도록 저장
-      localStorage.setItem(
-        'token',
-        loginToken
-      )
+      if (!savedUser) {
+        return null
+      }
+
+
+      try {
+
+        return JSON.parse(savedUser)
+
+      } catch (error) {
+
+        console.error(
+          '저장된 사용자 정보 파싱 실패:',
+          error
+        )
+
+        localStorage.removeItem('user')
+
+        return null
+
+      }
 
     }
 
 
+    const user = ref(
+      getStoredUser()
+    )
 
-    // 로그아웃 처리
+
+
+   
+    // 로그인
+   const setLogin = (
+  loginToken,
+  userInfo
+) => {
+
+  console.log('로그인 userInfo 확인:', userInfo);
+
+
+  token.value = loginToken;
+
+  user.value = userInfo;
+
+
+  localStorage.setItem(
+    'token',
+    loginToken
+  );
+
+
+  localStorage.setItem(
+    'user',
+    JSON.stringify(userInfo)
+  );
+
+};
+
+    const updateUser = (updatedUser) => {
+
+  user.value = {
+    ...(user.value ?? {}),
+    ...updatedUser,
+  };
+
+
+  localStorage.setItem(
+    'user',
+    JSON.stringify(user.value)
+  );
+
+};
+
+
+
+   
+    // 로그아웃
     const logout = () => {
 
+
       token.value = null
+
       user.value = null
+
 
 
       localStorage.removeItem(
         'token'
       )
 
+
+      localStorage.removeItem(
+        'user'
+      )
+
+
+      console.log(
+        '로그아웃 완료'
+      )
+
+    }
+
+
+    // 로그인 여부 확인용
+    const isLogin = () => {
+
+      return !!token.value
+
     }
 
 
 
     return {
-      token,
-      user,
-      setLogin,
-      logout
-    }
 
+  token,
+
+  user,
+
+  setLogin,
+
+  updateUser,
+
+  logout,
+
+  isLogin
+
+}
   }
 )

@@ -1,11 +1,33 @@
 <template>
+
   <nav class="bottom-nav">
-    <RouterLink to="/">홈</RouterLink>
-    <RouterLink to="/card">카드</RouterLink>
-    <RouterLink to="/payment">결제</RouterLink>
-    <RouterLink to="/point">포인트</RouterLink>
-    <RouterLink to="/setting">설정</RouterLink>
+
+    <RouterLink to="/home">
+      홈
+    </RouterLink>
+
+
+    <RouterLink to="/cards">
+      카드
+    </RouterLink>
+
+
+    <RouterLink to="/payment">
+      결제
+    </RouterLink>
+
+
+    <RouterLink to="/points">
+      혜택
+    </RouterLink>
+
+
+    <RouterLink to="/settings">
+      설정
+    </RouterLink>
+
   </nav>
+
 </template>
 
 <script setup>
@@ -27,11 +49,33 @@
   bottom: 0;
 }
 
-.bottom-nav a {
-  text-decoration: none;
-  color: #555;
-  font-size: 14px;
-  font-weight: 500;
+.bottom-nav {
+
+  height:70px;
+
+  display:flex;
+
+  justify-content:space-around;
+
+  align-items:center;
+
+
+  border-top:1px solid #ddd;
+
+  background:white;
+
+
+  position:fixed;
+
+  bottom:0;
+
+  left:0;
+
+  width:100%;
+
+
+  z-index:1000;
+
 }
 
 .router-link-active {

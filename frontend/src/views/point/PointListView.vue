@@ -2,7 +2,7 @@
 
 // 공통 컴포넌트
 import PageHeader from '@/components/common/PageHeader.vue'
-import BottomNav from '@/components/common/BottomNav.vue'
+import BottomNavigation from '@/components/layout/BottomNavigation.vue'
 import PullToRefresh from '@/components/common/PullToRefresh.vue'
 
 
@@ -129,7 +129,7 @@ const membershipList = [
 
 
 
-    <BottomNav />
+    <BottomNavigation />
 
 
   </div>
