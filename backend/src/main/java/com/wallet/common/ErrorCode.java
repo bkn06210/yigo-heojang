@@ -108,9 +108,15 @@ public enum ErrorCode {
     MEMBER_WITHDRAWN(
         HttpStatus.FORBIDDEN,
         "MEMBER_WITHDRAWN",
-        "탈퇴한 회원입니다.");
-    
+        "탈퇴한 회원입니다."),
 
+    /** 회원 정보를 찾을 수 없음 */
+    MEMBER_NOT_FOUND(
+        HttpStatus.NOT_FOUND,
+        "MEMBER_NOT_FOUND",
+            "회원을 찾을 수 없습니다."
+    );
+    
     private final HttpStatus status;
     private final String code;
     private final String message;
