@@ -9,6 +9,8 @@ package com.wallet.engine.model;
  */
 public enum NotApplicableReason {
     RETROACTIVE_EXCLUDED,
+    /** 증정은 결제 이벤트가 없어 매칭·계산 대상이 아니다. 카드 상세 화면이 별도 조회로 표시한다 */
+    GIFT_EXCLUDED,
     PERFORMANCE_NOT_MET,
     PAYMENT_TYPE_MISMATCH,
     MIN_TXN_AMOUNT_NOT_MET,

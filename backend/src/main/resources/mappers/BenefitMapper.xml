@@ -10,7 +10,12 @@
     <!-- 판정된 구간(tierId)의 benefit_tier_limit을 LEFT JOIN해 구간별 개별한도·혜택값을 함께 가져온다.
          해당 구간에 행이 없으면 tier_monthly_limit·tier_benefit_value가 NULL이 되고,
          조립 단계에서 TierLimitResolver가 base 값을 그대로 유지한다.
-         매칭 여부로 거르지 않고 카드의 활성 혜택 전부를 반환한다 — 묶음 한도 합산 때문이다. -->
+         매칭 여부로 거르지 않고 카드의 활성 혜택 전부를 반환한다 — 묶음 한도 합산 때문이다.
+
+         단 GIFT·RETROACTIVE는 제외한다. 증정은 결제 트랜잭션이 없어(카드 제시뿐) 한도 소진을
+         추적할 수 없고, 사후정산은 결제시점에 확정되지 않는다. 둘 다 후보에 넣으면 다른 혜택이 없는
+         카드에서 선택돼 결제와 무관한 혜택이 기록된다. 계산기도 같은 판정을 하지만(이중 방어),
+         조회에서 빼면 묶음 한도 합산 대상에도 애초에 들어오지 않는다. -->
     <select id="findActiveBenefits"
             resultType="com.wallet.engine.dao.dto.BenefitRow">
         SELECT b.benefit_id,
@@ -40,6 +45,7 @@
               AND tl.tier_id = #{tierId}
         WHERE b.card_id = #{cardId}
           AND b.is_active = 'Y'
+          AND b.benefit_kind NOT IN ('GIFT', 'RETROACTIVE')
     </select>
 
     <select id="findExclusions"
@@ -51,6 +57,7 @@
         JOIN benefit b ON b.benefit_id = x.benefit_id
         WHERE b.card_id = #{cardId}
           AND b.is_active = 'Y'
+          AND b.benefit_kind NOT IN ('GIFT', 'RETROACTIVE')
     </select>
 
 </mapper>

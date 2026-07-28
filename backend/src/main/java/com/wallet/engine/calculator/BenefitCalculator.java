@@ -19,7 +19,7 @@ import java.math.RoundingMode;
  *
  * 계산 순서:
  * <pre>
- * 0.  종류 게이트    RETROACTIVE → 미적용 / GIFT → 적용·0원·확정
+ * 0.  종류 게이트    RETROACTIVE·GIFT → 미적용
  * 1.  조건 게이트    실적 → 결제수단 → 건당최소금액
  * 1.5 횟수 게이트    일 횟수 → 월 횟수
  * 2.  대상금액       min(결제금액 − 포인트사용액, 대상금액상한)
@@ -45,10 +45,6 @@ public final class BenefitCalculator {
         if (gateFailure != null) {
             return BenefitResult.notApplicable(gateFailure);
         }
-        // 증정은 금전 가치 환산이 불가해 금액 비교에서 빼되, 적용 자체는 된 것으로 본다
-        if (rule.getBenefitKind() == BenefitKind.GIFT) {
-            return BenefitResult.of(0L, false, CapType.NONE);
-        }
 
         long eligibleAmount = eligibleAmount(rule, context);
         BigDecimal rawBenefit = rawBenefit(rule, eligibleAmount);
@@ -63,6 +59,11 @@ public final class BenefitCalculator {
     private NotApplicableReason checkGates(BenefitRule rule, CalcContext context) {
         if (rule.getBenefitKind() == BenefitKind.RETROACTIVE) {
             return NotApplicableReason.RETROACTIVE_EXCLUDED;
+        }
+        // 증정은 결제 트랜잭션 자체가 없다(카드를 제시할 뿐). 한도 소진·횟수를 추적할 수 없고,
+        // 적용된 것으로 두면 다른 혜택이 없는 카드에서 선택돼 "커피 결제에 라운지 혜택 적용"이 기록된다.
+        if (rule.getBenefitKind() == BenefitKind.GIFT) {
+            return NotApplicableReason.GIFT_EXCLUDED;
         }
         if (rule.isRequirePerformance() && !context.isPerformanceMet()) {
             return NotApplicableReason.PERFORMANCE_NOT_MET;
