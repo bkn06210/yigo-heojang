@@ -1,5 +1,7 @@
 package com.wallet.member.controller;
 
+import static com.wallet.common.constant.RequestAttributeNames.AUTHENTICATED_MEMBER_ID;
+
 import javax.servlet.http.HttpServletRequest;
 
 import lombok.RequiredArgsConstructor;
@@ -17,8 +19,6 @@ import com.wallet.member.service.MemberService;
 @RestController
 @RequestMapping("/api/members")
 public class MemberController {
-    private static final String AUTHENTICATED_MEMBER_ID = "authenticatedMemberId";
-
     private final MemberService memberService;
 
     @GetMapping("/me")
