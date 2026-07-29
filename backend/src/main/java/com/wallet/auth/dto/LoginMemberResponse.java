@@ -4,5 +4,5 @@ public record LoginMemberResponse(
     Long memberId,
     String email,
     String name,
-    String nickName
+    String nickname
 ){}
