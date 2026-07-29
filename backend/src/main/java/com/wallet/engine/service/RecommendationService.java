@@ -20,6 +20,7 @@ import com.wallet.engine.dao.dto.PerformanceTierRow;
 import com.wallet.engine.dao.dto.UserCardRow;
 import com.wallet.engine.dto.RecommendationItem;
 import com.wallet.engine.dto.RecommendationRequest;
+import com.wallet.engine.dto.RecommendationResponse;
 import com.wallet.engine.model.BenefitCandidate;
 import com.wallet.engine.model.CardBenefitSelection;
 import com.wallet.engine.model.CardState;
@@ -99,19 +100,22 @@ public class RecommendationService {
      * 혜택이 없는 카드도 목록에 담는다 — 표시 개수는 화면이 자른다.
      * 보유카드가 없으면 빈 목록이다(에러가 아니다).
      *
+     * 응답의 실적 미달 경고·포인트 안내는 아직 산출하지 않아 비어서 나간다
+     * ({@link RecommendationResponse} 참고).
+     *
      * @param memberId 회원 ID (토큰에서 추출한 값)
      * @param request  결제 예정 정보
      * @param today    기준일. 기준월과 일 소진 리셋 판정에 쓴다
      */
     @Transactional(readOnly = true)
-    public List<RecommendationItem> recommend(long memberId, RecommendationRequest request, LocalDate today) {
+    public RecommendationResponse recommend(long memberId, RecommendationRequest request, LocalDate today) {
         long expectedAmount = validateExpectedAmount(request);
         PaymentRequest paymentRequest = PaymentRequest.estimated(
                 resolvePaymentTarget(request), expectedAmount, request.getPaymentType());
 
         List<UserCardRow> cards = userCardMapper.findActiveCards(memberId);
         if (cards.isEmpty()) {
-            return List.of();
+            return RecommendationResponse.of(List.of());
         }
 
         YearMonth baseMonth = YearMonth.from(today);
@@ -135,7 +139,7 @@ public class RecommendationService {
                     usagesByUserCard.getOrDefault(card.getUserCardId(), List.of()),
                     tiersByCard.getOrDefault(card.getCardId(), List.of())));
         }
-        return toRankedItems(outcomes);
+        return RecommendationResponse.of(toRankedItems(outcomes));
     }
 
     /** 카드 한 장의 실적 판정 → 혜택 계산. 여기까지는 순위를 모른다. */
