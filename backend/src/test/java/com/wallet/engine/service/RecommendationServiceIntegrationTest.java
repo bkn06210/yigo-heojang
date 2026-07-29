@@ -232,8 +232,8 @@ class RecommendationServiceIntegrationTest {
 
     private void insertFixture() {
         memberId = insert(
-                "INSERT INTO member (email, password_hash, name) VALUES (?, ?, ?)",
-                "recommend-it@test.local", "x", "추천테스트회원");
+                "INSERT INTO member (email, password_hash, name, nickname) VALUES (?, ?, ?, ?)",
+                "recommend-it@test.local", "x", "추천테스트회원", "추천IT별명");
 
         long parentCategoryId = insert(
                 "INSERT INTO category (category_code, category_name, parent_category_id) VALUES (?, ?, NULL)",

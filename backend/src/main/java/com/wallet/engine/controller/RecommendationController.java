@@ -1,6 +1,5 @@
 package com.wallet.engine.controller;
 
-import com.wallet.auth.filter.JwtAuthenticationFilter;
 import com.wallet.common.ApiResponse;
 import com.wallet.engine.dto.RecommendationRequest;
 import com.wallet.engine.dto.RecommendationResponse;
@@ -14,6 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import java.time.LocalDate;
+
+import static com.wallet.common.constant.RequestAttributeNames.AUTHENTICATED_MEMBER_ID;
 
 /**
  * 결제 직전 카드 추천 API.
@@ -43,7 +44,7 @@ public class RecommendationController {
      */
     @PostMapping
     public ResponseEntity<ApiResponse<RecommendationResponse>> recommend(
-            @RequestAttribute(JwtAuthenticationFilter.AUTHENTICATED_MEMBER_ID) Long memberId,
+            @RequestAttribute(AUTHENTICATED_MEMBER_ID) Long memberId,
             @Valid @RequestBody RecommendationRequest request) {
 
         RecommendationResponse response =
