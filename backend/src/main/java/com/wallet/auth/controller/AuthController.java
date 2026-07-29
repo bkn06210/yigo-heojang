@@ -19,10 +19,15 @@ import org.springframework.web.bind.annotation.RestController;
 import com.wallet.auth.dto.LoginRequest;
 import com.wallet.auth.dto.LoginResponse;
 import com.wallet.auth.dto.LoginResult;
+import com.wallet.auth.dto.SignupEmailVerificationConfirmRequest;
+import com.wallet.auth.dto.SignupEmailVerificationConfirmResponse;
+import com.wallet.auth.dto.SignupEmailVerificationRequest;
+import com.wallet.auth.dto.SignupEmailVerificationResponse;
 import com.wallet.auth.dto.SignupRequest;
 import com.wallet.auth.dto.SignupResponse;
 import com.wallet.auth.dto.TokenResponse;
 import com.wallet.auth.service.AuthService;
+import com.wallet.auth.service.SignupEmailVerificationService;
 import com.wallet.common.ApiResponse;
 
 @RequiredArgsConstructor
@@ -32,6 +37,7 @@ public class AuthController {
     private static final String REFRESH_TOKEN_COOKIE_NAME = "refreshToken";
 
     private final AuthService authService;
+    private final SignupEmailVerificationService signupEmailVerificationService;
 
     @PostMapping("/signup")
     public ResponseEntity<ApiResponse<SignupResponse>> signup(
@@ -43,7 +49,30 @@ public class AuthController {
             .status(HttpStatus.CREATED)
             .body(ApiResponse.success("회원가입이 완료되었습니다.", response));
     }
-    
+
+    @PostMapping("/signup/email-verifications")
+    public ResponseEntity<ApiResponse<SignupEmailVerificationResponse>> sendSignupEmailVerificationCode(
+        @Valid @RequestBody SignupEmailVerificationRequest request
+    ) {
+        SignupEmailVerificationResponse response =
+            signupEmailVerificationService.sendVerificationCode(request);
+
+        return ResponseEntity
+            .status(HttpStatus.ACCEPTED)
+            .body(ApiResponse.success("인증 코드가 발송되었습니다.", response));
+    }
+
+    @PostMapping("/signup/email-verifications/verify")
+    public ResponseEntity<ApiResponse<SignupEmailVerificationConfirmResponse>> verifySignupEmailVerificationCode(
+        @Valid @RequestBody SignupEmailVerificationConfirmRequest request
+    ) {
+        SignupEmailVerificationConfirmResponse response =
+            signupEmailVerificationService.verifyCode(request);
+
+        return ResponseEntity
+            .ok(ApiResponse.success("이메일 인증이 완료되었습니다.", response));
+    }
+
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<LoginResponse>> login(@Valid @RequestBody LoginRequest request) {
         LoginResult result = authService.login(request);
