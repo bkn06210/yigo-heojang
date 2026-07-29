@@ -1,5 +1,6 @@
 package com.wallet.auth.filter;
 
+import static com.wallet.common.constant.RequestAttributeNames.AUTHENTICATED_MEMBER_ID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
@@ -206,7 +207,7 @@ class JwtAuthenticationFilterTest {
         // then
         assertThat(response.getStatus()).isEqualTo(200);
         assertThat(filterChain.getRequest()).isNotNull();
-        assertThat(request.getAttribute(JwtAuthenticationFilter.AUTHENTICATED_MEMBER_ID))
+        assertThat(request.getAttribute(AUTHENTICATED_MEMBER_ID))
             .isEqualTo(memberId);
 
         verify(jwtTokenProvider).validateAccessTokenOrThrow(accessToken);

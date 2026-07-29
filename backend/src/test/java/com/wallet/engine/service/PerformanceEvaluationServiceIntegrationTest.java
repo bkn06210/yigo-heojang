@@ -112,8 +112,8 @@ class PerformanceEvaluationServiceIntegrationTest {
 
     private void insertFixture() {
         memberId = insert(
-                "INSERT INTO member (email, password_hash, name) VALUES (?, ?, ?)",
-                "perf-it@test.local", "x", "실적테스트회원");
+                "INSERT INTO member (email, password_hash, name, nickname) VALUES (?, ?, ?, ?)",
+                "perf-it@test.local", "x", "실적테스트회원", "별명A");
 
         cardId = insert(
                 "INSERT INTO card (card_name, issuer, card_type) VALUES (?, ?, ?)",

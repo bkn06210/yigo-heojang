@@ -75,6 +75,7 @@ CREATE TABLE member (
     email         VARCHAR(255) NOT NULL COMMENT '이메일(로그인 ID)',
     password_hash VARCHAR(255) NOT NULL COMMENT '비밀번호 해시',
     name          VARCHAR(50)  NOT NULL COMMENT '회원명',
+    nickname      VARCHAR(50) NOT NULL COMMENT '닉네임',
     member_status ENUM('ACTIVE','SUSPENDED','WITHDRAWN') NOT NULL DEFAULT 'ACTIVE' COMMENT '회원 상태',
     created_at    DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '생성일시',
     updated_at    DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '수정일시',
