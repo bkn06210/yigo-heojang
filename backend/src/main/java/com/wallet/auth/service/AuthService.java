@@ -48,7 +48,8 @@ public class AuthService {
         LoginMemberResponse memberResponse = new LoginMemberResponse(
             member.getMemberId(),
             member.getEmail(),
-            member.getName()
+            member.getName(),
+            member.getNickname()
         );
 
         return new LoginResult(

@@ -1,5 +1,7 @@
 package com.wallet.auth.filter;
 
+import static com.wallet.common.constant.RequestAttributeNames.AUTHENTICATED_MEMBER_ID;
+
 import java.io.IOException;
 import java.util.Set;
 
@@ -25,10 +27,6 @@ import com.wallet.common.ErrorCode;
 @RequiredArgsConstructor
 @Component("jwtAuthenticationFilter")
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
-
-    // 인증된 회원 id를 request에 저장할 때 사용할 key.
-    public static final String AUTHENTICATED_MEMBER_ID = "authenticatedMemberId";
-
     private static final String AUTHORIZATION_HEADER = "Authorization";
     private static final String BEARER_PREFIX = "Bearer ";
 
