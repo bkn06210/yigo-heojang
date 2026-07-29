@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -164,18 +165,36 @@ public class RecommendationService {
                 benefitRows, benefitMapper.findExclusions(card.getCardId()));
 
         CardBenefitSelection selection = cardBenefitSelector.select(candidates, cardState, paymentRequest);
-        return new CardOutcome(card.getUserCardId(), card.getCardName(), selection,
+        // 동적 전환 판정용 가상 계산 — 이 결과는 응답 금액에 쓰지 않고 순위 비교에만 쓴다
+        CardBenefitSelection idealSelection =
+                cardBenefitSelector.select(candidates, withoutUsage(cardState), paymentRequest);
+
+        return new CardOutcome(card.getUserCardId(), card.getCardName(), selection, idealSelection,
                 buildReason(selection, benefitRows));
+    }
+
+    /**
+     * 소진 기록만 지운 가상 상태 — "이번 달 아직 안 썼다면 얼마였을까".
+     *
+     * 한도 자체는 그대로 둔다. 한도까지 없애면 실제로는 받을 수 없는 금액이 나와,
+     * "평소엔 이 카드가 유리하다"는 안내가 사실과 어긋난다.
+     * 실적 판정 결과(performanceMet·통합한도)는 지난달 실적으로 이미 정해진 값이라 건드리지 않는다.
+     */
+    private CardState withoutUsage(CardState cardState) {
+        return new CardState(
+                cardState.performanceMet(), cardState.sharedMonthlyLimit(), 0L, List.of());
     }
 
     /**
      * 혜택액 내림차순으로 세우고 순위를 매긴다. 동점이면 userCardId 오름차순 —
      * 같은 입력에 같은 순서가 나오게 하는 규칙이다(테스트 재현성).
+     *
+     * 정렬 뒤 동적 전환을 판정한다. 소진이 없었다면 1위였을 카드와 실제 1위가 다르면,
+     * 실제 1위에 표시해 "평소와 다른 카드를 추천하는 이유"를 화면이 설명할 수 있게 한다.
      */
     private List<RecommendationItem> toRankedItems(List<CardOutcome> outcomes) {
-        outcomes.sort(Comparator
-                .comparingLong((CardOutcome outcome) -> outcome.selection().benefitAmount()).reversed()
-                .thenComparingLong(CardOutcome::userCardId));
+        outcomes.sort(byBenefitDesc(CardOutcome::selection));
+        boolean switched = isDynamicSwitch(outcomes);
 
         List<RecommendationItem> items = new ArrayList<>(outcomes.size());
         for (int index = 0; index < outcomes.size(); index++) {
@@ -189,10 +208,38 @@ public class RecommendationService {
                     selection.estimate(),
                     selection.benefitKind(),
                     outcome.reason(),
-                    // 동적 전환 판정은 한도를 무시한 계산이 한 번 더 필요하다 — 이후 단계에서 붙인다
-                    false));
+                    // 표시는 실제 1위에만 — "이 카드를 추천하는 이유"를 붙이는 자리다
+                    index == 0 && switched));
         }
         return items;
+    }
+
+    /**
+     * 소진이 없었다면 1위였을 카드와 실제 1위가 다른가.
+     *
+     * 다르다는 것은 "원래 제일 좋은 카드가 한도·횟수를 소진해 밀려났다"는 뜻이다.
+     * 가상 1위조차 혜택이 0원이면 애초에 받을 혜택이 없는 상황이라 표시하지 않는다.
+     */
+    private boolean isDynamicSwitch(List<CardOutcome> sortedOutcomes) {
+        if (sortedOutcomes.size() < 2) {
+            return false;
+        }
+        CardOutcome idealTop = sortedOutcomes.stream()
+                .min(byBenefitDesc(CardOutcome::idealSelection))
+                .orElseThrow();
+
+        return idealTop.idealSelection().benefitAmount() > 0
+                && idealTop.userCardId() != sortedOutcomes.get(0).userCardId();
+    }
+
+    /**
+     * 혜택액 내림차순, 동점이면 userCardId 오름차순.
+     * 실제 결과와 가상 결과에 같은 기준을 써야 "1위가 바뀌었다"는 비교가 성립한다.
+     */
+    private Comparator<CardOutcome> byBenefitDesc(Function<CardOutcome, CardBenefitSelection> selector) {
+        return Comparator
+                .comparingLong((CardOutcome outcome) -> selector.apply(outcome).benefitAmount()).reversed()
+                .thenComparingLong(CardOutcome::userCardId);
     }
 
     /**
@@ -255,7 +302,13 @@ public class RecommendationService {
         return expectedAmount;
     }
 
-    /** 정렬 전 중간 결과 — 순위는 전체를 세운 뒤에야 정해진다 */
-    private record CardOutcome(long userCardId, String cardName, CardBenefitSelection selection, String reason) {
+    /**
+     * 정렬 전 중간 결과 — 순위는 전체를 세운 뒤에야 정해진다.
+     *
+     * @param selection      실제 계산 결과. 응답 금액은 이것만 쓴다
+     * @param idealSelection 소진 전이었다면 얼마였을지. 동적 전환 판정에만 쓰고 응답에 내보내지 않는다
+     */
+    private record CardOutcome(long userCardId, String cardName, CardBenefitSelection selection,
+                               CardBenefitSelection idealSelection, String reason) {
     }
 }

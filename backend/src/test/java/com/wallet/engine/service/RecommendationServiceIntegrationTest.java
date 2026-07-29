@@ -84,6 +84,9 @@ class RecommendationServiceIntegrationTest {
         assertThat(first.isEstimate()).isTrue();
         assertThat(first.reason()).isEqualTo("카페 10% 할인 예상 1,000원");
 
+        // 소진이 없으므로 "소진 전이었다면"의 1위와 실제 1위가 같다 → 동적 전환 아님
+        assertThat(first.dynamicSwitch()).isFalse();
+
         RecommendationItem second = response.recommendations().get(1);
         assertThat(second.rank()).isEqualTo(2);
         assertThat(second.userCardId()).isEqualTo(lowUserCardId);
@@ -155,6 +158,49 @@ class RecommendationServiceIntegrationTest {
 
         // 한도에 깎여 5% 카드(500원)에 순위가 밀린다
         assertThat(response.recommendations().get(0).userCardId()).isEqualTo(lowUserCardId);
+    }
+
+    @Test
+    @DisplayName("소진 때문에 1위가 바뀌면 실제 1위에 동적 전환을 표시한다")
+    void 소진으로_순위가_뒤집히면_동적_전환이다() {
+        // 10% 카드 혜택에 월 한도 2,000원을 걸고 그 한도를 이미 다 쓴 것으로 기록한다
+        jdbc.update("UPDATE benefit SET monthly_limit = 2000 WHERE benefit_id = ?", highBenefitId);
+        jdbc.update(
+                "INSERT INTO user_benefit_usage (user_card_id, benefit_id, base_year_month, "
+                        + "used_amount, used_count, last_applied_date, daily_used_count, daily_used_amount) "
+                        + "VALUES (?, ?, '2026-08', 2000, 1, ?, 1, 0)",
+                highUserCardId, highBenefitId, TODAY);
+
+        RecommendationResponse response = recommendationService.recommend(
+                memberId, request(starbucksMerchantId, 10_000L), TODAY);
+
+        // 실제: 10% 카드는 잔여 0원 → 5% 카드(500원)가 1위로 올라선다
+        RecommendationItem first = response.recommendations().get(0);
+        assertThat(first.userCardId()).isEqualTo(lowUserCardId);
+        assertThat(first.expectedBenefit()).isEqualTo(500L);
+
+        // 소진 전이었다면 10% 카드가 1,000원으로 1위였으므로 순위가 뒤집힌 것이다
+        assertThat(first.dynamicSwitch()).isTrue();
+
+        // 표시는 실제 1위에만 붙는다
+        assertThat(response.recommendations().get(1).dynamicSwitch()).isFalse();
+    }
+
+    @Test
+    @DisplayName("한도 자체가 낮아 순위가 바뀐 것은 동적 전환이 아니다")
+    void 구간_한도로_밀린_것은_동적_전환이_아니다() {
+        // 소진이 아니라 '구간 한도' 때문에 깎이는 경우 — 소진을 되돌려도 결과가 같다
+        jdbc.update(
+                "INSERT INTO benefit_tier_limit (benefit_id, tier_id, tier_monthly_limit) VALUES (?, ?, 300)",
+                highBenefitId, highTierIdOfHighCard);
+
+        RecommendationResponse response = recommendationService.recommend(
+                memberId, request(starbucksMerchantId, 10_000L), TODAY);
+
+        // 10% 카드가 300원으로 깎여 5% 카드에 밀리지만, 이건 '평소에도' 그런 것이다
+        RecommendationItem first = response.recommendations().get(0);
+        assertThat(first.userCardId()).isEqualTo(lowUserCardId);
+        assertThat(first.dynamicSwitch()).isFalse();
     }
 
     @Test
