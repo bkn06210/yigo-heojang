@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.wallet.auth.mapper.SignupEmailVerificationMapper">
+
+    <select id="findByEmail"
+            resultType="com.wallet.auth.domain.SignupEmailVerification">
+        SELECT
+            signup_email_verification_id AS signupEmailVerificationId,
+            email,
+            verification_code_hash AS verificationCodeHash,
+            verification_status AS verificationStatus,
+            failed_attempt_count AS failedAttemptCount,
+            verification_code_expires_at AS verificationCodeExpiresAt,
+            signup_token_hash AS signupTokenHash,
+            signup_token_expires_at AS signupTokenExpiresAt,
+            verified_at AS verifiedAt,
+            used_at AS usedAt,
+            created_at AS createdAt,
+            updated_at AS updatedAt
+        FROM signup_email_verification
+        WHERE email = #{email}
+        LIMIT 1
+    </select>
+
+    <select id="findByEmailForUpdate"
+            resultType="com.wallet.auth.domain.SignupEmailVerification">
+        SELECT
+            signup_email_verification_id AS signupEmailVerificationId,
+            email,
+            verification_code_hash AS verificationCodeHash,
+            verification_status AS verificationStatus,
+            failed_attempt_count AS failedAttemptCount,
+            verification_code_expires_at AS verificationCodeExpiresAt,
+            signup_token_hash AS signupTokenHash,
+            signup_token_expires_at AS signupTokenExpiresAt,
+            verified_at AS verifiedAt,
+            used_at AS usedAt,
+            created_at AS createdAt,
+            updated_at AS updatedAt
+        FROM signup_email_verification
+        WHERE email = #{email}
+        LIMIT 1
+        FOR UPDATE
+    </select>
+
+    <select id="findBySignupTokenHash"
+            resultType="com.wallet.auth.domain.SignupEmailVerification">
+        SELECT
+            signup_email_verification_id AS signupEmailVerificationId,
+            email,
+            verification_code_hash AS verificationCodeHash,
+            verification_status AS verificationStatus,
+            failed_attempt_count AS failedAttemptCount,
+            verification_code_expires_at AS verificationCodeExpiresAt,
+            signup_token_hash AS signupTokenHash,
+            signup_token_expires_at AS signupTokenExpiresAt,
+            verified_at AS verifiedAt,
+            used_at AS usedAt,
+            created_at AS createdAt,
+            updated_at AS updatedAt
+        FROM signup_email_verification
+        WHERE signup_token_hash = #{signupTokenHash}
+        LIMIT 1
+    </select>
+
+    <insert id="insert"
+            parameterType="com.wallet.auth.domain.SignupEmailVerification"
+            useGeneratedKeys="true"
+            keyProperty="signupEmailVerificationId">
+        INSERT INTO signup_email_verification (
+            email,
+            verification_code_hash,
+            verification_status,
+            failed_attempt_count,
+            verification_code_expires_at
+        )
+        VALUES (
+            #{email},
+            #{verificationCodeHash},
+            #{verificationStatus},
+            #{failedAttemptCount},
+            #{verificationCodeExpiresAt}
+        )
+    </insert>
+
+    <update id="updateForReissue">
+        UPDATE signup_email_verification
+        SET
+            verification_code_hash = #{verificationCodeHash},
+            verification_status = 'PENDING',
+            failed_attempt_count = 0,
+            verification_code_expires_at = #{verificationCodeExpiresAt},
+            signup_token_hash = NULL,
+            signup_token_expires_at = NULL,
+            verified_at = NULL,
+            used_at = NULL,
+            updated_at = CURRENT_TIMESTAMP
+        WHERE email = #{email}
+    </update>
+
+    <update id="increaseFailedAttemptCount">
+        UPDATE signup_email_verification
+        SET
+            failed_attempt_count = failed_attempt_count + 1,
+            updated_at = CURRENT_TIMESTAMP
+        WHERE signup_email_verification_id = #{signupEmailVerificationId}
+          AND verification_status = 'PENDING'
+    </update>
+
+    <update id="expireVerificationCode">
+        UPDATE signup_email_verification
+        SET
+            verification_status = 'EXPIRED',
+            updated_at = CURRENT_TIMESTAMP
+        WHERE signup_email_verification_id = #{signupEmailVerificationId}
+          AND verification_status = 'PENDING'
+    </update>
+
+    <update id="verify">
+        UPDATE signup_email_verification
+        SET
+            verification_status = 'VERIFIED',
+            signup_token_hash = #{signupTokenHash},
+            signup_token_expires_at = #{signupTokenExpiresAt},
+            verified_at = CURRENT_TIMESTAMP,
+            updated_at = CURRENT_TIMESTAMP
+        WHERE signup_email_verification_id = #{signupEmailVerificationId}
+          AND verification_status = 'PENDING'
+          AND verification_code_expires_at > CURRENT_TIMESTAMP
+    </update>
+
+    <update id="markAsUsed">
+        UPDATE signup_email_verification
+        SET
+            verification_status = 'USED',
+            used_at = CURRENT_TIMESTAMP,
+            updated_at = CURRENT_TIMESTAMP
+        WHERE signup_email_verification_id = #{signupEmailVerificationId}
+          AND verification_status = 'VERIFIED'
+          AND signup_token_expires_at > CURRENT_TIMESTAMP
+          AND used_at IS NULL
+    </update>
+
+</mapper>
