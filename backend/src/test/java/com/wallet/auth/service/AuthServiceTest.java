@@ -45,6 +45,7 @@ class AuthServiceTest {
     private RefreshTokenService refreshTokenService;
     private AuthService authService;
     private TermAgreementMapper termAgreementMapper;
+    private SignupEmailVerificationService signupEmailVerificationService;
 
     @BeforeEach
     void setUp() {
@@ -53,13 +54,15 @@ class AuthServiceTest {
         passwordEncoder = new BCryptPasswordEncoder();
         refreshTokenService = mock(RefreshTokenService.class);
         termAgreementMapper = mock(TermAgreementMapper.class);
+        signupEmailVerificationService = mock(SignupEmailVerificationService.class);
 
         authService = new AuthService(
             memberMapper,
             jwtTokenProvider,
             passwordEncoder,
             refreshTokenService,
-            termAgreementMapper
+            termAgreementMapper,
+            signupEmailVerificationService
         );
     }
 
@@ -384,6 +387,7 @@ class AuthServiceTest {
             "user@example.com",
             "password123",
             "이재혁",
+            "signup-token",
             List.of(
                 new TermAgreementRequest(10L, true),
                 new TermAgreementRequest(11L, true),
@@ -393,6 +397,11 @@ class AuthServiceTest {
 
         when(memberMapper.existsByEmail("user@example.com"))
             .thenReturn(false);
+
+        when(signupEmailVerificationService.validateSignupVerificationToken(
+            "user@example.com",
+            "signup-token"
+        )).thenReturn(1L);
 
         when(termAgreementMapper.countActiveTermVersionsByIds(List.of(10L, 11L, 12L)))
             .thenReturn(3);
@@ -464,9 +473,11 @@ class AuthServiceTest {
             .containsExactly(true, true, false);
 
         verify(memberMapper).existsByEmail("user@example.com");
+        verify(signupEmailVerificationService).markAsUsed(1L);
         verify(termAgreementMapper).countActiveTermVersionsByIds(List.of(10L, 11L, 12L));
         verify(termAgreementMapper).findActiveRequiredTermVersionIds();
         verify(memberMapper).findById(1L);
+
     }
 
     @Test
@@ -477,6 +488,7 @@ class AuthServiceTest {
             "user@example.com",
             "password123",
             "이재혁",
+            "signup-token",
             List.of(
                 new TermAgreementRequest(10L, true),
                 new TermAgreementRequest(11L, true)
@@ -512,6 +524,7 @@ class AuthServiceTest {
             "user@example.com",
             "password123",
             "이재혁",
+            "signup-token",
             List.of(
                 new TermAgreementRequest(10L, true),
                 new TermAgreementRequest(999L, true)
@@ -549,6 +562,7 @@ class AuthServiceTest {
             "user@example.com",
             "password123",
             "이재혁",
+            "signup-token",
             List.of(
                 new TermAgreementRequest(10L, true),
                 new TermAgreementRequest(11L, false),
@@ -590,6 +604,7 @@ class AuthServiceTest {
             "user@example.com",
             "password123",
             "이재혁",
+            "signup-token",
             List.of(
                 new TermAgreementRequest(10L, true),
                 new TermAgreementRequest(10L, true)
@@ -625,6 +640,7 @@ class AuthServiceTest {
             "user@example.com",
             "password123",
             "이재혁",
+            "signup-token",
             List.of(
                 new TermAgreementRequest(10L, true),
                 new TermAgreementRequest(11L, true),

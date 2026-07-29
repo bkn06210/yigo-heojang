@@ -174,8 +174,31 @@ public enum ErrorCode {
         HttpStatus.INTERNAL_SERVER_ERROR,
     "EMAIL_SEND_FAILED",
         "인증 메일 발송에 실패했습니다."
-    );
+    ),
 
+    SIGNUP_VERIFICATION_TOKEN_INVALID(
+        HttpStatus.BAD_REQUEST,
+    "SIGNUP_VERIFICATION_TOKEN_INVALID",
+        "회원가입 인증 토큰이 유효하지 않습니다."
+    ),
+
+    SIGNUP_VERIFICATION_TOKEN_EXPIRED(
+        HttpStatus.BAD_REQUEST,
+    "SIGNUP_VERIFICATION_TOKEN_EXPIRED",
+        "회원가입 인증 토큰이 만료되었습니다."
+    ),
+
+    SIGNUP_VERIFICATION_EMAIL_MISMATCH(
+        HttpStatus.BAD_REQUEST,
+    "SIGNUP_VERIFICATION_EMAIL_MISMATCH",
+        "인증된 이메일과 회원가입 이메일이 일치하지 않습니다."
+    ),
+
+    SIGNUP_EMAIL_VERIFICATION_ALREADY_USED(
+        HttpStatus.BAD_REQUEST,
+    "SIGNUP_EMAIL_VERIFICATION_ALREADY_USED",
+        "이미 사용 완료된 이메일 인증 정보입니다."
+    );
 
     private final HttpStatus status;
     private final String code;

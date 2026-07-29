@@ -30,8 +30,17 @@ public interface SignupEmailVerificationMapper {
         @Param("signupTokenHash") String signupTokenHash
     );
 
+    /*
+     * 회원가입 인증 토큰 해시로 인증 정보를 조회하면서 행 잠금을 건다.
+     *
+     * 최종 회원가입 요청에서 같은 signupVerificationToken이 동시에 사용되는 것을 막기 위해
+     * AuthService.signup()의 @Transactional 범위 안에서 사용한다.
+     */
+    SignupEmailVerification findBySignupTokenHashForUpdate(
+        @Param("signupTokenHash") String signupTokenHash
+    );
 
-    // 인증 정보를 최초 저장
+    // 인증 정보 최초 저장
     int insert(SignupEmailVerification verification);
 
     /*

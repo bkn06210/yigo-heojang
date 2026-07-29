@@ -66,6 +66,27 @@
         LIMIT 1
     </select>
 
+    <select id="findBySignupTokenHashForUpdate"
+            resultType="com.wallet.auth.domain.SignupEmailVerification">
+        SELECT
+            signup_email_verification_id AS signupEmailVerificationId,
+            email,
+            verification_code_hash AS verificationCodeHash,
+            verification_status AS verificationStatus,
+            failed_attempt_count AS failedAttemptCount,
+            verification_code_expires_at AS verificationCodeExpiresAt,
+            signup_token_hash AS signupTokenHash,
+            signup_token_expires_at AS signupTokenExpiresAt,
+            verified_at AS verifiedAt,
+            used_at AS usedAt,
+            created_at AS createdAt,
+            updated_at AS updatedAt
+        FROM signup_email_verification
+        WHERE signup_token_hash = #{signupTokenHash}
+        LIMIT 1
+        FOR UPDATE
+    </select>
+
     <insert id="insert"
             parameterType="com.wallet.auth.domain.SignupEmailVerification"
             useGeneratedKeys="true"

@@ -515,6 +515,217 @@ class SignupEmailVerificationServiceTest {
             .isEqualTo(ErrorCode.SIGNUP_VERIFICATION_TOKEN_FAILED);
     }
 
+    @Test
+    @DisplayName("회원가입 인증 토큰 검증 성공 - VERIFIED 상태이고 만료 전이며 이메일이 일치하면 인증 ID를 반환한다")
+    void validateSignupVerificationToken_success() {
+        // given
+        SignupEmailVerification verification = createSignupTokenVerification(
+            1L,
+            "user@example.com",
+            SignupEmailVerification.STATUS_VERIFIED,
+            LocalDateTime.now().plusMinutes(5)
+        );
+
+        when(tokenHashUtil.sha256("signup-token"))
+            .thenReturn("signup-token-hash");
+
+        when(signupEmailVerificationMapper.findBySignupTokenHashForUpdate("signup-token-hash"))
+            .thenReturn(verification);
+
+        // when
+        Long verificationId = signupEmailVerificationService.validateSignupVerificationToken(
+            "USER@example.com",
+            "signup-token"
+        );
+
+        // then
+        assertThat(verificationId).isEqualTo(1L);
+
+        verify(tokenHashUtil).sha256("signup-token");
+        verify(signupEmailVerificationMapper)
+            .findBySignupTokenHashForUpdate("signup-token-hash");
+    }
+
+    @Test
+    @DisplayName("회원가입 인증 토큰 검증 실패 - 토큰 해시에 해당하는 인증 정보가 없으면 TOKEN_INVALID 예외가 발생한다")
+    void validateSignupVerificationToken_fail_whenTokenNotFound() {
+        // given
+        when(tokenHashUtil.sha256("invalid-token"))
+            .thenReturn("invalid-token-hash");
+
+        when(signupEmailVerificationMapper.findBySignupTokenHashForUpdate("invalid-token-hash"))
+            .thenReturn(null);
+
+        // when
+        BusinessException exception = assertThrows(
+            BusinessException.class,
+            () -> signupEmailVerificationService.validateSignupVerificationToken(
+                "user@example.com",
+                "invalid-token"
+            )
+        );
+
+        // then
+        assertThat(exception.getErrorCode())
+            .isEqualTo(ErrorCode.SIGNUP_VERIFICATION_TOKEN_INVALID);
+    }
+
+    @Test
+    @DisplayName("회원가입 인증 토큰 검증 실패 - 이미 USED 상태이면 ALREADY_USED 예외가 발생한다")
+    void validateSignupVerificationToken_fail_whenAlreadyUsed() {
+        // given
+        SignupEmailVerification verification = createSignupTokenVerification(
+            1L,
+            "user@example.com",
+            SignupEmailVerification.STATUS_USED,
+            LocalDateTime.now().plusMinutes(5)
+        );
+
+        when(tokenHashUtil.sha256("signup-token"))
+            .thenReturn("signup-token-hash");
+
+        when(signupEmailVerificationMapper.findBySignupTokenHashForUpdate("signup-token-hash"))
+            .thenReturn(verification);
+
+        // when
+        BusinessException exception = assertThrows(
+            BusinessException.class,
+            () -> signupEmailVerificationService.validateSignupVerificationToken(
+                "user@example.com",
+                "signup-token"
+            )
+        );
+
+        // then
+        assertThat(exception.getErrorCode())
+            .isEqualTo(ErrorCode.SIGNUP_EMAIL_VERIFICATION_ALREADY_USED);
+    }
+
+    @Test
+    @DisplayName("회원가입 인증 토큰 검증 실패 - VERIFIED 상태가 아니면 TOKEN_INVALID 예외가 발생한다")
+    void validateSignupVerificationToken_fail_whenStatusIsNotVerified() {
+        // given
+        SignupEmailVerification verification = createSignupTokenVerification(
+            1L,
+            "user@example.com",
+            SignupEmailVerification.STATUS_PENDING,
+            LocalDateTime.now().plusMinutes(5)
+        );
+
+        when(tokenHashUtil.sha256("signup-token"))
+            .thenReturn("signup-token-hash");
+
+        when(signupEmailVerificationMapper.findBySignupTokenHashForUpdate("signup-token-hash"))
+            .thenReturn(verification);
+
+        // when
+        BusinessException exception = assertThrows(
+            BusinessException.class,
+            () -> signupEmailVerificationService.validateSignupVerificationToken(
+                "user@example.com",
+                "signup-token"
+            )
+        );
+
+        // then
+        assertThat(exception.getErrorCode())
+            .isEqualTo(ErrorCode.SIGNUP_VERIFICATION_TOKEN_INVALID);
+    }
+
+    @Test
+    @DisplayName("회원가입 인증 토큰 검증 실패 - 토큰이 만료되었으면 TOKEN_EXPIRED 예외가 발생한다")
+    void validateSignupVerificationToken_fail_whenTokenExpired() {
+        // given
+        SignupEmailVerification verification = createSignupTokenVerification(
+            1L,
+            "user@example.com",
+            SignupEmailVerification.STATUS_VERIFIED,
+            LocalDateTime.now().minusSeconds(1)
+        );
+
+        when(tokenHashUtil.sha256("signup-token"))
+            .thenReturn("signup-token-hash");
+
+        when(signupEmailVerificationMapper.findBySignupTokenHashForUpdate("signup-token-hash"))
+            .thenReturn(verification);
+
+        // when
+        BusinessException exception = assertThrows(
+            BusinessException.class,
+            () -> signupEmailVerificationService.validateSignupVerificationToken(
+                "user@example.com",
+                "signup-token"
+            )
+        );
+
+        // then
+        assertThat(exception.getErrorCode())
+            .isEqualTo(ErrorCode.SIGNUP_VERIFICATION_TOKEN_EXPIRED);
+    }
+
+    @Test
+    @DisplayName("회원가입 인증 토큰 검증 실패 - 인증 이메일과 요청 이메일이 다르면 EMAIL_MISMATCH 예외가 발생한다")
+    void validateSignupVerificationToken_fail_whenEmailMismatch() {
+        // given
+        SignupEmailVerification verification = createSignupTokenVerification(
+            1L,
+            "verified@example.com",
+            SignupEmailVerification.STATUS_VERIFIED,
+            LocalDateTime.now().plusMinutes(5)
+        );
+
+        when(tokenHashUtil.sha256("signup-token"))
+            .thenReturn("signup-token-hash");
+
+        when(signupEmailVerificationMapper.findBySignupTokenHashForUpdate("signup-token-hash"))
+            .thenReturn(verification);
+
+        // when
+        BusinessException exception = assertThrows(
+            BusinessException.class,
+            () -> signupEmailVerificationService.validateSignupVerificationToken(
+                "request@example.com",
+                "signup-token"
+            )
+        );
+
+        // then
+        assertThat(exception.getErrorCode())
+            .isEqualTo(ErrorCode.SIGNUP_VERIFICATION_EMAIL_MISMATCH);
+    }
+
+    @Test
+    @DisplayName("회원가입 이메일 인증 사용 완료 처리 성공")
+    void markAsUsed_success() {
+        // given
+        when(signupEmailVerificationMapper.markAsUsed(1L))
+            .thenReturn(1);
+
+        // when
+        signupEmailVerificationService.markAsUsed(1L);
+
+        // then
+        verify(signupEmailVerificationMapper).markAsUsed(1L);
+    }
+
+    @Test
+    @DisplayName("회원가입 이메일 인증 사용 완료 처리 실패 - 갱신된 행이 없으면 TOKEN_INVALID 예외가 발생한다")
+    void markAsUsed_fail_whenUpdatedCountIsZero() {
+        // given
+        when(signupEmailVerificationMapper.markAsUsed(1L))
+            .thenReturn(0);
+
+        // when
+        BusinessException exception = assertThrows(
+            BusinessException.class,
+            () -> signupEmailVerificationService.markAsUsed(1L)
+        );
+
+        // then
+        assertThat(exception.getErrorCode())
+            .isEqualTo(ErrorCode.SIGNUP_VERIFICATION_TOKEN_INVALID);
+    }
+
     private SignupEmailVerification createVerification(
         Long id,
         String email,
@@ -533,6 +744,23 @@ class SignupEmailVerificationServiceTest {
         ReflectionTestUtils.setField(verification, "failedAttemptCount", failedAttemptCount);
         ReflectionTestUtils.setField(verification, "verificationCodeExpiresAt", verificationCodeExpiresAt);
         ReflectionTestUtils.setField(verification, "updatedAt", updatedAt);
+
+        return verification;
+    }
+
+    private SignupEmailVerification createSignupTokenVerification(
+        Long id,
+        String email,
+        String status,
+        LocalDateTime signupTokenExpiresAt
+    ) {
+        SignupEmailVerification verification = new SignupEmailVerification();
+
+        ReflectionTestUtils.setField(verification, "signupEmailVerificationId", id);
+        ReflectionTestUtils.setField(verification, "email", email);
+        ReflectionTestUtils.setField(verification, "verificationStatus", status);
+        ReflectionTestUtils.setField(verification, "signupTokenHash", "signup-token-hash");
+        ReflectionTestUtils.setField(verification, "signupTokenExpiresAt", signupTokenExpiresAt);
 
         return verification;
     }

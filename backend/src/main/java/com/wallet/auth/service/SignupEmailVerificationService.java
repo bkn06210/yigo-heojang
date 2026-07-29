@@ -141,6 +141,36 @@ public class SignupEmailVerificationService {
         );
     }
 
+    // 최종 회원가입 요청에서 signupVerificationToken을 검증
+    @Transactional
+    public Long validateSignupVerificationToken(
+        String requestEmail,
+        String signupVerificationToken
+    ) {
+        String normalizedEmail = normalizeEmail(requestEmail);
+        String signupTokenHash = tokenHashUtil.sha256(signupVerificationToken);
+
+        SignupEmailVerification verification =
+            signupEmailVerificationMapper.findBySignupTokenHashForUpdate(signupTokenHash);
+
+        validateSignupTokenExists(verification);
+        validateSignupTokenStatus(verification);
+        validateSignupTokenNotExpired(verification);
+        validateSignupEmailMatches(normalizedEmail, verification);
+
+        return verification.getSignupEmailVerificationId();
+    }
+
+    // 최종 회원가입 성공 후 이메일 인증 정보를 사용 완료 처리
+    @Transactional
+    public void markAsUsed(Long signupEmailVerificationId) {
+        int updatedCount = signupEmailVerificationMapper.markAsUsed(signupEmailVerificationId);
+
+        if (updatedCount != 1) {
+            throw new BusinessException(ErrorCode.SIGNUP_VERIFICATION_TOKEN_INVALID);
+        }
+    }
+
     private void validateEmailNotDuplicated(String email) {
         if (memberMapper.existsByEmail(email)) {
             throw new BusinessException(ErrorCode.EMAIL_ALREADY_EXISTS);
@@ -189,5 +219,37 @@ public class SignupEmailVerificationService {
 
     private String normalizeEmail(String email) {
         return email.trim().toLowerCase(Locale.ROOT);
+    }
+
+    private void validateSignupTokenExists(SignupEmailVerification verification) {
+        if (verification == null) {
+            throw new BusinessException(ErrorCode.SIGNUP_VERIFICATION_TOKEN_INVALID);
+        }
+    }
+
+    private void validateSignupTokenStatus(SignupEmailVerification verification) {
+        if (SignupEmailVerification.STATUS_USED.equals(verification.getVerificationStatus())) {
+            throw new BusinessException(ErrorCode.SIGNUP_EMAIL_VERIFICATION_ALREADY_USED);
+        }
+
+        if (!SignupEmailVerification.STATUS_VERIFIED.equals(verification.getVerificationStatus())) {
+            throw new BusinessException(ErrorCode.SIGNUP_VERIFICATION_TOKEN_INVALID);
+        }
+    }
+
+    private void validateSignupTokenNotExpired(SignupEmailVerification verification) {
+        if (verification.getSignupTokenExpiresAt() == null
+            || !verification.getSignupTokenExpiresAt().isAfter(LocalDateTime.now())) {
+            throw new BusinessException(ErrorCode.SIGNUP_VERIFICATION_TOKEN_EXPIRED);
+        }
+    }
+
+    private void validateSignupEmailMatches(
+        String requestEmail,
+        SignupEmailVerification verification
+    ) {
+        if (!requestEmail.equals(verification.getEmail())) {
+            throw new BusinessException(ErrorCode.SIGNUP_VERIFICATION_EMAIL_MISMATCH);
+        }
     }
 }
