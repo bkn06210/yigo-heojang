@@ -104,6 +104,28 @@ class SettlementServiceIntegrationTest {
         assertThat(stateVal("shared_limit_used", BASE_MONTH)).isEqualTo(1_000L);
     }
 
+    @Test
+    @DisplayName("결제 가산: 혜택 한도가 소진돼 0원이면 횟수·기록을 남기지 않는다")
+    void 한도_소진으로_혜택이_0원이면_횟수를_올리지_않는다() {
+        // 월 한도 1만원을 이미 다 쓴 상태 — 이번 결제 혜택은 0원으로 깎인다
+        insertState(BASE_MONTH, 350_000, 20_000, 5_000);
+        insertUsage(10_000, 1, "2026-08-01");
+
+        PaymentSettlementResult result = settlementService.applyPayment(
+                command(10_000, "2026-08-15T12:00:00"));
+
+        // 실제로 받은 혜택이 없으므로 적용 혜택·혜택액이 비어서 나간다
+        assertThat(result.appliedBenefitId()).isNull();
+        assertThat(result.discountAmount()).isZero();
+
+        // 실적은 여전히 인정된다(할인 안 받은 일반 거래) — current += 10,000
+        assertThat(stateVal("current_performance_amount", BASE_MONTH)).isEqualTo(30_000L);
+        // 통합한도·혜택별 횟수/사용액은 그대로 — 0원짜리로 헛소비하지 않는다
+        assertThat(stateVal("shared_limit_used", BASE_MONTH)).isEqualTo(5_000L);
+        assertThat(usageVal("used_count")).isEqualTo(1L);
+        assertThat(usageVal("used_amount")).isEqualTo(10_000L);
+    }
+
     // ── 취소 ───────────────────────────────────────────────────────────────
 
     @Test

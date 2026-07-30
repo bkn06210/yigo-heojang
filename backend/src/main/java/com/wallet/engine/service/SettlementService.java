@@ -128,7 +128,9 @@ public class SettlementService {
         CardBenefitSelection selection = cardBenefitSelector.select(candidates, cardState, request);
 
         long discount = selection.benefitAmount();
-        Long appliedBenefitId = selection.hasBenefit() ? selection.benefitId() : null;
+        // 혜택이 뽑혔어도 한도 소진으로 0원이면 실제로 받은 혜택이 없다 —
+        // 소진(횟수·금액)을 올리지 않고 기록도 남기지 않는다(횟수 헛소비·유령 혜택 기록 방지).
+        Long appliedBenefitId = (selection.hasBenefit() && discount > 0) ? selection.benefitId() : null;
 
         // 상태 가산 — 실적은 이 거래의 인정분, 통합한도는 적용 혜택이 통합한도를 쓸 때만
         long performanceContribution = performanceContribution(
@@ -138,7 +140,7 @@ public class SettlementService {
         settlementMapper.upsertMonthlyStateAdd(command.userCardId(), baseYearMonth,
                 prevPerformanceAmount, performanceContribution, sharedLimitContribution);
 
-        // 혜택이 적용된 경우에만 혜택별 소진을 누적한다(applied_benefit_id=NULL이면 소진 없음)
+        // 실제 혜택을 받은 경우에만 혜택별 소진을 누적한다(0원·미적용이면 소진 없음)
         if (appliedBenefitId != null) {
             settlementMapper.upsertBenefitUsageAdd(command.userCardId(), appliedBenefitId,
                     baseYearMonth, discount, appliedDate);
