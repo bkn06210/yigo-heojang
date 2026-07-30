@@ -10,4 +10,3 @@ public interface MemberMapper {
     Member findByEmail(String email);
 
     Member findById(@Param("memberId") Long memberId);
-}

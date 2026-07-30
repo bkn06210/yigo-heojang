@@ -11,12 +11,30 @@
             email,
             password_hash AS password,
             name,
+            nickname,
             member_status AS memberStatus,
             created_at AS createdAt,
             updated_at AS updatedAt,
             withdrawn_at AS withdrawnAt
         FROM member
         WHERE email = #{email}
+            LIMIT 1
+    </select>
+
+    <select id="findById" resultType="com.wallet.member.domain.Member">
+        SELECT
+            member_id AS memberId,
+            email,
+            password_hash AS password,
+            name,
+            nickname,
+            member_status AS memberStatus,
+            created_at AS createdAt,
+            updated_at AS updatedAt,
+            withdrawn_at AS withdrawnAt
+        FROM member
+        WHERE member_id = #{memberId}
+          AND withdrawn_at IS NULL
             LIMIT 1
     </select>
 

@@ -102,6 +102,13 @@
             <version>2.17.2</version>
         </dependency>
 
+        <!-- Java 8 날짜/시간 타입(LocalDateTime, LocalDate, LocalTime 등)을 Jackson이 JSON으로 변환할 수 있게 해줌 -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+            <version>2.17.2</version>
+        </dependency>
+
         <!-- 서블릿 API: 톰캣이 제공하므로 provided. Tomcat 9 = servlet 4.0(javax.*) -->
         <dependency>
             <groupId>javax.servlet</groupId>
@@ -132,6 +139,23 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- Hamcrest: MockMvc jsonPath의 Matcher 컴파일 에러 해결 -->
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest</artifactId>
+            <version>2.2</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Jayway JsonPath: MockMvc에서 "$.xxx" 문법으로 JSON을 파싱하기 위해 필수 -->
+        <dependency>
+            <groupId>com.jayway.jsonpath</groupId>
+            <artifactId>json-path</artifactId>
+            <version>2.9.0</version>
+            <scope>test</scope>
+        </dependency>
+
+
         <!-- Bean Validation API -->
         <dependency>
             <groupId>javax.validation</groupId>
@@ -153,6 +177,14 @@
             <artifactId>spring-test</artifactId>
             <version>${spring.version}</version>
             <scope>test</scope>
+        </dependency>
+
+        <!-- Lombok -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.32</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 
@@ -176,6 +208,22 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.2.5</version>
+            </plugin>
+
+            <!-- lombok 사용을 위한, 플러그인 설정 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.13.0</version>
+                <configuration>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>1.18.32</version>
+                        </path>
+                    </annotationProcessorPaths>
+                </configuration>
             </plugin>
         </plugins>
     </build>
