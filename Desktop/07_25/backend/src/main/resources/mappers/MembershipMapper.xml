@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.wallet.membership.mapper.MembershipMapper">
+
+    <select id="selectMembershipProviders"
+            parameterType="long"
+            resultType="com.wallet.membership.dto.MembershipProviderResponse">
+
+        SELECT
+            pp.point_provider_id AS pointProviderId,
+            pp.point_provider_name AS providerName,
+            pp.point_provider_type AS providerType,
+            pp.logo_image_url AS logoImageUrl,
+            CASE WHEN mr.membership_register_id IS NULL THEN 0 ELSE 1 END AS isRegistered,
+            pp.default_recommend_yn AS defaultRecommendYn,
+            pp.recommend_priority AS recommendPriority,
+            pp.recommend_message AS recommendMessage
+        FROM point_provider pp
+                 LEFT JOIN membership_register mr
+                           ON pp.point_provider_id = mr.point_provider_id
+                               AND mr.member_id = #{memberId}
+                               AND mr.register_status = 'REGISTERED'
+        WHERE pp.point_provider_type = 'MEMBERSHIP'
+          AND pp.use_yn = 'Y'
+        ORDER BY
+            pp.default_recommend_yn DESC,
+            pp.recommend_priority ASC,
+            pp.point_provider_name ASC
+
+    </select>
+
+
+    <select id="selectProviderForRegister"
+            resultType="com.wallet.membership.dto.MembershipProviderCheckResponse">
+
+        SELECT
+            point_provider_id AS pointProviderId,
+            point_provider_name AS providerName,
+            point_provider_type AS providerType,
+            use_yn AS useYn
+        FROM point_provider
+        WHERE point_provider_id = #{pointProviderId}
+
+    </select>
+
+
+    <select id="selectRegisteredMembership"
+            resultType="com.wallet.membership.dto.MembershipRegisterResponse">
+
+        SELECT
+            mr.membership_register_id AS membershipRegisterId,
+            mr.point_provider_id AS pointProviderId,
+            pp.point_provider_name AS providerName,
+            mr.register_status AS registerStatus,
+            DATE_FORMAT(mr.registered_at, '%Y-%m-%dT%H:%i:%s') AS registeredAt
+        FROM membership_register mr
+                 JOIN point_provider pp
+                      ON mr.point_provider_id = pp.point_provider_id
+        WHERE mr.member_id = #{memberId}
+          AND mr.point_provider_id = #{pointProviderId}
+          AND mr.register_status = 'REGISTERED'
+            LIMIT 1
+
+    </select>
+
+
+    <select id="selectCanceledMembership"
+            resultType="com.wallet.membership.dto.MembershipRegisterResponse">
+
+        SELECT
+            mr.membership_register_id AS membershipRegisterId,
+            mr.point_provider_id AS pointProviderId,
+            pp.point_provider_name AS providerName,
+            mr.register_status AS registerStatus,
+            DATE_FORMAT(mr.registered_at, '%Y-%m-%dT%H:%i:%s') AS registeredAt
+        FROM membership_register mr
+                 JOIN point_provider pp
+                      ON mr.point_provider_id = pp.point_provider_id
+        WHERE mr.member_id = #{memberId}
+          AND mr.point_provider_id = #{pointProviderId}
+          AND mr.register_status = 'CANCELED'
+        ORDER BY mr.canceled_at DESC
+            LIMIT 1
+
+    </select>
+
+
+    <insert id="insertMembershipRegister"
+            parameterType="com.wallet.membership.dto.MembershipRegisterCommand"
+            useGeneratedKeys="true"
+            keyProperty="membershipRegisterId">
+
+        INSERT INTO membership_register (
+            member_id,
+            point_provider_id,
+            register_status,
+            registered_at,
+            canceled_at
+        )
+        VALUES (
+                   #{memberId},
+                   #{pointProviderId},
+                   'REGISTERED',
+                   NOW(),
+                   NULL
+               )
+
+    </insert>
+
+
+    <update id="updateCanceledMembershipToRegistered"
+            parameterType="com.wallet.membership.dto.MembershipRegisterCommand">
+
+        UPDATE membership_register
+        SET
+            register_status = 'REGISTERED',
+            registered_at = NOW(),
+            canceled_at = NULL
+        WHERE membership_register_id = #{membershipRegisterId}
+          AND member_id = #{memberId}
+
+    </update>
+
+
+    <insert id="insertPointWalletIfNotExists"
+            parameterType="com.wallet.membership.dto.MembershipRegisterCommand">
+
+        INSERT INTO point_wallet (
+            member_id,
+            point_provider_id,
+            total_point,
+            updated_at
+        )
+        SELECT
+            #{memberId},
+            #{pointProviderId},
+            0,
+            NOW()
+            WHERE NOT EXISTS (
+            SELECT 1
+            FROM point_wallet
+            WHERE member_id = #{memberId}
+            AND point_provider_id = #{pointProviderId}
+            )
+
+    </insert>
+
+
+    <select id="selectMembershipRegisterResponse"
+            resultType="com.wallet.membership.dto.MembershipRegisterResponse">
+
+        SELECT
+            mr.membership_register_id AS membershipRegisterId,
+            mr.point_provider_id AS pointProviderId,
+            pp.point_provider_name AS providerName,
+            mr.register_status AS registerStatus,
+            DATE_FORMAT(mr.registered_at, '%Y-%m-%dT%H:%i:%s') AS registeredAt
+        FROM membership_register mr
+                 JOIN point_provider pp
+                      ON mr.point_provider_id = pp.point_provider_id
+        WHERE mr.member_id = #{memberId}
+          AND mr.membership_register_id = #{membershipRegisterId}
+
+    </select>
+
+
+    <select id="selectMembershipStatusById"
+            resultType="com.wallet.membership.dto.MembershipRegisterResponse">
+
+        SELECT
+            mr.membership_register_id AS membershipRegisterId,
+            mr.point_provider_id AS pointProviderId,
+            pp.point_provider_name AS providerName,
+            mr.register_status AS registerStatus,
+            DATE_FORMAT(mr.registered_at, '%Y-%m-%dT%H:%i:%s') AS registeredAt
+        FROM membership_register mr
+                 JOIN point_provider pp
+                      ON mr.point_provider_id = pp.point_provider_id
+        WHERE mr.member_id = #{memberId}
+          AND mr.membership_register_id = #{membershipRegisterId}
+
+    </select>
+
+
+    <update id="cancelMembership">
+
+        UPDATE membership_register
+        SET
+            register_status = 'CANCELED',
+            canceled_at = NOW()
+        WHERE member_id = #{memberId}
+          AND membership_register_id = #{membershipRegisterId}
+          AND register_status = 'REGISTERED'
+
+    </update>
+
+
+    <select id="selectMembershipCancelResponse"
+            resultType="com.wallet.membership.dto.MembershipCancelResponse">
+
+        SELECT
+            membership_register_id AS membershipRegisterId,
+            register_status AS registerStatus,
+            DATE_FORMAT(canceled_at, '%Y-%m-%dT%H:%i:%s') AS canceledAt
+        FROM membership_register
+        WHERE member_id = #{memberId}
+          AND membership_register_id = #{membershipRegisterId}
+
+    </select>
+
+
+    <select id="selectMembershipDetail"
+            resultType="com.wallet.membership.dto.MembershipDetailResponse">
+
+        SELECT
+            mr.membership_register_id AS membershipRegisterId,
+            mr.point_provider_id AS pointProviderId,
+            pp.point_provider_name AS providerName,
+            pp.logo_image_url AS logoImage,
+            pp.official_site_url AS officialSiteUrl,
+            mr.register_status AS registerStatus,
+            COALESCE(pw.total_point, 0) AS totalPoint,
+            DATE_FORMAT(mr.registered_at, '%Y-%m-%dT%H:%i:%s') AS registeredAt
+        FROM membership_register mr
+                 JOIN point_provider pp
+                      ON mr.point_provider_id = pp.point_provider_id
+                 LEFT JOIN point_wallet pw
+                           ON mr.member_id = pw.member_id
+                               AND mr.point_provider_id = pw.point_provider_id
+        WHERE mr.member_id = #{memberId}
+          AND mr.membership_register_id = #{membershipRegisterId}
+
+    </select>
+
+
+    <select id="selectMembershipUsagePlaces"
+            resultType="com.wallet.membership.dto.MembershipUsagePlaceResponse">
+
+        SELECT
+            pup.point_usage_place_id AS usagePlaceId,
+            pup.place_name AS placeName,
+            c.category_name AS categoryName,
+            pup.use_yn AS useYn,
+            pup.description AS description
+        FROM point_usage_place pup
+                 LEFT JOIN category c
+                           ON pup.category_id = c.category_id
+        WHERE pup.point_provider_id = #{pointProviderId}
+          AND pup.use_yn = 'Y'
+        ORDER BY pup.point_usage_place_id ASC
+
+    </select>
+    <select id="selectMyMemberships"
+            parameterType="long"
+            resultType="com.wallet.membership.dto.MyMembershipResponse">
+
+        SELECT
+            mr.membership_register_id AS membershipRegisterId,
+            pp.point_provider_id AS pointProviderId,
+            pp.point_provider_name AS providerName,
+            pp.official_site_url AS officialSiteUrl,
+            pp.point_provider_type AS providerType,
+            pp.logo_image_url AS logoImageUrl,
+            COALESCE(pw.total_point, 0) AS totalPoint,
+            DATE_FORMAT(mr.registered_at, '%Y-%m-%dT%H:%i:%s') AS registeredAt
+        FROM membership_register mr
+                 JOIN point_provider pp
+                      ON mr.point_provider_id = pp.point_provider_id
+                 LEFT JOIN point_wallet pw
+                           ON mr.member_id = pw.member_id
+                               AND mr.point_provider_id = pw.point_provider_id
+        WHERE mr.member_id = #{memberId}
+          AND mr.register_status = 'REGISTERED'
+          AND pp.point_provider_type = 'MEMBERSHIP'
+          AND pp.use_yn = 'Y'
+        ORDER BY mr.registered_at DESC
+
+    </select>
+</mapper>

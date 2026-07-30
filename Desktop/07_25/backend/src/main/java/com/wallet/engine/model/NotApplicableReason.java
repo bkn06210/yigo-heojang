@@ -1,0 +1,17 @@
+package com.wallet.engine.model;
+
+/**
+ * 혜택 미적용 사유 — 게이트(적용 조건) 실패 전용.
+ * 한도 소진은 여기 넣지 않는다: 조건은 전부 충족하고 계산 결과가 0원인 것이므로
+ * "적용 + 0원 + CapType"으로 표현한다 (게이트와 클램프의 축 분리).
+ *
+ * 선언 순서 = 게이트 검사 순서 = 사유 우선순위 (여러 게이트가 동시에 실패해도 첫 번째만 기록).
+ */
+public enum NotApplicableReason {
+    RETROACTIVE_EXCLUDED,
+    PERFORMANCE_NOT_MET,
+    PAYMENT_TYPE_MISMATCH,
+    MIN_TXN_AMOUNT_NOT_MET,
+    DAILY_COUNT_EXCEEDED,
+    MONTHLY_COUNT_EXCEEDED
+}

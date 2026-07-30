@@ -1,0 +1,8 @@
+# DB 접속 설정 예시.
+# 이 파일을 같은 폴더에 db.properties 로 복사한 뒤, 자기 환경 값으로 채운다.
+#   - 로컬 Tomcat + 로컬 MySQL 실행: host = localhost
+#   - docker-compose 풀도커 실행:    host = mysql  (docker-compose 서비스명)
+db.driver=com.mysql.cj.jdbc.Driver
+db.url=jdbc:mysql://localhost:3306/wallet?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+db.username=root
+db.password=변경하세요

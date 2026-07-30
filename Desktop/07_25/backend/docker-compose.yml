@@ -1,0 +1,31 @@
+# 로컬 통합 실행용: Tomcat 9 + MySQL 8.0
+# 선행: WAR를 먼저 빌드해야 한다  →  ./mvnw package  (target/ROOT.war 생성)
+# 주의: docker로 실행할 땐 db.properties의 host를 localhost → mysql(아래 서비스명)로
+#       바꾼 뒤 WAR를 다시 빌드한다. (db.properties가 WAR 안에 포함되기 때문)
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: yigo-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: wallet          # 초기 DB 자동 생성 (스키마 SQL은 다음 단계)
+      TZ: Asia/Seoul
+    ports:
+      - "3306:3306"                   # 로컬 포트 매핑 (host:container)
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+  tomcat:
+    image: tomcat:9-jdk17             # Tomcat 10(jakarta) 아님 — javax 스펙 유지
+    container_name: yigo-tomcat
+    depends_on:
+      - mysql
+    ports:
+      - "8080:8080"
+    volumes:
+      # 빌드된 WAR를 ROOT로 배포 → http://localhost:8080/api/health
+      - ./target/ROOT.war:/usr/local/tomcat/webapps/ROOT.war
+
+volumes:
+  mysql-data:

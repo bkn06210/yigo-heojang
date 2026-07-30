@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.wallet.payment.mapper.PaymentMapper">
+
+    <select id="countUserCardByUserId" resultType="int">
+        SELECT COUNT(*)
+        FROM TBL_USER_CARD
+        WHERE USER_ID = #{userId}
+          AND USER_CARD_ID = #{userCardId}
+    </select>
+
+    <select id="countCategoryById" resultType="int">
+        SELECT COUNT(*)
+        FROM TBL_CATEGORY
+        WHERE CATEGORY_ID = #{categoryId}
+    </select>
+
+    <insert id="insertExpense"
+            parameterType="com.wallet.payment.dto.PaymentCommand"
+            useGeneratedKeys="true"
+            keyProperty="expenseId">
+
+        INSERT INTO TBL_EXPENSE (
+            USER_ID,
+            USER_CARD_ID,
+            CATEGORY_ID,
+            MERCHANT_NAME,
+            AMOUNT,
+            PAYMENT_DATE,
+            INPUT_TYPE
+        )
+        VALUES (
+                   #{userId},
+                   #{userCardId},
+                   #{categoryId},
+                   #{merchantName},
+                   #{paymentAmount},
+                   NOW(),
+                   'PAYMENT'
+               )
+
+    </insert>
+
+    <insert id="insertPayment"
+            parameterType="com.wallet.payment.dto.PaymentCommand"
+            useGeneratedKeys="true"
+            keyProperty="paymentId">
+
+        INSERT INTO TBL_MOCK_PAYMENT (
+            USER_ID,
+            USER_CARD_ID,
+            EXPENSE_ID,
+            MERCHANT_ID,
+            MERCHANT_NAME,
+            PAYMENT_AMOUNT,
+            PAYMENT_STATUS,
+            REQUESTED_AT,
+            COMPLETED_AT
+        )
+        VALUES (
+                   #{userId},
+                   #{userCardId},
+                   #{expenseId},
+                   #{merchantId},
+                   #{merchantName},
+                   #{paymentAmount},
+                   #{paymentStatus},
+                   NOW(),
+                   NOW()
+               )
+
+    </insert>
+
+    <select id="selectDefaultPointWallet"
+            resultType="com.wallet.payment.dto.PaymentPointWalletResponse">
+
+        SELECT
+            pw.POINT_WALLET_ID AS pointWalletId,
+            pw.POINT_PROVIDER_ID AS pointProviderId,
+            pp.POINT_PROVIDER_NAME AS providerName,
+            pw.TOTAL_POINT AS totalPoint
+        FROM TBL_POINT_WALLET pw
+                 JOIN TBL_POINT_PROVIDER pp
+                      ON pw.POINT_PROVIDER_ID = pp.POINT_PROVIDER_ID
+        WHERE pw.USER_ID = #{userId}
+          AND pp.USE_YN = 'Y'
+          AND pp.POINT_PROVIDER_TYPE = 'FINANCIAL_POINT'
+        ORDER BY pw.TOTAL_POINT DESC
+            LIMIT 1
+
+    </select>
+
+    <update id="updatePointWallet">
+        UPDATE TBL_POINT_WALLET
+        SET TOTAL_POINT = TOTAL_POINT + #{savedPoint},
+            UPDATED_AT = NOW()
+        WHERE POINT_WALLET_ID = #{pointWalletId}
+    </update>
+
+    <insert id="insertPointHistory">
+        INSERT INTO TBL_POINT_HISTORY (
+            USER_ID,
+            POINT_WALLET_ID,
+            EXPENSE_ID,
+            POINT_TYPE,
+            POINT_AMOUNT,
+            CONTENT,
+            OCCURRED_AT
+        )
+        VALUES (
+                   #{userId},
+                   #{pointWalletId},
+                   #{expenseId},
+                   'SAVE',
+                   #{savedPoint},
+                   #{content},
+                   NOW()
+               )
+    </insert>
+
+    <select id="selectPaymentResult"
+            resultType="com.wallet.payment.dto.PaymentResultResponse">
+
+        SELECT
+            p.payment_id AS paymentId,
+            p.expense_id AS expenseId,
+            cd.card_name AS cardName,
+            p.merchant_name AS merchantName,
+            p.payment_amount AS paymentAmount,
+            p.payment_status AS paymentStatus,
+            COALESCE(SUM(ph.point_amount), 0) AS savedPoint,
+            COALESCE(MAX(pw.total_point), 0) AS totalPoint,
+            DATE_FORMAT(p.completed_at, '%Y-%m-%dT%H:%i:%s') AS completedAt
+        FROM payment p
+                 JOIN user_card uc
+                      ON p.user_card_id = uc.user_card_id
+                 JOIN card cd
+                      ON uc.card_id = cd.card_id
+                 LEFT JOIN point_history ph
+                           ON p.expense_id = ph.expense_id
+                               AND ph.member_id = p.member_id
+                               AND ph.point_type = 'SAVE'
+                 LEFT JOIN point_wallet pw
+                           ON ph.point_wallet_id = pw.point_wallet_id
+        WHERE p.member_id = #{userId}
+          AND p.payment_id = #{paymentId}
+        GROUP BY
+            p.payment_id,
+            p.expense_id,
+            cd.card_name,
+            p.merchant_name,
+            p.payment_amount,
+            p.payment_status,
+            p.completed_at
+
+    </select>
+
+</mapper>
