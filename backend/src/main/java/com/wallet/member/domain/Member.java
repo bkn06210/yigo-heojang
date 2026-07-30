@@ -13,6 +13,22 @@ public class Member {
     private LocalDateTime updatedAt;
     private LocalDateTime withdrawnAt;
 
+    // 회원가입 전용 정적 팩토리 메서드
+    public static Member createSignupMember(
+        String email,
+        String encodedPassword,
+        String name,
+        String nickname
+    ) {
+        Member member = new Member();
+        member.email = email;
+        member.password = encodedPassword;
+        member.name = name;
+        member.nickname = nickname;
+        member.memberStatus = "ACTIVE";
+        return member;
+    }
+
     public Long getMemberId() {
         return memberId;
     }

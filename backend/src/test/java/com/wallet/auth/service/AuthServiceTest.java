@@ -3,6 +3,7 @@ package com.wallet.auth.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -10,20 +11,27 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import com.wallet.auth.domain.MemberTermAgreement;
 import com.wallet.auth.domain.RefreshToken;
 import com.wallet.auth.dto.LoginMemberResponse;
 import com.wallet.auth.dto.LoginRequest;
 import com.wallet.auth.dto.LoginResult;
+import com.wallet.auth.dto.SignupRequest;
+import com.wallet.auth.dto.SignupResponse;
+import com.wallet.auth.dto.TermAgreementRequest;
 import com.wallet.auth.dto.TokenResponse;
 import com.wallet.auth.jwt.JwtTokenProvider;
+import com.wallet.auth.mapper.TermAgreementMapper;
 import com.wallet.common.ErrorCode;
 import com.wallet.common.exception.BusinessException;
 import com.wallet.member.domain.Member;
@@ -36,6 +44,7 @@ class AuthServiceTest {
     private PasswordEncoder passwordEncoder;
     private RefreshTokenService refreshTokenService;
     private AuthService authService;
+    private TermAgreementMapper termAgreementMapper;
 
     @BeforeEach
     void setUp() {
@@ -43,12 +52,14 @@ class AuthServiceTest {
         jwtTokenProvider = mock(JwtTokenProvider.class);
         passwordEncoder = new BCryptPasswordEncoder();
         refreshTokenService = mock(RefreshTokenService.class);
+        termAgreementMapper = mock(TermAgreementMapper.class);
 
         authService = new AuthService(
             memberMapper,
             jwtTokenProvider,
             passwordEncoder,
-            refreshTokenService
+            refreshTokenService,
+            termAgreementMapper
         );
     }
 
@@ -364,6 +375,306 @@ class AuthServiceTest {
         // then
         verify(refreshTokenService, never()).revokeByToken(any());
     }
+
+    @Test
+    @DisplayName("회원가입 성공 - 회원을 저장하고 약관 동의 이력을 저장한 뒤 가입 정보를 반환한다")
+    void signup_success() {
+        // given
+        SignupRequest request = new SignupRequest(
+            "user@example.com",
+            "password123",
+            "이재혁",
+            List.of(
+                new TermAgreementRequest(10L, true),
+                new TermAgreementRequest(11L, true),
+                new TermAgreementRequest(12L, false)
+            )
+        );
+
+        when(memberMapper.existsByEmail("user@example.com"))
+            .thenReturn(false);
+
+        when(termAgreementMapper.countActiveTermVersionsByIds(List.of(10L, 11L, 12L)))
+            .thenReturn(3);
+
+        when(termAgreementMapper.findActiveRequiredTermVersionIds())
+            .thenReturn(List.of(10L, 11L));
+
+        when(memberMapper.insertMember(any(Member.class)))
+            .thenAnswer(invocation -> {
+                Member member = invocation.getArgument(0);
+                ReflectionTestUtils.setField(member, "memberId", 1L);
+                return 1;
+            });
+
+        Member savedMember = createMember(
+            1L,
+            "user@example.com",
+            passwordEncoder.encode("password123"),
+            "이재혁",
+            "ACTIVE"
+        );
+        ReflectionTestUtils.setField(savedMember, "nickname", "든든한얼룩말0001");
+        ReflectionTestUtils.setField(savedMember, "createdAt", LocalDateTime.of(2026, 7, 29, 10, 0));
+
+        when(memberMapper.findById(1L))
+            .thenReturn(savedMember);
+
+        // when
+        SignupResponse response = authService.signup(request);
+
+        // then
+        assertThat(response.memberId()).isEqualTo(1L);
+        assertThat(response.email()).isEqualTo("user@example.com");
+        assertThat(response.name()).isEqualTo("이재혁");
+        assertThat(response.memberStatus()).isEqualTo("ACTIVE");
+        assertThat(response.createdAt()).isEqualTo(LocalDateTime.of(2026, 7, 29, 10, 0));
+
+
+        ArgumentCaptor<Member> memberCaptor = ArgumentCaptor.forClass(Member.class);
+        verify(memberMapper).insertMember(memberCaptor.capture());
+
+        Member insertedMember = memberCaptor.getValue();
+
+        assertThat(insertedMember.getEmail()).isEqualTo("user@example.com");
+        assertThat(insertedMember.getName()).isEqualTo("이재혁");
+        assertThat(insertedMember.getMemberStatus()).isEqualTo("ACTIVE");
+        assertThat(insertedMember.getNickname()).isNotBlank();
+
+
+        assertThat(insertedMember.getPassword()).isNotEqualTo("password123");
+        assertThat(passwordEncoder.matches("password123", insertedMember.getPassword())).isTrue();
+
+        ArgumentCaptor<List<MemberTermAgreement>> agreementsCaptor = ArgumentCaptor.forClass(List.class);
+        verify(termAgreementMapper).insertMemberTermAgreements(agreementsCaptor.capture());
+
+        List<MemberTermAgreement> agreements = agreementsCaptor.getValue();
+
+        assertThat(agreements).hasSize(3);
+        assertThat(agreements)
+            .extracting(MemberTermAgreement::getMemberId)
+            .containsOnly(1L);
+
+        assertThat(agreements)
+            .extracting(MemberTermAgreement::getTermsVersionId)
+            .containsExactly(10L, 11L, 12L);
+
+        assertThat(agreements)
+            .extracting(MemberTermAgreement::getAgreed)
+            .containsExactly(true, true, false);
+
+        verify(memberMapper).existsByEmail("user@example.com");
+        verify(termAgreementMapper).countActiveTermVersionsByIds(List.of(10L, 11L, 12L));
+        verify(termAgreementMapper).findActiveRequiredTermVersionIds();
+        verify(memberMapper).findById(1L);
+    }
+
+    @Test
+    @DisplayName("회원가입 실패 - 이미 가입된 이메일이면 EMAIL_ALREADY_EXISTS 예외가 발생한다")
+    void signup_fail_whenEmailAlreadyExists() {
+        // given
+        SignupRequest request = new SignupRequest(
+            "user@example.com",
+            "password123",
+            "이재혁",
+            List.of(
+                new TermAgreementRequest(10L, true),
+                new TermAgreementRequest(11L, true)
+            )
+        );
+
+        when(memberMapper.existsByEmail("user@example.com"))
+            .thenReturn(true);
+
+        // when
+        BusinessException exception = assertThrows(
+            BusinessException.class,
+            () -> authService.signup(request)
+        );
+
+        // then
+        assertThat(exception.getErrorCode())
+            .isEqualTo(ErrorCode.EMAIL_ALREADY_EXISTS);
+
+        verify(memberMapper).existsByEmail("user@example.com");
+
+        verify(termAgreementMapper, never()).countActiveTermVersionsByIds(any());
+        verify(termAgreementMapper, never()).findActiveRequiredTermVersionIds();
+        verify(memberMapper, never()).insertMember(any());
+        verify(termAgreementMapper, never()).insertMemberTermAgreements(any());
+    }
+
+    @Test
+    @DisplayName("회원가입 실패 - 요청한 약관 버전 중 유효하지 않은 약관이 있으면 INPUT_INVALID 예외가 발생한다")
+    void signup_fail_whenTermVersionInvalid() {
+        // given
+        SignupRequest request = new SignupRequest(
+            "user@example.com",
+            "password123",
+            "이재혁",
+            List.of(
+                new TermAgreementRequest(10L, true),
+                new TermAgreementRequest(999L, true)
+            )
+        );
+
+        when(memberMapper.existsByEmail("user@example.com"))
+            .thenReturn(false);
+
+        when(termAgreementMapper.countActiveTermVersionsByIds(anyList()))
+            .thenReturn(1);
+
+        // when
+        BusinessException exception = assertThrows(
+            BusinessException.class,
+            () -> authService.signup(request)
+        );
+
+        // then
+        assertThat(exception.getErrorCode())
+            .isEqualTo(ErrorCode.INPUT_INVALID);
+
+        verify(memberMapper).existsByEmail("user@example.com");
+        verify(termAgreementMapper).countActiveTermVersionsByIds(anyList());
+        verify(termAgreementMapper, never()).findActiveRequiredTermVersionIds();
+        verify(memberMapper, never()).insertMember(any());
+        verify(termAgreementMapper, never()).insertMemberTermAgreements(any());
+    }
+
+    @Test
+    @DisplayName("회원가입 실패 - 필수 약관에 동의하지 않으면 INPUT_INVALID 예외가 발생한다")
+    void signup_fail_whenRequiredTermNotAgreed() {
+        // given
+        SignupRequest request = new SignupRequest(
+            "user@example.com",
+            "password123",
+            "이재혁",
+            List.of(
+                new TermAgreementRequest(10L, true),
+                new TermAgreementRequest(11L, false),
+                new TermAgreementRequest(12L, false)
+            )
+        );
+
+        when(memberMapper.existsByEmail("user@example.com"))
+            .thenReturn(false);
+
+        when(termAgreementMapper.countActiveTermVersionsByIds(List.of(10L, 11L, 12L)))
+            .thenReturn(3);
+
+        when(termAgreementMapper.findActiveRequiredTermVersionIds())
+            .thenReturn(List.of(10L, 11L));
+
+        // when
+        BusinessException exception = assertThrows(
+            BusinessException.class,
+            () -> authService.signup(request)
+        );
+
+        // then
+        assertThat(exception.getErrorCode())
+            .isEqualTo(ErrorCode.INPUT_INVALID);
+
+        verify(memberMapper).existsByEmail("user@example.com");
+        verify(termAgreementMapper).countActiveTermVersionsByIds(List.of(10L, 11L, 12L));
+        verify(termAgreementMapper).findActiveRequiredTermVersionIds();
+        verify(memberMapper, never()).insertMember(any());
+        verify(termAgreementMapper, never()).insertMemberTermAgreements(any());
+    }
+
+    @Test
+    @DisplayName("회원가입 실패 - 같은 약관 버전이 중복으로 들어오면 INPUT_INVALID 예외가 발생한다")
+    void signup_fail_whenTermVersionDuplicated() {
+        // given
+        SignupRequest request = new SignupRequest(
+            "user@example.com",
+            "password123",
+            "이재혁",
+            List.of(
+                new TermAgreementRequest(10L, true),
+                new TermAgreementRequest(10L, true)
+            )
+        );
+
+        when(memberMapper.existsByEmail("user@example.com"))
+            .thenReturn(false);
+
+        // when
+        BusinessException exception = assertThrows(
+            BusinessException.class,
+            () -> authService.signup(request)
+        );
+
+        // then
+        assertThat(exception.getErrorCode())
+            .isEqualTo(ErrorCode.INPUT_INVALID);
+
+        verify(memberMapper).existsByEmail("user@example.com");
+
+        verify(termAgreementMapper, never()).countActiveTermVersionsByIds(any());
+        verify(termAgreementMapper, never()).findActiveRequiredTermVersionIds();
+        verify(memberMapper, never()).insertMember(any());
+        verify(termAgreementMapper, never()).insertMemberTermAgreements(any());
+    }
+
+    @Test
+    @DisplayName("회원가입 성공 - 선택 약관은 동의하지 않아도 가입할 수 있다")
+    void signup_success_whenOptionalTermNotAgreed() {
+        // given
+        SignupRequest request = new SignupRequest(
+            "user@example.com",
+            "password123",
+            "이재혁",
+            List.of(
+                new TermAgreementRequest(10L, true),
+                new TermAgreementRequest(11L, true),
+                new TermAgreementRequest(12L, false)
+            )
+        );
+
+        when(memberMapper.existsByEmail("user@example.com"))
+            .thenReturn(false);
+
+        when(termAgreementMapper.countActiveTermVersionsByIds(List.of(10L, 11L, 12L)))
+            .thenReturn(3);
+        
+        when(termAgreementMapper.findActiveRequiredTermVersionIds())
+            .thenReturn(List.of(10L, 11L));
+
+        when(memberMapper.insertMember(any(Member.class)))
+            .thenAnswer(invocation -> {
+                Member member = invocation.getArgument(0);
+                ReflectionTestUtils.setField(member, "memberId", 1L);
+                return 1;
+            });
+
+        Member savedMember = createMember(
+            1L,
+            "user@example.com",
+            passwordEncoder.encode("password123"),
+            "이재혁",
+            "ACTIVE"
+        );
+        ReflectionTestUtils.setField(savedMember, "nickname", "알뜰한카드1234");
+        ReflectionTestUtils.setField(savedMember, "createdAt", LocalDateTime.of(2026, 7, 29, 10, 0));
+
+        when(memberMapper.findById(1L))
+            .thenReturn(savedMember);
+
+        // when
+        SignupResponse response = authService.signup(request);
+
+        // then
+        assertThat(response.memberId()).isEqualTo(1L);
+
+        ArgumentCaptor<List<MemberTermAgreement>> agreementsCaptor = ArgumentCaptor.forClass(List.class);
+        verify(termAgreementMapper).insertMemberTermAgreements(agreementsCaptor.capture());
+
+        assertThat(agreementsCaptor.getValue())
+            .extracting(MemberTermAgreement::getAgreed)
+            .containsExactly(true, true, false);
+    }
+
 
     private Member createMember(
         Long memberId,

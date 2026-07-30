@@ -38,6 +38,42 @@
             LIMIT 1
     </select>
 
+    <!--
+        SELECT EXISTS(...)는 조건에 맞는 행이 하나라도 있으면 1,
+        없으면 0을 반환한다. MyBatis는 이 값을 boolean으로 변환해준다.
+    -->
+    <select id="existsByEmail" resultType="boolean">
+        SELECT EXISTS (
+            SELECT 1
+            FROM member
+            WHERE email = #{email}
+        )
+    </select>
+
+    <!--
+        useGeneratedKeys="true":
+        - MySQL의 AUTO_INCREMENT로 생성된 member_id를 자바 객체에 다시 채워준다.
+    -->
+    <insert id="insertMember"
+            parameterType="com.wallet.member.domain.Member"
+            useGeneratedKeys="true"
+            keyProperty="memberId">
+        INSERT INTO member (
+            email,
+            password_hash,
+            name,
+            nickname,
+            member_status
+        )
+        VALUES (
+                   #{email},
+                   #{password},
+                   #{name},
+                   #{nickname},
+                   #{memberStatus}
+               )
+    </insert>
+
     <update id="updateMemberInfo">
         UPDATE member
         SET
