@@ -41,11 +41,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         "/api/auth/signup",
         "/api/auth/signup/email-verifications",
         "/api/auth/signup/email-verifications/verify",
+        "/api/auth/password/reset-link",
         "/api/terms"
         // TODO: 아래 API들은 구현 시점에 점진적으로 예외 경로에 추가할 것
 //        "/api/health",
 //        "/api/members/check-email",
-//        "/api/auth/password/reset-link",
 //        "/api/auth/password/verify-code",
 //        "/api/auth/password/resets"
     );

@@ -133,6 +133,7 @@ public enum ErrorCode {
     // =========================================================================
     //  6. 회원가입 이메일 인증 (SignupEmailVerification)
     // =========================================================================
+
     /** 회원가입 이메일 인증 코드 불일치 */
     SIGNUP_EMAIL_VERIFICATION_CODE_INVALID(
         HttpStatus.BAD_REQUEST,
@@ -204,6 +205,17 @@ public enum ErrorCode {
         HttpStatus.BAD_REQUEST,
     "SIGNUP_EMAIL_VERIFICATION_ALREADY_USED",
         "이미 사용 완료된 이메일 인증 정보입니다."
+    ),
+
+    // =========================================================================
+    //  7. 비밀번호 재설정 (PasswordReset)
+    // =========================================================================
+
+    /** 비밀번호 재설정 인증 코드 요청 횟수 제한 */
+    PASSWORD_RESET_REISSUE_COOLDOWN(
+        HttpStatus.TOO_MANY_REQUESTS,
+    "PASSWORD_RESET_REISSUE_COOLDOWN",
+        "비밀번호 재설정 이메일은 1분에 한 번만 요청할 수 있습니다. 잠시 후 다시 시도해 주세요."
     );
 
     private final HttpStatus status;

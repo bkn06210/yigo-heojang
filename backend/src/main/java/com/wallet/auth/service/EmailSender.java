@@ -13,4 +13,16 @@ public interface EmailSender {
         String verificationCode,
         long expiresInMinutes
     );
+
+    /**
+     * 비밀번호 재설정 인증 코드를 발송한다.
+     *
+     * 회원가입 인증과 비밀번호 재설정 인증은 둘 다 이메일 인증 코드를 보내지만,
+     * 사용자가 받는 메일 제목과 안내 문구가 다르므로 메서드를 분리한다.
+     */
+    void sendPasswordResetVerificationCode(
+        String toEmail,
+        String verificationCode,
+        long expiresInMinutes
+    );
 }
