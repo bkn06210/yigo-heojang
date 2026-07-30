@@ -44,6 +44,7 @@ class PasswordResetServiceTest {
     private TokenHashUtil tokenHashUtil;
     private PasswordResetService passwordResetService;
     private PasswordEncoder passwordEncoder;
+    private RefreshTokenService refreshTokenService;
 
     @BeforeEach
     void setUp() {
@@ -52,9 +53,9 @@ class PasswordResetServiceTest {
         emailSender = mock(EmailSender.class);
         verificationCodeGenerator = mock(VerificationCodeGenerator.class);
         verificationTokenGenerator = mock(VerificationTokenGenerator.class);
-
         tokenHashUtil = new TokenHashUtil();
         passwordEncoder = new BCryptPasswordEncoder();
+        refreshTokenService = mock(RefreshTokenService.class);
 
         passwordResetService = new PasswordResetService(
             passwordResetVerificationMapper,
@@ -63,7 +64,9 @@ class PasswordResetServiceTest {
             verificationCodeGenerator,
             verificationTokenGenerator,
             tokenHashUtil,
-            passwordEncoder
+            passwordEncoder,
+            refreshTokenService
+
         );
     }
 
@@ -641,7 +644,7 @@ class PasswordResetServiceTest {
     }
 
     @Test
-    @DisplayName("새 비밀번호 설정 성공 - 유효한 reset token이면 비밀번호를 변경하고 인증 정보를 사용 완료 처리한다")
+    @DisplayName("새 비밀번호 설정 성공 - 유효한 reset token이면 비밀번호를 변경하고 기존 Refresh Token을 모두 폐기한다")
     void resetPassword_success() {
         // given
         PasswordResetRequest request = new PasswordResetRequest(
@@ -699,6 +702,7 @@ class PasswordResetServiceTest {
         assertThat(passwordEncoder.matches("newPassword123", encodedPassword)).isTrue();
 
         verify(passwordResetVerificationMapper).markAsUsed(10L);
+        verify(refreshTokenService).revokeAllByPasswordReset(1L);
     }
 
     @Test
@@ -727,6 +731,7 @@ class PasswordResetServiceTest {
 
         verify(memberMapper, never()).updatePassword(any(), any());
         verify(passwordResetVerificationMapper, never()).markAsUsed(any());
+        verify(refreshTokenService, never()).revokeAllByPasswordReset(any());
     }
 
     @Test
@@ -769,6 +774,7 @@ class PasswordResetServiceTest {
 
         verify(memberMapper, never()).updatePassword(any(), any());
         verify(passwordResetVerificationMapper, never()).markAsUsed(any());
+        verify(refreshTokenService, never()).revokeAllByPasswordReset(any());
     }
 
     @Test
@@ -811,6 +817,7 @@ class PasswordResetServiceTest {
 
         verify(memberMapper, never()).updatePassword(any(), any());
         verify(passwordResetVerificationMapper, never()).markAsUsed(any());
+        verify(refreshTokenService, never()).revokeAllByPasswordReset(any());
     }
 
     @Test
@@ -853,6 +860,7 @@ class PasswordResetServiceTest {
 
         verify(memberMapper, never()).updatePassword(any(), any());
         verify(passwordResetVerificationMapper, never()).markAsUsed(any());
+        verify(refreshTokenService, never()).revokeAllByPasswordReset(any());
     }
 
     @Test
@@ -898,6 +906,7 @@ class PasswordResetServiceTest {
 
         verify(memberMapper, never()).updatePassword(any(), any());
         verify(passwordResetVerificationMapper, never()).markAsUsed(any());
+        verify(refreshTokenService, never()).revokeAllByPasswordReset(any());
     }
 
     @Test
@@ -953,6 +962,7 @@ class PasswordResetServiceTest {
             .isEqualTo(ErrorCode.PASSWORD_RESET_TOKEN_INVALID);
 
         verify(passwordResetVerificationMapper, never()).markAsUsed(any());
+        verify(refreshTokenService, never()).revokeAllByPasswordReset(any());
     }
 
     private Member createMember(

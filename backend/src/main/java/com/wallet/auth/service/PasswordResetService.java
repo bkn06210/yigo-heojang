@@ -39,6 +39,7 @@ public class PasswordResetService {
     private final VerificationTokenGenerator passwordResetTokenGenerator;
     private final TokenHashUtil tokenHashUtil;
     private final PasswordEncoder passwordEncoder;
+    private final RefreshTokenService refreshTokenService;
 
     @Transactional
     public void sendResetCode(PasswordResetCodeRequest request) {
@@ -169,6 +170,8 @@ public class PasswordResetService {
         if (usedCount == 0) {
             throw new BusinessException(ErrorCode.PASSWORD_RESET_TOKEN_INVALID);
         }
+
+        refreshTokenService.revokeAllByPasswordReset(member.getMemberId());
     }
 
     private void validateVerificationExists(PasswordResetVerification verification) {
