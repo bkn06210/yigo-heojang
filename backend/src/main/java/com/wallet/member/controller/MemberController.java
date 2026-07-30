@@ -3,16 +3,20 @@ package com.wallet.member.controller;
 import static com.wallet.common.constant.RequestAttributeNames.AUTHENTICATED_MEMBER_ID;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.wallet.common.ApiResponse;
 import com.wallet.member.dto.MemberMeResponse;
+import com.wallet.member.dto.MemberUpdateRequest;
 import com.wallet.member.service.MemberService;
 
 @RequiredArgsConstructor
@@ -31,4 +35,19 @@ public class MemberController {
             ApiResponse.success("회원정보 조회에 성공했습니다.", response)
         );
     }
+
+    @PatchMapping("/me")
+    public ResponseEntity<ApiResponse<MemberMeResponse>> updateMyInfo(
+        HttpServletRequest request,
+        @Valid @RequestBody MemberUpdateRequest updateRequest
+    ) {
+        Long memberId = (Long) request.getAttribute(AUTHENTICATED_MEMBER_ID);
+
+        MemberMeResponse response = memberService.updateMyInfo(memberId, updateRequest);
+
+        return ResponseEntity.ok(
+            ApiResponse.success("회원정보 수정에 성공했습니다.", response)
+        );
+    }
+
 }
