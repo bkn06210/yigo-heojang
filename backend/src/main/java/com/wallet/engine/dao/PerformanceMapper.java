@@ -38,4 +38,12 @@ public interface PerformanceMapper {
 
     /** 카드의 실적구간을 조회한다. 0원 구간을 포함해 최소 1행이 있어야 판정이 성립한다. */
     List<PerformanceTierRow> findTiers(@Param("cardId") long cardId);
+
+    /**
+     * 여러 카드의 실적구간을 한 번에 조회한다 — 보유카드 전부를 판정하는 추천 흐름용.
+     *
+     * 호출자가 cardId로 그룹핑해 카드별 구간 목록으로 나눠 쓴다.
+     * cardIds가 비어 있으면 호출하지 않는다(빈 IN 절은 SQL 문법 오류다).
+     */
+    List<PerformanceTierRow> findTiersByCardIds(@Param("cardIds") List<Long> cardIds);
 }
