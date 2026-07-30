@@ -15,6 +15,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import com.wallet.auth.domain.PasswordResetVerification;
@@ -22,10 +24,11 @@ import com.wallet.auth.domain.VerificationStatus;
 import com.wallet.auth.dto.PasswordResetCodeRequest;
 import com.wallet.auth.dto.PasswordResetCodeVerifyRequest;
 import com.wallet.auth.dto.PasswordResetCodeVerifyResponse;
+import com.wallet.auth.dto.PasswordResetRequest;
 import com.wallet.auth.mapper.PasswordResetVerificationMapper;
-import com.wallet.auth.support.VerificationTokenGenerator;
 import com.wallet.auth.support.TokenHashUtil;
 import com.wallet.auth.support.VerificationCodeGenerator;
+import com.wallet.auth.support.VerificationTokenGenerator;
 import com.wallet.common.ErrorCode;
 import com.wallet.common.exception.BusinessException;
 import com.wallet.member.domain.Member;
@@ -40,6 +43,7 @@ class PasswordResetServiceTest {
     private VerificationTokenGenerator verificationTokenGenerator;
     private TokenHashUtil tokenHashUtil;
     private PasswordResetService passwordResetService;
+    private PasswordEncoder passwordEncoder;
 
     @BeforeEach
     void setUp() {
@@ -50,6 +54,7 @@ class PasswordResetServiceTest {
         verificationTokenGenerator = mock(VerificationTokenGenerator.class);
 
         tokenHashUtil = new TokenHashUtil();
+        passwordEncoder = new BCryptPasswordEncoder();
 
         passwordResetService = new PasswordResetService(
             passwordResetVerificationMapper,
@@ -57,7 +62,8 @@ class PasswordResetServiceTest {
             emailSender,
             verificationCodeGenerator,
             verificationTokenGenerator,
-            tokenHashUtil
+            tokenHashUtil,
+            passwordEncoder
         );
     }
 
@@ -70,6 +76,7 @@ class PasswordResetServiceTest {
         Member member = createMember(
             1L,
             "user@example.com",
+            passwordEncoder.encode("password123"),
             "ACTIVE",
             null
         );
@@ -145,6 +152,7 @@ class PasswordResetServiceTest {
         Member member = createMember(
             1L,
             "user@example.com",
+            passwordEncoder.encode("password123"),
             "SUSPENDED",
             null
         );
@@ -174,6 +182,7 @@ class PasswordResetServiceTest {
         Member member = createMember(
             1L,
             "user@example.com",
+            passwordEncoder.encode("password123"),
             "ACTIVE",
             null
         );
@@ -227,6 +236,7 @@ class PasswordResetServiceTest {
         Member member = createMember(
             1L,
             "user@example.com",
+            passwordEncoder.encode("password123"),
             "ACTIVE",
             null
         );
@@ -314,6 +324,7 @@ class PasswordResetServiceTest {
         Member member = createMember(
             1L,
             "user@example.com",
+            passwordEncoder.encode("password123"),
             "ACTIVE",
             null
         );
@@ -347,6 +358,7 @@ class PasswordResetServiceTest {
         Member member = createMember(
             1L,
             "user@example.com",
+            passwordEncoder.encode("password123"),
             "ACTIVE",
             null
         );
@@ -395,6 +407,7 @@ class PasswordResetServiceTest {
         Member member = createMember(
             1L,
             "user@example.com",
+            passwordEncoder.encode("password123"),
             "ACTIVE",
             null
         );
@@ -443,6 +456,7 @@ class PasswordResetServiceTest {
         Member member = createMember(
             1L,
             "user@example.com",
+            passwordEncoder.encode("password123"),
             "ACTIVE",
             null
         );
@@ -491,6 +505,7 @@ class PasswordResetServiceTest {
         Member member = createMember(
             1L,
             "user@example.com",
+            passwordEncoder.encode("password123"),
             "ACTIVE",
             null
         );
@@ -539,6 +554,7 @@ class PasswordResetServiceTest {
         Member member = createMember(
             1L,
             "user@example.com",
+            passwordEncoder.encode("password123"),
             "ACTIVE",
             null
         );
@@ -586,6 +602,7 @@ class PasswordResetServiceTest {
         Member member = createMember(
             1L,
             "user@example.com",
+            passwordEncoder.encode("password123"),
             "ACTIVE",
             null
         );
@@ -623,9 +640,325 @@ class PasswordResetServiceTest {
         verify(verificationTokenGenerator, never()).generate();
     }
 
+    @Test
+    @DisplayName("새 비밀번호 설정 성공 - 유효한 reset token이면 비밀번호를 변경하고 인증 정보를 사용 완료 처리한다")
+    void resetPassword_success() {
+        // given
+        PasswordResetRequest request = new PasswordResetRequest(
+            "password-reset-token",
+            "newPassword123"
+        );
+
+        String resetTokenHash = tokenHashUtil.sha256("password-reset-token");
+
+        PasswordResetVerification verification = createPasswordResetVerification(
+            10L,
+            1L,
+            tokenHashUtil.sha256("482913"),
+            VerificationStatus.VERIFIED,
+            0,
+            LocalDateTime.now().minusMinutes(1),
+            resetTokenHash,
+            LocalDateTime.now().plusMinutes(10),
+            LocalDateTime.now().minusMinutes(1),
+            null,
+            LocalDateTime.now().minusMinutes(1)
+        );
+
+        Member member = createMember(
+            1L,
+            "user@example.com",
+            passwordEncoder.encode("oldPassword123"),
+            "ACTIVE",
+            null
+        );
+
+        when(passwordResetVerificationMapper.findByResetTokenHashForUpdate(resetTokenHash))
+            .thenReturn(verification);
+
+        when(memberMapper.findById(1L))
+            .thenReturn(member);
+
+        when(memberMapper.updatePassword(eq(1L), any(String.class)))
+            .thenReturn(1);
+
+        when(passwordResetVerificationMapper.markAsUsed(10L))
+            .thenReturn(1);
+
+        // when
+        passwordResetService.resetPassword(request);
+
+        // then
+        ArgumentCaptor<String> passwordCaptor = ArgumentCaptor.forClass(String.class);
+
+        verify(memberMapper).updatePassword(eq(1L), passwordCaptor.capture());
+
+        String encodedPassword = passwordCaptor.getValue();
+
+        assertThat(encodedPassword).isNotEqualTo("newPassword123");
+        assertThat(passwordEncoder.matches("newPassword123", encodedPassword)).isTrue();
+
+        verify(passwordResetVerificationMapper).markAsUsed(10L);
+    }
+
+    @Test
+    @DisplayName("새 비밀번호 설정 실패 - reset token이 없으면 PASSWORD_RESET_TOKEN_INVALID 예외가 발생한다")
+    void resetPassword_fail_whenTokenNotFound() {
+        // given
+        PasswordResetRequest request = new PasswordResetRequest(
+            "unknown-token",
+            "newPassword123"
+        );
+
+        String resetTokenHash = tokenHashUtil.sha256("unknown-token");
+
+        when(passwordResetVerificationMapper.findByResetTokenHashForUpdate(resetTokenHash))
+            .thenReturn(null);
+
+        // when
+        BusinessException exception = assertThrows(
+            BusinessException.class,
+            () -> passwordResetService.resetPassword(request)
+        );
+
+        // then
+        assertThat(exception.getErrorCode())
+            .isEqualTo(ErrorCode.PASSWORD_RESET_TOKEN_INVALID);
+
+        verify(memberMapper, never()).updatePassword(any(), any());
+        verify(passwordResetVerificationMapper, never()).markAsUsed(any());
+    }
+
+    @Test
+    @DisplayName("새 비밀번호 설정 실패 - VERIFIED 상태가 아니면 PASSWORD_RESET_TOKEN_INVALID 예외가 발생한다")
+    void resetPassword_fail_whenStatusIsNotVerified() {
+        // given
+        PasswordResetRequest request = new PasswordResetRequest(
+            "password-reset-token",
+            "newPassword123"
+        );
+
+        String resetTokenHash = tokenHashUtil.sha256("password-reset-token");
+
+        PasswordResetVerification verification = createPasswordResetVerification(
+            10L,
+            1L,
+            tokenHashUtil.sha256("482913"),
+            VerificationStatus.PENDING,
+            0,
+            LocalDateTime.now().plusMinutes(5),
+            null,
+            null,
+            null,
+            null,
+            LocalDateTime.now().minusMinutes(1)
+        );
+
+        when(passwordResetVerificationMapper.findByResetTokenHashForUpdate(resetTokenHash))
+            .thenReturn(verification);
+
+        // when
+        BusinessException exception = assertThrows(
+            BusinessException.class,
+            () -> passwordResetService.resetPassword(request)
+        );
+
+        // then
+        assertThat(exception.getErrorCode())
+            .isEqualTo(ErrorCode.PASSWORD_RESET_TOKEN_INVALID);
+
+        verify(memberMapper, never()).updatePassword(any(), any());
+        verify(passwordResetVerificationMapper, never()).markAsUsed(any());
+    }
+
+    @Test
+    @DisplayName("새 비밀번호 설정 실패 - 이미 USED 상태면 PASSWORD_RESET_TOKEN_ALREADY_USED 예외가 발생한다")
+    void resetPassword_fail_whenTokenAlreadyUsed() {
+        // given
+        PasswordResetRequest request = new PasswordResetRequest(
+            "password-reset-token",
+            "newPassword123"
+        );
+
+        String resetTokenHash = tokenHashUtil.sha256("password-reset-token");
+
+        PasswordResetVerification verification = createPasswordResetVerification(
+            10L,
+            1L,
+            tokenHashUtil.sha256("482913"),
+            VerificationStatus.USED,
+            0,
+            LocalDateTime.now().minusMinutes(1),
+            resetTokenHash,
+            LocalDateTime.now().plusMinutes(10),
+            LocalDateTime.now().minusMinutes(2),
+            LocalDateTime.now().minusMinutes(1),
+            LocalDateTime.now().minusMinutes(1)
+        );
+
+        when(passwordResetVerificationMapper.findByResetTokenHashForUpdate(resetTokenHash))
+            .thenReturn(verification);
+
+        // when
+        BusinessException exception = assertThrows(
+            BusinessException.class,
+            () -> passwordResetService.resetPassword(request)
+        );
+
+        // then
+        assertThat(exception.getErrorCode())
+            .isEqualTo(ErrorCode.PASSWORD_RESET_TOKEN_ALREADY_USED);
+
+        verify(memberMapper, never()).updatePassword(any(), any());
+        verify(passwordResetVerificationMapper, never()).markAsUsed(any());
+    }
+
+    @Test
+    @DisplayName("새 비밀번호 설정 실패 - reset token이 만료되면 PASSWORD_RESET_TOKEN_EXPIRED 예외가 발생한다")
+    void resetPassword_fail_whenTokenExpired() {
+        // given
+        PasswordResetRequest request = new PasswordResetRequest(
+            "password-reset-token",
+            "newPassword123"
+        );
+
+        String resetTokenHash = tokenHashUtil.sha256("password-reset-token");
+
+        PasswordResetVerification verification = createPasswordResetVerification(
+            10L,
+            1L,
+            tokenHashUtil.sha256("482913"),
+            VerificationStatus.VERIFIED,
+            0,
+            LocalDateTime.now().minusMinutes(1),
+            resetTokenHash,
+            LocalDateTime.now().minusSeconds(1),
+            LocalDateTime.now().minusMinutes(10),
+            null,
+            LocalDateTime.now().minusMinutes(10)
+        );
+
+        when(passwordResetVerificationMapper.findByResetTokenHashForUpdate(resetTokenHash))
+            .thenReturn(verification);
+
+        // when
+        BusinessException exception = assertThrows(
+            BusinessException.class,
+            () -> passwordResetService.resetPassword(request)
+        );
+
+        // then
+        assertThat(exception.getErrorCode())
+            .isEqualTo(ErrorCode.PASSWORD_RESET_TOKEN_EXPIRED);
+
+        verify(memberMapper, never()).updatePassword(any(), any());
+        verify(passwordResetVerificationMapper, never()).markAsUsed(any());
+    }
+
+    @Test
+    @DisplayName("새 비밀번호 설정 실패 - 회원이 없으면 PASSWORD_RESET_TOKEN_INVALID 예외가 발생한다")
+    void resetPassword_fail_whenMemberNotFound() {
+        // given
+        PasswordResetRequest request = new PasswordResetRequest(
+            "password-reset-token",
+            "newPassword123"
+        );
+
+        String resetTokenHash = tokenHashUtil.sha256("password-reset-token");
+
+        PasswordResetVerification verification = createPasswordResetVerification(
+            10L,
+            1L,
+            tokenHashUtil.sha256("482913"),
+            VerificationStatus.VERIFIED,
+            0,
+            LocalDateTime.now().minusMinutes(1),
+            resetTokenHash,
+            LocalDateTime.now().plusMinutes(10),
+            LocalDateTime.now().minusMinutes(1),
+            null,
+            LocalDateTime.now().minusMinutes(1)
+        );
+
+        when(passwordResetVerificationMapper.findByResetTokenHashForUpdate(resetTokenHash))
+            .thenReturn(verification);
+
+        when(memberMapper.findById(1L))
+            .thenReturn(null);
+
+        // when
+        BusinessException exception = assertThrows(
+            BusinessException.class,
+            () -> passwordResetService.resetPassword(request)
+        );
+
+        // then
+        assertThat(exception.getErrorCode())
+            .isEqualTo(ErrorCode.PASSWORD_RESET_TOKEN_INVALID);
+
+        verify(memberMapper, never()).updatePassword(any(), any());
+        verify(passwordResetVerificationMapper, never()).markAsUsed(any());
+    }
+
+    @Test
+    @DisplayName("새 비밀번호 설정 실패 - 비밀번호 업데이트 결과가 0이면 PASSWORD_RESET_TOKEN_INVALID 예외가 발생한다")
+    void resetPassword_fail_whenPasswordUpdateFailed() {
+        // given
+        PasswordResetRequest request = new PasswordResetRequest(
+            "password-reset-token",
+            "newPassword123"
+        );
+
+        String resetTokenHash = tokenHashUtil.sha256("password-reset-token");
+
+        PasswordResetVerification verification = createPasswordResetVerification(
+            10L,
+            1L,
+            tokenHashUtil.sha256("482913"),
+            VerificationStatus.VERIFIED,
+            0,
+            LocalDateTime.now().minusMinutes(1),
+            resetTokenHash,
+            LocalDateTime.now().plusMinutes(10),
+            LocalDateTime.now().minusMinutes(1),
+            null,
+            LocalDateTime.now().minusMinutes(1)
+        );
+
+        Member member = createMember(
+            1L,
+            "user@example.com",
+            passwordEncoder.encode("oldPassword123"),
+            "ACTIVE",
+            null
+        );
+
+        when(passwordResetVerificationMapper.findByResetTokenHashForUpdate(resetTokenHash))
+            .thenReturn(verification);
+
+        when(memberMapper.findById(1L))
+            .thenReturn(member);
+
+        when(memberMapper.updatePassword(eq(1L), any(String.class)))
+            .thenReturn(0);
+
+        // when
+        BusinessException exception = assertThrows(
+            BusinessException.class,
+            () -> passwordResetService.resetPassword(request)
+        );
+
+        // then
+        assertThat(exception.getErrorCode())
+            .isEqualTo(ErrorCode.PASSWORD_RESET_TOKEN_INVALID);
+
+        verify(passwordResetVerificationMapper, never()).markAsUsed(any());
+    }
+
     private Member createMember(
         Long memberId,
         String email,
+        String password,
         String memberStatus,
         LocalDateTime withdrawnAt
     ) {
@@ -633,10 +966,64 @@ class PasswordResetServiceTest {
 
         ReflectionTestUtils.setField(member, "memberId", memberId);
         ReflectionTestUtils.setField(member, "email", email);
+        ReflectionTestUtils.setField(member, "password", password);
         ReflectionTestUtils.setField(member, "memberStatus", memberStatus);
         ReflectionTestUtils.setField(member, "withdrawnAt", withdrawnAt);
 
         return member;
+    }
+
+    @Test
+    @DisplayName("새 비밀번호 설정 실패 - 기존 비밀번호와 같으면 PASSWORD_SAME_AS_CURRENT 예외가 발생한다")
+    void resetPassword_fail_whenNewPasswordSameAsCurrentPassword() {
+        // given
+        PasswordResetRequest request = new PasswordResetRequest(
+            "password-reset-token",
+            "samePassword123"
+        );
+
+        String resetTokenHash = tokenHashUtil.sha256("password-reset-token");
+
+        PasswordResetVerification verification = createPasswordResetVerification(
+            10L,
+            1L,
+            tokenHashUtil.sha256("482913"),
+            VerificationStatus.VERIFIED,
+            0,
+            LocalDateTime.now().minusMinutes(1),
+            resetTokenHash,
+            LocalDateTime.now().plusMinutes(10),
+            LocalDateTime.now().minusMinutes(1),
+            null,
+            LocalDateTime.now().minusMinutes(1)
+        );
+
+        Member member = createMember(
+            1L,
+            "user@example.com",
+            passwordEncoder.encode("samePassword123"),
+            "ACTIVE",
+            null
+        );
+
+        when(passwordResetVerificationMapper.findByResetTokenHashForUpdate(resetTokenHash))
+            .thenReturn(verification);
+
+        when(memberMapper.findById(1L))
+            .thenReturn(member);
+
+        // when
+        BusinessException exception = assertThrows(
+            BusinessException.class,
+            () -> passwordResetService.resetPassword(request)
+        );
+
+        // then
+        assertThat(exception.getErrorCode())
+            .isEqualTo(ErrorCode.PASSWORD_SAME_AS_CURRENT);
+
+        verify(memberMapper, never()).updatePassword(any(), any());
+        verify(passwordResetVerificationMapper, never()).markAsUsed(any());
     }
 
     private PasswordResetVerification createPasswordResetVerification(

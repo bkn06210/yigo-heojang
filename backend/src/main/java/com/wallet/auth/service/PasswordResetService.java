@@ -5,6 +5,7 @@ import java.util.Locale;
 
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,6 +14,7 @@ import com.wallet.auth.domain.VerificationStatus;
 import com.wallet.auth.dto.PasswordResetCodeRequest;
 import com.wallet.auth.dto.PasswordResetCodeVerifyRequest;
 import com.wallet.auth.dto.PasswordResetCodeVerifyResponse;
+import com.wallet.auth.dto.PasswordResetRequest;
 import com.wallet.auth.mapper.PasswordResetVerificationMapper;
 import com.wallet.auth.support.VerificationTokenGenerator;
 import com.wallet.auth.support.TokenHashUtil;
@@ -36,6 +38,7 @@ public class PasswordResetService {
     private final VerificationCodeGenerator verificationCodeGenerator;
     private final VerificationTokenGenerator passwordResetTokenGenerator;
     private final TokenHashUtil tokenHashUtil;
+    private final PasswordEncoder passwordEncoder;
 
     @Transactional
     public void sendResetCode(PasswordResetCodeRequest request) {
@@ -127,6 +130,47 @@ public class PasswordResetService {
         );
     }
 
+    @Transactional
+    public void resetPassword(PasswordResetRequest request) {
+        String resetTokenHash = tokenHashUtil.sha256(request.passwordResetToken());
+
+        PasswordResetVerification verification =
+            passwordResetVerificationMapper.findByResetTokenHashForUpdate(resetTokenHash);
+
+        validateResetTokenExists(verification);
+        validateResetTokenStatus(verification);
+        validateResetTokenNotExpired(verification);
+
+        Member member = memberMapper.findById(verification.getMemberId());
+
+        if (member == null || !isActiveMember(member)) {
+            throw new BusinessException(ErrorCode.PASSWORD_RESET_TOKEN_INVALID);
+        }
+
+        if (passwordEncoder.matches(request.newPassword(), member.getPassword())) {
+            throw new BusinessException(ErrorCode.PASSWORD_SAME_AS_CURRENT);
+        }
+
+        String encodedPassword = passwordEncoder.encode(request.newPassword());
+
+        int passwordUpdatedCount = memberMapper.updatePassword(
+            member.getMemberId(),
+            encodedPassword
+        );
+
+        if (passwordUpdatedCount == 0) {
+            throw new BusinessException(ErrorCode.PASSWORD_RESET_TOKEN_INVALID);
+        }
+
+        int usedCount = passwordResetVerificationMapper.markAsUsed(
+            verification.getPasswordResetVerificationId()
+        );
+
+        if (usedCount == 0) {
+            throw new BusinessException(ErrorCode.PASSWORD_RESET_TOKEN_INVALID);
+        }
+    }
+
     private void validateVerificationExists(PasswordResetVerification verification) {
         if (verification == null) {
             throw new BusinessException(ErrorCode.PASSWORD_RESET_CODE_INVALID);
@@ -195,5 +239,28 @@ public class PasswordResetService {
 
     private String normalizeEmail(String email) {
         return email.trim().toLowerCase(Locale.ROOT);
+    }
+
+    private void validateResetTokenExists(PasswordResetVerification verification) {
+        if (verification == null) {
+            throw new BusinessException(ErrorCode.PASSWORD_RESET_TOKEN_INVALID);
+        }
+    }
+
+    private void validateResetTokenStatus(PasswordResetVerification verification) {
+        if (VerificationStatus.USED.equals(verification.getVerificationStatus())) {
+            throw new BusinessException(ErrorCode.PASSWORD_RESET_TOKEN_ALREADY_USED);
+        }
+
+        if (!VerificationStatus.VERIFIED.equals(verification.getVerificationStatus())) {
+            throw new BusinessException(ErrorCode.PASSWORD_RESET_TOKEN_INVALID);
+        }
+    }
+
+    private void validateResetTokenNotExpired(PasswordResetVerification verification) {
+        if (verification.getResetTokenExpiresAt() == null
+            || !verification.getResetTokenExpiresAt().isAfter(LocalDateTime.now())) {
+            throw new BusinessException(ErrorCode.PASSWORD_RESET_TOKEN_EXPIRED);
+        }
     }
 }

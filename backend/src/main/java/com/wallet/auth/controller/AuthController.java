@@ -22,6 +22,7 @@ import com.wallet.auth.dto.LoginResult;
 import com.wallet.auth.dto.PasswordResetCodeRequest;
 import com.wallet.auth.dto.PasswordResetCodeVerifyRequest;
 import com.wallet.auth.dto.PasswordResetCodeVerifyResponse;
+import com.wallet.auth.dto.PasswordResetRequest;
 import com.wallet.auth.dto.SignupEmailVerificationConfirmRequest;
 import com.wallet.auth.dto.SignupEmailVerificationConfirmResponse;
 import com.wallet.auth.dto.SignupEmailVerificationRequest;
@@ -142,6 +143,17 @@ public class AuthController {
 
         return ResponseEntity.ok(
             ApiResponse.success("인증 번호 검증에 성공했습니다.", response)
+        );
+    }
+
+    @PostMapping("/password/resets")
+    public ResponseEntity<ApiResponse<Void>> resetPassword(
+        @Valid @RequestBody PasswordResetRequest request
+    ) {
+        passwordResetService.resetPassword(request);
+
+        return ResponseEntity.ok(
+            ApiResponse.success("비밀번호 재설정이 완료되었습니다.", null)
         );
     }
 

@@ -240,6 +240,30 @@ public enum ErrorCode {
         HttpStatus.TOO_MANY_REQUESTS,
         "PASSWORD_RESET_ATTEMPT_LIMIT_EXCEEDED",
             "인증 번호 입력 시도 횟수를 초과했습니다."
+    ),
+
+    PASSWORD_RESET_TOKEN_INVALID(
+        HttpStatus.BAD_REQUEST,
+        "PASSWORD_RESET_TOKEN_INVALID",
+        "비밀번호 재설정 토큰이 유효하지 않습니다."
+    ),
+
+    PASSWORD_RESET_TOKEN_EXPIRED(
+        HttpStatus.BAD_REQUEST,
+        "PASSWORD_RESET_TOKEN_EXPIRED",
+        "만료된 비밀번호 재설정 토큰입니다."
+    ),
+
+    PASSWORD_RESET_TOKEN_ALREADY_USED(
+        HttpStatus.CONFLICT,
+        "PASSWORD_RESET_TOKEN_ALREADY_USED",
+        "이미 사용 완료된 비밀번호 재설정 토큰입니다."
+    ),
+
+    PASSWORD_SAME_AS_CURRENT(
+        HttpStatus.BAD_REQUEST,
+        "PASSWORD_SAME_AS_CURRENT",
+        "기존 비밀번호와 동일한 비밀번호로 변경할 수 없습니다."
     );
 
     private final HttpStatus status;
