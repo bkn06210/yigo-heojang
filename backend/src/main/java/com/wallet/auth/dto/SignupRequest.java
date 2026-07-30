@@ -21,6 +21,9 @@ public record SignupRequest(
     @Size(max = 50, message = "이름은 50자 이하여야 합니다.")
     String name,
 
+    @NotBlank(message = "회원가입 이메일 인증 토큰은 필수입니다.")
+    String signupVerificationToken,
+
     @Valid
     @NotEmpty(message = "약관 동의 정보는 필수입니다.")
     List<TermAgreementRequest> termsAgreements
