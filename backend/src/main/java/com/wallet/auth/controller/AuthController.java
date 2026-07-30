@@ -20,6 +20,8 @@ import com.wallet.auth.dto.LoginRequest;
 import com.wallet.auth.dto.LoginResponse;
 import com.wallet.auth.dto.LoginResult;
 import com.wallet.auth.dto.PasswordResetCodeRequest;
+import com.wallet.auth.dto.PasswordResetCodeVerifyRequest;
+import com.wallet.auth.dto.PasswordResetCodeVerifyResponse;
 import com.wallet.auth.dto.SignupEmailVerificationConfirmRequest;
 import com.wallet.auth.dto.SignupEmailVerificationConfirmResponse;
 import com.wallet.auth.dto.SignupEmailVerificationRequest;
@@ -130,6 +132,17 @@ public class AuthController {
         return ResponseEntity
             .status(HttpStatus.ACCEPTED)
             .body(ApiResponse.success("입력한 이메일로 비밀번호 초기화 안내를 전송했습니다.", null));
+    }
+
+    @PostMapping("/password/verify-code")
+    public ResponseEntity<ApiResponse<PasswordResetCodeVerifyResponse>> verifyPasswordResetCode(
+        @Valid @RequestBody PasswordResetCodeVerifyRequest request
+    ) {
+        PasswordResetCodeVerifyResponse response = passwordResetService.verifyResetCode(request);
+
+        return ResponseEntity.ok(
+            ApiResponse.success("인증 번호 검증에 성공했습니다.", response)
+        );
     }
 
     private ResponseCookie createRefreshTokenCookie(String refreshToken, long maxAgeSeconds) {

@@ -216,6 +216,30 @@ public enum ErrorCode {
         HttpStatus.TOO_MANY_REQUESTS,
     "PASSWORD_RESET_REISSUE_COOLDOWN",
         "비밀번호 재설정 이메일은 1분에 한 번만 요청할 수 있습니다. 잠시 후 다시 시도해 주세요."
+    ),
+
+    PASSWORD_RESET_CODE_INVALID(
+        HttpStatus.BAD_REQUEST,
+        "PASSWORD_RESET_CODE_INVALID",
+            "인증 번호가 일치하지 않습니다."
+    ),
+
+    PASSWORD_RESET_CODE_EXPIRED(
+        HttpStatus.BAD_REQUEST,
+        "PASSWORD_RESET_CODE_EXPIRED",
+            "만료된 인증 번호입니다."
+    ),
+
+    PASSWORD_RESET_CODE_ALREADY_USED(
+        HttpStatus.CONFLICT,
+        "PASSWORD_RESET_CODE_ALREADY_USED",
+            "이미 사용 완료된 인증 번호입니다."
+    ),
+
+    PASSWORD_RESET_ATTEMPT_LIMIT_EXCEEDED(
+        HttpStatus.TOO_MANY_REQUESTS,
+        "PASSWORD_RESET_ATTEMPT_LIMIT_EXCEEDED",
+            "인증 번호 입력 시도 횟수를 초과했습니다."
     );
 
     private final HttpStatus status;

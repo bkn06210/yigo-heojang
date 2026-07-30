@@ -9,8 +9,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.wallet.auth.domain.PasswordResetVerification;
+import com.wallet.auth.domain.VerificationStatus;
 import com.wallet.auth.dto.PasswordResetCodeRequest;
+import com.wallet.auth.dto.PasswordResetCodeVerifyRequest;
+import com.wallet.auth.dto.PasswordResetCodeVerifyResponse;
 import com.wallet.auth.mapper.PasswordResetVerificationMapper;
+import com.wallet.auth.support.VerificationTokenGenerator;
 import com.wallet.auth.support.TokenHashUtil;
 import com.wallet.auth.support.VerificationCodeGenerator;
 import com.wallet.common.ErrorCode;
@@ -22,12 +26,15 @@ import com.wallet.member.mapper.MemberMapper;
 @Service
 public class PasswordResetService {
     private static final long VERIFICATION_CODE_EXPIRE_MINUTES = 5;
+    private static final long PASSWORD_RESET_TOKEN_EXPIRE_MINUTES = 10;
     private static final long REISSUE_WAIT_SECONDS = 60;
+    private static final int MAX_FAILED_ATTEMPT_COUNT = 5;
 
     private final PasswordResetVerificationMapper passwordResetVerificationMapper;
     private final MemberMapper memberMapper;
     private final EmailSender emailSender;
     private final VerificationCodeGenerator verificationCodeGenerator;
+    private final VerificationTokenGenerator passwordResetTokenGenerator;
     private final TokenHashUtil tokenHashUtil;
 
     @Transactional
@@ -71,6 +78,101 @@ public class PasswordResetService {
         } catch (RuntimeException e) {
             throw new BusinessException(ErrorCode.EMAIL_SEND_FAILED);
         }
+    }
+
+    @Transactional
+    public PasswordResetCodeVerifyResponse verifyResetCode(
+        PasswordResetCodeVerifyRequest request
+    ) {
+        String email = normalizeEmail(request.email());
+
+        Member member = memberMapper.findByEmail(email);
+        if (member == null || !isActiveMember(member)) {
+            throw new BusinessException(ErrorCode.PASSWORD_RESET_CODE_INVALID);
+        }
+
+        PasswordResetVerification verification =
+            passwordResetVerificationMapper.findLatestByMemberIdForUpdate(
+                member.getMemberId()
+            );
+
+        validateVerificationExists(verification);
+        validateVerificationStatus(verification);
+        validateAttemptLimit(verification);
+        validateCodeNotExpired(verification);
+
+        String requestCodeHash = tokenHashUtil.sha256(request.verificationCode());
+        if (!verification.getVerificationCodeHash().equals(requestCodeHash)) {
+            handleCodeMismatch(verification);
+        }
+
+        String passwordResetToken = passwordResetTokenGenerator.generate();
+        String resetTokenHash = tokenHashUtil.sha256(passwordResetToken);
+        LocalDateTime resetTokenExpiresAt = LocalDateTime.now()
+            .plusMinutes(PASSWORD_RESET_TOKEN_EXPIRE_MINUTES);
+
+        int updatedCount = passwordResetVerificationMapper.verify(
+            verification.getPasswordResetVerificationId(),
+            resetTokenHash,
+            resetTokenExpiresAt
+        );
+
+        if (updatedCount == 0) {
+            throw new BusinessException(ErrorCode.PASSWORD_RESET_CODE_INVALID);
+        }
+
+        return new PasswordResetCodeVerifyResponse(
+            passwordResetToken,
+            PASSWORD_RESET_TOKEN_EXPIRE_MINUTES * 60
+        );
+    }
+
+    private void validateVerificationExists(PasswordResetVerification verification) {
+        if (verification == null) {
+            throw new BusinessException(ErrorCode.PASSWORD_RESET_CODE_INVALID);
+        }
+    }
+
+    private void validateVerificationStatus(PasswordResetVerification verification) {
+        if (VerificationStatus.EXPIRED.equals(verification.getVerificationStatus())) {
+            throw new BusinessException(ErrorCode.PASSWORD_RESET_CODE_EXPIRED);
+        }
+
+        if (VerificationStatus.VERIFIED.equals(verification.getVerificationStatus())
+            || VerificationStatus.USED.equals(verification.getVerificationStatus())) {
+            throw new BusinessException(ErrorCode.PASSWORD_RESET_CODE_ALREADY_USED);
+        }
+
+        if (!VerificationStatus.PENDING.equals(verification.getVerificationStatus())) {
+            throw new BusinessException(ErrorCode.PASSWORD_RESET_CODE_INVALID);
+        }
+    }
+
+    private void validateAttemptLimit(PasswordResetVerification verification) {
+        if (verification.getFailedAttemptCount() >= MAX_FAILED_ATTEMPT_COUNT) {
+            throw new BusinessException(ErrorCode.PASSWORD_RESET_ATTEMPT_LIMIT_EXCEEDED);
+        }
+    }
+
+    private void validateCodeNotExpired(PasswordResetVerification verification) {
+        if (!verification.getVerificationCodeExpiresAt().isAfter(LocalDateTime.now())) {
+            passwordResetVerificationMapper.expireVerificationCode(
+                verification.getPasswordResetVerificationId()
+            );
+            throw new BusinessException(ErrorCode.PASSWORD_RESET_CODE_EXPIRED);
+        }
+    }
+
+    private void handleCodeMismatch(PasswordResetVerification verification) {
+        passwordResetVerificationMapper.increaseFailedAttemptCount(
+            verification.getPasswordResetVerificationId()
+        );
+
+        if (verification.getFailedAttemptCount() + 1 >= MAX_FAILED_ATTEMPT_COUNT) {
+            throw new BusinessException(ErrorCode.PASSWORD_RESET_ATTEMPT_LIMIT_EXCEEDED);
+        }
+
+        throw new BusinessException(ErrorCode.PASSWORD_RESET_CODE_INVALID);
     }
 
     private void validateReissueAllowed(PasswordResetVerification verification) {
