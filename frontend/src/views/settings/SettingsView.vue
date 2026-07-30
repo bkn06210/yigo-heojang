@@ -13,46 +13,27 @@ import ProfileEditBottomSheet from '@/components/settings/ProfileEditBottomSheet
 const router = useRouter();
 
 
-// 사용자 정보
+// 로그인 상태
+// TODO : 백엔드/Pinia 인증 상태 연결
 const authStore = useAuthStore();
 
 const { user } = storeToRefs(authStore);
 
 
-// 프로필 수정 바텀시트 상태
+// 프로필 수정 바텀시트
 const isProfileSheetOpen = ref(false);
-
-
-// 프로필 수정창 열기
-const openProfileEdit = () => {
-
-  if (!user.value) return;
-
-  isProfileSheetOpen.value = true;
-
-};
-
-
-// 프로필 수정창 닫기
-const closeProfileEdit = () => {
-
-  isProfileSheetOpen.value = false;
-
-};
-
-
-// 프로필 저장
-const updateProfile = (updatedUser) => {
-
-  userStore.updateUser(updatedUser);
-
-  closeProfileEdit();
-
-};
 
 
 // 보기 설정
 const displaySetting = ref('system');
+
+
+// 로그인 이동
+const goLogin = () => {
+
+  router.push('/auth/login');
+
+};
 
 
 // 뒤로가기
@@ -64,18 +45,70 @@ const goBack = () => {
 
 
 // 메뉴 이동
+// 로그인 상태에서만 이동 가능
 const navigateTo = (path) => {
+
+  if (!user.value) {
+
+    goLogin();
+
+    return;
+
+  }
+
 
   router.push(path);
 
 };
 
+
+
+// 프로필 수정 열기
+const openProfileEdit = () => {
+
+  if (!user.value) {
+
+    goLogin();
+
+    return;
+
+  }
+
+
+  isProfileSheetOpen.value = true;
+
+};
+
+
+
+// 프로필 수정 닫기
+const closeProfileEdit = () => {
+
+  isProfileSheetOpen.value = false;
+
+};
+
+
+
+// 프로필 저장
+const updateProfile = (updatedUser) => {
+
+  // TODO : 실제 API 연결 시 수정 API 호출
+
+  authStore.updateUser(updatedUser);
+
+
+  closeProfileEdit();
+
+};
+
+
+
 // 로그아웃
 const logout = () => {
 
-  console.log('로그아웃 버튼 클릭');
-
   authStore.logout();
+
 
   router.push('/');
 
@@ -83,31 +116,32 @@ const logout = () => {
 
 </script>
 
-
 <template>
 
   <div class="settings-view">
 
 
     <!-- 헤더 -->
-    <PageHeader 
+    <PageHeader
       title="설정"
       @back="goBack"
     />
+
 
 
     <main class="settings-content">
 
 
       <!-- 프로필 영역 -->
+
       <section
         v-if="user"
         class="profile-section"
       >
 
 
-        <!-- 프로필 이미지 -->
         <div class="profile-image-wrapper">
+
 
           <img
             v-if="user.profileImageUrl"
@@ -116,22 +150,28 @@ const logout = () => {
             class="profile-image"
           />
 
+
           <div
             v-else
             class="profile-image default-image"
           />
 
+
         </div>
 
 
-        <!-- 닉네임 + 수정 버튼 -->
+
+
         <div class="profile-info">
 
+
           <div class="nickname-area">
+
 
             <span class="nickname">
               {{ user.nickname }}
             </span>
+
 
 
             <button
@@ -148,6 +188,7 @@ const logout = () => {
 
           </div>
 
+
         </div>
 
 
@@ -155,39 +196,64 @@ const logout = () => {
 
 
 
-      <!-- 로그인하지 않은 경우 -->
+      <!-- 비로그인 상태 -->
+
       <section
         v-else
-        class="profile-section"
+        class="profile-section guest-profile"
       >
 
-        <span>
-          로그인해주세요.
-        </span>
+        <p>
+          로그인 후 이용해주세요.
+        </p>
+
+
+        <button
+          class="login-button"
+          @click="goLogin"
+        >
+
+          로그인
+
+        </button>
+
 
       </section>
 
 
 
+
+
       <!-- 설정 메뉴 -->
+
       <section class="menu-list">
 
+
+
+        <!-- 개인 맞춤 설정 -->
 
         <div
           class="menu-item"
           @click="navigateTo('/settings/personalization')"
         >
+
           <span>
             개인 맞춤 설정
           </span>
+
 
           <span>
             ›
           </span>
 
+
         </div>
 
 
+
+
+
+        <!-- 알림 -->
 
         <div
           class="menu-item"
@@ -198,24 +264,34 @@ const logout = () => {
             알림
           </span>
 
+
           <span>
             ›
           </span>
+
 
         </div>
 
 
 
+
+
+        <!-- 보기 설정 -->
+
         <div class="menu-item dropdown-item">
+
 
           <span>
             보기
           </span>
 
 
+
           <div class="menu-value-dropdown">
 
+
             <select v-model="displaySetting">
+
 
               <option value="system">
                 시스템 설정
@@ -231,7 +307,9 @@ const logout = () => {
                 다크 모드
               </option>
 
+
             </select>
+
 
 
             <span class="dropdown-arrow">
@@ -241,26 +319,14 @@ const logout = () => {
 
           </div>
 
-        </div>
-
-
-
-        <div
-          class="menu-item"
-          @click="navigateTo('/settings/security')"
-        >
-
-          <span>
-            보안 및 로그인
-          </span>
-
-          <span>
-            ›
-          </span>
 
         </div>
 
 
+
+
+
+        <!-- 계정 및 보안 -->
 
         <div
           class="menu-item"
@@ -268,39 +334,56 @@ const logout = () => {
         >
 
           <span>
-            계정
+            계정 및 보안
           </span>
+
 
           <span>
             ›
           </span>
 
+
         </div>
 
 
+
       </section>
+
+
 
 
 
       <!-- 로그아웃 -->
-      <section class="logout-section">
 
-  <button
-    class="logout-button"
-    type="button"
-    @click="logout"
-  >
-    로그아웃
-  </button>
+      <section
+        v-if="user"
+        class="logout-section"
+      >
+
+
+        <button
+          class="logout-button"
+          type="button"
+          @click="logout"
+        >
+
+          로그아웃
+
+        </button>
+
 
       </section>
+
 
 
     </main>
 
 
 
+
+
     <!-- 프로필 수정 바텀시트 -->
+
     <ProfileEditBottomSheet
 
       v-if="isProfileSheetOpen"
@@ -315,201 +398,388 @@ const logout = () => {
 
 
 
+
+
     <!-- 하단 네비게이션 -->
+
     <BottomNavigation />
 
 
   </div>
+
 
 </template>
 
 <style scoped>
 
 .settings-view {
-  display: flex;
-
-  flex-direction: column;
 
   min-height: 100vh;
 
-  background: #f9f9f9;
+  background: #f7f7f8;
+
+  display:flex;
+
+  flex-direction:column;
+
 }
 
+
+
+/* 본문 */
 
 .settings-content {
-  flex: 1;
 
-  padding: 20px;
+  flex:1;
 
-  padding-bottom: 80px;
+  padding:20px;
+
+  padding-bottom:100px;
+
 }
 
+
+
+/* 프로필 */
 
 .profile-section {
-  display: flex;
 
-  flex-direction: column;
+  background:white;
 
-  align-items: center;
+  border-radius:20px;
 
-  margin-bottom: 30px;
+  padding:24px 20px;
+
+  display:flex;
+
+  flex-direction:column;
+
+  align-items:center;
+
+  margin-bottom:20px;
+
 }
+
+
+
+.guest-profile {
+
+  gap:16px;
+
+}
+
+
+
+.guest-profile p {
+
+  margin:0;
+
+  color:#666;
+
+  font-size:15px;
+
+}
+
+
+
+.login-button {
+
+  border:none;
+
+  background:#4F46E5;
+
+  color:white;
+
+  padding:10px 24px;
+
+  border-radius:20px;
+
+  font-size:14px;
+
+  cursor:pointer;
+
+}
+
+
+
 
 
 .profile-image-wrapper {
-  width: 100px;
 
-  height: 100px;
+  width:88px;
+
+  height:88px;
+
 }
+
 
 
 .profile-image {
-  width: 100%;
 
-  height: 100%;
+  width:100%;
 
-  border-radius: 50%;
+  height:100%;
 
-  object-fit: cover;
+  border-radius:50%;
+
+  object-fit:cover;
+
 }
+
 
 
 .default-image {
-  background: #ddd;
+
+  background:#e5e7eb;
+
 }
+
 
 
 .profile-info {
-  margin-top: 12px;
+
+  margin-top:14px;
+
 }
+
 
 
 .nickname-area {
-  display: flex;
 
-  align-items: center;
+  display:flex;
 
-  justify-content: center;
+  align-items:center;
 
-  gap: 6px;
+  gap:8px;
+
 }
+
 
 
 .nickname {
-  font-size: 1.2rem;
 
-  font-weight: bold;
+  font-size:18px;
+
+  font-weight:700;
+
 }
+
 
 
 .edit-profile-button {
-  width: 24px;
 
-  height: 24px;
+  width:28px;
 
-  border: none;
+  height:28px;
 
-  background: none;
+  border:none;
 
-  display: flex;
+  background:#f3f4f6;
 
-  justify-content: center;
+  border-radius:50%;
 
-  align-items: center;
+  display:flex;
 
-  cursor: pointer;
+  align-items:center;
+
+  justify-content:center;
+
+  cursor:pointer;
+
 }
+
 
 
 .edit-profile-button .material-icons {
-  font-size: 18px;
 
-  color: #888;
+  font-size:16px;
+
+  color:#666;
+
 }
 
+
+
+
+
+/* 설정 메뉴 */
 
 .menu-list {
-  background: white;
 
-  border-radius: 8px;
+  background:white;
 
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  border-radius:20px;
+
+  overflow:hidden;
+
+  box-shadow:0 2px 10px rgba(0,0,0,0.04);
+
 }
+
 
 
 .menu-item {
-  display: flex;
 
-  justify-content: space-between;
+  min-height:56px;
 
-  align-items: center;
+  padding:0 20px;
 
-  padding: 15px 20px;
+  display:flex;
 
-  border-bottom: 1px solid #eee;
+  justify-content:space-between;
 
-  cursor: pointer;
+  align-items:center;
+
+  border-bottom:1px solid #f1f1f1;
+
+  font-size:15px;
+
+  cursor:pointer;
+
 }
+
 
 
 .menu-item:last-child {
-  border-bottom: none;
+
+  border-bottom:none;
+
 }
 
+
+
+.menu-item span:last-child {
+
+  color:#999;
+
+  font-size:22px;
+
+}
+
+
+
+
+
+/* 보기 설정 */
 
 .dropdown-item {
-  cursor: default;
+
+  cursor:default;
+
 }
+
 
 
 .menu-value-dropdown {
-  position: relative;
 
-  display: flex;
+  position:relative;
 
-  align-items: center;
+  display:flex;
+
+  align-items:center;
+
 }
+
 
 
 .menu-value-dropdown select {
-  appearance: none;
 
-  background: transparent;
+  appearance:none;
 
-  border: none;
+  -webkit-appearance:none;
 
-  font-size: 0.9rem;
+  border:none;
 
-  color: #666;
+  outline:none;
 
-  padding-right: 20px;
+
+  background:#f5f5f7;
+
+  color:#555;
+
+
+  height:34px;
+
+  min-width:110px;
+
+
+  padding:0 34px 0 14px;
+
+
+  border-radius:18px;
+
+
+  font-size:13px;
+
+  font-weight:500;
+
+  cursor:pointer;
+
 }
+
 
 
 .dropdown-arrow {
-  position: absolute;
 
-  right: 0;
+  position:absolute;
+
+  right:12px;
+
+  color:#888;
+
+  font-size:12px;
+
+  pointer-events:none;
+
 }
 
+
+
+
+
+/* 로그아웃 */
 
 .logout-section {
-  margin-top: 40px;
 
-  text-align: center;
+  margin-top:32px;
+
+  display:flex;
+
+  justify-content:center;
+
 }
+
 
 
 .logout-button {
-  color: #d9534f;
 
-  font-weight: bold;
+  border:none;
 
-  border: none;
+  background:white;
 
-  background: none;
 
-  cursor: pointer;
+  width:100%;
+
+  height:52px;
+
+
+  border-radius:16px;
+
+
+  color:#ef4444;
+
+
+  font-size:15px;
+
+  font-weight:600;
+
+
+  cursor:pointer;
+
+
+  box-shadow:0 2px 8px rgba(0,0,0,0.04);
+
 }
+
 
 </style>

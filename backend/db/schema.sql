@@ -75,6 +75,7 @@ CREATE TABLE member (
     email         VARCHAR(255) NOT NULL COMMENT '이메일(로그인 ID)',
     password_hash VARCHAR(255) NOT NULL COMMENT '비밀번호 해시',
     name          VARCHAR(50)  NOT NULL COMMENT '회원명',
+    nickname      VARCHAR(50) NOT NULL COMMENT '닉네임',
     member_status ENUM('ACTIVE','SUSPENDED','WITHDRAWN') NOT NULL DEFAULT 'ACTIVE' COMMENT '회원 상태',
     created_at    DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '생성일시',
     updated_at    DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '수정일시',
@@ -94,6 +95,26 @@ CREATE TABLE member_withdrawal (
     PRIMARY KEY (member_withdrawal_id),
     UNIQUE KEY uk_member_withdrawal_member (member_id)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT '회원 탈퇴 이력';
+
+CREATE TABLE signup_email_verification (
+    signup_email_verification_id BIGINT       NOT NULL AUTO_INCREMENT COMMENT '회원가입 이메일 인증 ID',
+    email                        VARCHAR(255) NOT NULL COMMENT '인증 대상 이메일',
+    verification_code_hash       VARCHAR(255) NOT NULL COMMENT '인증 코드 단방향 해시',
+    verification_status          ENUM('PENDING', 'VERIFIED', 'USED', 'EXPIRED') NOT NULL DEFAULT 'PENDING' COMMENT '인증 상태',
+    failed_attempt_count         INT          NOT NULL DEFAULT 0 COMMENT '인증 코드 검증 실패 횟수',
+    verification_code_expires_at DATETIME     NOT NULL COMMENT '인증 코드 만료일시',
+    signup_token_hash            VARCHAR(255) NULL COMMENT '회원가입 인증 토큰 해시',
+    signup_token_expires_at      DATETIME     NULL COMMENT '회원가입 인증 토큰 만료일시',
+    verified_at                  DATETIME     NULL COMMENT '인증 완료일시',
+    used_at                      DATETIME     NULL COMMENT '회원가입에 사용된 일시',
+    created_at                   DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '생성일시',
+    updated_at                   DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '수정일시',
+    PRIMARY KEY (signup_email_verification_id),
+    UNIQUE KEY uk_email (email),
+    UNIQUE KEY uk_signup_email_verification_token (signup_token_hash),
+    KEY idx_signup_email_verification_email_status (email, verification_status),
+    KEY idx_signup_email_verification_code_expiry (verification_code_expires_at)
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '회원가입 이메일 인증';
 
 -- reset_token_hash와 reset_token_expires_at은 둘 다 NULL이거나 둘 다 값이 있어야 한다.
 CREATE TABLE password_reset_verification (
@@ -123,7 +144,7 @@ CREATE TABLE refresh_token (
     token_hash       VARCHAR(255) NOT NULL COMMENT '토큰 단방향 해시',
     expires_at       DATETIME     NOT NULL COMMENT '만료일시',
     revoked_at       DATETIME     NULL COMMENT '폐기일시. NULL이면 유효',
-    revoke_reason    ENUM('LOGOUT','PASSWORD_CHANGED','PASSWORD_RESET','MEMBER_WITHDRAWN') NULL COMMENT '폐기 사유',
+    revoke_reason    ENUM('REISSUED', 'LOGOUT','PASSWORD_CHANGED','PASSWORD_RESET','MEMBER_WITHDRAWN') NULL COMMENT '폐기 사유',
     created_at       DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '발급일시',
     PRIMARY KEY (refresh_token_id),
     UNIQUE KEY uk_refresh_token_hash (token_hash),

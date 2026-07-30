@@ -4,13 +4,17 @@
 
 <mapper namespace="com.wallet.engine.dao.UserCardMapper">
 
+    <!-- 카드명은 응답 필드라 card 마스터를 조인해 함께 가져온다 — 카드 수만큼 이름 조회가
+         따로 나가는 것을 막는다. 정렬은 하지 않는다: 추천은 혜택액 기준으로 다시 정렬한다. -->
     <select id="findActiveCards"
             resultType="com.wallet.engine.dao.dto.UserCardRow">
-        SELECT user_card_id,
-               card_id
-        FROM user_card
-        WHERE member_id = #{memberId}
-          AND card_status = 'ACTIVE'
+        SELECT uc.user_card_id,
+               uc.card_id,
+               c.card_name
+        FROM user_card uc
+        JOIN card c ON c.card_id = uc.card_id
+        WHERE uc.member_id = #{memberId}
+          AND uc.card_status = 'ACTIVE'
     </select>
 
 </mapper>

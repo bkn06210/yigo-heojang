@@ -19,7 +19,7 @@
          @RestController는 @Controller를 메타 포함하므로 함께 제외된다. -->
     <context:component-scan base-package="com.wallet">
         <context:exclude-filter type="annotation"
-            expression="org.springframework.stereotype.Controller"/>
+                                expression="org.springframework.stereotype.Controller"/>
     </context:component-scan>
 
     <!-- HikariCP DataSource: setter 방식으로 선언 → 커넥션 풀이 '첫 쿼리 시점'에 생성(지연 초기화).
@@ -48,10 +48,6 @@
          basePackage만 com.wallet로 두면 매퍼 아닌 인터페이스까지 가짜 매퍼 빈이 되므로 두 스캐너 모두
          범위를 좁혀 둔다. 두 조건에 다 걸리는 매퍼는 MyBatis가 중복 등록을 건너뛴다. -->
     <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
-        <property name="basePackage" value="com.wallet.**.mapper"/>
-        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
-    </bean>
-    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
         <property name="basePackage" value="com.wallet"/>
         <property name="annotationClass" value="org.apache.ibatis.annotations.Mapper"/>
         <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
@@ -67,6 +63,30 @@
     <!-- 비밀번호 해시/검증 -->
     <bean id="passwordEncoder"
           class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder">
+    </bean>
+
+    <!-- ObjectMapper -->
+    <bean id="objectMapper"
+          class="com.fasterxml.jackson.databind.ObjectMapper">
+    </bean>
+
+    <!-- JavaMailSenderImpl -->
+    <bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+        <property name="host" value="${mail.host}"/>
+        <property name="port" value="${mail.port}"/>
+        <property name="username" value="${mail.username}"/>
+        <property name="password" value="${mail.password}"/>
+        <property name="defaultEncoding" value="UTF-8"/>
+        <property name="javaMailProperties">
+            <props>
+                <prop key="mail.smtp.auth">${mail.smtp.auth}</prop>
+                <prop key="mail.smtp.starttls.enable">${mail.smtp.starttls.enable}</prop>
+                <prop key="mail.smtp.connectiontimeout">${mail.smtp.connectiontimeout}</prop>
+                <prop key="mail.smtp.timeout">${mail.smtp.timeout}</prop>
+                <prop key="mail.smtp.writetimeout">${mail.smtp.writetimeout}</prop>
+                <prop key="mail.debug">${mail.debug}</prop>
+            </props>
+        </property>
     </bean>
 
 </beans>

@@ -1,7 +1,15 @@
 <script setup>
 
+// 부모(HomeView)로 전달하는 이벤트
+defineEmits([
+  'chat',
+  'click-notification',
+  'profile',
+]);
+
 // Props
 defineProps({
+
   hasUnreadNotification: {
     type: Boolean,
     default: false,
@@ -11,23 +19,13 @@ defineProps({
     type: Object,
     default: null,
   },
-})
 
-
-// Event
-defineEmits([
-  'chat',
-  'notification',
-  'profile',
-])
-
+});
 </script>
-
 
 <template>
 
 <header class="home-header">
-
 
   <!-- 앱 이름 -->
   <h1 class="logo">
@@ -36,9 +34,8 @@ defineEmits([
 
 
 
-  <!-- 우측 버튼 -->
+  <!-- 우측 영역 -->
   <div class="actions">
-
 
     <!-- 챗봇 -->
     <button
@@ -55,13 +52,13 @@ defineEmits([
     <button
       type="button"
       class="icon-button notification-btn"
-      @click="$emit('notification')"
+      @click="$emit('click-notification')"
     >
 
       🔔
 
 
-      <!-- 읽지 않은 알림 표시 -->
+      <!-- 읽지 않은 알림 -->
       <span
         v-if="hasUnreadNotification"
         class="notification-dot"
@@ -103,12 +100,9 @@ defineEmits([
         👤
       </span>
 
-
     </button>
 
-
   </div>
-
 
 </header>
 
@@ -117,7 +111,6 @@ defineEmits([
 
 
 <style scoped>
-
 
 .home-header {
 
@@ -165,19 +158,24 @@ defineEmits([
 
 
 
+/* 공통 아이콘 버튼 */
 .icon-button,
 .profile-button {
 
   width:32px;
+
   height:32px;
 
   border:none;
+
   background:none;
 
   padding:0;
 
   display:flex;
+
   align-items:center;
+
   justify-content:center;
 
   cursor:pointer;
@@ -186,24 +184,37 @@ defineEmits([
 
 
 
-.notification-dot {
+/* 알림 버튼 기준 */
+.notification-btn {
 
-  position:absolute;
-
-  top:0;
-  right:0;
-
-  width:8px;
-  height:8px;
-
-  border-radius:50%;
-
-  background:red;
+  position:relative;
 
 }
 
 
 
+/* 빨간 점 */
+.notification-dot {
+
+  position:absolute;
+
+  top:3px;
+
+  right:3px;
+
+  width:8px;
+
+  height:8px;
+
+  border-radius:50%;
+
+  background:#ff3b30;
+
+}
+
+
+
+/* 기본 프로필 */
 .default-profile {
 
   font-size:24px;
@@ -212,9 +223,11 @@ defineEmits([
 
 
 
+/* 프로필 이미지 */
 .profile-image {
 
   width:32px;
+
   height:32px;
 
   border-radius:50%;
@@ -222,14 +235,5 @@ defineEmits([
   object-fit:cover;
 
 }
-
-
-
-.notification-btn {
-
-  position:relative;
-
-}
-
 
 </style>

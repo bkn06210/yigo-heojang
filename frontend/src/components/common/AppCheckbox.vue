@@ -1,13 +1,15 @@
 <script setup>
 
 defineProps({
-  checked:Boolean,
-  label:String
-})
+  modelValue: Boolean,
+  label: String
+});
 
-defineEmits([
-  'update:checked'
-])
+
+const emit = defineEmits([
+  'update:modelValue'
+]);
+
 
 </script>
 
@@ -16,22 +18,26 @@ defineEmits([
 
 <label class="checkbox">
 
-<input
- type="checkbox"
- :checked="checked"
- @change="
- $emit(
- 'update:checked',
- $event.target.checked
- )
- "
-/>
 
-<span>
-{{ label }}
-</span>
+  <input
+    type="checkbox"
+    :checked="modelValue"
+    @change="
+      emit(
+        'update:modelValue',
+        $event.target.checked
+      )
+    "
+  />
+
+
+  <span>
+    {{ label }}
+  </span>
+
 
 </label>
+
 
 </template>
 
@@ -39,15 +45,16 @@ defineEmits([
 <style scoped>
 
 .checkbox {
- display:flex;
- gap:8px;
- align-items:center;
- font-size:14px;
+  display:flex;
+  gap:8px;
+  align-items:center;
+  font-size:14px;
 }
 
+
 input {
- width:18px;
- height:18px;
+  width:18px;
+  height:18px;
 }
 
 </style>

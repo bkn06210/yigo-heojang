@@ -12,7 +12,7 @@
     </RouterLink>
 
 
-    <RouterLink to="/payment">
+    <RouterLink to="/payment/recommend">
       결제
     </RouterLink>
 
@@ -89,3 +89,20 @@
 활성화 색상
 배지(알림 개수)
 가운데 결제 버튼 디자인
+
+/* 공통 레이어 기준 */
+
+<!-- BottomNavigation
+z-index: 100
+
+Dropdown
+z-index: 200
+
+Modal
+z-index: 500
+
+BottomSheet
+z-index: 1000
+
+Alert
+z-index: 2000 -->

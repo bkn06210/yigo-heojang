@@ -61,14 +61,14 @@ class BenefitCalculatorTest {
         }
 
         @Test
-        void 증정_혜택은_적용되지만_금액은_0원_확정이다() {
+        void 증정_혜택은_추천_계산에서_제외된다() {
             BenefitRule rule = rateRule().benefitKind(BenefitKind.GIFT).build();
 
             BenefitResult result = calculator.calculate(rule, context().build());
 
-            assertThat(result.applied()).isTrue();
-            assertThat(result.benefitAmount()).isZero();
-            assertThat(result.estimate()).isFalse();
+            // 적용·0원으로 두면 다른 혜택이 없는 카드에서 선택돼 결제와 무관한 혜택이 기록된다
+            assertThat(result.applied()).isFalse();
+            assertThat(result.notApplicableReason()).isEqualTo(NotApplicableReason.GIFT_EXCLUDED);
         }
 
         @Test

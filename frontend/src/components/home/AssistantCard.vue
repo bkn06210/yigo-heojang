@@ -7,33 +7,6 @@
 
 
 
-<template>
-
-<section class="assistant-card">
-
-
-  <!-- AI 금융 비서 제목 -->
-  <h2 class="assistant-title">
-
-    SMART FINANCIAL ASSISTANT
-
-  </h2>
-
-
-
-  <!-- AI 금융 비서 설명 -->
-  <p class="assistant-description">
-
-    고객님의 금융 데이터를 기반으로
-    맞춤 혜택과 소비 정보를 알려드립니다.
-
-  </p>
-
-
-</section>
-
-</template>
-
 
 
 <style scoped>
