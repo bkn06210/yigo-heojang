@@ -170,6 +170,14 @@
             <version>6.2.5.Final</version>
         </dependency>
 
+        <!-- 테스트 환경에서 Bean Validation 메시지 처리를 위한 EL 구현체 -->
+        <dependency>
+            <groupId>org.glassfish</groupId>
+            <artifactId>javax.el</artifactId>
+            <version>3.0.1-b12</version>
+            <scope>test</scope>
+        </dependency>
+
         <!-- slf4j 로그 -->
         <dependency>
             <groupId>org.slf4j</groupId>
