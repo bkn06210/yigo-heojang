@@ -46,9 +46,16 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final RefreshTokenService refreshTokenService;
     private final TermAgreementMapper termAgreementMapper;
+    private final SignupEmailVerificationService signupEmailVerificationService;
 
     @Transactional
     public SignupResponse signup(SignupRequest request) {
+        Long signupEmailVerificationId =
+            signupEmailVerificationService.validateSignupVerificationToken(
+                request.email(),
+                request.signupVerificationToken()
+            );
+
         validateEmailNotDuplicated(request.email());
         validateTermsAgreements(request.termsAgreements());
 
@@ -74,6 +81,8 @@ public class AuthService {
             .toList();
 
         termAgreementMapper.insertMemberTermAgreements(agreements);
+
+        signupEmailVerificationService.markAsUsed(signupEmailVerificationId);
 
         Member savedMember = memberMapper.findById(member.getMemberId());
 

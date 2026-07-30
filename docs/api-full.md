@@ -54,54 +54,56 @@
 
 ## 엔드포인트 목록
 
-| #   | 그룹             | 메서드   | 경로                                         | 기능명                                  | 담당    | 상태코드       |
-| --- | ---------------- | -------- | -------------------------------------------- | --------------------------------------- | ------- | -------------- |
-| 1   | Auth             | `GET`    | `/api/terms`                                 | 약관 목록 조회                          | 재혁 이 | 200 OK         |
-| 2   | Auth             | `POST`   | `/api/auth/signup`                           | 회원가입                                | 재혁 이 | 201 Created    |
-| 3   | Auth             | `POST`   | `/api/auth/login`                            | 로그인                                  | 재혁 이 | 200 OK         |
-| 4   | Auth             | `POST`   | `/api/auth/password/reset-link`              | 인증 코드 요청 (비밀번호 찾기)          | 재혁 이 | 202 Accepted   |
-| 5   | Auth             | `POST`   | `/api/auth/password/verify-code`             | 인증 번호 검증 (비밀번호 찾기)          | 재혁 이 | 200 OK         |
-| 6   | Auth             | `POST`   | `/api/auth/password/resets`                  | 새 비밀번호 설정 (비밀번호 찾기)        | 재혁 이 | 204 No Content |
-| 7   | Auth             | `POST`   | `/api/members/check-email`                   | 이메일(아이디) 중복 확인                | 재혁 이 | 200 OK         |
-| 8   | Auth             | `GET`    | `/api/members/me`                            | 회원정보 조회                           | 재혁 이 | 200 OK         |
-| 9   | Main             | `GET`    | `/api/notifications`                         | 알림 목록 조회                          | 재혁 이 | 200 OK         |
-| 10  | Main             | `PATCH`  | `/api/notifications/read`                    | 모든 알림 읽음                          | 재혁 이 | 200 OK         |
-| 11  | Main             | `DELETE` | `/api/notifications/{notificationId}`        | 단건 알림 삭제                          | 재혁 이 | 200 OK         |
-| 12  | Main             | `DELETE` | `/api/notifications`                         | 모든 알림 삭제                          | 재혁 이 | 200 OK         |
-| 13  | Card             | `GET`    | `/api/user-cards`                            | 보유 카드 목록 조회                     | 재혁 이 | 200 OK         |
-| 14  | Card             | `DELETE` | `/api/user-cards/{userCardId}`               | 보유 카드 삭제                          | 재혁 이 | 204 No Content |
-| 15  | Card             | `GET`    | `/api/user-cards/{userCardId}`               | 보유 카드 상세 조회                     | 재혁 이 | 200 OK         |
-| 16  | Card             | `POST`   | `/api/user-cards`                            | 보유 카드 등록                          | 재혁 이 | 201 Created    |
-| 17  | Card             | `PATCH`  | `/api/user-cards/{userCardId}/main`          | 대표 카드 설정                          | 재혁 이 | 204 NoContent  |
-| 18  | Point/Mem        | `GET`    | `/api/cards/{cardId}/benefits`               | 카드별 혜택 상세 조회                   | 재혁 이 | 200 OK         |
-| 19  | Settings         | `GET`    | `/api/members/me`                            | 회원 정보 조회                          | 재혁 이 | 200 OK         |
-| 20  | Settings         | `PATCH`  | `/api/members/me`                            | 회원 정보 수정                          | 재혁 이 | 200 OK         |
-| 21  | Settings         | `POST`   | `/api/auth/logout`                           | 로그아웃                                | 재혁 이 | 204 No Content |
-| 22  | Settings         | `PATCH`  | `/api/members/me/password`                   | 비밀번호 변경                           | 재혁 이 | 204 No Content |
-| 23  | Settings         | `GET`    | `/api/notification-settings`                 | 알림 설정 조회                          | 재혁 이 | 200 OK         |
-| 24  | Settings         | `PATCH`  | `/api/notification-settings`                 | 알림 설정 수정                          | 재혁 이 | 200 OK         |
-| 25  | Settings         | `GET`    | `/api/members/me/personalization`            | 개인화 설정 조회                        | 재혁 이 | 200 OK         |
-| 26  | Settings         | `PATCH`  | `/api/members/me/personalization`            | 개인화 설정 수정                        | 재혁 이 | 204 No Content |
-| 27  | Settings         | `DELETE` | `/api/members/me`                            | 회원탈퇴                                | 재혁 이 | 204 No Content |
-| 28  | -                | `POST`   | `/api/auth/token`                            | 토큰 재발급                             | 재혁 이 | 200 OK         |
-| 29  | Transaction      | `GET`    | `/api/transactions`                          | 소비내역 목록 조회                      | 허강상  | 200 OK         |
-| 30  | Transaction      | `GET`    | `/api/transactions/{expenseId}`              | 소비내역 상세 조회                      | 허강상  | 200 OK         |
-| 31  | Transaction      | `POST`   | `/api/transactions/sync`                     | 마이데이터 거래 동기화                  | 허강상  | 200 OK         |
-| 32  | Transaction      | `GET`    | `/api/expense-categories`                    | 소비카테고리 목록 조회                  | 허강상  | 200 OK         |
-| 33  | Payment          | `POST`   | `/api/payments`                              | 결제 처리                               | 허강상  | 201 Created    |
-| 34  | Payment          | `GET`    | `/api/payments/{paymentId}`                  | 결제 결과 조회                          | 허강상  | 200 OK         |
-| 35  | Point/Membership | `GET`    | `/api/points`                                | 포인트 목록 조회                        | 허강상  | 200 OK         |
-| 36  | Point/Membership | `GET`    | `/api/points/history`                        | 포인트 내역 조회                        | 허강상  | 200 OK         |
-| 37  | Point/Membership | `GET`    | `/api/points/{pointProviderId}/usage-places` | 포인트 사용처 조회                      | 허강상  | 200 OK         |
-| 38  | Point/Membership | `GET`    | `/api/memberships/providers`                 | 멤버십 등록 가능 목록 및 기본 추천 조회 | 허강상  | 200 OK         |
-| 39  | Point/Membership | `POST`   | `/api/memberships`                           | 멤버십 등록                             | 허강상  | 201 Created    |
-| 40  | Point/Membership | `DELETE` | `/api/memberships/{membershipRegisterId}`    | 멤버십 등록 해제                        | 허강상  | 200 OK         |
-| 41  | Point/Membership | `GET`    | `/api/memberships/{membershipRegisterId}`    | 멤버십 상세 조회                        | 허강상  | 200 OK         |
-| 42  | -                | `POST`   | `/api/recommendations`                       | 결제 직전 최적 카드 추천                | 현준 고 | 200 OK         |
-| 43  | -                | `GET`    | `/api/cards/monthly-status`                  | 보유 카드 전체 현황                     | 현준 고 | 200 OK         |
-| 44  | -                | `GET`    | `/api/cards/{userCardId}/monthly-status`     | 보유 카드 상세 현황                     | 현준 고 | 200 OK         |
-| 45  | -                | `POST`   | `/api/settlements/cancel`                    | 결제 취소 상태 갱신                     | 현준 고 | 200 OK         |
-| 46  | -                | `GET`    | `/api/points/recommendations`                | 포인트 추천                             | 현준 고 | 200 OK         |
+| #   | 그룹             | 메서드   | 경로                                          | 기능명                                  | 담당    | 상태코드       |
+| --- | ---------------- | -------- | --------------------------------------------- | --------------------------------------- | ------- | -------------- |
+| 1   | Auth             | `GET`    | `/api/terms`                                  | 약관 목록 조회                          | 재혁 이 | 200 OK         |
+| 2   | Auth             | `POST`   | `/api/auth/signup/email-verifications`        | 인증 코드 요청 (회원가입 이메일 인증)   | 재혁 이 | 202 Accepted   |
+| 3   | Auth             | `POST`   | `/api/auth/signup/email-verifications/verify` | 인증 번호 검증 (회원가입 이메일 인증)   | 재혁 이 | 200 OK         |
+| 4   | Auth             | `POST`   | `/api/auth/signup`                            | 회원가입                                | 재혁 이 | 201 Created    |
+| 5   | Auth             | `POST`   | `/api/auth/login`                             | 로그인                                  | 재혁 이 | 200 OK         |
+| 6   | Auth             | `POST`   | `/api/auth/password/reset-link`               | 인증 코드 요청 (비밀번호 찾기)          | 재혁 이 | 202 Accepted   |
+| 7   | Auth             | `POST`   | `/api/auth/password/verify-code`              | 인증 번호 검증 (비밀번호 찾기)          | 재혁 이 | 200 OK         |
+| 8   | Auth             | `POST`   | `/api/auth/password/resets`                   | 새 비밀번호 설정 (비밀번호 찾기)        | 재혁 이 | 204 No Content |
+| 9   | Auth             | `POST`   | `/api/members/check-email`                    | 이메일(아이디) 중복 확인                | 재혁 이 | 200 OK         |
+| 10  | Auth             | `GET`    | `/api/members/me`                             | 회원정보 조회                           | 재혁 이 | 200 OK         |
+| 11  | Main             | `GET`    | `/api/notifications`                          | 알림 목록 조회                          | 재혁 이 | 200 OK         |
+| 12  | Main             | `PATCH`  | `/api/notifications/read`                     | 모든 알림 읽음                          | 재혁 이 | 200 OK         |
+| 13  | Main             | `DELETE` | `/api/notifications/{notificationId}`         | 단건 알림 삭제                          | 재혁 이 | 200 OK         |
+| 14  | Main             | `DELETE` | `/api/notifications`                          | 모든 알림 삭제                          | 재혁 이 | 200 OK         |
+| 15  | Card             | `GET`    | `/api/user-cards`                             | 보유 카드 목록 조회                     | 재혁 이 | 200 OK         |
+| 16  | Card             | `DELETE` | `/api/user-cards/{userCardId}`                | 보유 카드 삭제                          | 재혁 이 | 204 No Content |
+| 17  | Card             | `GET`    | `/api/user-cards/{userCardId}`                | 보유 카드 상세 조회                     | 재혁 이 | 200 OK         |
+| 18  | Card             | `POST`   | `/api/user-cards`                             | 보유 카드 등록                          | 재혁 이 | 201 Created    |
+| 19  | Card             | `PATCH`  | `/api/user-cards/{userCardId}/main`           | 대표 카드 설정                          | 재혁 이 | 204 NoContent  |
+| 20  | Point/Mem        | `GET`    | `/api/cards/{cardId}/benefits`                | 카드별 혜택 상세 조회                   | 재혁 이 | 200 OK         |
+| 21  | Settings         | `GET`    | `/api/members/me`                             | 회원 정보 조회                          | 재혁 이 | 200 OK         |
+| 22  | Settings         | `PATCH`  | `/api/members/me`                             | 회원 정보 수정                          | 재혁 이 | 200 OK         |
+| 23  | Settings         | `POST`   | `/api/auth/logout`                            | 로그아웃                                | 재혁 이 | 204 No Content |
+| 24  | Settings         | `PATCH`  | `/api/members/me/password`                    | 비밀번호 변경                           | 재혁 이 | 204 No Content |
+| 25  | Settings         | `GET`    | `/api/notification-settings`                  | 알림 설정 조회                          | 재혁 이 | 200 OK         |
+| 26  | Settings         | `PATCH`  | `/api/notification-settings`                  | 알림 설정 수정                          | 재혁 이 | 200 OK         |
+| 27  | Settings         | `GET`    | `/api/members/me/personalization`             | 개인화 설정 조회                        | 재혁 이 | 200 OK         |
+| 28  | Settings         | `PATCH`  | `/api/members/me/personalization`             | 개인화 설정 수정                        | 재혁 이 | 204 No Content |
+| 29  | Settings         | `DELETE` | `/api/members/me`                             | 회원탈퇴                                | 재혁 이 | 204 No Content |
+| 30  | -                | `POST`   | `/api/auth/token`                             | 토큰 재발급                             | 재혁 이 | 200 OK         |
+| 31  | Transaction      | `GET`    | `/api/transactions`                           | 소비내역 목록 조회                      | 허강상  | 200 OK         |
+| 32  | Transaction      | `GET`    | `/api/transactions/{expenseId}`               | 소비내역 상세 조회                      | 허강상  | 200 OK         |
+| 33  | Transaction      | `POST`   | `/api/transactions/sync`                      | 마이데이터 거래 동기화                  | 허강상  | 200 OK         |
+| 34  | Transaction      | `GET`    | `/api/expense-categories`                     | 소비카테고리 목록 조회                  | 허강상  | 200 OK         |
+| 35  | Payment          | `POST`   | `/api/payments`                               | 결제 처리                               | 허강상  | 201 Created    |
+| 36  | Payment          | `GET`    | `/api/payments/{paymentId}`                   | 결제 결과 조회                          | 허강상  | 200 OK         |
+| 37  | Point/Membership | `GET`    | `/api/points`                                 | 포인트 목록 조회                        | 허강상  | 200 OK         |
+| 38  | Point/Membership | `GET`    | `/api/points/history`                         | 포인트 내역 조회                        | 허강상  | 200 OK         |
+| 39  | Point/Membership | `GET`    | `/api/points/{pointProviderId}/usage-places`  | 포인트 사용처 조회                      | 허강상  | 200 OK         |
+| 40  | Point/Membership | `GET`    | `/api/memberships/providers`                  | 멤버십 등록 가능 목록 및 기본 추천 조회 | 허강상  | 200 OK         |
+| 41  | Point/Membership | `POST`   | `/api/memberships`                            | 멤버십 등록                             | 허강상  | 201 Created    |
+| 42  | Point/Membership | `DELETE` | `/api/memberships/{membershipRegisterId}`     | 멤버십 등록 해제                        | 허강상  | 200 OK         |
+| 43  | Point/Membership | `GET`    | `/api/memberships/{membershipRegisterId}`     | 멤버십 상세 조회                        | 허강상  | 200 OK         |
+| 44  | -                | `POST`   | `/api/recommendations`                        | 결제 직전 최적 카드 추천                | 현준 고 | 200 OK         |
+| 45  | -                | `GET`    | `/api/cards/monthly-status`                   | 보유 카드 전체 현황                     | 현준 고 | 200 OK         |
+| 46  | -                | `GET`    | `/api/cards/{userCardId}/monthly-status`      | 보유 카드 상세 현황                     | 현준 고 | 200 OK         |
+| 47  | -                | `POST`   | `/api/settlements/cancel`                     | 결제 취소 상태 갱신                     | 현준 고 | 200 OK         |
+| 48  | -                | `GET`    | `/api/points/recommendations`                 | 포인트 추천                             | 현준 고 | 200 OK         |
 
 ## 공통 에러 코드
 
@@ -221,24 +223,146 @@ GET /api/terms
 }
 ```
 
-### 2. 회원가입
+### 2. 인증 코드 요청 (회원가입 이메일 인증)
+
+```
+POST /api/auth/signup/email-verifications
+```
+
+회원가입에 사용할 이메일을 입력받아 인증 코드를 발송한다.
+
+**화면** W_Auth_Signup · **라우트** /auth/signup · **권한** GUEST · **담당** 재혁 이 · **상태 코드** 202 Accepted
+
+**Business Rules**
+
+- 이메일 형식이 올바른 경우에만 인증 코드를 발급한다.
+- 이미 가입된 이메일은 회원가입 이메일 인증을 요청할 수 없다.
+- 인증 코드는 숫자 6자리로 발급한다.
+- 인증 코드는 5분 동안만 유효하다.
+- 인증 코드 원문은 저장하지 않고 단방향 해시로 저장한다.
+- 동일 이메일로 새 인증 코드를 요청하면 기존 진행 중 인증 정보는 새 코드 기준으로 갱신한다.
+- 동일 이메일의 반복 요청은 60초 재요청 대기시간을 둔다.
+- 메일 발송 실패 시 인증 코드 요청은 실패로 처리한다.
+
+**Request**
+
+```json
+{
+  "email": "user@example.com"
+}
+```
+
+**Response**
+
+```json
+{
+  "success": true,
+  "code": "SUCCESS",
+  "message": "인증 코드가 발송되었습니다.",
+  "data": {
+    "email": "user@example.com",
+    "expiresIn": 300
+  }
+}
+```
+
+**고유 에러**
+
+`EMAIL_ALREADY_EXISTS(409) SIGNUP_EMAIL_VERIFICATION_REQUEST_TOO_FREQUENT(429) EMAIL_SEND_FAILED(500)`
+
+**Error Response Format**
+
+```json
+{
+  "success": false,
+  "code": "SIGNUP_EMAIL_VERIFICATION_REQUEST_TOO_FREQUENT",
+  "message": "인증 코드는 60초 후에 다시 요청할 수 있습니다.",
+  "errors": []
+}
+```
+
+### 3. 인증 번호 검증 (회원가입 이메일 인증)
+
+```
+POST /api/auth/signup/email-verifications/verify
+```
+
+회원가입 이메일로 발송된 인증 번호를 검증하고, 최종 회원가입 요청에 사용할 일회용 회원가입 인증 토큰을 발급한다.
+
+**화면** W_Auth_Signup · **라우트** /auth/signup · **권한** GUEST · **담당** 재혁 이 · **상태 코드** 200 OK
+
+**Business Rules**
+
+- 이메일과 인증 번호가 일치해야 한다.
+- 인증 번호는 만료되지 않아야 한다.
+- 인증 번호 검증 실패 시 실패 횟수를 증가시킨다.
+- 인증 번호 검증 실패 횟수가 5회를 초과하면 추가 검증을 제한한다.
+- 인증 번호 검증 성공 시 회원가입 인증 토큰을 발급한다.
+- 회원가입 인증 토큰은 10분 동안만 유효하다.
+- 회원가입 인증 토큰 원문은 저장하지 않고 단방향 해시로 저장한다.
+- 회원가입 인증 토큰은 최종 회원가입 성공 시 사용 완료 처리한다.
+- 이미 검증 완료된 인증 정보에 대해 새 코드 검증을 다시 수행할 수 없다.
+
+**Request**
+
+```json
+{
+  "email": "user@example.com",
+  "verificationCode": "482913"
+}
+```
+
+**Response**
+
+```json
+{
+  "success": true,
+  "code": "SUCCESS",
+  "message": "이메일 인증이 완료되었습니다.",
+  "data": {
+    "signupVerificationToken": "q6Gb0f82tOfwUdw1JDY9Rh5qfXb7p3Er",
+    "expiresIn": 600
+  }
+}
+```
+
+**고유 에러**
+
+`SIGNUP_EMAIL_VERIFICATION_CODE_INVALID(400) SIGNUP_EMAIL_VERIFICATION_CODE_EXPIRED(400) SIGNUP_EMAIL_VERIFICATION_ATTEMPT_LIMIT_EXCEEDED(429)`
+
+**Error Response Format**
+
+```json
+{
+  "success": false,
+  "code": "SIGNUP_EMAIL_VERIFICATION_CODE_INVALID",
+  "message": "인증 번호가 일치하지 않습니다.",
+  "errors": []
+}
+```
+
+### 4. 회원가입
 
 ```
 POST /api/auth/signup
 ```
 
-이름, 이메일, 비밀번호를 입력받아 신규 회원 계정을 생성한다.
+이메일 인증을 완료한 사용자의 이름, 이메일, 비밀번호, 약관 동의 정보를 입력받아 신규 회원 계정을 생성한다.
 
 **화면** W_Auth_Signup · **라우트** /auth/signup · **권한** GUEST · **담당** 재혁 이 · **상태 코드** 201 Created
 
 **Business Rules**
 
 - 이메일은 다른 회원과 중복될 수 없다.
+- 회원가입 전에 이메일 인증을 완료해야 한다.
+- 회원가입 요청 이메일과 회원가입 인증 토큰에 연결된 이메일이 일치해야 한다.
+- 회원가입 인증 토큰은 만료되지 않아야 한다.
+- 이미 사용 완료된 회원가입 인증 토큰은 다시 사용할 수 없다.
 - 비밀번호는 암호화가 아닌 단방향 해시로 저장한다.
 - 회원 상태의 기본값은 ACTIVE이다.
 - 회원가입 성공 후, 로그인 인증 성공 시 Access Token을 발급한다.
 - 회원가입 성공 후, 로그인을 하려면 별도로 로그인을 수행해야 한다.
-- 회원 생성과 약관 동의 저장은 하나의 트랜잭션으로 처리한다.
+- 회원 생성, 약관 동의 저장, 이메일 인증 정보 사용 완료 처리는 하나의 트랜잭션으로 처리한다.
 
 **Request**
 
@@ -247,6 +371,7 @@ POST /api/auth/signup
   "email": "user@example.com",
   "password": "1234",
   "name": "이재혁",
+  "signupVerificationToken": "q6Gb0f82tOfwUdw1JDY9Rh5qfXb7p3Er",
   "termsAgreements": [
     {
       "termsVersionId": 10,
@@ -283,7 +408,7 @@ POST /api/auth/signup
 
 **고유 에러**
 
-`EMAIL_ALREADY_EXISTS(409)`
+`EMAIL_ALREADY_EXISTS(409) SIGNUP_VERIFICATION_TOKEN_INVALID(400) SIGNUP_VERIFICATION_TOKEN_EXPIRED(400) SIGNUP_VERIFICATION_EMAIL_MISMATCH(400) SIGNUP_EMAIL_VERIFICATION_ALREADY_USED(409)`
 
 **Error Response Format**
 
@@ -305,7 +430,7 @@ POST /api/auth/signup
 }
 ```
 
-### 3. 로그인
+### 5. 로그인
 
 ```
 POST /api/auth/login
@@ -375,7 +500,7 @@ POST /api/auth/login
 }
 ```
 
-### 4. 인증 코드 요청 (비밀번호 찾기)
+### 6. 인증 코드 요청 (비밀번호 찾기)
 
 ```
 POST /api/auth/password/reset-link
@@ -427,7 +552,7 @@ POST /api/auth/password/reset-link
 }
 ```
 
-### 5. 인증 번호 검증 (비밀번호 찾기)
+### 7. 인증 번호 검증 (비밀번호 찾기)
 
 ```
 POST /api/auth/password/verify-code
@@ -486,7 +611,7 @@ POST /api/auth/password/verify-code
 }
 ```
 
-### 6. 새 비밀번호 설정
+### 8. 새 비밀번호 설정
 
 (비밀번호 찾기)
 
@@ -533,7 +658,7 @@ POST /api/auth/password/resets
 }
 ```
 
-### 7. 이메일(아이디) 중복 확인
+### 9. 이메일(아이디) 중복 확인
 
 ```
 POST /api/members/check-email
@@ -2605,14 +2730,14 @@ GET /api/payments/{paymentId}
 
 **고유 에러**
 
-`ACCESS_TOKEN_INVALID(401) PAYMENT_NOT_FOUND(404) PAYMENT_ACCESS_DENIED(403) PAYMENT_READ_FAILED(500)`
+`UNAUTHORIZED(401) MOCK_+PYAMENT_NOT_FOUND(404) MOCK_PAYMENT_ACCESS_DENIED(403) MOCK_PAYMNENT_READ_FAILED(500)`
 
 **Error Response Format**
 
 ```json
 {
   "success": false,
-  "code": "PAYMENT_NOT_FOUND",
+  "code": "MOCK_PAYMENT_NOT_FOUND",
   "message": "결제 정보를 찾을 수 없습니다.",
   "errors": []
 }
