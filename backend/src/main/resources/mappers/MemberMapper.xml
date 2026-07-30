@@ -38,4 +38,14 @@
             LIMIT 1
     </select>
 
+    <update id="updateMemberInfo">
+        UPDATE member
+        SET
+            nickname = #{nickname},
+            updated_at = CURRENT_TIMESTAMP
+        WHERE member_id = #{memberId}
+          AND member_status = 'ACTIVE'
+          AND withdrawn_at IS NULL
+    </update>
+
 </mapper>
