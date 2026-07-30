@@ -1,98 +1,235 @@
 <script setup>
-// =========================
+
 // Props
-// =========================
 defineProps({
-  // 읽지 않은 알림 여부
   hasUnreadNotification: {
     type: Boolean,
     default: false,
   },
+
+  user: {
+    type: Object,
+    default: null,
+  },
 })
 
-// =========================
+
 // Event
-// =========================
-const emit = defineEmits([
+defineEmits([
   'chat',
   'notification',
   'profile',
 ])
+
 </script>
 
+
 <template>
-  <header class="home-header">
 
-    <!-- 앱 이름 -->
-    <h1 class="logo">
-        YIGO
-    </h1>
+<header class="home-header">
 
-    <!-- 우측 버튼 -->
-    <div class="actions">
 
-      <!-- 챗봇 -->
-      <button
-        type="button"
-        @click="$emit('chat')"
-      >
-        🤖
-      </button>
+  <!-- 앱 이름 -->
+  <h1 class="logo">
+    YIGO
+  </h1>
 
-      <!-- 알림 -->
-      <button
-        type="button"
-        class="notification-btn"
-        @click="$emit('notification')"
-      >
-        🔔
 
-        <!-- 읽지 않은 알림 -->
-        <span
-          v-if="hasUnreadNotification"
-          class="notification-dot"
-        />
-      </button>
 
-      <!-- 프로필 -->
-      <button
-        type="button"
-        @click="$emit('profile')"
+  <!-- 우측 버튼 -->
+  <div class="actions">
+
+
+    <!-- 챗봇 -->
+    <button
+      type="button"
+      class="icon-button"
+      @click="$emit('chat')"
+    >
+      🤖
+    </button>
+
+
+
+    <!-- 알림 -->
+    <button
+      type="button"
+      class="icon-button notification-btn"
+      @click="$emit('notification')"
+    >
+
+      🔔
+
+
+      <!-- 읽지 않은 알림 표시 -->
+      <span
+        v-if="hasUnreadNotification"
+        class="notification-dot"
+      />
+
+    </button>
+
+
+
+    <!-- 사용자 이름 -->
+    <span
+      v-if="user"
+      class="user-name"
+    >
+      {{ user.name }}
+    </span>
+
+
+
+    <!-- 프로필 -->
+    <button
+      type="button"
+      class="profile-button"
+      @click="$emit('profile')"
+    >
+
+      <img
+        v-if="user && user.profileImageUrl"
+        :src="user.profileImageUrl"
+        class="profile-image"
+        alt="프로필 이미지"
+      />
+
+
+      <span
+        v-else
+        class="default-profile"
       >
         👤
-      </button>
+      </span>
 
-    </div>
 
-  </header>
+    </button>
+
+
+  </div>
+
+
+</header>
+
 </template>
 
+
+
 <style scoped>
-.home-header{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-bottom:16px;
+
+
+.home-header {
+
+  display:flex;
+
+  justify-content:space-between;
+
+  align-items:center;
+
+  margin-bottom:16px;
+
 }
 
-.actions{
-    display:flex;
-    gap:12px;
+
+
+.logo {
+
+  font-size:24px;
+
+  font-weight:700;
+
 }
 
-button{
-    position:relative;
+
+
+.actions {
+
+  display:flex;
+
+  align-items:center;
+
+  gap:12px;
+
 }
 
-.notification-dot{
-    position:absolute;
-    top:0;
-    right:0;
 
-    width:8px;
-    height:8px;
 
-    border-radius:50%;
-    background:red;
+.user-name {
+
+  font-size:14px;
+
+  font-weight:600;
+
 }
+
+
+
+.icon-button,
+.profile-button {
+
+  width:32px;
+  height:32px;
+
+  border:none;
+  background:none;
+
+  padding:0;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  cursor:pointer;
+
+}
+
+
+
+.notification-dot {
+
+  position:absolute;
+
+  top:0;
+  right:0;
+
+  width:8px;
+  height:8px;
+
+  border-radius:50%;
+
+  background:red;
+
+}
+
+
+
+.default-profile {
+
+  font-size:24px;
+
+}
+
+
+
+.profile-image {
+
+  width:32px;
+  height:32px;
+
+  border-radius:50%;
+
+  object-fit:cover;
+
+}
+
+
+
+.notification-btn {
+
+  position:relative;
+
+}
+
+
 </style>

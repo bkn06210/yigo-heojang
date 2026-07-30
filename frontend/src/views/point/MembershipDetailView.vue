@@ -5,7 +5,7 @@ import { ref } from 'vue'
 
 // 공통 컴포넌트
 import PageHeader from '@/components/common/PageHeader.vue'
-import BottomNav from '@/components/common/BottomNav.vue'
+import BottomNavigation from '@/components/layout/BottomNavigation.vue'
 
 
 // 삭제 팝업 상태
@@ -179,6 +179,8 @@ const deleteMembership = () => {
       </button>
 
     </div>
+
+    <BottomNavigation />
 
 
   </div>
