@@ -1,24 +1,30 @@
 <script setup>
-import PageHeader from '@/components/common/PageHeader.vue'
-import AIBriefingCard from '@/components/common/AIBriefingCard.vue'
+import { ref, onMounted } from 'vue'
+import { useRoute } from 'vue-router'
+import { getPoints, getPointUsagePlaces } from '@/api/pointApi'
 
+const route = useRoute()
 
-// 임시 데이터
-// 추후 금융 포인트 상세 API 응답으로 교체
-const pointData = {
-  name: 'KB Pay 포인트',
-  totalPoint: 12300,
+const point = ref(null)
+const usagePlaces = ref([])
 
-  aiMessage:
-    '현재 보유 포인트는 카드 결제에 활용하는 것을 추천해요.',
+const fetchPointDetail = async () => {
+  const pointWalletId = Number(route.params.id)
 
-  usageMethods: [
-    '카드 결제',
-    '간편결제',
-    '포인트 전환'
-  ]
+  const response = await getPoints()
+  const points = response.data?.data?.points || []
+
+  point.value = points.find((item) => item.pointWalletId === pointWalletId)
+
+  if (point.value) {
+    const usageResponse = await getPointUsagePlaces(point.value.pointProviderId)
+    usagePlaces.value = usageResponse.data?.data?.usagePlaces || []
+  }
 }
 
+onMounted(() => {
+  fetchPointDetail()
+})
 </script>
 
 
