@@ -6,3 +6,18 @@ db.driver=com.mysql.cj.jdbc.Driver
 db.url=jdbc:mysql://localhost:3306/wallet?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
 db.username=root
 db.password=변경하세요
+
+# --- SMTP server settings ---
+mail.host=smtp.gmail.com
+mail.port=587
+mail.username=변경하세요
+mail.password=변경하세요
+mail.from=변경하세요@example.com
+
+# --- SMTP options ---
+mail.smtp.auth=true
+mail.smtp.starttls.enable=true
+mail.smtp.connectiontimeout=5000
+mail.smtp.timeout=5000
+mail.smtp.writetimeout=5000
+mail.debug=false

@@ -128,6 +128,82 @@ public enum ErrorCode {
         HttpStatus.CONFLICT,
         "EMAIL_ALREADY_EXISTS",
             "이미 가입된 이메일입니다."
+    ),
+
+    // =========================================================================
+    //  6. 회원가입 이메일 인증 (SignupEmailVerification)
+    // =========================================================================
+    /** 회원가입 이메일 인증 코드 불일치 */
+    SIGNUP_EMAIL_VERIFICATION_CODE_INVALID(
+        HttpStatus.BAD_REQUEST,
+    "SIGNUP_EMAIL_VERIFICATION_CODE_INVALID",
+        "인증 코드가 일치하지 않습니다."
+    ),
+
+    /** 회원가입 이메일 인증 코드 만료 */
+    SIGNUP_EMAIL_VERIFICATION_CODE_EXPIRED(
+        HttpStatus.BAD_REQUEST,
+    "SIGNUP_EMAIL_VERIFICATION_CODE_EXPIRED",
+        "인증 코드가 만료되었습니다."
+    ),
+
+    /** 회원가입 이메일 인증 요청 재시도 제한 */
+    SIGNUP_EMAIL_VERIFICATION_REQUEST_TOO_FREQUENT(
+        HttpStatus.TOO_MANY_REQUESTS,
+    "SIGNUP_EMAIL_VERIFICATION_REQUEST_TOO_FREQUENT",
+        "인증 코드는 잠시 후 다시 요청할 수 있습니다."
+    ),
+
+    /** 회원가입 이메일 인증 실패 횟수 초과 */
+    SIGNUP_EMAIL_VERIFICATION_ATTEMPT_LIMIT_EXCEEDED(
+        HttpStatus.TOO_MANY_REQUESTS,
+    "SIGNUP_EMAIL_VERIFICATION_ATTEMPT_LIMIT_EXCEEDED",
+        "인증 코드 입력 가능 횟수를 초과했습니다."
+    ),
+
+    /** 회원가입 이메일 인증 정보를 찾을 수 없음 */
+    SIGNUP_EMAIL_VERIFICATION_NOT_FOUND(
+        HttpStatus.NOT_FOUND,
+    "SIGNUP_EMAIL_VERIFICATION_NOT_FOUND",
+        "이메일 인증 정보를 찾을 수 없습니다."
+    ),
+
+    /** 회원가입 인증 토큰 발급 실패 */
+    SIGNUP_VERIFICATION_TOKEN_FAILED(
+        HttpStatus.INTERNAL_SERVER_ERROR,
+    "SIGNUP_VERIFICATION_TOKEN_FAILED",
+        "회원가입 인증 처리에 실패했습니다."
+    ),
+
+    /** 이메일 발송 실패 */
+    EMAIL_SEND_FAILED(
+        HttpStatus.INTERNAL_SERVER_ERROR,
+    "EMAIL_SEND_FAILED",
+        "인증 메일 발송에 실패했습니다."
+    ),
+
+    SIGNUP_VERIFICATION_TOKEN_INVALID(
+        HttpStatus.BAD_REQUEST,
+    "SIGNUP_VERIFICATION_TOKEN_INVALID",
+        "회원가입 인증 토큰이 유효하지 않습니다."
+    ),
+
+    SIGNUP_VERIFICATION_TOKEN_EXPIRED(
+        HttpStatus.BAD_REQUEST,
+    "SIGNUP_VERIFICATION_TOKEN_EXPIRED",
+        "회원가입 인증 토큰이 만료되었습니다."
+    ),
+
+    SIGNUP_VERIFICATION_EMAIL_MISMATCH(
+        HttpStatus.BAD_REQUEST,
+    "SIGNUP_VERIFICATION_EMAIL_MISMATCH",
+        "인증된 이메일과 회원가입 이메일이 일치하지 않습니다."
+    ),
+
+    SIGNUP_EMAIL_VERIFICATION_ALREADY_USED(
+        HttpStatus.BAD_REQUEST,
+    "SIGNUP_EMAIL_VERIFICATION_ALREADY_USED",
+        "이미 사용 완료된 이메일 인증 정보입니다."
     );
 
     private final HttpStatus status;

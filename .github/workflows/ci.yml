@@ -54,6 +54,18 @@ jobs:
           db.url=jdbc:mysql://127.0.0.1:3306/wallet?serverTimezone=Asia/Seoul&characterEncoding=UTF-8&allowPublicKeyRetrieval=true
           db.username=root
           db.password=root
+
+          mail.host=localhost
+          mail.port=2525
+          mail.username=test
+          mail.password=test
+          mail.from=test@example.com
+          mail.smtp.auth=false
+          mail.smtp.starttls.enable=false
+          mail.smtp.connectiontimeout=1000
+          mail.smtp.timeout=1000
+          mail.smtp.writetimeout=1000
+          mail.debug=false
           EOF
 
       # mvnw는 저장소에 실행권한 없이 커밋돼 있어(100644) chmod가 필요하다.
