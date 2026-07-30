@@ -5,12 +5,23 @@ package com.wallet.engine.dao.dto;
  *
  * sharedMonthlyLimit은 Long이다 — NULL(통합한도 없음)과 0(혜택 없음)의 의미가 다르다.
  * 원시 타입으로 받으면 NULL이 0으로 뭉개져 이 구분이 사라진다.
+ *
+ * cardId는 여러 카드의 구간을 한 번에 조회할 때 그룹핑 키로 쓴다.
  */
 public class PerformanceTierRow {
 
+    private long cardId;
     private long tierId;
     private long minPerformanceAmount;
     private Long sharedMonthlyLimit;
+
+    public long getCardId() {
+        return cardId;
+    }
+
+    public void setCardId(long cardId) {
+        this.cardId = cardId;
+    }
 
     public long getTierId() {
         return tierId;

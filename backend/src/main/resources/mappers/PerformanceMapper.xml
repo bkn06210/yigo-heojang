@@ -40,11 +40,28 @@
 
     <select id="findTiers"
             resultType="com.wallet.engine.dao.dto.PerformanceTierRow">
-        SELECT tier_id,
+        SELECT card_id,
+               tier_id,
                min_performance_amount,
                shared_monthly_limit
         FROM performance_tier
         WHERE card_id = #{cardId}
+    </select>
+
+    <!-- 보유카드 전부의 구간을 한 번에 가져온다. 카드 수만큼 조회가 반복되지 않도록 IN으로 묶고,
+         호출자가 card_id로 그룹핑한다. 빈 목록으로 호출하면 IN ()이 되어 문법 오류이므로
+         호출 측에서 막는다. -->
+    <select id="findTiersByCardIds"
+            resultType="com.wallet.engine.dao.dto.PerformanceTierRow">
+        SELECT card_id,
+               tier_id,
+               min_performance_amount,
+               shared_monthly_limit
+        FROM performance_tier
+        WHERE card_id IN
+        <foreach item="cardId" collection="cardIds" open="(" separator="," close=")">
+            #{cardId}
+        </foreach>
     </select>
 
 </mapper>

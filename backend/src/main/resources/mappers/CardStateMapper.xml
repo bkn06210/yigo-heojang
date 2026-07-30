@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- resultType 자동 매핑에 의존한다(mapUnderscoreToCamelCase=true).
+     일 소진 리셋(last_applied_date가 오늘이 아니면 0)과 전월실적 폴백 판정은 여기서 하지 않는다
+     — assembler의 몫이다. SQL에 CURDATE() 같은 날짜 함수를 두지 않아 조회가 시계에 의존하지 않는다. -->
+<mapper namespace="com.wallet.engine.dao.CardStateMapper">
+
+    <!-- 기준월과 직전월 두 달치를 함께 읽는다. 기준월 행이 없을 때(월이 바뀐 뒤 첫 결제 전)
+         직전월 행의 current_performance_amount가 전월실적이 되기 때문이다.
+         쿼리는 하나로 유지되고, 어느 달 행인지는 base_year_month로 구분한다.
+         user_card 조인으로 회원 소유 + 활성 카드로 제한한다 — 상태 테이블에는 member_id가
+         없어(user_card_id 기준) 조인이 소유권 필터를 겸한다. -->
+    <select id="findStates"
+            resultType="com.wallet.engine.dao.dto.CardMonthlyStateRow">
+        SELECT s.user_card_id,
+               s.base_year_month,
+               s.prev_performance_amount,
+               s.current_performance_amount,
+               s.shared_limit_used
+        FROM user_card_monthly_state s
+        JOIN user_card uc ON uc.user_card_id = s.user_card_id
+        WHERE uc.member_id = #{memberId}
+          AND uc.card_status = 'ACTIVE'
+          AND s.base_year_month IN (#{baseYearMonth}, #{previousYearMonth})
+    </select>
+
+    <!-- 소진 현황은 기준월 한 달치만 읽는다 — 월마다 리셋되는 값이라 직전월을 섞으면 안 된다.
+         일 소진 컬럼은 last_applied_date 당일 기준 값이라 원값 그대로 내보내고,
+         오늘이 아니면 0으로 접는 판정은 assembler가 한다. -->
+    <select id="findUsages"
+            resultType="com.wallet.engine.dao.dto.BenefitUsageRow">
+        SELECT u.user_card_id,
+               u.benefit_id,
+               u.used_amount,
+               u.used_count,
+               u.last_applied_date,
+               u.daily_used_amount,
+               u.daily_used_count
+        FROM user_benefit_usage u
+        JOIN user_card uc ON uc.user_card_id = u.user_card_id
+        WHERE uc.member_id = #{memberId}
+          AND uc.card_status = 'ACTIVE'
+          AND u.base_year_month = #{baseYearMonth}
+    </select>
+
+</mapper>
