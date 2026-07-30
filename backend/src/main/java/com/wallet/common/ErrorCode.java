@@ -77,6 +77,12 @@ public enum ErrorCode {
         "NOT_FOUND",
         "요청한 리소스를 찾을 수 없습니다."),
 
+    /** 이미 취소된 소비내역 — 취소 정산을 다시 요청한 경우 */
+    ALREADY_CANCELED(
+        HttpStatus.CONFLICT,
+        "ALREADY_CANCELED",
+        "이미 취소된 소비내역입니다."),
+
 
     // =========================================================================
     //  4. 서버 오류 (Server)
