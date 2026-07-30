@@ -2246,6 +2246,9 @@ POST /api/settlements/cancel
 - 주의사항:
 - 결제(가산)와 취소(차감)의 처리 경로가 다르다 — 아래 4-A / 4-B 참고.
 - 놓친 혜택(최적 대비 차액)은 계산·저장하지 않는다. (범위 밖)
+- 취소는 당월 건만 처리한다. 전월 이전 거래 취소는 범위 밖(`RESOURCE_STATE_INVALID`, 400) — 전월실적이 바뀌면 실적구간·통합한도 재판정이 필요하기 때문.
+- 취소 상태 전환(`APPROVED→CANCELED`)은 엔진이 compare-and-set으로 수행한다(중복 취소 차단 = 멱등). expense 상태 변경 주체는 소비내역 담당과 협의 대상(잠정).
+- 가산 시 한도 소진으로 혜택액이 0원이면 `applied_benefit_id`·소진(횟수·사용액)을 기록하지 않는다. 단 그 거래의 실적 인정분은 정상 가산된다.
 
 **담당** 현준 고 · **상태 코드** 200 OK
 
@@ -2291,7 +2294,7 @@ POST /api/settlements/cancel
 
 **고유 에러**
 
-`NOT_FOUND(404) ALREADY_CANCELED(409)`
+`NOT_FOUND(404) ALREADY_CANCELED(409) RESOURCE_STATE_INVALID(400)`
 
 ### 33. 포인트 추천
 
