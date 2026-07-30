@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.wallet.auth.domain.SignupEmailVerification;
+import com.wallet.auth.domain.VerificationStatus;
 import com.wallet.auth.dto.SignupEmailVerificationConfirmRequest;
 import com.wallet.auth.dto.SignupEmailVerificationConfirmResponse;
 import com.wallet.auth.dto.SignupEmailVerificationRequest;
@@ -197,7 +198,7 @@ public class SignupEmailVerificationService {
     }
 
     private void validateVerificationPending(SignupEmailVerification verification) {
-        if (!SignupEmailVerification.STATUS_PENDING.equals(verification.getVerificationStatus())) {
+        if (!VerificationStatus.PENDING.equals(verification.getVerificationStatus())) {
             throw new BusinessException(ErrorCode.SIGNUP_EMAIL_VERIFICATION_CODE_INVALID);
         }
     }
@@ -228,11 +229,11 @@ public class SignupEmailVerificationService {
     }
 
     private void validateSignupTokenStatus(SignupEmailVerification verification) {
-        if (SignupEmailVerification.STATUS_USED.equals(verification.getVerificationStatus())) {
+        if (VerificationStatus.USED.equals(verification.getVerificationStatus())) {
             throw new BusinessException(ErrorCode.SIGNUP_EMAIL_VERIFICATION_ALREADY_USED);
         }
 
-        if (!SignupEmailVerification.STATUS_VERIFIED.equals(verification.getVerificationStatus())) {
+        if (!VerificationStatus.VERIFIED.equals(verification.getVerificationStatus())) {
             throw new BusinessException(ErrorCode.SIGNUP_VERIFICATION_TOKEN_INVALID);
         }
     }

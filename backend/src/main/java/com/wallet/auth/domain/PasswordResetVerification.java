@@ -6,11 +6,6 @@ import lombok.Getter;
 
 @Getter
 public class PasswordResetVerification {
-    public static final String STATUS_PENDING = "PENDING";
-    public static final String STATUS_VERIFIED = "VERIFIED";
-    public static final String STATUS_USED = "USED";
-    public static final String STATUS_EXPIRED = "EXPIRED";
-
     private Long passwordResetVerificationId;
     private Long memberId;
     private String verificationCodeHash;
@@ -32,7 +27,7 @@ public class PasswordResetVerification {
         PasswordResetVerification verification = new PasswordResetVerification();
         verification.memberId = memberId;
         verification.verificationCodeHash = verificationCodeHash;
-        verification.verificationStatus = STATUS_PENDING;
+        verification.verificationStatus = VerificationStatus.PENDING;
         verification.failedAttemptCount = 0;
         verification.verificationCodeExpiresAt = verificationCodeExpiresAt;
         return verification;
