@@ -96,7 +96,11 @@ const routes = [
   // Transaction
   { path: '/transactions', component: TransactionListView },
   { path: '/transactions/:id', component: TransactionDetailView },
-
+  {
+    path: '/transactions',
+    name: 'TransactionList',
+    component: TransactionListView,
+  },
   // Point
   { path: '/points', component: PointListView },
   { path: '/points/financial/:id', component: FinancialPointDetailView },

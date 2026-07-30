@@ -5,6 +5,8 @@ import com.wallet.transaction.dto.TransactionDetailResponse;
 import com.wallet.transaction.dto.TransactionListResponse;
 import com.wallet.transaction.dto.TransactionSyncResponse;
 
+import java.util.List;
+
 public interface TransactionService {
 
     TransactionListResponse getTransactionList(
@@ -23,4 +25,6 @@ public interface TransactionService {
     TransactionSyncResponse syncTransactions(Long userId);
 
     ExpenseCategoryListResponse getExpenseCategories();
+
+    List<TransactionDetailResponse> getTransactionsByMemberId(Long memberId);
 }
