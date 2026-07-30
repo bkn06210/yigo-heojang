@@ -37,11 +37,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private static final Set<String> PUBLIC_PATHS = Set.of(
         "/api/auth/login",
         "/api/auth/logout",
-        "/api/auth/token"
+        "/api/auth/token",
+        "/api/auth/signup",
+        "/api/terms"
         // TODO: 아래 API들은 구현 시점에 점진적으로 예외 경로에 추가할 것
 //        "/api/health",
-//        "/api/terms",
-//        "/api/auth/signup",
 //        "/api/members/check-email",
 //        "/api/auth/password/reset-link",
 //        "/api/auth/password/verify-code",
