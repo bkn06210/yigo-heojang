@@ -15,7 +15,7 @@ import com.wallet.auth.dto.SignupEmailVerificationConfirmResponse;
 import com.wallet.auth.dto.SignupEmailVerificationRequest;
 import com.wallet.auth.dto.SignupEmailVerificationResponse;
 import com.wallet.auth.mapper.SignupEmailVerificationMapper;
-import com.wallet.auth.support.SignupVerificationTokenGenerator;
+import com.wallet.auth.support.VerificationTokenGenerator;
 import com.wallet.auth.support.TokenHashUtil;
 import com.wallet.auth.support.VerificationCodeGenerator;
 import com.wallet.common.ErrorCode;
@@ -42,7 +42,7 @@ public class SignupEmailVerificationService {
     private final MemberMapper memberMapper;
     private final EmailSender emailSender;
     private final VerificationCodeGenerator verificationCodeGenerator;
-    private final SignupVerificationTokenGenerator signupVerificationTokenGenerator;
+    private final VerificationTokenGenerator verificationTokenGenerator;
     private final TokenHashUtil tokenHashUtil;
 
     // 회원가입 이메일 인증 코드를 발송
@@ -121,7 +121,7 @@ public class SignupEmailVerificationService {
             throw new BusinessException(ErrorCode.SIGNUP_EMAIL_VERIFICATION_CODE_INVALID);
         }
 
-        String signupVerificationToken = signupVerificationTokenGenerator.generate();
+        String signupVerificationToken = verificationTokenGenerator.generate();
         String signupTokenHash = tokenHashUtil.sha256(signupVerificationToken);
         LocalDateTime signupTokenExpiresAt = LocalDateTime.now()
             .plusMinutes(SIGNUP_TOKEN_EXPIRE_MINUTES);

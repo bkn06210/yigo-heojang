@@ -23,7 +23,7 @@ import com.wallet.auth.dto.SignupEmailVerificationConfirmResponse;
 import com.wallet.auth.dto.SignupEmailVerificationRequest;
 import com.wallet.auth.dto.SignupEmailVerificationResponse;
 import com.wallet.auth.mapper.SignupEmailVerificationMapper;
-import com.wallet.auth.support.SignupVerificationTokenGenerator;
+import com.wallet.auth.support.VerificationTokenGenerator;
 import com.wallet.auth.support.TokenHashUtil;
 import com.wallet.auth.support.VerificationCodeGenerator;
 import com.wallet.common.ErrorCode;
@@ -35,7 +35,7 @@ class SignupEmailVerificationServiceTest {
     private MemberMapper memberMapper;
     private EmailSender emailSender;
     private VerificationCodeGenerator verificationCodeGenerator;
-    private SignupVerificationTokenGenerator signupVerificationTokenGenerator;
+    private VerificationTokenGenerator verificationTokenGenerator;
     private TokenHashUtil tokenHashUtil;
     private SignupEmailVerificationService signupEmailVerificationService;
 
@@ -45,7 +45,7 @@ class SignupEmailVerificationServiceTest {
         memberMapper = mock(MemberMapper.class);
         emailSender = mock(EmailSender.class);
         verificationCodeGenerator = mock(VerificationCodeGenerator.class);
-        signupVerificationTokenGenerator = mock(SignupVerificationTokenGenerator.class);
+        verificationTokenGenerator = mock(VerificationTokenGenerator.class);
         tokenHashUtil = mock(TokenHashUtil.class);
 
         signupEmailVerificationService = new SignupEmailVerificationService(
@@ -53,7 +53,7 @@ class SignupEmailVerificationServiceTest {
             memberMapper,
             emailSender,
             verificationCodeGenerator,
-            signupVerificationTokenGenerator,
+            verificationTokenGenerator,
             tokenHashUtil
         );
     }
@@ -278,7 +278,7 @@ class SignupEmailVerificationServiceTest {
         when(tokenHashUtil.sha256("123456"))
             .thenReturn("code-hash");
 
-        when(signupVerificationTokenGenerator.generate())
+        when(verificationTokenGenerator.generate())
             .thenReturn("signup-token");
 
         when(tokenHashUtil.sha256("signup-token"))
@@ -466,7 +466,7 @@ class SignupEmailVerificationServiceTest {
             .isEqualTo(ErrorCode.SIGNUP_EMAIL_VERIFICATION_CODE_INVALID);
 
         verify(signupEmailVerificationMapper).increaseFailedAttemptCount(1L);
-        verify(signupVerificationTokenGenerator, never()).generate();
+        verify(verificationTokenGenerator, never()).generate();
         verify(signupEmailVerificationMapper, never()).verify(any(), any(), any());
     }
 
@@ -493,7 +493,7 @@ class SignupEmailVerificationServiceTest {
         when(tokenHashUtil.sha256("123456"))
             .thenReturn("code-hash");
 
-        when(signupVerificationTokenGenerator.generate())
+        when(verificationTokenGenerator.generate())
             .thenReturn("signup-token");
 
         when(tokenHashUtil.sha256("signup-token"))
