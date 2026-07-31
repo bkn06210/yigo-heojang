@@ -207,7 +207,7 @@ li:last-child {
 
 .notice-section p {
 
-  font-size: 14px;
+  font-size: 14px; 
 
   color: #666;
 
