@@ -143,6 +143,25 @@ class CardMonthlyStatusBuilderTest {
     }
 
     @Test
+    @DisplayName("실적 조건부 혜택도 상세 목록에 담고 requirePerformance로 표시한다")
+    void 실적_조건부_혜택은_담되_표시한다() {
+        BenefitRow conditional = benefitRow(10, "실적 조건부 혜택", null, 5_000L, null);
+        conditional.setRequirePerformance("Y");
+        BenefitRow unconditional = benefitRow(20, "조건 없는 혜택", null, 5_000L, null);
+        unconditional.setRequirePerformance("N");
+
+        // 전월실적 0 → 0원 구간 → 실적 미충족. 상세는 그래도 둘 다 보여준다
+        CardMonthlyStatus status = builder.build(
+                1, "카드", "2026-08", 0, 0, 0, TIERS,
+                List.of(conditional, unconditional), Map.of());
+
+        assertThat(status.performanceMet()).isFalse();
+        assertThat(status.benefits()).hasSize(2);
+        assertThat(status.benefits().get(0).requirePerformance()).isTrue();
+        assertThat(status.benefits().get(1).requirePerformance()).isFalse();
+    }
+
+    @Test
     @DisplayName("구간별 개별한도가 있으면 base가 아니라 그 구간의 한도를 쓴다")
     void 구간별_한도가_있으면_그_한도를_쓴다() {
         // base monthly_limit은 NULL, 판정 구간의 개별한도 1만원이 유효값이 된다

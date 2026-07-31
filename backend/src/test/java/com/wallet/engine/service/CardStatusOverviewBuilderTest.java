@@ -58,6 +58,24 @@ class CardStatusOverviewBuilderTest {
     }
 
     @Test
+    @DisplayName("실적 미충족 카드에서는 실적 조건부 혜택을 요약에서 뺀다")
+    void 실적_미충족이면_실적_조건부_혜택은_요약에서_빠진다() {
+        List<BenefitUsageStatus> benefits = List.of(
+                benefit(10, "실적 필요 없는 혜택", null, 3_000L, false),
+                benefit(20, "실적 조건부 혜택", null, 5_000L, true));
+
+        // 실적 미충족 — 조건부 혜택은 이번 달 계산기가 아예 적용하지 않으므로 "남은 혜택"이 아니다
+        CardStatusSummary notMet = builder.build(List.of(
+                statusWithPerformance(1, "미달카드", benefits, false))).cards().get(0);
+        assertThat(notMet.benefitsSummary()).extracting(BenefitSummary::benefitId).containsExactly(10L);
+
+        // 충족했으면 둘 다 남는다
+        CardStatusSummary met = builder.build(List.of(
+                statusWithPerformance(1, "충족카드", benefits, true))).cards().get(0);
+        assertThat(met.benefitsSummary()).extracting(BenefitSummary::benefitId).containsExactly(10L, 20L);
+    }
+
+    @Test
     @DisplayName("브리핑은 아직 못 채운 카드 중 달성률이 가장 높은 카드를 고른다")
     void 브리핑은_달성률이_가장_높은_미달성_카드다() {
         CardStatusOverview overview = builder.build(List.of(
@@ -119,9 +137,16 @@ class CardStatusOverviewBuilderTest {
 
     // ── 헬퍼 ──────────────────────────────────────────────────────────────
 
+    /** 실적을 충족한 카드 — 혜택 요약 규칙만 보는 테스트용 */
     private CardMonthlyStatus status(long userCardId, String cardName, List<BenefitUsageStatus> benefits) {
+        return statusWithPerformance(userCardId, cardName, benefits, true);
+    }
+
+    private CardMonthlyStatus statusWithPerformance(long userCardId, String cardName,
+                                                    List<BenefitUsageStatus> benefits,
+                                                    boolean performanceMet) {
         return new CardMonthlyStatus(userCardId, cardName, "2026-08",
-                0, 0, 0, 0, null, false, null, 0, benefits);
+                0, 0, 0, 0, null, performanceMet, null, 0, benefits);
     }
 
     /** 실적 조건이 있는 카드 — 달성률과 남은 금액만 브리핑 판정에 쓰인다 */
@@ -139,7 +164,13 @@ class CardStatusOverviewBuilderTest {
     }
 
     private BenefitUsageStatus benefit(long benefitId, String name, String groupCode, Long remainingLimit) {
+        return benefit(benefitId, name, groupCode, remainingLimit, false);
+    }
+
+    private BenefitUsageStatus benefit(long benefitId, String name, String groupCode,
+                                       Long remainingLimit, boolean requirePerformance) {
         return new BenefitUsageStatus(benefitId, name, groupCode, 0L,
-                remainingLimit == null ? null : remainingLimit + 1_000L, remainingLimit, null);
+                remainingLimit == null ? null : remainingLimit + 1_000L, remainingLimit, null,
+                requirePerformance);
     }
 }

@@ -80,6 +80,11 @@ public class CardMonthlyStatusBuilder {
      *
      * 묶음 한도(limit_group_code) 소속 혜택은 usedAmount를 <b>그룹 합산</b>으로 내려준다.
      * 화면이 혜택마다 따로 더하면 한도가 그룹 혜택 수만큼 배로 보이므로, 묶인 혜택들은 같은 값을 갖는다.
+     *
+     * <b>실적 조건으로 걸러내지는 않는다.</b> 카드 상세는 "이 카드에 어떤 혜택이 있나"를 보는 자리라
+     * 지금 못 쓰는 혜택도 보여야 한다. 대신 {@code requirePerformance}를 함께 내려, 카드의
+     * {@code performanceMet}과 묶어 보면 "지금 받을 수 있나"를 판단할 수 있게 한다.
+     * 홈 요약(#2)이 "지금 쓸 수 있는 것"만 남기는 필터는 CardStatusOverviewBuilder가 수행한다.
      */
     private List<BenefitUsageStatus> buildBenefits(List<BenefitRow> benefitRows,
                                                    Map<Long, Long> usedAmountByBenefit) {
@@ -92,7 +97,8 @@ public class CardMonthlyStatusBuilder {
                     : Math.max(0L, monthlyLimit - usedAmount);
             result.add(new BenefitUsageStatus(
                     row.getBenefitId(), row.getBenefitName(), row.getLimitGroupCode(),
-                    usedAmount, monthlyLimit, remainingLimit, usageRate(monthlyLimit, usedAmount)));
+                    usedAmount, monthlyLimit, remainingLimit, usageRate(monthlyLimit, usedAmount),
+                    "Y".equals(row.getRequirePerformance())));
         }
         return result;
     }

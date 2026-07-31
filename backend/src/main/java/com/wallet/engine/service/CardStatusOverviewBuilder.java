@@ -54,21 +54,39 @@ public class CardStatusOverviewBuilder {
                 status.performanceMet(),
                 status.sharedLimit(),
                 status.sharedLimitUsed(),
-                toBenefitsSummary(status.benefits()));
+                toBenefitsSummary(status.benefits(), status.performanceMet()));
     }
 
     /**
-     * "남은 혜택" 요약 — 아직 쓸 수 있는 혜택만, 묶음 한도는 그룹당 한 줄로.
+     * "남은 혜택" 요약 — <b>지금 쓸 수 있는 혜택만</b>, 묶음 한도는 그룹당 한 줄로.
      *
-     * 한도를 다 쓴 혜택(잔여 0)은 뺀다. 한도가 없는 혜택(잔여 null)은 <b>남긴다</b> —
-     * null은 "제약 없음"이라 언제든 받을 수 있다는 뜻이지 소진이 아니다(NULL≠0).
+     * 카드 상세(#3)와 목적이 달라 기준도 다르다. 상세는 "이 카드에 어떤 혜택이 있나"라서 전부
+     * 보여주지만, 홈 위젯은 "지금 뭘 받을 수 있나"를 보는 자리다. 그래서 여기서만 두 가지를 뺀다.
+     *   · 한도를 다 쓴 혜택(잔여 0)
+     *   · 실적 미충족 카드의 실적 조건부 혜택 — 이번 달엔 계산기가 아예 적용하지 않는다.
+     *     남겨두면 "남은 혜택 5,000원"과 "실적 미달"이 한 화면에 같이 뜨는 모순이 된다.
+     *     그 카드는 브리핑이 "이 카드부터 채우라"고 안내하므로 정보가 사라지지는 않는다.
+     *
+     * 한도가 없는 혜택(잔여 null)은 <b>남긴다</b> — null은 "제약 없음"이라 언제든 받을 수 있다는
+     * 뜻이지 소진이 아니다(NULL≠0).
      *
      * 묶음을 접지 않으면 화면이 같은 지갑을 여러 번 더한다. 대신 접히면서 사라지는 혜택명은
      * "외 N건"으로 표시에 남긴다 — 정보를 지우지 않으면서 금액은 한 번만 노출하기 위함이다.
+     *
+     * <b>여기 잔여액에 통합할인한도는 반영하지 않는다.</b> 통합 잔여는 카드 단위 값이라
+     * (sharedLimit − sharedLimitUsed) 응답에 이미 따로 있고, 성격이 다른 두 잔액이라 합치지 않는다.
+     * 화면은 통합 잔여를 카드 단위로 한 줄 두고 그 안에서 개별 잔여를 보여준다.
+     *
+     * @param performanceMet 이 카드의 전월실적 충족 여부
      */
-    private List<BenefitSummary> toBenefitsSummary(List<BenefitUsageStatus> benefits) {
+    private List<BenefitSummary> toBenefitsSummary(List<BenefitUsageStatus> benefits,
+                                                   boolean performanceMet) {
+        List<BenefitUsageStatus> usableBenefits = benefits.stream()
+                .filter(benefit -> performanceMet || !benefit.requirePerformance())
+                .toList();
+
         List<BenefitSummary> result = new ArrayList<>();
-        for (List<BenefitUsageStatus> group : groupByLimit(benefits).values()) {
+        for (List<BenefitUsageStatus> group : groupByLimit(usableBenefits).values()) {
             // 대표는 그룹에서 가장 작은 benefit_id — 같은 입력에 같은 응답이 나오게 하는 규칙
             BenefitUsageStatus representative = group.stream()
                     .min(Comparator.comparingLong(BenefitUsageStatus::benefitId))
