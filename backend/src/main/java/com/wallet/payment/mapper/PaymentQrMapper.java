@@ -3,8 +3,10 @@ package com.wallet.payment.mapper;
 import com.wallet.payment.dto.PaymentQrInsertParam;
 import com.wallet.payment.dto.PaymentQrPayParam;
 import com.wallet.payment.dto.PaymentQrRecord;
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+@Mapper
 public interface PaymentQrMapper {
 
     int countActiveUserCard(
