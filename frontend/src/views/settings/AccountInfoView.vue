@@ -22,6 +22,7 @@ const goPasswordChange = () => {
 
 const joinedDate = '2026.07.16';
 
+
 // 보안 설정
 const appLock = ref(false);
 
@@ -32,6 +33,7 @@ const autoLogin = ref(true);
 const goPinChange = () => {
   router.push('/settings/pin-change');
 };
+
 
 // 이름 마스킹
 const maskName = (name) => {
@@ -74,7 +76,11 @@ const navigateTo = (path) => {
 
     <!-- 상단 헤더 -->
     <PageHeader
+
       title="계정 및 보안"
+
+      title="계정 정보"
+
       @back="goBack"
     />
 
@@ -143,6 +149,7 @@ const navigateTo = (path) => {
         </div>
 
       </div>
+
 
 
 
@@ -253,6 +260,30 @@ const navigateTo = (path) => {
 
   <div class="menu-list">
 
+      <!-- 계정 관리 -->
+      <div class="section-group">
+
+
+        <div class="menu-list">
+
+
+          <!-- 비밀번호 변경 -->
+          <div
+            class="menu-item"
+            @click="showPasswordVerify = true"
+          >
+
+            <span class="menu-label">
+              비밀번호 변경
+            </span>
+
+
+            <span class="chevron-icon">
+              ›
+            </span>
+
+          </div>
+
 
           <!-- 회원 탈퇴 -->
           <div
@@ -298,6 +329,91 @@ const navigateTo = (path) => {
 </template>
 
 <style scoped>
+.account-info-view {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: #f9f9f9;
+}
+
+.content-container {
+  flex: 1;
+  padding: 20px;
+}
+
+.section-group {
+  margin-bottom: 24px;
+}
+
+.section-title {
+  font-size: 0.85rem;
+  color: #888;
+  margin-bottom: 8px;
+  font-weight: 600;
+  padding-left: 4px;
+}
+
+.info-card {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  padding: 16px 20px;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+.info-row:last-child {
+  border-bottom: none;
+}
+
+.info-label {
+  font-size: 0.95rem;
+  color: #666;
+}
+
+.info-value {
+  font-size: 0.95rem;
+  color: #333;
+  font-weight: 500;
+}
+
+.menu-list {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+}
+
+.menu-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 20px;
+  border-bottom: 1px solid #f0f0f0;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+.menu-item:last-child {
+  border-bottom: none;
+}
+.menu-item:hover {
+  background-color: #fafafa;
+}
+
+.menu-label {
+  font-size: 1rem;
+  color: #333;
+}
+
+.withdraw-item .menu-label {
+  color: #e53935; /* 탈퇴 메뉴는 눈에 띄게 붉은 계열 포인트 */
+}
+
 
 .toggle {
   width: 48px;
@@ -424,6 +540,7 @@ const navigateTo = (path) => {
 .withdraw-item .menu-label {
   color: #e53935; /* 탈퇴 메뉴는 눈에 띄게 붉은 계열 포인트 */
 }
+
 
 .chevron-icon {
   color: #888;
