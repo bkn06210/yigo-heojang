@@ -284,11 +284,31 @@ Authorization: Bearer <JWT>
 | cards[].performanceMet                   | bool         | 현재 실적 충족 여부 — 전월실적으로 판정된 구간의 `min_performance_amount > 0`이면 true. false면 `require_performance=Y` 혜택은 이번 달 적용되지 않는다 |
 | cards[].sharedLimit                      | int\|null     | 현재 구간의 월 통합할인한도. **null=통합한도 없는 카드**(혜택별 개별한도만 적용), 0=혜택 없음                                             |
 | cards[].sharedLimitUsed                  | int          | 통합한도 소진액                                                                                                                           |
-| cards[].benefitsSummary[]                | array        | 홈 위젯 "남은 혜택" 표시용 — 아직 쓸 수 있는 혜택 요약. 잔여 0(소진)은 빠지고, 한도 없는 혜택은 남는다. 상세는 3번 |
+| cards[].benefitsSummary[]                | array        | 홈 위젯 "남은 혜택" 표시용 — **지금 쓸 수 있는 혜택만.** 잔여 0(소진)과 **실적 미충족 카드의 실적 조건부 혜택**은 빠지고, 한도 없는 혜택은 남는다. 전체 목록은 3번 |
 | cards[].benefitsSummary[].benefitId      | int          | 혜택 id. **묶음 소속이면 그룹에서 가장 작은 id**(대표)                                                                                    |
 | cards[].benefitsSummary[].benefitName    | string       | 표시명. 묶음 소속이면 `"대표 혜택명 외 N건"` (예: 통신요금 10% 할인 외 2건)                                                               |
 | cards[].benefitsSummary[].limitGroupCode | string\|null | 묶음 한도 코드. null이면 이 혜택 단독                                                                                                     |
-| cards[].benefitsSummary[].remainingLimit | int\|null    | 잔여 한도. **묶음 소속이면 그룹 기준 잔여액을 한 번만** 내려준다(접힌 결과라 화면이 더해도 실제와 맞는다). 한도 없는 혜택은 null          |
+| cards[].benefitsSummary[].remainingLimit | int\|null    | **이 혜택의 개별 잔여 한도.** 묶음 소속이면 그룹 기준 잔여액을 한 번만 내려준다. 한도 없는 혜택은 null. **통합할인한도는 반영하지 않는다** — 아래 주의 참고 |
+
+> **통합한도와 개별한도는 성격이 다른 두 잔액이다 — 더해서 하나로 보여주면 안 된다.**
+>
+> 결제 한 건의 할인액은 두 잔액을 **동시에** 깎는다. 카페 5만원 10% 할인(5,000원)이면
+> 카페 혜택의 개별 잔여에서 5,000원, 카드의 통합 잔여에서도 5,000원이 빠진다.
+> 그래서 실제로 받을 수 있는 금액은 **항상 두 잔액 중 작은 쪽에 막힌다** — 개별이 남아도 통합이 0이면 못 받는다.
+>
+> `benefitsSummary[].remainingLimit`을 세로로 더해 "남은 혜택 합계"를 만들면 통합한도를 넘는 값이 나온다.
+> 합계로 쓸 값은 **통합 잔여**(`sharedLimit − sharedLimitUsed`)이고, 개별 잔여는 그 안에서의 배분이다.
+>
+> ```
+> 카드 통합 잔여 한도    15,000원 / 20,000원      ← 합계는 이 값
+>  ├ 카페 10% 할인       0원 남음 (소진)
+>  ├ 편의점 2천원 할인    2,000원 남음
+>  └ 교통 10% 할인       5,000원 남음             ← 개별 잔여는 통합 잔여 안에서만 유효
+> ```
+>
+> `sharedLimit`이 null인 카드(통합한도 없음)는 통합 잔여 줄을 그리지 않고 개별 잔여만 쓰면 된다.
+> `use_shared_limit='N'` 혜택은 통합한도를 소진하지 않아 통합 잔여가 0이어도 받을 수 있는데,
+> 현재 시드에는 한 카드 안에 `Y`·`N`이 섞인 경우가 없어 화면에서 구분하지 않아도 된다.
 
 ---
 
@@ -300,6 +320,7 @@ Authorization: Bearer <JWT>
 - **주의사항**:
   - 달성률·이용률·잔여 한도는 저장값이 아니라 계산값이다 (원본만 저장, 조회 시 계산).
   - `benefits[]`는 **한도 없는 혜택도 담는다.** 이때 `monthlyLimit`·`remainingLimit`·`usageRate`가 전부 null이다 — "제약 없음"이지 "다 씀"이 아니다(NULL≠0).
+  - **실적 미충족이어도 혜택을 빼지 않는다.** 이 화면은 "이 카드에 어떤 혜택이 있나"를 보는 자리다. 대신 혜택별 `requirePerformance`와 카드의 `performanceMet`을 함께 보면 지금 받을 수 있는지 판단할 수 있다 — 둘이 각각 `true`·`false`면 이번 달엔 적용되지 않으므로 화면은 "실적 채우면 받을 수 있어요"로 표시한다. (홈 요약(2번)은 반대로 그 혜택을 아예 빼서 "지금 쓸 수 있는 것"만 보여준다.)
   - 묶음 한도 그룹을 **접지 않는다.** 2번(목록)은 접어서 한 줄로 주지만, 상세는 혜택별로 전부 보여야 하므로 같은 값을 각 행에 내려준다(아래 주의 참고).
   - 증정(GIFT)·사후정산(RETROACTIVE)은 계산 대상이 아니라 이 목록에 없다. 카드 상세 화면이 정보로 표시하려면 benefit 목록을 별도 조회한다.
   - `yearMonth` 형식이 `YYYY-MM`이 아니면 `INPUT_INVALID`(400).
@@ -358,7 +379,8 @@ Authorization: Bearer <JWT>
         "usedAmount": 8000,
         "monthlyLimit": 10000,
         "remainingLimit": 2000,
-        "usageRate": 80.0
+        "usageRate": 80.0,
+        "requirePerformance": true
       },
       {
         "benefitId": 61,
@@ -367,7 +389,8 @@ Authorization: Bearer <JWT>
         "usedAmount": 3000,
         "monthlyLimit": 5000,
         "remainingLimit": 2000,
-        "usageRate": 60.0
+        "usageRate": 60.0,
+        "requirePerformance": true
       },
       {
         "benefitId": 62,
@@ -376,7 +399,8 @@ Authorization: Bearer <JWT>
         "usedAmount": 3000,
         "monthlyLimit": 5000,
         "remainingLimit": 2000,
-        "usageRate": 60.0
+        "usageRate": 60.0,
+        "requirePerformance": true
       },
       {
         "benefitId": 70,
@@ -385,7 +409,8 @@ Authorization: Bearer <JWT>
         "usedAmount": 1200,
         "monthlyLimit": null,
         "remainingLimit": null,
-        "usageRate": null
+        "usageRate": null,
+        "requirePerformance": false
       }
     ]
   },
@@ -415,6 +440,10 @@ Authorization: Bearer <JWT>
 | benefits[].monthlyLimit   | int\|null   | 혜택 월 한도(없으면 null). 묶음 소속이면 **그룹 공유 한도**. 실적구간별 한도가 있으면(`benefit_tier_limit`) **판정된 구간의 한도**를 내려준다 |
 | benefits[].remainingLimit | int\|null   | 잔여 한도(monthlyLimit − usedAmount, 한도 없으면 null). 묶음 소속이면 **그룹 기준 잔여액** — 묶인 혜택들이 같은 값을 갖는다     |
 | benefits[].usageRate      | float\|null | 혜택 이용률(%), 계산값. 한도 없으면(monthlyLimit=null) **null**. 묶음 소속이면 그룹 기준 이용률. **0~100 범위**(잔여 0과 어긋나지 않게 100에서 자른다) |
+| benefits[].requirePerformance | bool    | 전월실적 조건이 걸린 혜택인가. 카드의 `performanceMet=false`와 겹치면 이번 달 적용되지 않는다 — 화면은 이 둘을 함께 보고 "실적 채우면 받을 수 있어요"를 표시한다 |
+
+> **`remainingLimit`은 개별 잔액일 뿐이다.** 통합할인한도를 쓰는 혜택은 실제로 받을 때 카드의
+> 통합 잔여(`sharedLimit − sharedLimitUsed`)에 한 번 더 막힌다. 두 잔액을 더하지 말 것 — 2번의 주의 참고.
 
 > **묶음 한도 표시 주의** — `limitGroupCode`가 같은 혜택들은 한도를 공유하므로 `monthlyLimit`·`usedAmount`·`remainingLimit`·`usageRate`가 모두 같은 값으로 내려간다.
 > 화면에서 혜택마다 따로 더하면 한도가 실제보다 몇 배로 보인다(위 예시: 5,000원 지갑 하나인데 10,000원으로 보임).
