@@ -329,7 +329,7 @@ justify-content:space-between;
 
 color:#e53935;
 
-font-weight:600;
+font-weight:600; 
 
 }
 
