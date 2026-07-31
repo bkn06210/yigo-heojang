@@ -444,8 +444,6 @@ const togglePin = (id) => {
 
 
 
-
-
 :deep(.empty-card button:first-child) {
 
 
