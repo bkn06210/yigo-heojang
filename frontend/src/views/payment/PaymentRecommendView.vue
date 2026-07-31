@@ -1113,7 +1113,7 @@ main {
   background:white;
 
 
-  border-radius:20px;
+  border-radius:20px; 
 
 
   padding:24px;
