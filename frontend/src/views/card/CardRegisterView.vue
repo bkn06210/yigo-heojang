@@ -589,7 +589,7 @@ font-size:15px;
 
 }
 
-
+ 
 
 .register-button{
 
