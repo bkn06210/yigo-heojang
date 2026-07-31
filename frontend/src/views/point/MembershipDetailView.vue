@@ -358,7 +358,7 @@ const deleteMembership = () => {
   border-radius: 10px;
 
 }
-
+ 
 
 .cancel-button {
 
