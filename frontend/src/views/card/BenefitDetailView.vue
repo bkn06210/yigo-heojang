@@ -92,4 +92,4 @@ const benefits = ref([
   flex-direction: column;
   gap: 16px;
 }
-</style>
+</style> 
