@@ -139,8 +139,9 @@ class CardStatusServiceIntegrationTest {
     void 전체_현황은_요약과_브리핑을_내려준다() {
         CardStatusOverview overview = cardStatusService.getOverview(memberId, BASE_MONTH);
 
+        // 순서는 user_card_id 오름차순으로 고정된다 — 홈 카드 순서가 호출마다 바뀌면 안 된다
         assertThat(overview.cards()).extracting(CardStatusSummary::userCardId)
-                .containsExactlyInAnyOrder(mainUserCardId, plainUserCardId);
+                .containsExactly(mainUserCardId, plainUserCardId);
 
         CardStatusSummary mainCard = summaryOf(overview, mainUserCardId);
         // 통신·공과금이 한 줄로 접히고, 편의점·무한도가 각각 한 줄 → 4개 혜택이 3줄로
@@ -156,6 +157,26 @@ class CardStatusServiceIntegrationTest {
         assertThat(overview.briefing().userCardId()).isEqualTo(mainUserCardId);
         assertThat(overview.briefing().achievementRate()).isEqualByComparingTo("80.0");
         assertThat(overview.briefing().message()).contains("보유하신 카드 2장 중", "80%");
+    }
+
+    @Test
+    @DisplayName("실적 미충족 카드는 실적 조건부 혜택이 홈 요약에서 빠지되 상세에는 남는다")
+    void 실적_미충족_카드의_조건부_혜택은_요약에서만_빠진다() {
+        // 편의점 혜택에 실적 조건을 걸고, 전월실적을 0원 구간으로 떨어뜨려 미충족을 만든다
+        jdbc.update("UPDATE benefit SET require_performance = 'Y' WHERE benefit_id = ?", storeBenefitId);
+        jdbc.update("UPDATE user_card_monthly_state SET prev_performance_amount = 0 "
+                + "WHERE user_card_id = ? AND base_year_month = '2026-08'", mainUserCardId);
+
+        CardMonthlyStatus detail = cardStatusService.getCardStatus(memberId, mainUserCardId, BASE_MONTH);
+        assertThat(detail.performanceMet()).isFalse();
+        // 상세는 "이 카드에 어떤 혜택이 있나"라서 그대로 담고, 플래그로 구분만 한다
+        assertThat(benefitOf(detail, storeBenefitId).requirePerformance()).isTrue();
+
+        CardStatusSummary summary = summaryOf(
+                cardStatusService.getOverview(memberId, BASE_MONTH), mainUserCardId);
+        // 홈은 "지금 쓸 수 있는 것"이라 빠진다 — 이번 달 계산기가 적용하지 않는 혜택이다
+        assertThat(summary.benefitsSummary()).extracting(BenefitSummary::benefitId)
+                .doesNotContain(storeBenefitId);
     }
 
     @Test
