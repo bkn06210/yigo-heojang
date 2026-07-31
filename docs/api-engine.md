@@ -414,7 +414,7 @@ Authorization: Bearer <JWT>
 | benefits[].limitGroupCode | string\|null | 묶음 한도 코드. **같은 코드를 가진 혜택들은 한도를 공유한다** — 아래 세 값이 전부 그룹 기준으로 내려간다. null이면 이 혜택 단독 |
 | benefits[].monthlyLimit   | int\|null   | 혜택 월 한도(없으면 null). 묶음 소속이면 **그룹 공유 한도**. 실적구간별 한도가 있으면(`benefit_tier_limit`) **판정된 구간의 한도**를 내려준다 |
 | benefits[].remainingLimit | int\|null   | 잔여 한도(monthlyLimit − usedAmount, 한도 없으면 null). 묶음 소속이면 **그룹 기준 잔여액** — 묶인 혜택들이 같은 값을 갖는다     |
-| benefits[].usageRate      | float\|null | 혜택 이용률(%), 계산값. 한도 없으면(monthlyLimit=null) **null**. 묶음 소속이면 그룹 기준 이용률                                |
+| benefits[].usageRate      | float\|null | 혜택 이용률(%), 계산값. 한도 없으면(monthlyLimit=null) **null**. 묶음 소속이면 그룹 기준 이용률. **0~100 범위**(잔여 0과 어긋나지 않게 100에서 자른다) |
 
 > **묶음 한도 표시 주의** — `limitGroupCode`가 같은 혜택들은 한도를 공유하므로 `monthlyLimit`·`usedAmount`·`remainingLimit`·`usageRate`가 모두 같은 값으로 내려간다.
 > 화면에서 혜택마다 따로 더하면 한도가 실제보다 몇 배로 보인다(위 예시: 5,000원 지갑 하나인데 10,000원으로 보임).

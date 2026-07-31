@@ -2193,6 +2193,7 @@ GET /api/cards/{userCardId}/monthly-status
 ◦ **limitGroupCode가 같은 혜택들은 한도를 공유한다.** monthlyLimit·usedAmount·remainingLimit·usageRate가 모두 같은 값으로 내려가므로, 화면에서 혜택마다 따로 더하면 한도가 실제보다 몇 배로 보인다. 같은 코드끼리 묶어 한 줄로 표시하거나 그룹 잔여액을 한 번만 노출한다. null이면 이 혜택 단독. (30번은 서버가 미리 접어서 내려주고, 여기서는 접지 않는다 — 상세 화면이 혜택별로 다 보여야 하기 때문.)
 ◦ **한도가 없는 혜택도 목록에 담는다.** 이때 monthlyLimit·remainingLimit·usageRate가 모두 `null`이다 — "제약 없음"이지 "다 씀"이 아니다. 화면은 잔여액 대신 혜택명만 표시한다.
 ◦ 증정(GIFT)·사후정산(RETROACTIVE)은 계산 대상이 아니라 이 목록에 없다. 카드 상세 화면에서 정보로 표시하려면 benefit 목록을 별도 조회한다.
+◦ `usageRate`는 **0~100 범위**다. 소진이 한도를 넘는 데이터가 있어도 100에서 자른다 — `remainingLimit`을 0으로 깎으면서 이용률만 100을 넘기면 응답이 서로 어긋나고 화면 진행 막대가 칸을 넘친다.
 ◦ performanceMet: 현재 실적 충족 여부(bool). sharedLimit은 `int|null` (null = 통합한도 없는 카드).
 ◦ `yearMonth` 형식이 `YYYY-MM`이 아니면 `INPUT_INVALID(400)`.
 

@@ -113,6 +113,21 @@ class CardMonthlyStatusBuilderTest {
     }
 
     @Test
+    @DisplayName("소진이 한도를 넘어도 이용률은 100%를 넘지 않는다")
+    void 이용률은_100을_넘지_않는다() {
+        // 엔진 가산으로는 나올 수 없는 상태(계산기가 한도에서 자른다). 손으로 넣은 데이터에만 있다
+        BenefitRow row = benefitRow(60, "그룹 한도 초과 혜택", null, 10_000L, null);
+
+        CardMonthlyStatus status = builder.build(
+                1, "카드", "2026-08", 350_000, 0, 0, TIERS, List.of(row), Map.of(60L, 11_600L));
+
+        BenefitUsageStatus benefit = only(status);
+        // 잔여는 0으로 깎으면서 이용률만 116%를 내보내면 응답이 자기모순이다
+        assertThat(benefit.remainingLimit()).isZero();
+        assertThat(benefit.usageRate()).isEqualByComparingTo("100.0");
+    }
+
+    @Test
     @DisplayName("한도 0(혜택 없음)은 잔여 0이되 이용률은 null이다")
     void 한도_0인_혜택은_이용률이_null이다() {
         BenefitRow row = benefitRow(50, "구간 미달로 한도 0", null, 0L, null);

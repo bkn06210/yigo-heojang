@@ -30,6 +30,9 @@ import java.util.Map;
 @Component
 public class CardMonthlyStatusBuilder {
 
+    /** 이용률 상한. 소진이 한도를 넘는 데이터가 있어도 100%를 넘겨 표시하지 않는다 */
+    private static final BigDecimal MAX_USAGE_RATE = new BigDecimal("100.0");
+
     private final PerformanceTierResolver tierResolver = new PerformanceTierResolver();
 
     /**
@@ -97,13 +100,18 @@ public class CardMonthlyStatusBuilder {
     /**
      * 이용률(%) — 소진액 ÷ 한도. 한도가 없거나(null) 0이면 정의되지 않아 null이다.
      * 0을 돌려주면 "아직 안 썼다"로 읽혀 "쓸 한도가 없다"와 구분되지 않는다.
+     *
+     * <b>100을 넘지 않게 자른다.</b> 소진액이 한도를 넘는 상태는 엔진이 만들 수 없지만(계산기가
+     * 한도에서 클램프한다), 손으로 넣은 데이터에는 있을 수 있다. 그때 잔여는 0으로 깎으면서
+     * 이용률만 116%로 내보내면 응답이 자기모순이고, 화면 진행 막대도 칸을 넘친다.
      */
     private BigDecimal usageRate(Long monthlyLimit, long usedAmount) {
         if (monthlyLimit == null || monthlyLimit == 0) {
             return null;
         }
-        return BigDecimal.valueOf(usedAmount * 100)
+        BigDecimal rate = BigDecimal.valueOf(usedAmount * 100)
                 .divide(BigDecimal.valueOf(monthlyLimit), 1, RoundingMode.HALF_UP);
+        return rate.min(MAX_USAGE_RATE);
     }
 
     /** 판정된 구간의 개별한도가 있으면 그 값, 없으면 base 월 한도. 둘 다 없으면 null(한도 없음). */
