@@ -1,8 +1,8 @@
 <script setup>
 
-
 import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
+import { useAuthStore } from '@/stores/authStore';
 
 
 // 공통 컴포넌트
@@ -21,32 +21,13 @@ import MembershipCard from '@/components/point/MembershipCard.vue';
 import BenefitReportCard from '@/components/point/BenefitReportCard.vue';
 import BenefitReportBottomSheet from '@/components/point/BenefitReportBottomSheet.vue';
 
+const router = useRouter();
 
-// 공통 컴포넌트
-import PageHeader from '@/components/common/PageHeader.vue'
-import BottomNavigation from '@/components/layout/BottomNavigation.vue'
-import PullToRefresh from '@/components/common/PullToRefresh.vue'
+const authStore = useAuthStore();
 
 
-// 포인트 컴포넌트
-import FinancialPointCard from '@/components/point/FinancialPointCard.vue'
-import MembershipCard from '@/components/point/MembershipCard.vue'
-
-
-import { useRouter } from 'vue-router'
-
-
-
-const router = useRouter()
-
-
-// =========================
-// 로그인 / 카드 상태
-// =========================
-
-
-// TODO: Pinia 또는 로그인 API 연결
-const isLogin = ref(false)
+// 로그인 상태
+const isLogin = computed(() => authStore.isLogin);
 
 
 // TODO: 카드 조회 API 연결
@@ -77,11 +58,7 @@ const goLogin = () => {
 
 
 
-
-// =========================
 // 혜택 리포트
-// =========================
-
 
 // TODO: API 연결
 // GET /api/benefits/report
@@ -168,11 +145,7 @@ const closeBenefitReport = () => {
 
 
 
-
-
-// =========================
 // 금융 포인트
-// =========================
 
 
 const showPointSheet = ref(false);
@@ -209,9 +182,6 @@ const closePointSheet = () => {
 
 const refreshPoint = async () => {
 
-  console.log('포인트 데이터 갱신 시작')
-
-
   console.log('혜택 데이터 갱신');
 
 };
@@ -220,9 +190,8 @@ const refreshPoint = async () => {
 
 
 
-// =========================
+
 // 멤버십
-// =========================
 
 
 // TODO: API 연결
@@ -239,7 +208,6 @@ const membershipList = ref([]);
 
 
 const goMembershipRegister = () => {
-
 
   router.push('/memberships/register');
 
@@ -275,31 +243,10 @@ const showMoreMembership = () => {
 };
 
 
-  router.push('/memberships/register')
-
-}
-
-const membershipList = [
-  {
-    id: 1,
-    name: 'CJ ONE',
-    link: 'https://www.cjone.com'
-  },
-  {
-    id: 2,
-    name: '해피포인트',
-    link: 'https://www.happypointcard.com'
-  }
-]
-
 
 </script>
 
-
-
-
 <template>
-
   <PullToRefresh @refresh="refreshPoint">
 
     <div class="point-page">
@@ -485,79 +432,7 @@ const membershipList = [
     </div>
 
 
-  <div class="point-page">
-
-
-    <!-- 페이지 제목 -->
-    <PageHeader title="포인트" />
-
-
-
-    <main class="content">
-
-
-      <!-- 금융 포인트 영역 -->
-      <section class="point-section">
-
-        <h2>
-          금융 포인트
-        </h2>
-
-
-        <FinancialPointCard />
-
-      </section>
-
-
-
-
-      <!-- 멤버십 영역 -->
-<section class="membership-section">
-
-  <div class="section-header">
-
-    <h2>
-      멤버십
-    </h2>
-
-
-    <button
-      class="add-button"
-      @click="goMembershipRegister"
-    >
-      + 추가
-    </button>
-
-  </div>
-
-
-  <MembershipCard
-  v-for="membership in membershipList"
-  :key="membership.id"
-  :membership="membership"
-/>
-
-<p class="notice">
-  ※ 멤버십 상세 페이지에서 사용처 및 이용 정보를 확인할 수 있습니다.
-</p>
-
-
-</section>
-    
-
-
-    </main>
-
-
-
-    <BottomNavigation />
-
-
-  </div>
-
-
   </PullToRefresh>
-
 
 
 
@@ -569,9 +444,6 @@ const membershipList = [
 
 
 </template>
-
-
-
 
 <style scoped>
 
@@ -600,45 +472,6 @@ section {
 
 h2 {
   margin: 0 0 14px;
-
-
-
-.point-page {
-
-  min-height: 100vh;
-
-  padding-bottom: 80px;
-
-}
-
-
-
-.content {
-
-  padding: 20px;
-
-}
-
-
-
-.point-section {
-
-  margin-bottom: 32px;
-
-}
-
-
-
-.membership-section {
-
-  margin-bottom: 32px;
-
-}
-
-
-
-h2 {
-
 
   font-size: 18px;
   font-weight: 700;
@@ -683,29 +516,13 @@ h2 {
 
   margin-top: 0;
 
-
 }
-
-  margin-bottom: 14px;
-
-}
-
-
-
-button {
-
-  border: none;
 
 
 
 .point-section :deep(.financial-point-card) {
 
   border-radius: 18px;
-
-
-
-  font-size: 14px;
-
 
 }
 
@@ -812,9 +629,6 @@ button {
 /* 안내 문구 */
 
 .notice {
-
-  margin-top: 14px;
-
 
   margin:16px 0 0;
 
@@ -967,10 +781,3 @@ button {
 
 </style>
 
-
-  line-height: 1.5;
-
-}
-
-
-</style>
