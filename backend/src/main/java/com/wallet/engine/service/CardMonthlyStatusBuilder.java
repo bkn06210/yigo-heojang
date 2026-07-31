@@ -70,8 +70,10 @@ public class CardMonthlyStatusBuilder {
     }
 
     /**
-     * 혜택별 이용 현황을 조립한다. <b>한도가 있는 혜택만</b> 담는다 —
-     * 한도 없는 혜택(예: 전 가맹점 기본 적립)은 잔여·이용률이 정의되지 않아 이용 현황에서 뺀다.
+     * 혜택별 이용 현황을 조립한다. <b>한도 없는 혜택도 담는다</b> — 카드 상세 화면이 이 응답 하나로
+     * "이 카드로 받을 수 있는 혜택"을 그릴 수 있어야 하므로, 목록에서 빼는 대신
+     * 정의되지 않는 세 값(monthlyLimit·remainingLimit·usageRate)을 null로 내려준다.
+     * NULL≠0 원칙과 같은 표현이다 — null은 "제약 없음"이지 "다 썼음"이 아니다.
      *
      * 묶음 한도(limit_group_code) 소속 혜택은 usedAmount를 <b>그룹 합산</b>으로 내려준다.
      * 화면이 혜택마다 따로 더하면 한도가 그룹 혜택 수만큼 배로 보이므로, 묶인 혜택들은 같은 값을 갖는다.
@@ -81,21 +83,27 @@ public class CardMonthlyStatusBuilder {
         List<BenefitUsageStatus> result = new ArrayList<>();
         for (BenefitRow row : benefitRows) {
             Long monthlyLimit = effectiveMonthlyLimit(row);
-            if (monthlyLimit == null) {
-                continue;
-            }
             long usedAmount = groupUsedAmount(row, benefitRows, usedAmountByBenefit);
-            long remainingLimit = Math.max(0L, monthlyLimit - usedAmount);
-            // 한도 0(혜택 없음)이면 이용률은 정의되지 않는다 — 0으로 나누지 않도록 null
-            BigDecimal usageRate = (monthlyLimit == 0)
+            Long remainingLimit = (monthlyLimit == null)
                     ? null
-                    : BigDecimal.valueOf(usedAmount * 100)
-                            .divide(BigDecimal.valueOf(monthlyLimit), 1, RoundingMode.HALF_UP);
+                    : Math.max(0L, monthlyLimit - usedAmount);
             result.add(new BenefitUsageStatus(
                     row.getBenefitId(), row.getBenefitName(), row.getLimitGroupCode(),
-                    usedAmount, monthlyLimit, remainingLimit, usageRate));
+                    usedAmount, monthlyLimit, remainingLimit, usageRate(monthlyLimit, usedAmount)));
         }
         return result;
+    }
+
+    /**
+     * 이용률(%) — 소진액 ÷ 한도. 한도가 없거나(null) 0이면 정의되지 않아 null이다.
+     * 0을 돌려주면 "아직 안 썼다"로 읽혀 "쓸 한도가 없다"와 구분되지 않는다.
+     */
+    private BigDecimal usageRate(Long monthlyLimit, long usedAmount) {
+        if (monthlyLimit == null || monthlyLimit == 0) {
+            return null;
+        }
+        return BigDecimal.valueOf(usedAmount * 100)
+                .divide(BigDecimal.valueOf(monthlyLimit), 1, RoundingMode.HALF_UP);
     }
 
     /** 판정된 구간의 개별한도가 있으면 그 값, 없으면 base 월 한도. 둘 다 없으면 null(한도 없음). */

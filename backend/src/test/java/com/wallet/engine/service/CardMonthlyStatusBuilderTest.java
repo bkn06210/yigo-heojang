@@ -93,8 +93,8 @@ class CardMonthlyStatusBuilderTest {
     }
 
     @Test
-    @DisplayName("한도 없는 혜택은 이용 현황 목록에서 빠진다")
-    void 한도_없는_혜택은_목록에서_빠진다() {
+    @DisplayName("한도 없는 혜택도 목록에 담되 한도·잔여·이용률은 null이다")
+    void 한도_없는_혜택은_한도_관련_값이_null이다() {
         BenefitRow limited = benefitRow(10, "편의점 5% 할인", null, 5_000L, null);
         BenefitRow unlimited = benefitRow(30, "전 가맹점 0.7% 적립", null, null, null);
 
@@ -102,8 +102,29 @@ class CardMonthlyStatusBuilderTest {
                 1, "카드", "2026-08", 350_000, 0, 0, TIERS,
                 List.of(limited, unlimited), Map.of(10L, 1_000L, 30L, 5_000L));
 
-        // 한도 없는 혜택은 잔여·이용률이 정의되지 않아 뺀다
-        assertThat(status.benefits()).extracting(BenefitUsageStatus::benefitId).containsExactly(10L);
+        assertThat(status.benefits()).extracting(BenefitUsageStatus::benefitId)
+                .containsExactly(10L, 30L);
+        // 한도 없는 혜택 — 소진액은 실제 값, 나머지 셋은 "제약 없음"이라 null(0이 아니다)
+        BenefitUsageStatus noLimit = status.benefits().get(1);
+        assertThat(noLimit.usedAmount()).isEqualTo(5_000L);
+        assertThat(noLimit.monthlyLimit()).isNull();
+        assertThat(noLimit.remainingLimit()).isNull();
+        assertThat(noLimit.usageRate()).isNull();
+    }
+
+    @Test
+    @DisplayName("한도 0(혜택 없음)은 잔여 0이되 이용률은 null이다")
+    void 한도_0인_혜택은_이용률이_null이다() {
+        BenefitRow row = benefitRow(50, "구간 미달로 한도 0", null, 0L, null);
+
+        CardMonthlyStatus status = builder.build(
+                1, "카드", "2026-08", 350_000, 0, 0, TIERS, List.of(row), Map.of());
+
+        BenefitUsageStatus benefit = only(status);
+        assertThat(benefit.monthlyLimit()).isZero();
+        assertThat(benefit.remainingLimit()).isZero();
+        // 0으로 나눌 수 없다 — 이용률 0%("아직 안 씀")로 뭉개면 안 된다
+        assertThat(benefit.usageRate()).isNull();
     }
 
     @Test
