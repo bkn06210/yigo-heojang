@@ -1,13 +1,26 @@
 name: CI
 
-# push(develop·main)와 모든 PR에서 backend 테스트를 자동 실행한다.
+# push(develop·main)와 모든 PR에서 모노레포 전체를 검사한다.
 # 목적: 회귀 자동 감지 + PR 본문의 "다른 파트 영향 없음"을 기계로 뒷받침.
+#
+# 파트별로 job을 나눈 이유는 두 가지다.
+#   ① 병렬로 돌아 전체 시간이 느린 쪽 하나만큼만 걸린다
+#   ② 실패한 job 이름만 봐도 어느 파트가 깨졌는지 바로 안다
+#
+# 변경 경로로 job을 건너뛰게(paths 필터) 하지 않는다. 필수 체크로 지정된 job이 skip되면
+# "통과"가 아니라 "미실행"으로 남아 머지 판정이 애매해지기 때문이다. 둘 다 항상 돌린다.
+#
+# ⚠️ job을 추가하면 GitHub 저장소 설정에서 필수 체크 목록에도 추가해야 머지를 막는다
+#    (Settings → Rules → protect-develop → Require status checks). 안 하면 빨간불이어도 머지된다.
+#
+# ai-server(Python)는 아직 소스가 없어 job이 없다. 챗봇 서버가 들어오면 job을 하나 더 추가한다.
 on:
   push:
     branches: [develop, main]
   pull_request:
 
 jobs:
+  # 이름을 바꾸지 말 것 — develop 보호 규칙이 이 이름을 필수 체크로 지정하고 있다.
   backend-test:
     runs-on: ubuntu-latest
 
@@ -73,3 +86,34 @@ jobs:
         run: |
           chmod +x mvnw
           ./mvnw -B test
+
+  # 프론트엔드는 아직 테스트 스크립트가 없어 빌드로 검사한다.
+  # 빌드만으로도 문법 오류·중복 선언·닫히지 않은 태그·없는 모듈 import가 전부 걸린다
+  # (실제로 이런 사고가 있었다: 중복 import 한 줄 때문에 앱 첫 화면이 백지가 됐고,
+  #  backend만 검사하던 CI는 초록불이었다).
+  frontend-build:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: frontend
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # Vite 8은 Node 20.19+ 또는 22.12+를 요구한다. 22로 고정해 둔다.
+      - name: Set up Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      # npm install이 아니라 npm ci — package-lock.json을 그대로 재현한다.
+      # 사람마다 다른 버전이 깔려 "내 로컬에선 되는데"가 생기는 것을 막고,
+      # lock과 package.json이 어긋나면 여기서 바로 실패한다.
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
