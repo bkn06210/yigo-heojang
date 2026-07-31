@@ -715,7 +715,7 @@ h2 {
 
   height: 44px;
 
-  border: none;
+  border: none; 
 
   border-radius: 12px;
 
