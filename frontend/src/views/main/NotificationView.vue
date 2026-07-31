@@ -3,7 +3,7 @@ import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 
 import NotificationModal from '@/components/notification/NotificationModal.vue';
-
+  
 // 뒤로가기용
 const router = useRouter();
 
