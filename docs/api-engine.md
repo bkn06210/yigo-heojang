@@ -184,6 +184,10 @@ Content-Type: application/json
   - 보유 카드가 0장이면 에러가 아니라 `cards: []`, `briefing: null`을 반환한다 (정상 상태).
   - 3번(상세)과의 분리 근거: 목록에서 카드마다 전체 혜택 상세를 반복 전송하면 응답이 커지므로, 목록은 요약(`benefitsSummary`)만, 혜택 상세(`benefits`, 이용률 포함)는 3번 개별 호출로 나눈다.
   - `briefing`은 실적 달성이 가장 임박한 카드 안내 — 판단·문구 모두 엔진 생성 (화면 표기는 "추천", "AI 브리핑" 라벨 지양).
+    후보 제외: 실적 조건 없는 카드(`targetPerformance=0`), 이미 최고 구간까지 채운 카드(`remainingPerformance=0`).
+    선정: 달성률 최대 → 동률이면 남은 금액 최소 → `userCardId` 오름차순(재현성).
+  - `benefitsSummary`는 **묶음 한도 그룹을 한 줄로 접어** 내려준다 (3번은 접지 않는다 — 아래 참고).
+  - `yearMonth` 형식이 `YYYY-MM`이 아니면 `INPUT_INVALID`(400).
 
 ### 🔽 엔드포인트
 
@@ -237,12 +241,20 @@ Authorization: Bearer <JWT>
           {
             "benefitId": 31,
             "benefitName": "교통 10% 할인",
+            "limitGroupCode": null,
             "remainingLimit": 5000
           },
           {
-            "benefitId": 55,
-            "benefitName": "편의점 2천원 할인",
+            "benefitId": 61,
+            "benefitName": "통신요금 10% 할인 외 2건",
+            "limitGroupCode": "LIVING3",
             "remainingLimit": 2000
+          },
+          {
+            "benefitId": 70,
+            "benefitName": "전 가맹점 0.5% 적립",
+            "limitGroupCode": null,
+            "remainingLimit": null
           }
         ]
       }
@@ -272,10 +284,11 @@ Authorization: Bearer <JWT>
 | cards[].performanceMet                   | bool         | 현재 실적 충족 여부 — 전월실적으로 판정된 구간의 `min_performance_amount > 0`이면 true. false면 `require_performance=Y` 혜택은 이번 달 적용되지 않는다 |
 | cards[].sharedLimit                      | int\|null     | 현재 구간의 월 통합할인한도. **null=통합한도 없는 카드**(혜택별 개별한도만 적용), 0=혜택 없음                                             |
 | cards[].sharedLimitUsed                  | int          | 통합한도 소진액                                                                                                                           |
-| cards[].benefitsSummary[]                | array        | 홈 위젯 "남은 혜택" 표시용 — 잔여 한도가 남은 혜택 요약. 상세는 3번                                                                       |
-| cards[].benefitsSummary[].benefitId      | int          | 혜택 id                                                                                                                                   |
-| cards[].benefitsSummary[].benefitName    | string       | 혜택명 (예: 교통 10% 할인)                                                                                                                |
-| cards[].benefitsSummary[].remainingLimit | int\|null    | 잔여 한도(한도 없으면 null). **묶음 한도 소속이면 그룹 기준 잔여액** — 3번의 `limitGroupCode` 참조                                        |
+| cards[].benefitsSummary[]                | array        | 홈 위젯 "남은 혜택" 표시용 — 아직 쓸 수 있는 혜택 요약. 잔여 0(소진)은 빠지고, 한도 없는 혜택은 남는다. 상세는 3번 |
+| cards[].benefitsSummary[].benefitId      | int          | 혜택 id. **묶음 소속이면 그룹에서 가장 작은 id**(대표)                                                                                    |
+| cards[].benefitsSummary[].benefitName    | string       | 표시명. 묶음 소속이면 `"대표 혜택명 외 N건"` (예: 통신요금 10% 할인 외 2건)                                                               |
+| cards[].benefitsSummary[].limitGroupCode | string\|null | 묶음 한도 코드. null이면 이 혜택 단독                                                                                                     |
+| cards[].benefitsSummary[].remainingLimit | int\|null    | 잔여 한도. **묶음 소속이면 그룹 기준 잔여액을 한 번만** 내려준다(접힌 결과라 화면이 더해도 실제와 맞는다). 한도 없는 혜택은 null          |
 
 ---
 
@@ -284,7 +297,12 @@ Authorization: Bearer <JWT>
 ### 📌 기능 설명
 
 - **사용 목적**: 카드 상세 화면용. 특정 보유 카드 한 장의 실적 현황과 **혜택별 이용 현황(잔여 한도 포함)**까지 상세 반환한다.
-- **주의사항**: 달성률·이용률·잔여 한도는 저장값이 아니라 계산값이다 (원본만 저장, 조회 시 계산).
+- **주의사항**:
+  - 달성률·이용률·잔여 한도는 저장값이 아니라 계산값이다 (원본만 저장, 조회 시 계산).
+  - `benefits[]`는 **한도 없는 혜택도 담는다.** 이때 `monthlyLimit`·`remainingLimit`·`usageRate`가 전부 null이다 — "제약 없음"이지 "다 씀"이 아니다(NULL≠0).
+  - 묶음 한도 그룹을 **접지 않는다.** 2번(목록)은 접어서 한 줄로 주지만, 상세는 혜택별로 전부 보여야 하므로 같은 값을 각 행에 내려준다(아래 주의 참고).
+  - 증정(GIFT)·사후정산(RETROACTIVE)은 계산 대상이 아니라 이 목록에 없다. 카드 상세 화면이 정보로 표시하려면 benefit 목록을 별도 조회한다.
+  - `yearMonth` 형식이 `YYYY-MM`이 아니면 `INPUT_INVALID`(400).
 
 ### 🔽 엔드포인트
 
@@ -359,6 +377,15 @@ Authorization: Bearer <JWT>
         "monthlyLimit": 5000,
         "remainingLimit": 2000,
         "usageRate": 60.0
+      },
+      {
+        "benefitId": 70,
+        "benefitName": "전 가맹점 0.5% 적립",
+        "limitGroupCode": null,
+        "usedAmount": 1200,
+        "monthlyLimit": null,
+        "remainingLimit": null,
+        "usageRate": null
       }
     ]
   },
@@ -383,7 +410,7 @@ Authorization: Bearer <JWT>
 | sharedLimitUsed           | int         | 통합한도 소진액                                                                                                               |
 | benefits[].benefitId      | int         | 혜택 id                                                                                                                       |
 | benefits[].benefitName    | string      | 혜택명                                                                                                                        |
-| benefits[].usedAmount      | int         | 이번 달 누적 혜택액. 묶음 소속이면 **그룹 전체 누적액**                                                                        |
+| benefits[].usedAmount      | int         | 이번 달 누적 혜택액. 묶음 소속이면 **그룹 전체 누적액**. 한도가 없는 혜택도 이 값은 실제 누적액이다                             |
 | benefits[].limitGroupCode | string\|null | 묶음 한도 코드. **같은 코드를 가진 혜택들은 한도를 공유한다** — 아래 세 값이 전부 그룹 기준으로 내려간다. null이면 이 혜택 단독 |
 | benefits[].monthlyLimit   | int\|null   | 혜택 월 한도(없으면 null). 묶음 소속이면 **그룹 공유 한도**. 실적구간별 한도가 있으면(`benefit_tier_limit`) **판정된 구간의 한도**를 내려준다 |
 | benefits[].remainingLimit | int\|null   | 잔여 한도(monthlyLimit − usedAmount, 한도 없으면 null). 묶음 소속이면 **그룹 기준 잔여액** — 묶인 혜택들이 같은 값을 갖는다     |

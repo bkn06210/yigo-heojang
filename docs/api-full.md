@@ -2111,10 +2111,12 @@ GET /api/cards/monthly-status
 ◦ 카드가 여러 장이라도 한 번의 호출로 처리한다 (개별 호출 반복 금지).
 ◦ 보유 카드가 0장이면 에러가 아니라 cards: [], briefing: null을 반환한다 (정상 상태).
 ◦ 3번(상세)과의 분리 근거: 목록에서 카드마다 전체 혜택 상세를 반복 전송하면 응답이 커지므로, 목록은 요약(benefitsSummary)만, 혜택 상세(benefits, 이용률 포함)는 3번 개별 호출로 나눈다.
-◦ briefing은 실적 달성이 가장 임박한 카드 안내 — 판단·문구 모두 엔진 생성 (화면 표기는 "추천", "AI 브리핑" 라벨 지양).
+◦ briefing은 실적 달성이 가장 임박한 카드 안내 — 판단·문구 모두 엔진 생성 (화면 표기는 "추천", "AI 브리핑" 라벨 지양). 후보에서 빠지는 카드는 둘이다: 실적 조건이 없는 카드(targetPerformance=0)와 이미 최고 구간까지 채운 카드(remainingPerformance=0). 남은 카드 중 달성률 최대, 동률이면 남은 금액이 적은 쪽 → userCardId 오름차순. 후보가 없으면 `null`.
 ◦ performanceMet: 현재 실적 충족 여부(bool). false면 전월실적 조건이 걸린 혜택은 이번 달 적용되지 않는다.
 ◦ sharedLimit은 `int|null`. **null = 통합한도가 없는 카드**(혜택별 개별한도만 적용), 0 = 혜택 없음. 둘을 뭉개면 안 된다.
-◦ benefitsSummary[].remainingLimit은 묶음 한도에 속한 혜택이면 **그룹 기준 잔여액**이다 (31번의 limitGroupCode 참조).
+◦ **benefitsSummary는 묶음 한도(limitGroupCode) 그룹을 한 줄로 접어 내려준다.** 한도를 공유하는 혜택을 각각 내려주면 목록 화면이 그대로 더해 실제 지갑보다 몇 배 큰 금액으로 보이기 때문이다. 대표는 그룹에서 가장 작은 benefitId, 표시명은 `"대표 혜택명 외 N건"`. 상세는 31번(접지 않고 혜택별로 전부 내려감).
+◦ benefitsSummary는 **아직 쓸 수 있는 혜택만** 담는다. 잔여 0(이번 달 소진)은 빠지고, 한도가 없는 혜택은 `remainingLimit: null`로 남는다 — null은 "제약 없음"이지 소진이 아니다.
+◦ `yearMonth` 형식이 `YYYY-MM`이 아니면 `INPUT_INVALID(400)`. 조용히 이번 달로 넘기지 않는다(다른 달 숫자를 그 달 값으로 오인하게 되므로).
 
 **화면** W*CardList W_Main*홈 · **라우트** /home /cards · **담당** 현준 고 · **상태 코드** 200 OK
 
@@ -2152,12 +2154,20 @@ GET /api/cards/monthly-status
           {
             "benefitId": 31,
             "benefitName": "교통 10% 할인",
+            "limitGroupCode": null,
             "remainingLimit": 5000
           },
           {
-            "benefitId": 55,
-            "benefitName": "편의점 2천원 할인",
+            "benefitId": 61,
+            "benefitName": "통신요금 10% 할인 외 2건",
+            "limitGroupCode": "LIVING3",
             "remainingLimit": 2000
+          },
+          {
+            "benefitId": 70,
+            "benefitName": "전 가맹점 0.5% 적립",
+            "limitGroupCode": null,
+            "remainingLimit": null
           }
         ]
       }
@@ -2180,8 +2190,11 @@ GET /api/cards/{userCardId}/monthly-status
 • 사용 목적: 카드 상세 화면용. 특정 보유 카드 한 장의 실적 현황과 **혜택별 이용 현황(잔여 한도 포함)**까지 상세 반환한다.
 • 주의사항:
 ◦ 달성률·이용률·잔여 한도는 저장값이 아니라 계산값이다 (원본만 저장, 조회 시 계산).
-◦ **limitGroupCode가 같은 혜택들은 한도를 공유한다.** monthlyLimit·usedAmount·remainingLimit·usageRate가 모두 같은 값으로 내려가므로, 화면에서 혜택마다 따로 더하면 한도가 실제보다 몇 배로 보인다. 같은 코드끼리 묶어 한 줄로 표시하거나 그룹 잔여액을 한 번만 노출한다. null이면 이 혜택 단독.
+◦ **limitGroupCode가 같은 혜택들은 한도를 공유한다.** monthlyLimit·usedAmount·remainingLimit·usageRate가 모두 같은 값으로 내려가므로, 화면에서 혜택마다 따로 더하면 한도가 실제보다 몇 배로 보인다. 같은 코드끼리 묶어 한 줄로 표시하거나 그룹 잔여액을 한 번만 노출한다. null이면 이 혜택 단독. (30번은 서버가 미리 접어서 내려주고, 여기서는 접지 않는다 — 상세 화면이 혜택별로 다 보여야 하기 때문.)
+◦ **한도가 없는 혜택도 목록에 담는다.** 이때 monthlyLimit·remainingLimit·usageRate가 모두 `null`이다 — "제약 없음"이지 "다 씀"이 아니다. 화면은 잔여액 대신 혜택명만 표시한다.
+◦ 증정(GIFT)·사후정산(RETROACTIVE)은 계산 대상이 아니라 이 목록에 없다. 카드 상세 화면에서 정보로 표시하려면 benefit 목록을 별도 조회한다.
 ◦ performanceMet: 현재 실적 충족 여부(bool). sharedLimit은 `int|null` (null = 통합한도 없는 카드).
+◦ `yearMonth` 형식이 `YYYY-MM`이 아니면 `INPUT_INVALID(400)`.
 
 **화면** W_CardDetail · **라우트** /cards/:id · **담당** 현준 고 · **상태 코드** 200 OK
 
@@ -2225,6 +2238,15 @@ GET /api/cards/{userCardId}/monthly-status
         "monthlyLimit": 5000,
         "remainingLimit": 2000,
         "usageRate": 60.0
+      },
+      {
+        "benefitId": 70,
+        "benefitName": "전 가맹점 0.5% 적립",
+        "limitGroupCode": null,
+        "usedAmount": 1200,
+        "monthlyLimit": null,
+        "remainingLimit": null,
+        "usageRate": null
       }
     ]
   },
@@ -2234,7 +2256,7 @@ GET /api/cards/{userCardId}/monthly-status
 
 **고유 에러**
 
-`NOT_FOUND(404)`
+`NOT_FOUND(404)` — 없는 카드와 타인 소유 카드를 구분 없이 404 (존재 비노출)
 
 ### 32. 결제 취소 상태 갱신
 
