@@ -1,27 +1,29 @@
+// frontend/src/api/authApi.js
+
 import api from './axios'
 
-
 // 회원가입 요청
-// POST /api/auth/signup
-// 전달 데이터: name, email, password
-// passwordConfirm은 프론트 검증용이라 전달하지 않음
 export const signup = (userData) => {
-
   return api.post(
-    '/api/auth/signup',
-    userData
+      '/api/auth/signup',
+      userData
   )
-
 }
 
-
 // 로그인 요청
-// POST /api/auth/login
 export const login = (loginData) => {
-
   return api.post(
-    '/api/auth/login',
-    loginData
+      '/api/auth/login',
+      loginData
   )
+}
 
+// Access Token 재발급 요청
+export const reissueAccessToken = () => {
+  return api.post('/api/auth/token')
+}
+
+// 로그아웃 요청
+export const logout = () => {
+  return api.post('/api/auth/logout')
 }

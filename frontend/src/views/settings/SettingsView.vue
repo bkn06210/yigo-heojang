@@ -2,7 +2,7 @@
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { storeToRefs } from 'pinia';
-
+import { logout as logoutApi } from '@/api/authApi'
 import { useAuthStore } from '@/stores/authStore';
 
 import PageHeader from '@/components/common/PageHeader.vue';
@@ -40,6 +40,16 @@ const closeProfileEdit = () => {
 
 };
 
+const handleLogout = async () => {
+  try {
+    await logoutApi()
+  } catch (error) {
+    console.log('로그아웃 API 실패:', error)
+  } finally {
+    authStore.logout()
+    router.push('/auth/login')
+  }
+}
 
 // 프로필 저장
 const updateProfile = (updatedUser) => {
@@ -71,15 +81,7 @@ const navigateTo = (path) => {
 };
 
 // 로그아웃
-const logout = () => {
 
-  console.log('로그아웃 버튼 클릭');
-
-  authStore.logout();
-
-  router.push('/');
-
-};
 
 </script>
 
@@ -288,7 +290,7 @@ const logout = () => {
   <button
     class="logout-button"
     type="button"
-    @click="logout"
+    @click="handleLogout"
   >
     로그아웃
   </button>

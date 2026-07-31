@@ -70,7 +70,14 @@ export const useAuthStore = defineStore(
     'token',
     loginToken
   );
+const setAccessToken = (newAccessToken) => {
+  token.value = newAccessToken
 
+  localStorage.setItem(
+    'token',
+    newAccessToken
+  )
+}
 
   localStorage.setItem(
     'user',
@@ -78,7 +85,16 @@ export const useAuthStore = defineStore(
   );
 
 };
+const setAccessToken = (newAccessToken) => {
 
+  token.value = newAccessToken;
+
+  localStorage.setItem(
+    'token',
+    newAccessToken
+  );
+
+};
     const updateUser = (updatedUser) => {
 
   user.value = {
@@ -140,12 +156,15 @@ export const useAuthStore = defineStore(
   user,
 
   setLogin,
+	
+  setAccessToken,
 
   updateUser,
 
   logout,
 
   isLogin
+
 
 }
   }
