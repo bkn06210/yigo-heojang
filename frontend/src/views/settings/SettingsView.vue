@@ -13,11 +13,8 @@ import ProfileEditBottomSheet from '@/components/settings/ProfileEditBottomSheet
 const router = useRouter();
 
 
-
 // 로그인 상태
 // TODO : 백엔드/Pinia 인증 상태 연결
-// 사용자 정보
-
 const authStore = useAuthStore();
 
 const { user } = storeToRefs(authStore);
@@ -113,71 +110,11 @@ const logout = () => {
   authStore.logout();
 
 
-// 프로필 수정 바텀시트 상태
-const isProfileSheetOpen = ref(false);
-
-
-// 프로필 수정창 열기
-const openProfileEdit = () => {
-
-  if (!user.value) return;
-
-  isProfileSheetOpen.value = true;
-
-};
-
-
-// 프로필 수정창 닫기
-const closeProfileEdit = () => {
-
-  isProfileSheetOpen.value = false;
-
-};
-
-
-// 프로필 저장
-const updateProfile = (updatedUser) => {
-
-  userStore.updateUser(updatedUser);
-
-  closeProfileEdit();
-
-};
-
-
-// 보기 설정
-const displaySetting = ref('system');
-
-
-// 뒤로가기
-const goBack = () => {
-
-  router.go(-1);
-
-};
-
-
-// 메뉴 이동
-const navigateTo = (path) => {
-
-  router.push(path);
-
-};
-
-// 로그아웃
-const logout = () => {
-
-  console.log('로그아웃 버튼 클릭');
-
-  authStore.logout();
-
-
   router.push('/');
 
 };
 
 </script>
-
 
 <template>
 
@@ -185,11 +122,7 @@ const logout = () => {
 
 
     <!-- 헤더 -->
-
     <PageHeader
-
-    <PageHeader 
-
       title="설정"
       @back="goBack"
     />
@@ -207,11 +140,8 @@ const logout = () => {
       >
 
 
-
         <div class="profile-image-wrapper">
 
-        <!-- 프로필 이미지 -->
-        <div class="profile-image-wrapper">
 
           <img
             v-if="user.profileImageUrl"
@@ -227,7 +157,6 @@ const logout = () => {
           />
 
 
-
         </div>
 
 
@@ -235,16 +164,6 @@ const logout = () => {
 
         <div class="profile-info">
 
-
-          <div class="nickname-area">
-
-
-
-        </div>
-
-
-        <!-- 닉네임 + 수정 버튼 -->
-        <div class="profile-info">
 
           <div class="nickname-area">
 
@@ -277,7 +196,6 @@ const logout = () => {
 
 
 
-
       <!-- 비로그인 상태 -->
 
       <section
@@ -300,19 +218,7 @@ const logout = () => {
         </button>
 
 
-      <!-- 로그인하지 않은 경우 -->
-      <section
-        v-else
-        class="profile-section"
-      >
-
-        <span>
-          로그인해주세요.
-        </span>
-
-
       </section>
-
 
 
 
@@ -325,12 +231,6 @@ const logout = () => {
 
 
         <!-- 개인 맞춤 설정 -->
-
-
-      <!-- 설정 메뉴 -->
-      <section class="menu-list">
-
-
 
         <div
           class="menu-item"
@@ -353,9 +253,7 @@ const logout = () => {
 
 
 
-
         <!-- 알림 -->
-
 
         <div
           class="menu-item"
@@ -378,12 +276,7 @@ const logout = () => {
 
 
 
-
         <!-- 보기 설정 -->
-
-        <div class="menu-item dropdown-item">
-
-
 
         <div class="menu-item dropdown-item">
 
@@ -394,15 +287,8 @@ const logout = () => {
 
 
 
-
           <div class="menu-value-dropdown">
 
-
-            <select v-model="displaySetting">
-
-
-
-          <div class="menu-value-dropdown">
 
             <select v-model="displaySetting">
 
@@ -420,12 +306,6 @@ const logout = () => {
               <option value="dark">
                 다크 모드
               </option>
-
-
-
-            </select>
-
-
 
 
             </select>
@@ -446,7 +326,6 @@ const logout = () => {
 
 
 
-
         <!-- 계정 및 보안 -->
 
         <div
@@ -459,23 +338,12 @@ const logout = () => {
           </span>
 
 
-        <div
-          class="menu-item"
-          @click="navigateTo('/settings/security')"
-        >
-
-          <span>
-            보안 및 로그인
-          </span>
-
-
           <span>
             ›
           </span>
 
 
         </div>
-
 
 
 
@@ -503,37 +371,6 @@ const logout = () => {
 
         </button>
 
-        <div
-          class="menu-item"
-          @click="navigateTo('/settings/account')"
-        >
-
-          <span>
-            계정
-          </span>
-
-          <span>
-            ›
-          </span>
-
-        </div>
-
-
-      </section>
-
-
-
-      <!-- 로그아웃 -->
-      <section class="logout-section">
-
-  <button
-    class="logout-button"
-    type="button"
-    @click="logout"
-  >
-    로그아웃
-  </button>
-
 
       </section>
 
@@ -543,10 +380,6 @@ const logout = () => {
 
 
 
-
-
-
-    <!-- 프로필 수정 바텀시트 -->
 
 
     <!-- 프로필 수정 바텀시트 -->
@@ -567,9 +400,6 @@ const logout = () => {
 
 
 
-
-    <!-- 하단 네비게이션 -->
-
     <!-- 하단 네비게이션 -->
 
     <BottomNavigation />
@@ -583,7 +413,6 @@ const logout = () => {
 <style scoped>
 
 .settings-view {
-
 
   min-height: 100vh;
 
@@ -950,193 +779,6 @@ const logout = () => {
 
   box-shadow:0 2px 8px rgba(0,0,0,0.04);
 
-}
-
-
-  display: flex;
-
-  flex-direction: column;
-
-  min-height: 100vh;
-
-  background: #f9f9f9;
-}
-
-
-.settings-content {
-  flex: 1;
-
-  padding: 20px;
-
-  padding-bottom: 80px;
-}
-
-
-.profile-section {
-  display: flex;
-
-  flex-direction: column;
-
-  align-items: center;
-
-  margin-bottom: 30px;
-}
-
-
-.profile-image-wrapper {
-  width: 100px;
-
-  height: 100px;
-}
-
-
-.profile-image {
-  width: 100%;
-
-  height: 100%;
-
-  border-radius: 50%;
-
-  object-fit: cover;
-}
-
-
-.default-image {
-  background: #ddd;
-}
-
-
-.profile-info {
-  margin-top: 12px;
-}
-
-
-.nickname-area {
-  display: flex;
-
-  align-items: center;
-
-  justify-content: center;
-
-  gap: 6px;
-}
-
-
-.nickname {
-  font-size: 1.2rem;
-
-  font-weight: bold;
-}
-
-
-.edit-profile-button {
-  width: 24px;
-
-  height: 24px;
-
-  border: none;
-
-  background: none;
-
-  display: flex;
-
-  justify-content: center;
-
-  align-items: center;
-
-  cursor: pointer;
-}
-
-
-.edit-profile-button .material-icons {
-  font-size: 18px;
-
-  color: #888;
-}
-
-
-.menu-list {
-  background: white;
-
-  border-radius: 8px;
-
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-}
-
-
-.menu-item {
-  display: flex;
-
-  justify-content: space-between;
-
-  align-items: center;
-
-  padding: 15px 20px;
-
-  border-bottom: 1px solid #eee;
-
-  cursor: pointer;
-}
-
-
-.menu-item:last-child {
-  border-bottom: none;
-}
-
-
-.dropdown-item {
-  cursor: default;
-}
-
-
-.menu-value-dropdown {
-  position: relative;
-
-  display: flex;
-
-  align-items: center;
-}
-
-
-.menu-value-dropdown select {
-  appearance: none;
-
-  background: transparent;
-
-  border: none;
-
-  font-size: 0.9rem;
-
-  color: #666;
-
-  padding-right: 20px;
-}
-
-
-.dropdown-arrow {
-  position: absolute;
-
-  right: 0;
-}
-
-
-.logout-section {
-  margin-top: 40px;
-
-  text-align: center;
-}
-
-
-.logout-button {
-  color: #d9534f;
-
-  font-weight: bold;
-
-  border: none;
-
-  background: none;
-
-  cursor: pointer;
 }
 
 
