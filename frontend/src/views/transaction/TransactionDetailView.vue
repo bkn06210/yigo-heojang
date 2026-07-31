@@ -268,7 +268,7 @@ const closeDetail = () => {
 
   font-weight:600;
 
-}
+} 
 
 
 
