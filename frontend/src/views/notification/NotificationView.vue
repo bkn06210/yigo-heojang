@@ -281,7 +281,7 @@ const deleteNotification = (id)=>{
 .action-buttons .delete{
 
   background:#ef4444;
-
+ 
 }
 
 
