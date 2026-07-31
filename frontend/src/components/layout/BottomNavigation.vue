@@ -12,7 +12,11 @@
     </RouterLink>
 
 
+
     <RouterLink to="/payment/recommend">
+
+    <RouterLink to="/payment">
+
       결제
     </RouterLink>
 

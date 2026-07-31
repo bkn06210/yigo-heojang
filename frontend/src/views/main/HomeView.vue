@@ -1,16 +1,19 @@
 <script setup>
+
 import { ref, computed, onMounted } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { storeToRefs } from 'pinia';
-
 import { useAuthStore } from '@/stores/authStore';
 import { useCardStore } from '@/stores/cardStore';
+
 
 import HomeHeader from '@/components/home/HomeHeader.vue';
 import AIBriefingCard from '@/components/common/AIBriefingCard.vue';
 import MyCardSummaryCard from '@/components/home/MyCardSummaryCard.vue';
 import PointSummaryCard from '@/components/home/PointSummaryCard.vue';
 import MembershipSummaryCard from '@/components/home/MembershipSummaryCard.vue';
+
 import BottomNavigation from '@/components/layout/BottomNavigation.vue';
 import EmptyStateCard from '@/components/common/EmptyStateCard.vue';
 import BenefitReportCard from '@/components/point/BenefitReportCard.vue';
@@ -39,6 +42,50 @@ const hasCard = computed(() => cards.value.length > 0);
 
 
 // 홈 데이터
+
+import AssistantCard from '@/components/home/AssistantCard.vue';
+import BottomNavigation from '@/components/layout/BottomNavigation.vue';
+import EmptyStateCard from '@/components/common/EmptyStateCard.vue';
+
+
+const router = useRouter();
+
+// 로그인 정보
+const authStore = useAuthStore();
+
+const { user } = storeToRefs(authStore);
+
+
+
+// 헤더 이벤트
+const goChatBot = () => {
+  console.log('챗봇');
+};
+
+
+const goNotification = () => {
+  console.log('알림');
+};
+
+
+const goProfile = () => {
+  router.push('/settings');
+};
+
+
+// 카드 이벤트
+
+const goCardDetail = () => {
+  console.log('카드 상세');
+};
+
+
+const goCardList = () => {
+  console.log('카드 목록');
+};
+
+
+// 홈 Mock 데이터
 const homeData = ref({
 
   hasUnreadNotification: true,
@@ -46,6 +93,12 @@ const homeData = ref({
 
   briefing: {
 
+
+    content:
+      '약 18,000원의 혜택을 받을 수 있습니다.',
+
+
+    title: '이번 달 가장 큰 혜택은 신한카드입니다.',
     content:
       '약 18,000원의 혜택을 받을 수 있습니다.',
 
@@ -53,6 +106,7 @@ const homeData = ref({
 
 
   myCard: {
+
 
     image: '',
 
@@ -90,18 +144,27 @@ const homeData = ref({
 
   memberships:[
 
+
     {
       id:1,
       name:'CJ ONE',
+
+    {
+      id:1,
+      name:'해피포인트',
+
     },
 
     {
       id:2,
+
       name:'해피포인트',
+
+      name:'CJ ONE',
+
     },
 
   ],
-
 
 });
 
@@ -184,6 +247,34 @@ const goPointList = () => {
 
 const goPointDetail = (item) => {
 
+});
+
+
+// 데이터 조회
+
+const loadHome = async () => {
+
+  console.log('홈 데이터 조회');
+
+};
+
+
+onMounted(async()=>{
+  await loadHome();
+});
+
+
+// 이동
+
+const goPointList = () => {
+  console.log('포인트 목록');
+};
+
+
+const goPointDetail = (item)=>{
+  console.log('포인트 상세', item);
+};
+
   console.log('포인트 상세', item);
 
 };
@@ -191,6 +282,7 @@ const goPointDetail = (item) => {
 
 
 // 멤버십
+
 
 const goMembershipDetail = (item) => {
 
@@ -239,11 +331,17 @@ onMounted(async()=>{
 
 </script>
 
+const goMembershipDetail = (item)=>{
+  console.log('멤버십 상세', item);
+};
+
+</script>
 
 
 <template>
 
 <div class="home-view">
+
 
 
 <main class="home-content">
@@ -481,6 +579,144 @@ onMounted(async()=>{
 
 <BottomNavigation />
 
+  <main class="home-content">
+
+
+    <HomeHeader
+
+      :has-unread-notification="homeData.hasUnreadNotification"
+
+      :user="user"
+
+      @chat="goChatBot"
+
+      @notification="goNotification"
+
+      @profile="goProfile"
+
+    />
+
+
+
+  <!-- 로그인 여부에 따른 브리핑 -->
+
+   <AIBriefingCard
+
+      v-if="user"
+
+      :is-login="true"
+
+      :message="homeData.briefing.content"
+
+    />
+
+
+    <AIBriefingCard
+
+      v-else
+
+      :is-login="false"
+
+      message="로그인하면 맞춤 금융 혜택을 확인할 수 있어요."
+
+    />
+
+
+
+
+  <!-- 카드 -->
+
+  
+    <MyCardSummaryCard
+
+      v-if="user"
+
+      :is-login="true"
+
+      :card="homeData.myCard"
+
+      @click-card="goCardDetail"
+
+      @click-more="goCardList"
+
+    />
+
+    <EmptyStateCard
+
+      v-else
+
+      title="등록된 카드가 없습니다."
+
+    />
+
+
+  <!-- 금융 포인트 -->
+
+   <PointSummaryCard
+
+      v-if="
+        user &&
+        homeData.financialPoints.length
+      "
+
+      :is-login="true"
+
+      :points="homeData.financialPoints"
+
+      @click-more="goPointList"
+
+      @click-item="goPointDetail"
+
+    />
+
+
+    <EmptyStateCard
+
+      v-else
+
+      title="등록된 금융 포인트가 없습니다."
+
+    />
+
+
+  <!-- 멤버십 -->
+
+    <MembershipSummaryCard
+
+      v-if="
+        user &&
+        homeData.memberships.length
+      "
+
+      :is-login="true"
+
+      :memberships="homeData.memberships"
+
+      @click-more="goPointList"
+
+      @click-item="goMembershipDetail"
+
+    />
+
+     <EmptyStateCard
+
+      v-else
+
+      title="등록된 멤버십이 없습니다."
+
+      button-text="멤버십 등록"
+
+    />
+
+    <AssistantCard />
+
+
+  </main>
+
+
+<!-- 하단 네비게이션 -->
+ <BottomNavigation />
+
 
 </div>
 
@@ -489,6 +725,7 @@ onMounted(async()=>{
 
 
 <style scoped>
+
 
 /* 홈 전체 */
 .home-view {
@@ -554,6 +791,13 @@ onMounted(async()=>{
   font-size: 18px;
 
   font-weight: 700;
+
+.home-view {
+
+  padding:16px;
+
+  padding-bottom:90px;
+
 
 }
 

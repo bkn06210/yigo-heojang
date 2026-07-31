@@ -1,5 +1,6 @@
 <script setup>
 
+
 // 부모(HomeView)로 전달하는 이벤트
 defineEmits([
   'chat',
@@ -10,10 +11,15 @@ defineEmits([
 // Props
 defineProps({
 
+
+// Props
+defineProps({
+
   hasUnreadNotification: {
     type: Boolean,
     default: false,
   },
+
 
   user: {
     type: Object,
@@ -21,11 +27,30 @@ defineProps({
   },
 
 });
+
+
+  user: {
+    type: Object,
+    default: null,
+  },
+})
+
+
+// Event
+defineEmits([
+  'chat',
+  'notification',
+  'profile',
+])
+
+
 </script>
+
 
 <template>
 
 <header class="home-header">
+
 
   <!-- 앱 이름 -->
   <h1 class="logo">
@@ -36,6 +61,20 @@ defineProps({
 
   <!-- 우측 영역 -->
   <div class="actions">
+
+
+
+  <!-- 앱 이름 -->
+  <h1 class="logo">
+    YIGO
+  </h1>
+
+
+
+  <!-- 우측 버튼 -->
+  <div class="actions">
+
+
 
     <!-- 챗봇 -->
     <button
@@ -52,6 +91,7 @@ defineProps({
     <button
       type="button"
       class="icon-button notification-btn"
+
       @click="$emit('click-notification')"
     >
 
@@ -59,6 +99,15 @@ defineProps({
 
 
       <!-- 읽지 않은 알림 -->
+
+      @click="$emit('notification')"
+    >
+
+      🔔
+
+
+      <!-- 읽지 않은 알림 표시 -->
+
       <span
         v-if="hasUnreadNotification"
         class="notification-dot"
@@ -100,9 +149,20 @@ defineProps({
         👤
       </span>
 
+
     </button>
 
   </div>
+
+
+
+
+    </button>
+
+
+  </div>
+
+
 
 </header>
 
@@ -111,6 +171,9 @@ defineProps({
 
 
 <style scoped>
+
+
+
 
 .home-header {
 
@@ -121,6 +184,7 @@ defineProps({
   align-items:center;
 
   margin-bottom:16px;
+
 
 }
 
@@ -172,9 +236,27 @@ defineProps({
 
   padding:0;
 
+}
+
+
+
+.logo {
+
+  font-size:24px;
+
+  font-weight:700;
+
+}
+
+
+
+.actions {
+
+
   display:flex;
 
   align-items:center;
+
 
   justify-content:center;
 
@@ -194,9 +276,48 @@ defineProps({
 
 
 /* 빨간 점 */
+
+  gap:12px;
+
+}
+
+
+
+.user-name {
+
+  font-size:14px;
+
+  font-weight:600;
+
+}
+
+
+
+.icon-button,
+.profile-button {
+
+  width:32px;
+  height:32px;
+
+  border:none;
+  background:none;
+
+  padding:0;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  cursor:pointer;
+
+}
+
+
+
 .notification-dot {
 
   position:absolute;
+
 
   top:3px;
 
@@ -204,9 +325,15 @@ defineProps({
 
   width:8px;
 
+  top:0;
+  right:0;
+
+  width:8px;
+
   height:8px;
 
   border-radius:50%;
+
 
   background:#ff3b30;
 
@@ -215,6 +342,14 @@ defineProps({
 
 
 /* 기본 프로필 */
+
+  background:red;
+
+}
+
+
+
+
 .default-profile {
 
   font-size:24px;
@@ -223,7 +358,12 @@ defineProps({
 
 
 
+
 /* 프로필 이미지 */
+.profile-image {
+
+  width:32px;
+
 .profile-image {
 
   width:32px;
@@ -235,5 +375,14 @@ defineProps({
   object-fit:cover;
 
 }
+
+
+.notification-btn {
+
+  position:relative;
+
+}
+
+
 
 </style>
