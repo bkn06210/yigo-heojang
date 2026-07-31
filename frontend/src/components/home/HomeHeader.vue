@@ -1,6 +1,5 @@
 <script setup>
 
-
 // 부모(HomeView)로 전달하는 이벤트
 defineEmits([
   'chat',
@@ -11,15 +10,10 @@ defineEmits([
 // Props
 defineProps({
 
-
-// Props
-defineProps({
-
   hasUnreadNotification: {
     type: Boolean,
     default: false,
   },
-
 
   user: {
     type: Object,
@@ -27,30 +21,11 @@ defineProps({
   },
 
 });
-
-
-  user: {
-    type: Object,
-    default: null,
-  },
-})
-
-
-// Event
-defineEmits([
-  'chat',
-  'notification',
-  'profile',
-])
-
-
 </script>
-
 
 <template>
 
 <header class="home-header">
-
 
   <!-- 앱 이름 -->
   <h1 class="logo">
@@ -61,20 +36,6 @@ defineEmits([
 
   <!-- 우측 영역 -->
   <div class="actions">
-
-
-
-  <!-- 앱 이름 -->
-  <h1 class="logo">
-    YIGO
-  </h1>
-
-
-
-  <!-- 우측 버튼 -->
-  <div class="actions">
-
-
 
     <!-- 챗봇 -->
     <button
@@ -91,7 +52,6 @@ defineEmits([
     <button
       type="button"
       class="icon-button notification-btn"
-
       @click="$emit('click-notification')"
     >
 
@@ -99,15 +59,6 @@ defineEmits([
 
 
       <!-- 읽지 않은 알림 -->
-
-      @click="$emit('notification')"
-    >
-
-      🔔
-
-
-      <!-- 읽지 않은 알림 표시 -->
-
       <span
         v-if="hasUnreadNotification"
         class="notification-dot"
@@ -149,20 +100,9 @@ defineEmits([
         👤
       </span>
 
-
     </button>
 
   </div>
-
-
-
-
-    </button>
-
-
-  </div>
-
-
 
 </header>
 
@@ -171,9 +111,6 @@ defineEmits([
 
 
 <style scoped>
-
-
-
 
 .home-header {
 
@@ -184,7 +121,6 @@ defineEmits([
   align-items:center;
 
   margin-bottom:16px;
-
 
 }
 
@@ -236,27 +172,9 @@ defineEmits([
 
   padding:0;
 
-}
-
-
-
-.logo {
-
-  font-size:24px;
-
-  font-weight:700;
-
-}
-
-
-
-.actions {
-
-
   display:flex;
 
   align-items:center;
-
 
   justify-content:center;
 
@@ -276,48 +194,9 @@ defineEmits([
 
 
 /* 빨간 점 */
-
-  gap:12px;
-
-}
-
-
-
-.user-name {
-
-  font-size:14px;
-
-  font-weight:600;
-
-}
-
-
-
-.icon-button,
-.profile-button {
-
-  width:32px;
-  height:32px;
-
-  border:none;
-  background:none;
-
-  padding:0;
-
-  display:flex;
-  align-items:center;
-  justify-content:center;
-
-  cursor:pointer;
-
-}
-
-
-
 .notification-dot {
 
   position:absolute;
-
 
   top:3px;
 
@@ -325,15 +204,9 @@ defineEmits([
 
   width:8px;
 
-  top:0;
-  right:0;
-
-  width:8px;
-
   height:8px;
 
   border-radius:50%;
-
 
   background:#ff3b30;
 
@@ -342,14 +215,6 @@ defineEmits([
 
 
 /* 기본 프로필 */
-
-  background:red;
-
-}
-
-
-
-
 .default-profile {
 
   font-size:24px;
@@ -358,12 +223,7 @@ defineEmits([
 
 
 
-
 /* 프로필 이미지 */
-.profile-image {
-
-  width:32px;
-
 .profile-image {
 
   width:32px;
@@ -375,14 +235,5 @@ defineEmits([
   object-fit:cover;
 
 }
-
-
-.notification-btn {
-
-  position:relative;
-
-}
-
-
 
 </style>
