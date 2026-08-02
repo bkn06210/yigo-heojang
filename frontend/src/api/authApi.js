@@ -30,3 +30,16 @@ export const logout = () => {
 
 // 현재 유효한 회원가입 약관 조회
 export const getTerms = () => api.get('/api/terms')
+
+// 회원가입 이메일 인증 코드 발송
+export const sendSignupVerificationCode = (email) => (
+  api.post('/api/auth/signup/email-verifications', { email })
+)
+
+// 회원가입 이메일 인증 코드 검증
+export const verifySignupVerificationCode = (email, verificationCode) => (
+  api.post('/api/auth/signup/email-verifications/verify', {
+    email,
+    verificationCode,
+  })
+)

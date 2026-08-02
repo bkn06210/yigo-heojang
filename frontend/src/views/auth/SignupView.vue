@@ -10,7 +10,11 @@ import PasswordInput from '@/components/common/PasswordInput.vue'
 
 
 // API
-import { signup } from '@/api/authApi'
+import {
+  sendSignupVerificationCode,
+  signup,
+  verifySignupVerificationCode,
+} from '@/api/authApi'
 
 
 const router = useRouter()
@@ -22,6 +26,12 @@ const name = ref('')
 const email = ref('')
 const password = ref('')
 const passwordConfirm = ref('')
+const verificationCode = ref('')
+const signupVerificationToken = ref('')
+const verificationEmail = ref('')
+const isSendingCode = ref(false)
+const isVerifyingCode = ref(false)
+const verificationMessage = ref('')
 
 
 // 비밀번호 조건 상태
@@ -102,6 +112,55 @@ watch(passwordConfirm, () => {
 
 })
 
+watch(email, () => {
+  if (email.value !== verificationEmail.value) {
+    signupVerificationToken.value = ''
+    verificationCode.value = ''
+    verificationMessage.value = ''
+  }
+})
+
+const requestVerificationCode = async () => {
+  if (!email.value) {
+    alert('이메일을 입력해주세요.')
+    return
+  }
+
+  try {
+    isSendingCode.value = true
+    const response = await sendSignupVerificationCode(email.value)
+    verificationEmail.value = response.data.data?.email ?? email.value
+    signupVerificationToken.value = ''
+    verificationMessage.value = '인증 코드를 발송했습니다. 이메일을 확인해주세요.'
+  } catch (error) {
+    verificationMessage.value = error.response?.data?.message ?? '인증 코드를 발송하지 못했습니다.'
+  } finally {
+    isSendingCode.value = false
+  }
+}
+
+const verifyEmailCode = async () => {
+  if (!/^\d{6}$/.test(verificationCode.value)) {
+    verificationMessage.value = '인증 코드 6자리를 입력해주세요.'
+    return
+  }
+
+  try {
+    isVerifyingCode.value = true
+    const response = await verifySignupVerificationCode(email.value, verificationCode.value)
+    signupVerificationToken.value = response.data.data?.signupVerificationToken ?? ''
+    verificationEmail.value = email.value
+    verificationMessage.value = signupVerificationToken.value
+      ? '이메일 인증이 완료되었습니다.'
+      : '인증 토큰을 받지 못했습니다. 다시 시도해주세요.'
+  } catch (error) {
+    signupVerificationToken.value = ''
+    verificationMessage.value = error.response?.data?.message ?? '인증 코드 확인에 실패했습니다.'
+  } finally {
+    isVerifyingCode.value = false
+  }
+}
+
 
 
 // 로그인 이동
@@ -149,6 +208,11 @@ const nextStep = async () => {
 
   }
 
+  if (!signupVerificationToken.value || verificationEmail.value !== email.value) {
+    alert('이메일 인증을 완료해주세요.')
+    return
+  }
+
 
   if (!passwordValid.value || passwordConfirmError.value) {
 
@@ -175,6 +239,7 @@ const nextStep = async () => {
       name: name.value,
       email: email.value,
       password: password.value,
+      signupVerificationToken: signupVerificationToken.value,
       termsAgreements
 
     }
@@ -244,6 +309,43 @@ const nextStep = async () => {
   v-model="email"
   placeholder="이메일을 입력해주세요"
 />
+
+<button
+  type="button"
+  class="check-button"
+  :disabled="isSendingCode"
+  @click="requestVerificationCode"
+>
+  {{ isSendingCode ? '발송 중' : '인증코드 발송' }}
+</button>
+
+<template v-if="verificationEmail">
+  <label>인증 코드</label>
+
+  <div class="verification-box">
+    <AppInput
+      v-model="verificationCode"
+      placeholder="6자리 인증 코드"
+      :disabled="Boolean(signupVerificationToken)"
+    />
+
+    <button
+      type="button"
+      class="check-button"
+      :disabled="isVerifyingCode || Boolean(signupVerificationToken)"
+      @click="verifyEmailCode"
+    >
+      {{ signupVerificationToken ? '인증 완료' : (isVerifyingCode ? '확인 중' : '인증 확인') }}
+    </button>
+  </div>
+
+  <p
+    class="verification-message"
+    :class="{ success: Boolean(signupVerificationToken) }"
+  >
+    {{ verificationMessage }}
+  </p>
+</template>
 
 
 
@@ -382,6 +484,21 @@ border:1px solid #ddd;
 background:white;
 border-radius:10px;
 
+}
+
+.verification-box {
+  display: flex;
+  gap: 8px;
+}
+
+.verification-message {
+  margin-top: -8px;
+  color: #ef4444;
+  font-size: 12px;
+}
+
+.verification-message.success {
+  color: #16a34a;
 }
 
 
