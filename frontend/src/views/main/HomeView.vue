@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router';
 import { storeToRefs } from 'pinia';
 
 import { useAuthStore } from '@/stores/authStore';
+import { getMyInfo } from '@/api/memberApi';
 
 import HomeHeader from '@/components/home/HomeHeader.vue';
 import AIBriefingCard from '@/components/common/AIBriefingCard.vue';
@@ -26,12 +27,12 @@ const { user } = storeToRefs(authStore);
 
 // 헤더 이벤트
 const goChatBot = () => {
-  console.log('챗봇');
+  router.push('/ai/chat');
 };
 
 
 const goNotification = () => {
-  console.log('알림');
+  router.push('/notifications');
 };
 
 
@@ -115,9 +116,14 @@ const homeData = ref({
 // 데이터 조회
 
 const loadHome = async () => {
+  if (!authStore.token) return;
 
-  console.log('홈 데이터 조회');
-
+  try {
+    const response = await getMyInfo();
+    authStore.updateUser(response.data.data);
+  } catch (error) {
+    console.error('홈 회원 정보 조회 실패:', error);
+  }
 };
 
 

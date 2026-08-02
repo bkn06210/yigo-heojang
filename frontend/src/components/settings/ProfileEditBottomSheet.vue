@@ -22,7 +22,6 @@ const emit = defineEmits([
 // 수정용 임시 데이터
 const form = ref({
   nickname: '',
-  profileImageUrl: '',
 });
 
 
@@ -33,7 +32,6 @@ watch(
     if (newUser) {
       form.value = {
         nickname: newUser.nickname ?? '',
-        profileImageUrl: newUser.profileImageUrl ?? '',
       };
     }
   },
@@ -47,9 +45,10 @@ watch(
 const saveProfile = () => {
   emit('save', {
     nickname: form.value.nickname,
-    profileImageUrl: form.value.profileImageUrl,
   });
 };
+
+const closeSheet = () => emit('close');
 </script>
 
 <template>
@@ -58,31 +57,6 @@ const saveProfile = () => {
       <div class="handle"></div>
 
       <h2>프로필 수정</h2>
-
-      <!-- 프로필 이미지 -->
-      <div class="profile-image-area">
-        <div class="profile-image-wrapper">
-          <img
-            v-if="form.profileImageUrl"
-            :src="form.profileImageUrl"
-            class="profile-image"
-          />
-
-          <div v-else class="profile-image default-image"></div>
-
-          <button class="camera-button" type="button" @click="openFilePicker">
-            <span class="material-icons"> photo_camera </span>
-          </button>
-        </div>
-      </div>
-
-      <input
-        ref="fileInput"
-        type="file"
-        accept="image/*"
-        hidden
-        @change="changeProfileImage"
-      />
 
       <!-- 닉네임 -->
       <AppInput v-model="form.nickname" placeholder="닉네임" />

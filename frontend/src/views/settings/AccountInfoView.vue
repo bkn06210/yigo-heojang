@@ -1,9 +1,10 @@
 <script setup>
-import { ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { storeToRefs } from 'pinia';
 
 import { useAuthStore } from '@/stores/authStore';
+import { getMyInfo } from '@/api/memberApi';
 import PageHeader from '@/components/common/PageHeader.vue';
 import AuthVerifyModal from '@/components/auth/AuthVerifyModal.vue';
 
@@ -20,7 +21,10 @@ const goPasswordChange = () => {
   router.push('/auth/password-change');
 };
 
-const joinedDate = '2026.07.16';
+const joinedDate = computed(() => {
+  if (!user.value?.createdAt) return '-';
+  return new Intl.DateTimeFormat('ko-KR').format(new Date(user.value.createdAt));
+});
 
 // 이름 마스킹
 const maskName = (name) => {
@@ -56,6 +60,17 @@ const goBack = () => {
 const navigateTo = (path) => {
   router.push(path);
 };
+
+onMounted(async () => {
+  if (!authStore.token) return;
+
+  try {
+    const response = await getMyInfo();
+    authStore.updateUser(response.data.data);
+  } catch (error) {
+    console.error('계정 정보 조회 실패:', error);
+  }
+});
 </script>
 
 <template>

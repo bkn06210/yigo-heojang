@@ -1,8 +1,9 @@
 <script setup>
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { storeToRefs } from 'pinia';
 import { logout as logoutApi } from '@/api/authApi'
+import { getMyInfo, updateMyInfo } from '@/api/memberApi';
 import { useAuthStore } from '@/stores/authStore';
 
 import PageHeader from '@/components/common/PageHeader.vue';
@@ -21,6 +22,7 @@ const { user } = storeToRefs(authStore);
 
 // 프로필 수정 바텀시트 상태
 const isProfileSheetOpen = ref(false);
+const isSavingProfile = ref(false);
 
 
 // 프로필 수정창 열기
@@ -52,12 +54,19 @@ const handleLogout = async () => {
 }
 
 // 프로필 저장
-const updateProfile = (updatedUser) => {
+const updateProfile = async ({ nickname }) => {
+  if (isSavingProfile.value) return;
 
-  userStore.updateUser(updatedUser);
-
-  closeProfileEdit();
-
+  try {
+    isSavingProfile.value = true;
+    const response = await updateMyInfo({ nickname });
+    authStore.updateUser(response.data.data);
+    closeProfileEdit();
+  } catch (error) {
+    alert(error.response?.data?.message ?? '프로필을 수정하지 못했습니다.');
+  } finally {
+    isSavingProfile.value = false;
+  }
 };
 
 
@@ -79,6 +88,17 @@ const navigateTo = (path) => {
   router.push(path);
 
 };
+
+onMounted(async () => {
+  if (!authStore.token) return;
+
+  try {
+    const response = await getMyInfo();
+    authStore.updateUser(response.data.data);
+  } catch (error) {
+    console.error('회원 정보 조회 실패:', error);
+  }
+});
 
 // 로그아웃
 
