@@ -1,9 +1,9 @@
 <script setup>
-import { onMounted, ref } from 'vue';
+import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { storeToRefs } from 'pinia';
 import { logout as logoutApi } from '@/api/authApi'
-import { getMyInfo, updateMyInfo } from '@/api/memberApi';
+import { updateMyInfo } from '@/api/memberApi';
 import { useAuthStore } from '@/stores/authStore';
 
 import PageHeader from '@/components/common/PageHeader.vue';
@@ -88,17 +88,6 @@ const navigateTo = (path) => {
   router.push(path);
 
 };
-
-onMounted(async () => {
-  if (!authStore.token) return;
-
-  try {
-    const response = await getMyInfo();
-    authStore.updateUser(response.data.data);
-  } catch (error) {
-    console.error('회원 정보 조회 실패:', error);
-  }
-});
 
 // 로그아웃
 

@@ -1,10 +1,9 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { storeToRefs } from 'pinia';
 
 import { useAuthStore } from '@/stores/authStore';
-import { getMyInfo } from '@/api/memberApi';
 
 import HomeHeader from '@/components/home/HomeHeader.vue';
 import AIBriefingCard from '@/components/common/AIBriefingCard.vue';
@@ -110,25 +109,6 @@ const homeData = ref({
     },
   ],
 
-});
-
-
-// 데이터 조회
-
-const loadHome = async () => {
-  if (!authStore.token) return;
-
-  try {
-    const response = await getMyInfo();
-    authStore.updateUser(response.data.data);
-  } catch (error) {
-    console.error('홈 회원 정보 조회 실패:', error);
-  }
-};
-
-
-onMounted(async()=>{
-  await loadHome();
 });
 
 

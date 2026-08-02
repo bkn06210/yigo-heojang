@@ -1,10 +1,9 @@
 <script setup>
-import { computed, onMounted, ref } from 'vue';
+import { computed, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { storeToRefs } from 'pinia';
 
 import { useAuthStore } from '@/stores/authStore';
-import { getMyInfo } from '@/api/memberApi';
 import PageHeader from '@/components/common/PageHeader.vue';
 import AuthVerifyModal from '@/components/auth/AuthVerifyModal.vue';
 
@@ -61,16 +60,6 @@ const navigateTo = (path) => {
   router.push(path);
 };
 
-onMounted(async () => {
-  if (!authStore.token) return;
-
-  try {
-    const response = await getMyInfo();
-    authStore.updateUser(response.data.data);
-  } catch (error) {
-    console.error('계정 정보 조회 실패:', error);
-  }
-});
 </script>
 
 <template>
