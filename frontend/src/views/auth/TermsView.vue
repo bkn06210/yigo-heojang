@@ -1,172 +1,110 @@
 <script setup>
-import { ref, computed } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 
+import { getTerms } from '@/api/authApi'
+import AppButton from '@/components/common/AppButton.vue'
+import AppModal from '@/components/common/AppModal.vue'
+
 const router = useRouter()
-
-
-// 전체 동의
+const terms = ref([])
 const agreeAll = ref(false)
+const selectedTerm = ref(null)
+const isLoading = ref(false)
+const errorMessage = ref('')
 
+const canNext = computed(() => (
+  terms.value.length > 0 && terms.value
+    .filter((term) => term.required)
+    .every((term) => term.checked)
+))
 
-// 약관 목록
-// 추후 백 API 응답 데이터로 교체
-const terms = ref([
-  {
-    id: 1,
-    title: '서비스 이용약관',
-    required: true,
-    checked: false
-  },
-  {
-    id: 2,
-    title: '개인정보 수집 및 이용',
-    required: true,
-    checked: false
-  },
-  {
-    id: 3,
-    title: '마케팅 정보 수신',
-    required: false,
-    checked: false
-  }
-])
-
-
-// 전체 동의 클릭
 const toggleAll = () => {
-
-  terms.value.forEach(term => {
+  terms.value.forEach((term) => {
     term.checked = agreeAll.value
   })
-
 }
 
-
-// 개별 선택 변경 시 전체 동의 상태 변경
 const updateAgreeAll = () => {
-
-  agreeAll.value = terms.value.every(
-    term => term.checked
-  )
-
+  agreeAll.value = terms.value.length > 0 && terms.value.every((term) => term.checked)
 }
 
-
-// 필수 약관 체크 여부
-const canNext = computed(() => {
-
-  return terms.value
-    .filter(term => term.required)
-    .every(term => term.checked)
-
-})
-
-
-// 상세보기
-// 추후 백 API 연결 위치
-const openDetail = (term) => {
-
-  console.log('약관 상세:', term.id)
-
-}
-
-
-// 다음
-const goSignup = () => {
-
-  if (!canNext.value) {
-    alert('필수 약관에 동의해주세요.')
-    return
+const loadTerms = async () => {
+  try {
+    isLoading.value = true
+    errorMessage.value = ''
+    const response = await getTerms()
+    terms.value = (response.data.data?.terms ?? []).map((term) => ({
+      ...term,
+      checked: false,
+    }))
+  } catch (error) {
+    errorMessage.value = error.response?.data?.message ?? '약관을 불러오지 못했습니다.'
+  } finally {
+    isLoading.value = false
   }
-
-
-  router.push('/auth/signup')
-
 }
 
+const goSignup = () => {
+  if (!canNext.value) return
+
+  const agreements = terms.value.map((term) => ({
+    termsVersionId: term.termsVersionId,
+    agreed: term.checked,
+  }))
+  sessionStorage.setItem('signupTermsAgreements', JSON.stringify(agreements))
+  router.push('/auth/signup')
+}
+
+onMounted(loadTerms)
 </script>
 
-
 <template>
-  <div class="terms">
-
+  <div class="terms-view">
     <h1>약관 동의</h1>
+    <p class="description">회원가입을 위해 약관을 확인하고 동의해주세요.</p>
 
-
-    <label>
-      <input
-        type="checkbox"
-        v-model="agreeAll"
-        @change="toggleAll"
-      >
-
-      전체 동의
-    </label>
-
-
-
-    <div
-      v-for="term in terms"
-      :key="term.id"
-      class="term-item"
-    >
-
-      <label>
-
-        <input
-          type="checkbox"
-          v-model="term.checked"
-          @change="updateAgreeAll"
-        >
-
-
-        {{ term.required ? '(필수)' : '(선택)' }}
-
-        {{ term.title }}
-
-      </label>
-
-
-      <button
-        type="button"
-        @click="openDetail(term)"
-      >
-        더보기
-      </button>
-
+    <p v-if="isLoading">약관을 불러오는 중입니다.</p>
+    <div v-else-if="errorMessage" class="error-box">
+      <p>{{ errorMessage }}</p>
+      <button type="button" @click="loadTerms">다시 시도</button>
     </div>
 
+    <template v-else>
+      <label class="all-agreement">
+        <input v-model="agreeAll" type="checkbox" @change="toggleAll">
+        전체 동의
+      </label>
 
+      <div v-for="term in terms" :key="term.termsVersionId" class="term-item">
+        <label>
+          <input v-model="term.checked" type="checkbox" @change="updateAgreeAll">
+          {{ term.required ? '(필수)' : '(선택)' }} {{ term.termsName }}
+        </label>
+        <button type="button" @click="selectedTerm = term">더보기</button>
+      </div>
 
-    <button
-      :disabled="!canNext"
-      @click="goSignup"
+      <AppButton text="다음" :disabled="!canNext" @click="goSignup" />
+    </template>
+
+    <AppModal
+      :visible="Boolean(selectedTerm)"
+      :title="selectedTerm?.termsName"
+      @close="selectedTerm = null"
     >
-      다음
-    </button>
-
-
+      <p class="term-content">{{ selectedTerm?.content }}</p>
+    </AppModal>
   </div>
 </template>
 
-
 <style scoped>
-
-.terms {
-  padding:24px;
-}
-
-
-.term-item {
-  display:flex;
-  justify-content:space-between;
-  margin-top:16px;
-}
-
-
-button {
-  cursor:pointer;
-}
-
+.terms-view { padding: 24px; }
+.description { margin-bottom: 28px; color: #666; }
+.all-agreement { display: block; padding: 18px 0; border-bottom: 1px solid #ddd; font-weight: 700; }
+.term-item { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 16px 0; }
+input { width: 18px; height: 18px; vertical-align: middle; }
+button { cursor: pointer; }
+.term-item button { border: 0; background: none; color: #666; text-decoration: underline; }
+.error-box { margin: 24px 0; color: #d93025; }
+.term-content { max-height: 50vh; overflow: auto; white-space: pre-wrap; line-height: 1.6; }
 </style>

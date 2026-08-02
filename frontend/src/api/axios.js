@@ -57,7 +57,9 @@ api.interceptors.response.use(
       const isAuthRequest =
           requestUrl.includes('/api/auth/login') ||
           requestUrl.includes('/api/auth/token') ||
-          requestUrl.includes('/api/auth/logout')
+          requestUrl.includes('/api/auth/logout') ||
+          requestUrl.includes('/api/auth/signup') ||
+          requestUrl.includes('/api/terms')
 
       if (status !== 401 || originalRequest._retry || isAuthRequest) {
         return Promise.reject(error)

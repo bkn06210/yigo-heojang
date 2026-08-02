@@ -33,15 +33,6 @@ const passwordConfirmError = ref('')
 
 
 
-// 이메일 중복 확인
-const checkEmail = () => {
-
-  console.log('이메일 중복 확인')
-
-}
-
-
-
 // 비밀번호 조건 검사
 const validatePassword = () => {
 
@@ -54,6 +45,11 @@ const validatePassword = () => {
     passwordValid.value = true
     return
 
+  }
+
+  if (!passwordConfirm.value) {
+    alert('비밀번호 확인을 입력해주세요.')
+    return
   }
 
 
@@ -164,17 +160,29 @@ const nextStep = async () => {
 
   try {
 
+    const savedAgreements = sessionStorage.getItem('signupTermsAgreements')
+    const termsAgreements = savedAgreements ? JSON.parse(savedAgreements) : []
+
+    if (!termsAgreements.length) {
+      alert('약관 동의를 먼저 진행해주세요.')
+      router.push('/auth/terms')
+      return
+    }
+
 
     const userData = {
 
       name: name.value,
       email: email.value,
-      password: password.value
+      password: password.value,
+      termsAgreements
 
     }
 
 
     await signup(userData)
+
+    sessionStorage.removeItem('signupTermsAgreements')
 
 
     alert('회원가입이 완료되었습니다.')
@@ -232,23 +240,10 @@ const nextStep = async () => {
 
 <label>이메일</label>
 
-<div class="email-box">
-
 <AppInput
   v-model="email"
   placeholder="이메일을 입력해주세요"
 />
-
-
-<button
- class="check-button"
- @click="checkEmail"
->
-중복확인
-</button>
-
-
-</div>
 
 
 

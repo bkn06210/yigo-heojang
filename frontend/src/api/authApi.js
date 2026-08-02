@@ -27,3 +27,6 @@ export const reissueAccessToken = () => {
 export const logout = () => {
   return api.post('/api/auth/logout')
 }
+
+// 현재 유효한 회원가입 약관 조회
+export const getTerms = () => api.get('/api/terms')
