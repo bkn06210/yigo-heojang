@@ -5,27 +5,27 @@ import java.time.LocalDateTime;
 import lombok.Getter;
 
 @Getter
-public class SignupEmailVerification {
-    private Long signupEmailVerificationId;
-    private String email;
+public class PasswordResetVerification {
+    private Long passwordResetVerificationId;
+    private Long memberId;
     private String verificationCodeHash;
     private String verificationStatus;
     private Integer failedAttemptCount;
     private LocalDateTime verificationCodeExpiresAt;
-    private String signupTokenHash;
-    private LocalDateTime signupTokenExpiresAt;
+    private String resetTokenHash;
+    private LocalDateTime resetTokenExpiresAt;
     private LocalDateTime verifiedAt;
     private LocalDateTime usedAt;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    public static SignupEmailVerification createPending(
-        String email,
+    public static PasswordResetVerification createPending(
+        Long memberId,
         String verificationCodeHash,
         LocalDateTime verificationCodeExpiresAt
     ) {
-        SignupEmailVerification verification = new SignupEmailVerification();
-        verification.email = email;
+        PasswordResetVerification verification = new PasswordResetVerification();
+        verification.memberId = memberId;
         verification.verificationCodeHash = verificationCodeHash;
         verification.verificationStatus = VerificationStatus.PENDING;
         verification.failedAttemptCount = 0;
