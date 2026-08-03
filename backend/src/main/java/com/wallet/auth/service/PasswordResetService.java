@@ -84,7 +84,7 @@ public class PasswordResetService {
         }
     }
 
-    @Transactional
+    @Transactional(noRollbackFor = BusinessException.class)
     public PasswordResetCodeVerifyResponse verifyResetCode(
         PasswordResetCodeVerifyRequest request
     ) {
