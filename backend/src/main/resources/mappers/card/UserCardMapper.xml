@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.wallet.card.mapper.UserCardMapper">
+
+    <resultMap id="userCardResultMap"
+               type="com.wallet.card.domain.UserCard">
+        <constructor>
+            <idArg column="userCardId" javaType="Long"/>
+            <arg column="memberId" javaType="Long"/>
+            <arg column="cardId" javaType="Long"/>
+            <arg column="maskedCardNumber" javaType="String"/>
+            <arg column="representative" javaType="Boolean"/>
+            <arg column="cardStatus" javaType="String"/>
+        </constructor>
+    </resultMap>
+
+    <resultMap id="userCardRegistrationResultMap"
+               type="com.wallet.card.domain.UserCardRegistrationResult">
+        <constructor>
+            <idArg column="userCardId" javaType="Long"/>
+            <arg column="cardName" javaType="String"/>
+            <arg column="companyName" javaType="String"/>
+            <arg column="maskedCardNumber" javaType="String"/>
+            <arg column="imageUrl" javaType="String"/>
+            <arg column="representative" javaType="Boolean"/>
+        </constructor>
+    </resultMap>
+
+    <select id="findByMemberIdAndCardId"
+            resultMap="userCardResultMap">
+        SELECT
+            user_card_id AS userCardId,
+            member_id AS memberId,
+            card_id AS cardId,
+            masked_card_number AS maskedCardNumber,
+            is_representative AS representative,
+            card_status AS cardStatus
+        FROM user_card
+        WHERE member_id = #{memberId}
+          AND card_id = #{cardId}
+            LIMIT 1
+    </select>
+
+    <insert id="insertUserCard">
+        INSERT INTO user_card (
+            member_id,
+            card_id,
+            masked_card_number
+        ) VALUES (
+                     #{memberId},
+                     #{cardId},
+                     #{maskedCardNumber}
+                 )
+    </insert>
+
+    <update id="reactivateUserCard">
+        UPDATE user_card
+        SET
+            masked_card_number = #{maskedCardNumber},
+            card_status = 'ACTIVE',
+            is_representative = 0,
+            registered_at = CURRENT_TIMESTAMP
+        WHERE user_card_id = #{userCardId}
+          AND member_id = #{memberId}
+          AND card_status = 'DELETED'
+    </update>
+
+    <select id="findRegistrationResult"
+            resultMap="userCardRegistrationResultMap">
+        SELECT
+            uc.user_card_id AS userCardId,
+            c.card_name AS cardName,
+            cc.company_name AS companyName,
+            uc.masked_card_number AS maskedCardNumber,
+            c.image_url AS imageUrl,
+            uc.is_representative AS representative
+        FROM user_card uc
+        INNER JOIN card c ON c.card_id = uc.card_id
+        INNER JOIN card_company cc ON cc.card_company_id = c.card_company_id
+        WHERE uc.member_id = #{memberId}
+          AND uc.card_id = #{cardId}
+          AND uc.card_status = 'ACTIVE'
+          AND c.is_active = 'Y'
+          AND cc.is_active = 'Y'
+            LIMIT 1
+    </select>
+
+</mapper>
