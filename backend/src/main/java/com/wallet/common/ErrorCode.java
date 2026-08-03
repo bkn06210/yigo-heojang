@@ -264,6 +264,17 @@ public enum ErrorCode {
         HttpStatus.BAD_REQUEST,
         "PASSWORD_SAME_AS_CURRENT",
         "기존 비밀번호와 동일한 비밀번호로 변경할 수 없습니다."
+    ),
+
+    // =========================================================================
+    //  8. 카드 관리 (Card)
+    // =========================================================================
+
+    /** 카드번호가 숫자/길이/룬 알고리즘 기준을 만족하지 않는 경우 */
+    CARD_NUMBER_INVALID(
+        HttpStatus.BAD_REQUEST,
+    "CARD_NUMBER_INVALID",
+        "유효한 카드번호 형식이 아닙니다."
     );
 
     private final HttpStatus status;
