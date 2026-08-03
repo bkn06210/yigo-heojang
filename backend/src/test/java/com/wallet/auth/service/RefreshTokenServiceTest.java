@@ -56,6 +56,24 @@ public class RefreshTokenServiceTest {
         refreshTokenService.revokeByToken(refreshToken);
 
         // then
-        verify(refreshTokenMapper).revokeByHash(expectedHash, "LOGOUT");
+        verify(refreshTokenMapper).revokeByHash(
+            expectedHash,
+            RefreshToken.REVOKE_REASON_LOGOUT);
+    }
+
+    @Test
+    @DisplayName("비밀번호 재설정으로 회원의 모든 Refresh Token을 폐기한다")
+    void revokeAllByPasswordReset_revokesAllTokensByMemberId() {
+        // given
+        Long memberId = 1L;
+
+        // when
+        refreshTokenService.revokeAllByPasswordReset(memberId);
+
+        // then
+        verify(refreshTokenMapper).revokeAllByMemberId(
+            memberId,
+            RefreshToken.REVOKE_REASON_PASSWORD_RESET
+        );
     }
 }
