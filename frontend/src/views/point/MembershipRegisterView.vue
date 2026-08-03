@@ -500,7 +500,7 @@ button {
 .suggestion-item:hover {
 
   background: #f8f8f8;
-
+ 
 }
 
 
