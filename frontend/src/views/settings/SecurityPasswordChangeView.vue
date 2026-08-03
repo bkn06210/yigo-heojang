@@ -116,7 +116,7 @@ const handleVerifySuccess = () => {
   font-weight: 500;
   color: #333;
   margin-bottom: 8px;
-}
+} 
 
 .footer-button-area {
   position: fixed;

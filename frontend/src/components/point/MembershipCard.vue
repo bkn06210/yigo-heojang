@@ -36,24 +36,29 @@ const emit = defineEmits([
 
 <template>
 
-  <div class="membership-item">
-
-  <span class="membership-name">
-    {{ membership.name }}
-  </span>
+  <div class="membership-card">
 
 
-  <button
-    class="move-button"
-    @click="goDetail(membership.id)"
-  >
-    상세 보기
-  </button>
-
-</div>
+    <div class="membership-item">
 
 
+      <span class="membership-name">
+        {{ membership.name }}
+      </span>
 
+
+      <button
+        class="move-button"
+        @click="goDetail(membership.id)"
+      >
+        상세 보기
+      </button>
+
+
+    </div>
+
+
+  </div>
 
 </template>
 

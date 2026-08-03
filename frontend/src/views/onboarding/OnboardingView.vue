@@ -306,7 +306,7 @@ const skip = () => {
 
 
   cursor: pointer;
-
+ 
 }
 
 

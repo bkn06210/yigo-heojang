@@ -207,7 +207,7 @@ li:last-child {
 
 .notice-section p {
 
-  font-size: 14px;
+  font-size: 14px; 
 
   color: #666;
 
@@ -217,3 +217,7 @@ li:last-child {
 
 
 </style>
+
+// 기존 금융 포인트 상세 페이지 라우트 유지
+// UI 변경으로 현재는 바텀시트에서 동일 API 데이터를 호출함
+// 추후 API 연동 시 상세 페이지 대신 바텀시트 데이터로 매핑

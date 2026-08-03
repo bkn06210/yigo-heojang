@@ -10,8 +10,8 @@ import PasswordChangeView from '@/views/auth/PasswordChangeView.vue'
 import OnboardingView from '@/views/onboarding/OnboardingView.vue'
 
 // Main
-import GuestMainView from '@/views/main/GuestMainView.vue'
-import HomeEmptyView from '@/views/main/HomeEmptyView.vue'
+// import GuestMainView from '@/views/main/GuestMainView.vue'
+// import HomeEmptyView from '@/views/main/HomeEmptyView.vue'
 import HomeView from '@/views/main/HomeView.vue'
 import AIChatRoomView from '@/views/main/AIChatRoomView.vue'
 import NotificationView from '@/views/main/NotificationView.vue'
@@ -20,11 +20,12 @@ import NotificationView from '@/views/main/NotificationView.vue'
 import CardListView from '@/views/card/CardListView.vue'
 import CardDetailView from '@/views/card/CardDetailView.vue'
 import CardRegisterView from '@/views/card/CardRegisterView.vue'
-import CardRecommendView from '@/views/card/CardRecommendView.vue'
-import CardRecommendResultView from '@/views/card/CardRecommendResultView.vue'
 
 // Payment
 import PaymentView from '@/views/payment/PaymentView.vue'
+import PaymentRecommendView from '@/views/payment/PaymentRecommendView.vue' //주소 명칭 변경
+// import CardRecommendResultView from '@/views/card/CardRecommendResultView.vue' //모달로 뺐음
+
 
 // Transaction
 import TransactionListView from '@/views/transaction/TransactionListView.vue'
@@ -41,7 +42,7 @@ import BenefitDetailView from '@/views/point/BenefitDetailView.vue'
 import SettingsView from '@/views/settings/SettingsView.vue'
 import ProfileView from '@/views/settings/ProfileView.vue'
 import AccountInfoView from '@/views/settings/AccountInfoView.vue'
-import SecuritySettingView from '@/views/settings/SecuritySettingView.vue'
+// import SecuritySettingView from '@/views/settings/SecuritySettingView.vue'  //계정 및 보안으로 합침
 import SecurityPasswordChangeView from '@/views/settings/SecurityPasswordChangeView.vue'
 import NotificationSettingView from '@/views/settings/NotificationSettingView.vue'
 import DisplaySettingView from '@/views/settings/DisplaySettingView.vue'
@@ -68,8 +69,8 @@ const routes = [
   {path: '/onboarding', component: OnboardingView},
 
   // Main
-  { path: '/main/guest', component: GuestMainView },
-  { path: '/home/empty', component: HomeEmptyView },
+  // { path: '/main/guest', component: GuestMainView },
+  // { path: '/home/empty', component: HomeEmptyView },
   { path: '/home', component: HomeView },
   { path: '/ai/chat', component: AIChatRoomView },
   { path: '/notifications', component: NotificationView },
@@ -82,9 +83,9 @@ const routes = [
 
   // Payment
   // 결제 직전 AI 카드 추천 기능 포함이라 /card로 정의함
-  { path: '/payment', component: PaymentView },
-  { path: '/cards/recommend', component: CardRecommendView },
-  { path: '/cards/recommend/result', component: CardRecommendResultView },
+  { path: '/payment',  name: 'Payment', component: PaymentView },
+  { path: '/payment/recommend', component: PaymentRecommendView }, //주소 명칭 변경
+  // { path: '/cards/recommend/result', component: CardRecommendResultView }, //모달로 뺐음
 
   // Transaction
   { path: '/transactions', component: TransactionListView },
@@ -102,7 +103,7 @@ const routes = [
   { path: '/settings', component: SettingsView },
   { path: '/settings/profile', component: ProfileView },
   { path: '/settings/account', component: AccountInfoView },
-  { path: '/settings/security', component: SecuritySettingView },
+  // { path: '/settings/security', component: SecuritySettingView },
   { path: '/settings/security/password', component: SecurityPasswordChangeView },
   { path: '/settings/notifications', component: NotificationSettingView },
   { path: '/settings/display', component: DisplaySettingView },
