@@ -17,12 +17,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import com.wallet.auth.domain.SignupEmailVerification;
+import com.wallet.auth.domain.VerificationStatus;
 import com.wallet.auth.dto.SignupEmailVerificationConfirmRequest;
 import com.wallet.auth.dto.SignupEmailVerificationConfirmResponse;
 import com.wallet.auth.dto.SignupEmailVerificationRequest;
 import com.wallet.auth.dto.SignupEmailVerificationResponse;
 import com.wallet.auth.mapper.SignupEmailVerificationMapper;
-import com.wallet.auth.support.SignupVerificationTokenGenerator;
+import com.wallet.auth.support.VerificationTokenGenerator;
 import com.wallet.auth.support.TokenHashUtil;
 import com.wallet.auth.support.VerificationCodeGenerator;
 import com.wallet.common.ErrorCode;
@@ -34,7 +35,7 @@ class SignupEmailVerificationServiceTest {
     private MemberMapper memberMapper;
     private EmailSender emailSender;
     private VerificationCodeGenerator verificationCodeGenerator;
-    private SignupVerificationTokenGenerator signupVerificationTokenGenerator;
+    private VerificationTokenGenerator verificationTokenGenerator;
     private TokenHashUtil tokenHashUtil;
     private SignupEmailVerificationService signupEmailVerificationService;
 
@@ -44,7 +45,7 @@ class SignupEmailVerificationServiceTest {
         memberMapper = mock(MemberMapper.class);
         emailSender = mock(EmailSender.class);
         verificationCodeGenerator = mock(VerificationCodeGenerator.class);
-        signupVerificationTokenGenerator = mock(SignupVerificationTokenGenerator.class);
+        verificationTokenGenerator = mock(VerificationTokenGenerator.class);
         tokenHashUtil = mock(TokenHashUtil.class);
 
         signupEmailVerificationService = new SignupEmailVerificationService(
@@ -52,7 +53,7 @@ class SignupEmailVerificationServiceTest {
             memberMapper,
             emailSender,
             verificationCodeGenerator,
-            signupVerificationTokenGenerator,
+            verificationTokenGenerator,
             tokenHashUtil
         );
     }
@@ -113,7 +114,7 @@ class SignupEmailVerificationServiceTest {
             1L,
             "user@example.com",
             "old-code-hash",
-            SignupEmailVerification.STATUS_PENDING,
+            VerificationStatus.PENDING,
             0,
             LocalDateTime.now().plusMinutes(3),
             LocalDateTime.now().minusSeconds(61)
@@ -190,7 +191,7 @@ class SignupEmailVerificationServiceTest {
             1L,
             "user@example.com",
             "old-code-hash",
-            SignupEmailVerification.STATUS_PENDING,
+            VerificationStatus.PENDING,
             0,
             LocalDateTime.now().plusMinutes(3),
             LocalDateTime.now().minusSeconds(10)
@@ -265,7 +266,7 @@ class SignupEmailVerificationServiceTest {
             1L,
             "user@example.com",
             "code-hash",
-            SignupEmailVerification.STATUS_PENDING,
+            VerificationStatus.PENDING,
             0,
             LocalDateTime.now().plusMinutes(3),
             LocalDateTime.now().minusSeconds(61)
@@ -277,7 +278,7 @@ class SignupEmailVerificationServiceTest {
         when(tokenHashUtil.sha256("123456"))
             .thenReturn("code-hash");
 
-        when(signupVerificationTokenGenerator.generate())
+        when(verificationTokenGenerator.generate())
             .thenReturn("signup-token");
 
         when(tokenHashUtil.sha256("signup-token"))
@@ -341,7 +342,7 @@ class SignupEmailVerificationServiceTest {
             1L,
             "user@example.com",
             "code-hash",
-            SignupEmailVerification.STATUS_VERIFIED,
+            VerificationStatus.VERIFIED,
             0,
             LocalDateTime.now().plusMinutes(3),
             LocalDateTime.now().minusSeconds(61)
@@ -374,7 +375,7 @@ class SignupEmailVerificationServiceTest {
             1L,
             "user@example.com",
             "code-hash",
-            SignupEmailVerification.STATUS_PENDING,
+            VerificationStatus.PENDING,
             5,
             LocalDateTime.now().plusMinutes(3),
             LocalDateTime.now().minusSeconds(61)
@@ -408,7 +409,7 @@ class SignupEmailVerificationServiceTest {
             1L,
             "user@example.com",
             "code-hash",
-            SignupEmailVerification.STATUS_PENDING,
+            VerificationStatus.PENDING,
             0,
             LocalDateTime.now().minusSeconds(1),
             LocalDateTime.now().minusSeconds(61)
@@ -442,7 +443,7 @@ class SignupEmailVerificationServiceTest {
             1L,
             "user@example.com",
             "correct-code-hash",
-            SignupEmailVerification.STATUS_PENDING,
+            VerificationStatus.PENDING,
             0,
             LocalDateTime.now().plusMinutes(3),
             LocalDateTime.now().minusSeconds(61)
@@ -465,7 +466,7 @@ class SignupEmailVerificationServiceTest {
             .isEqualTo(ErrorCode.SIGNUP_EMAIL_VERIFICATION_CODE_INVALID);
 
         verify(signupEmailVerificationMapper).increaseFailedAttemptCount(1L);
-        verify(signupVerificationTokenGenerator, never()).generate();
+        verify(verificationTokenGenerator, never()).generate();
         verify(signupEmailVerificationMapper, never()).verify(any(), any(), any());
     }
 
@@ -480,7 +481,7 @@ class SignupEmailVerificationServiceTest {
             1L,
             "user@example.com",
             "code-hash",
-            SignupEmailVerification.STATUS_PENDING,
+            VerificationStatus.PENDING,
             0,
             LocalDateTime.now().plusMinutes(3),
             LocalDateTime.now().minusSeconds(61)
@@ -492,7 +493,7 @@ class SignupEmailVerificationServiceTest {
         when(tokenHashUtil.sha256("123456"))
             .thenReturn("code-hash");
 
-        when(signupVerificationTokenGenerator.generate())
+        when(verificationTokenGenerator.generate())
             .thenReturn("signup-token");
 
         when(tokenHashUtil.sha256("signup-token"))
@@ -522,7 +523,7 @@ class SignupEmailVerificationServiceTest {
         SignupEmailVerification verification = createSignupTokenVerification(
             1L,
             "user@example.com",
-            SignupEmailVerification.STATUS_VERIFIED,
+            VerificationStatus.VERIFIED,
             LocalDateTime.now().plusMinutes(5)
         );
 
@@ -577,7 +578,7 @@ class SignupEmailVerificationServiceTest {
         SignupEmailVerification verification = createSignupTokenVerification(
             1L,
             "user@example.com",
-            SignupEmailVerification.STATUS_USED,
+            VerificationStatus.USED,
             LocalDateTime.now().plusMinutes(5)
         );
 
@@ -608,7 +609,7 @@ class SignupEmailVerificationServiceTest {
         SignupEmailVerification verification = createSignupTokenVerification(
             1L,
             "user@example.com",
-            SignupEmailVerification.STATUS_PENDING,
+            VerificationStatus.PENDING,
             LocalDateTime.now().plusMinutes(5)
         );
 
@@ -639,7 +640,7 @@ class SignupEmailVerificationServiceTest {
         SignupEmailVerification verification = createSignupTokenVerification(
             1L,
             "user@example.com",
-            SignupEmailVerification.STATUS_VERIFIED,
+            VerificationStatus.VERIFIED,
             LocalDateTime.now().minusSeconds(1)
         );
 
@@ -670,7 +671,7 @@ class SignupEmailVerificationServiceTest {
         SignupEmailVerification verification = createSignupTokenVerification(
             1L,
             "verified@example.com",
-            SignupEmailVerification.STATUS_VERIFIED,
+            VerificationStatus.VERIFIED,
             LocalDateTime.now().plusMinutes(5)
         );
 

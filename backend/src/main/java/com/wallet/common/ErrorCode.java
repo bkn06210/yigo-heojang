@@ -133,6 +133,7 @@ public enum ErrorCode {
     // =========================================================================
     //  6. 회원가입 이메일 인증 (SignupEmailVerification)
     // =========================================================================
+
     /** 회원가입 이메일 인증 코드 불일치 */
     SIGNUP_EMAIL_VERIFICATION_CODE_INVALID(
         HttpStatus.BAD_REQUEST,
@@ -204,6 +205,65 @@ public enum ErrorCode {
         HttpStatus.BAD_REQUEST,
     "SIGNUP_EMAIL_VERIFICATION_ALREADY_USED",
         "이미 사용 완료된 이메일 인증 정보입니다."
+    ),
+
+    // =========================================================================
+    //  7. 비밀번호 재설정 (PasswordReset)
+    // =========================================================================
+
+    /** 비밀번호 재설정 인증 코드 요청 횟수 제한 */
+    PASSWORD_RESET_REISSUE_COOLDOWN(
+        HttpStatus.TOO_MANY_REQUESTS,
+    "PASSWORD_RESET_REISSUE_COOLDOWN",
+        "비밀번호 재설정 이메일은 1분에 한 번만 요청할 수 있습니다. 잠시 후 다시 시도해 주세요."
+    ),
+
+    PASSWORD_RESET_CODE_INVALID(
+        HttpStatus.BAD_REQUEST,
+        "PASSWORD_RESET_CODE_INVALID",
+            "인증 번호가 일치하지 않습니다."
+    ),
+
+    PASSWORD_RESET_CODE_EXPIRED(
+        HttpStatus.BAD_REQUEST,
+        "PASSWORD_RESET_CODE_EXPIRED",
+            "만료된 인증 번호입니다."
+    ),
+
+    PASSWORD_RESET_CODE_ALREADY_USED(
+        HttpStatus.CONFLICT,
+        "PASSWORD_RESET_CODE_ALREADY_USED",
+            "이미 사용 완료된 인증 번호입니다."
+    ),
+
+    PASSWORD_RESET_ATTEMPT_LIMIT_EXCEEDED(
+        HttpStatus.TOO_MANY_REQUESTS,
+        "PASSWORD_RESET_ATTEMPT_LIMIT_EXCEEDED",
+            "인증 번호 입력 시도 횟수를 초과했습니다."
+    ),
+
+    PASSWORD_RESET_TOKEN_INVALID(
+        HttpStatus.BAD_REQUEST,
+        "PASSWORD_RESET_TOKEN_INVALID",
+        "비밀번호 재설정 토큰이 유효하지 않습니다."
+    ),
+
+    PASSWORD_RESET_TOKEN_EXPIRED(
+        HttpStatus.BAD_REQUEST,
+        "PASSWORD_RESET_TOKEN_EXPIRED",
+        "만료된 비밀번호 재설정 토큰입니다."
+    ),
+
+    PASSWORD_RESET_TOKEN_ALREADY_USED(
+        HttpStatus.CONFLICT,
+        "PASSWORD_RESET_TOKEN_ALREADY_USED",
+        "이미 사용 완료된 비밀번호 재설정 토큰입니다."
+    ),
+
+    PASSWORD_SAME_AS_CURRENT(
+        HttpStatus.BAD_REQUEST,
+        "PASSWORD_SAME_AS_CURRENT",
+        "기존 비밀번호와 동일한 비밀번호로 변경할 수 없습니다."
     );
 
     private final HttpStatus status;

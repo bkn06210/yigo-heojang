@@ -8,9 +8,11 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class SmtpEmailSender implements EmailSender {
-
     private static final String SIGNUP_VERIFICATION_SUBJECT =
         "[이고허장] 회원가입 이메일 인증 코드";
+
+    private static final String PASSWORD_RESET_VERIFICATION_SUBJECT =
+        "[이고허장] 비밀번호 재설정 인증 코드";
 
     private final JavaMailSender mailSender;
     private final String fromEmail;
@@ -46,6 +48,25 @@ public class SmtpEmailSender implements EmailSender {
         }
     }
 
+    @Override
+    public void sendPasswordResetVerificationCode(
+        String toEmail,
+        String verificationCode,
+        long expiresInMinutes
+    ) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom(fromEmail);
+        message.setTo(toEmail);
+        message.setSubject(PASSWORD_RESET_VERIFICATION_SUBJECT);
+        message.setText(createPasswordResetVerificationText(verificationCode, expiresInMinutes));
+
+        try {
+            mailSender.send(message);
+        } catch (MailException e) {
+            throw new IllegalStateException("비밀번호 재설정 인증 메일 발송에 실패했습니다.", e);
+        }
+    }
+
     private String createSignupVerificationText(
         String verificationCode,
         long expiresInMinutes
@@ -54,6 +75,22 @@ public class SmtpEmailSender implements EmailSender {
             "안녕하세요. 이고허장입니다.",
             "",
             "회원가입을 계속하려면 아래 인증 코드를 입력해 주세요.",
+            "",
+            "인증 코드: " + verificationCode,
+            "유효 시간: " + expiresInMinutes + "분",
+            "",
+            "본인이 요청하지 않았다면 이 메일을 무시해 주세요."
+        );
+    }
+
+    private String createPasswordResetVerificationText(
+        String verificationCode,
+        long expiresInMinutes
+    ) {
+        return String.join(System.lineSeparator(),
+            "안녕하세요. 이고허장입니다.",
+            "",
+            "비밀번호 재설정을 계속하려면 아래 인증 코드를 입력해 주세요.",
             "",
             "인증 코드: " + verificationCode,
             "유효 시간: " + expiresInMinutes + "분",

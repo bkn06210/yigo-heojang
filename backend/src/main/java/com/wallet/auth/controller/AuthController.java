@@ -19,6 +19,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.wallet.auth.dto.LoginRequest;
 import com.wallet.auth.dto.LoginResponse;
 import com.wallet.auth.dto.LoginResult;
+import com.wallet.auth.dto.PasswordResetCodeRequest;
+import com.wallet.auth.dto.PasswordResetCodeVerifyRequest;
+import com.wallet.auth.dto.PasswordResetCodeVerifyResponse;
+import com.wallet.auth.dto.PasswordResetRequest;
 import com.wallet.auth.dto.SignupEmailVerificationConfirmRequest;
 import com.wallet.auth.dto.SignupEmailVerificationConfirmResponse;
 import com.wallet.auth.dto.SignupEmailVerificationRequest;
@@ -27,6 +31,7 @@ import com.wallet.auth.dto.SignupRequest;
 import com.wallet.auth.dto.SignupResponse;
 import com.wallet.auth.dto.TokenResponse;
 import com.wallet.auth.service.AuthService;
+import com.wallet.auth.service.PasswordResetService;
 import com.wallet.auth.service.SignupEmailVerificationService;
 import com.wallet.common.ApiResponse;
 
@@ -38,6 +43,7 @@ public class AuthController {
 
     private final AuthService authService;
     private final SignupEmailVerificationService signupEmailVerificationService;
+    private final PasswordResetService passwordResetService;
 
     @PostMapping("/signup")
     public ResponseEntity<ApiResponse<SignupResponse>> signup(
@@ -116,6 +122,39 @@ public class AuthController {
         return ResponseEntity.ok()
             .header(HttpHeaders.SET_COOKIE, deleteCookie.toString())
             .body(ApiResponse.success("로그아웃에 성공했습니다.", null));
+    }
+
+    @PostMapping("/password/reset-link")
+    public ResponseEntity<ApiResponse<Void>> sendPasswordResetCode(
+        @Valid @RequestBody PasswordResetCodeRequest request
+    ) {
+        passwordResetService.sendResetCode(request);
+
+        return ResponseEntity
+            .status(HttpStatus.ACCEPTED)
+            .body(ApiResponse.success("입력한 이메일로 비밀번호 초기화 안내를 전송했습니다.", null));
+    }
+
+    @PostMapping("/password/verify-code")
+    public ResponseEntity<ApiResponse<PasswordResetCodeVerifyResponse>> verifyPasswordResetCode(
+        @Valid @RequestBody PasswordResetCodeVerifyRequest request
+    ) {
+        PasswordResetCodeVerifyResponse response = passwordResetService.verifyResetCode(request);
+
+        return ResponseEntity.ok(
+            ApiResponse.success("인증 번호 검증에 성공했습니다.", response)
+        );
+    }
+
+    @PostMapping("/password/resets")
+    public ResponseEntity<ApiResponse<Void>> resetPassword(
+        @Valid @RequestBody PasswordResetRequest request
+    ) {
+        passwordResetService.resetPassword(request);
+
+        return ResponseEntity.ok(
+            ApiResponse.success("비밀번호 재설정이 완료되었습니다.", null)
+        );
     }
 
     private ResponseCookie createRefreshTokenCookie(String refreshToken, long maxAgeSeconds) {
