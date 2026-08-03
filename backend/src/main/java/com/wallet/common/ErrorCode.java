@@ -275,6 +275,20 @@ public enum ErrorCode {
         HttpStatus.BAD_REQUEST,
     "CARD_NUMBER_INVALID",
         "유효한 카드번호 형식이 아닙니다."
+    ),
+
+    /** 프로젝트가 보유한 BIN 데이터에서 카드사를 찾지 못한 경우 */
+    CARD_BIN_NOT_FOUND(
+        HttpStatus.BAD_REQUEST,
+        "CARD_BIN_NOT_FOUND",
+        "카드사를 확인할 수 없는 카드번호입니다."
+    ),
+
+    /** BIN으로 카드사는 식별했지만, 해당 카드사의 등록 가능한 활성 카드 상품이 없는 경우 */
+    CARD_CANDIDATE_NOT_FOUND(
+        HttpStatus.NOT_FOUND,
+        "CARD_CANDIDATE_NOT_FOUND",
+        "등록 가능한 카드 상품을 찾을 수 없습니다."
     );
 
     private final HttpStatus status;
