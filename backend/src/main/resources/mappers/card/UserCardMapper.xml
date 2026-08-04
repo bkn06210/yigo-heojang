@@ -13,7 +13,7 @@
             <arg column="cardId" javaType="Long"/>
             <arg column="maskedCardNumber" javaType="String"/>
             <arg column="representative" javaType="Boolean"/>
-            <arg column="cardStatus" javaType="String"/>
+            <arg column="cardStatus" javaType="com.wallet.card.domain.CardStatus"/>
         </constructor>
     </resultMap>
 
