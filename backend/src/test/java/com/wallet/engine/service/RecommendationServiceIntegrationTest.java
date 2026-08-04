@@ -246,13 +246,18 @@ class RecommendationServiceIntegrationTest {
                 "INSERT INTO merchant (merchant_code, merchant_name, category_id) VALUES (?, ?, ?)",
                 "IT_REC_STARBUCKS", "IT추천스타벅스", cafeCategoryId);
 
+        long cardCompanyId = insert(
+            "INSERT INTO card_company (company_code, company_name) VALUES (?, ?)",
+            "TEST_CARD", "테스트카드사"
+        );
+
         // 카드 두 장 — 같은 카테고리에 혜택률만 다르게 둬 순위 비교가 성립하게 한다
         highCardId = insert(
-                "INSERT INTO card (card_name, issuer, card_type) VALUES (?, ?, ?)",
-                "추천IT_10퍼센트카드", "TEST", "CREDIT");
+                "INSERT INTO card (card_name, card_company_id, card_type) VALUES (?, ?, ?)",
+                "추천IT_10퍼센트카드", cardCompanyId, "CREDIT");
         lowCardId = insert(
-                "INSERT INTO card (card_name, issuer, card_type) VALUES (?, ?, ?)",
-                "추천IT_5퍼센트카드", "TEST", "CREDIT");
+                "INSERT INTO card (card_name, card_company_id, card_type) VALUES (?, ?, ?)",
+                "추천IT_5퍼센트카드", cardCompanyId, "CREDIT");
 
         highUserCardId = insert(
                 "INSERT INTO user_card (member_id, card_id, masked_card_number) VALUES (?, ?, ?)",
