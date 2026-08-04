@@ -245,12 +245,17 @@ class CardStatusServiceIntegrationTest {
                 "INSERT INTO category (category_code, category_name, parent_category_id) VALUES (?, ?, ?)",
                 "IT_STATUS_TELECOM", "IT현황통신", parentCategoryId);
 
+        long cardCompanyId = insert(
+            "INSERT INTO card_company (company_code, company_name) VALUES (?, ?)",
+            "TEST_CARD", "테스트카드사"
+        );
+
         mainCardId = insert(
-                "INSERT INTO card (card_name, issuer, card_type) VALUES (?, ?, ?)",
-                "현황IT_생활카드", "TEST", "CREDIT");
+                "INSERT INTO card (card_name, card_company_id, card_type) VALUES (?, ?, ?)",
+                "현황IT_생활카드", cardCompanyId, "CREDIT");
         long plainCardId = insert(
-                "INSERT INTO card (card_name, issuer, card_type) VALUES (?, ?, ?)",
-                "현황IT_실적없는카드", "TEST", "CREDIT");
+                "INSERT INTO card (card_name, card_company_id, card_type) VALUES (?, ?, ?)",
+                "현황IT_실적없는카드", cardCompanyId, "CREDIT");
 
         mainUserCardId = insert(
                 "INSERT INTO user_card (member_id, card_id, masked_card_number) VALUES (?, ?, ?)",
