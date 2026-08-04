@@ -1,5 +1,6 @@
 <script setup>
 import { computed, ref } from 'vue';
+import Icon from '@/components/common/Icon.vue';
 
 const emit = defineEmits([
   'close',
@@ -211,7 +212,7 @@ const close = () => {
   <button
     @click="close"
   >
-    ✕
+    <Icon name="close" size="sm" />
   </button>
 
 </div>
@@ -387,7 +388,7 @@ const close = () => {
 
   width:100%;
 
-  background:white;
+  background:var(--color-surface);
 
   border-radius:24px 24px 0 0;
 
@@ -402,7 +403,7 @@ const close = () => {
   width:42px;
   height:5px;
 
-  background:#ddd;
+  background:var(--color-border);
 
   border-radius:99px;
 
@@ -490,7 +491,7 @@ const close = () => {
 
   font-size:13px;
 
-  color:#777;
+  color:var(--color-text-secondary);
 
 }
 
@@ -502,7 +503,7 @@ const close = () => {
 
   border:none;
 
-  background:white;
+  background:var(--color-surface);
 
 }
 
@@ -510,9 +511,14 @@ const close = () => {
 
 .calendar .selected {
 
-  background:#4F46E5;
+  background:
+    linear-gradient(
+      90deg,
+      var(--color-btn-primary-start),
+      var(--color-btn-primary-end)
+    );
 
-  color:white;
+  color:var(--color-btn-primary-text);
 
   border-radius:50%;
 
@@ -521,7 +527,7 @@ const close = () => {
 
 .calendar .between {
 
-  background:#EEF2FF;
+  background:var(--color-filter-active-bg);
 
 }
 
@@ -567,7 +573,11 @@ const close = () => {
 
 .reset {
 
-  background:#eee;
+  background:var(--color-border);
+
+  color:var(--color-text-secondary);
+
+  font-weight:var(--font-semibold);
 
 }
 
@@ -575,9 +585,16 @@ const close = () => {
 
 .confirm {
 
-  background:#4F46E5;
+  background:
+    linear-gradient(
+      90deg,
+      var(--color-btn-primary-start),
+      var(--color-btn-primary-end)
+    );
 
-  color:white;
+  color:var(--color-btn-primary-text);
+
+  font-weight:var(--font-semibold);
 
 }
 

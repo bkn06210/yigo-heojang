@@ -1,7 +1,5 @@
 <script setup>
 
-
-
 defineProps({
 
   title:{
@@ -28,7 +26,6 @@ defineProps({
   }
 
 })
-
 
 
 const emit = defineEmits([
@@ -126,11 +123,15 @@ const emit = defineEmits([
 
   width:100%;
 
-  padding:32px 20px;
+  padding: var(--space-lg);
 
-  border-radius:16px;
+  border-radius: var(--radius-lg);
 
-  background:#f7f7f7;
+  background: var(--color-surface);
+
+  border: 1px solid var(--color-border);
+
+  box-shadow: var(--shadow-md);
 
   display:flex;
 
@@ -138,7 +139,15 @@ const emit = defineEmits([
 
   align-items:center;
 
-  gap:12px;
+  justify-content:flex-start;
+
+  gap:var(--space-sm);
+
+  overflow:hidden;
+
+  word-break:break-word;
+
+  box-sizing:border-box;
 
 }
 
@@ -148,7 +157,11 @@ const emit = defineEmits([
 
   margin:0;
 
-  font-size:15px;
+  color:var(--color-text-primary);
+
+  font-size:var(--font-md);
+
+  font-weight:var(--font-semibold);
 
 }
 
@@ -158,9 +171,9 @@ const emit = defineEmits([
 
   margin:0;
 
-  font-size:13px;
+  color:var(--color-text-secondary);
 
-  color:#777;
+  font-size:var(--font-sm);
 
 }
 
@@ -170,7 +183,9 @@ const emit = defineEmits([
 
   display:flex;
 
-  gap:10px;
+  gap:var(--space-xs);
+
+  margin-top:var(--space-sm);
 
 }
 
@@ -180,14 +195,31 @@ button{
 
   border:none;
 
-  padding:10px 20px;
+  padding:var(--space-xs) var(--space-lg);
 
-  border-radius:20px;
+  border-radius:var(--radius-full);
+
+  background:var(--color-primary);
+
+  color:var(--color-btn-primary-text);
+
+  font-size:var(--font-sm);
+
+  font-weight:var(--font-semibold);
 
   cursor:pointer;
 
+  transition:var(--transition-fast);
+
 }
 
+
+
+button:hover{
+
+  opacity:0.9;
+
+}
 
 
 </style>

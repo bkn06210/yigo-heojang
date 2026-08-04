@@ -319,11 +319,11 @@ const deleteNotification = (id) => {
 
   min-height:100vh;
 
-  background:#fafafa;
+  background: var(--color-bg);
 
-  padding:20px;
+  padding: var(--space-md);
 
-  padding-bottom:100px;
+  padding-bottom: calc(var(--space-xl) + var(--space-2xl) + var(--space-xl));
 
 }
 
@@ -335,9 +335,9 @@ const deleteNotification = (id) => {
 
   align-items:center;
 
-  gap:12px;
+  gap: var(--space-sm);
 
-  margin-bottom:24px;
+  margin-bottom: var(--space-xl);
 
 }
 
@@ -345,9 +345,9 @@ const deleteNotification = (id) => {
 
 .notification-header h1 {
 
-  font-size:22px;
+  font-size: var(--font-title);
 
-  font-weight:700;
+  font-weight: var(--font-bold);
 
 }
 
@@ -359,9 +359,11 @@ const deleteNotification = (id) => {
 
   background:none;
 
-  font-size:24px;
+  font-size: var(--font-2xl);
 
   cursor:pointer;
+
+  color: var(--color-text-primary);
 
 }
 
@@ -375,17 +377,17 @@ const deleteNotification = (id) => {
 
   justify-content:center;
 
-  width:22px;
+  width:24px;
 
-  height:22px;
+  height:24px;
 
-  border-radius:50%;
+  border-radius: var(--radius-full);
 
-  background:#ff4d4f;
+  background: var(--color-coral);
 
-  color:white;
+  color: var(--color-btn-primary-text);
 
-  font-size:12px;
+  font-size: var(--font-xs);
 
 }
 
@@ -397,7 +399,7 @@ const deleteNotification = (id) => {
 
   flex-direction:column;
 
-  gap:12px;
+  gap: var(--space-sm);
 
 }
 
@@ -411,15 +413,15 @@ const deleteNotification = (id) => {
 
   align-items:flex-start;
 
-  padding:18px;
+  padding: var(--space-md);
 
-  background:white;
+  background: var(--color-surface);
 
-  border-radius:16px;
+  border-radius: var(--radius-md);
 
-  color:#999;
+  color: var(--color-text-secondary);
 
-  transition:.2s;
+  transition: var(--transition-normal);
 
 }
 
@@ -427,9 +429,9 @@ const deleteNotification = (id) => {
 
 .notification-item.unread {
 
-  color:#222;
+  color: var(--color-text-primary);
 
-  font-weight:600;
+  font-weight: var(--font-semibold);
 
 }
 
@@ -437,9 +439,11 @@ const deleteNotification = (id) => {
 
 .notification-content h2 {
 
-  margin:0 0 8px;
+  margin: 0 0 var(--space-xs);
 
-  font-size:16px;
+  font-size: var(--font-md);
+
+  font-weight: var(--font-semibold);
 
 }
 
@@ -447,11 +451,11 @@ const deleteNotification = (id) => {
 
 .notification-content p {
 
-  margin:0 0 10px;
+  margin: 0 0 var(--space-xs);
 
-  font-size:14px;
+  font-size: var(--font-sm);
 
-  font-weight:400;
+  font-weight: var(--font-regular);
 
 }
 
@@ -459,9 +463,9 @@ const deleteNotification = (id) => {
 
 .notification-content span {
 
-  font-size:12px;
+  font-size: var(--font-xs);
 
-  color:#aaa;
+  color: var(--color-text-tertiary);
 
 }
 
@@ -473,9 +477,9 @@ const deleteNotification = (id) => {
 
   background:none;
 
-  font-size:22px;
+  font-size: var(--font-lg);
 
-  color:#aaa;
+  color: var(--color-text-tertiary);
 
   cursor:pointer;
 
@@ -487,15 +491,15 @@ const deleteNotification = (id) => {
 
   position:fixed;
 
-  right:20px;
+  right: var(--space-md);
 
-  bottom:30px;
+  bottom: var(--space-lg);
 
   display:flex;
 
   flex-direction:column;
 
-  gap:10px;
+  gap: var(--space-xs);
 
 }
 
@@ -503,15 +507,15 @@ const deleteNotification = (id) => {
 
 .notification-actions button {
 
-  padding:12px 18px;
+  padding: var(--space-sm) var(--space-md);
 
   border:none;
 
-  border-radius:20px;
+  border-radius: var(--radius-lg);
 
-  background:#222;
+  background: var(--color-primary);
 
-  color:white;
+  color: var(--color-btn-primary-text);
 
   cursor:pointer;
 
@@ -523,9 +527,9 @@ const deleteNotification = (id) => {
 
   text-align:center;
 
-  color:#999;
+  color: var(--color-text-secondary);
 
-  padding:60px 0;
+  padding: calc(var(--space-2xl) * 2.5) 0;
 
 }
 

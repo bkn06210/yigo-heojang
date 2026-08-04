@@ -1,11 +1,23 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 
 import PageHeader from '@/components/common/PageHeader.vue';
 import TransactionFilterBottomSheet from '@/components/transaction/TransactionFilterBottomSheet.vue';
 import TransactionDatePickerBottomSheet from '@/components/transaction/TransactionDatePickerBottomSheet.vue';
 import TransactionDetailBottomSheet from '@/components/transaction/TransactionDetailBottomSheet.vue';
+import Icon from '@/components/common/Icon.vue';
 
+
+const route = useRoute();
+const router = useRouter();
+
+// 카드 상세에서 들어온 경우에만 존재 — 있으면 해당 카드 소비내역만, 없으면 전체
+const filterCardId = computed(() =>
+  route.query.cardId ? Number(route.query.cardId) : null,
+);
+
+const filterCardName = computed(() => route.query.cardName || '');
 
 // 조회조건 표시
 const showFilter = ref(false);
@@ -57,26 +69,64 @@ const cards = ref([
 const transactions = ref([
   {
     id: 1,
-    date: '2026.07.28',
+    cardId: 1,
+    date: '2026.08.04 09:30',
     merchant: '스타벅스',
     cardName: 'KB My WE:SH 카드',
-    amount: 6200,
+    amount: 8500,
+    category: '음식/카페',
+    status: '승인',
   },
   {
     id: 2,
-    date: '2026.07.27',
-    merchant: 'CU',
+    cardId: 1,
+    date: '2026.08.03 18:45',
+    merchant: 'GS25',
     cardName: 'KB My WE:SH 카드',
-    amount: 4500,
+    amount: 12400,
+    category: '편의점',
+    status: '승인',
   },
   {
     id: 3,
-    date: '2026.07.26',
-    merchant: '올리브영',
+    cardId: 1,
+    date: '2026.08.02 14:20',
+    merchant: '넥슨 게임샵',
+    cardName: 'KB My WE:SH 카드',
+    amount: 29000,
+    category: '게임/엔터',
+    status: '승인',
+  },
+  {
+    id: 4,
+    cardId: 2,
+    date: '2026.08.01 16:15',
+    merchant: '컬리마켓',
     cardName: '신한 Deep Dream 카드',
-    amount: 28900,
+    amount: 45800,
+    category: '쇼핑',
+    status: '승인',
+  },
+  {
+    id: 5,
+    cardId: 2,
+    date: '2026.07.31 10:50',
+    merchant: '로또판매점',
+    cardName: '신한 Deep Dream 카드',
+    amount: 5000,
+    category: '기타',
+    status: '승인',
   },
 ]);
+
+// 카드 상세에서 진입한 경우 해당 카드 소비내역만, 홈에서 진입한 경우 전체
+const filteredTransactions = computed(() => {
+  if (!filterCardId.value) return transactions.value;
+
+  return transactions.value.filter(
+    (transaction) => transaction.cardId === filterCardId.value,
+  );
+});
 
 
 // 조회조건 열기
@@ -158,14 +208,17 @@ const closeDetail = () => {
 
   <div class="header">
 
-    <PageHeader title="카드 사용내역" />
+    <PageHeader
+      :title="filterCardName ? `${filterCardName} 사용내역` : '카드 사용내역'"
+      @back="router.back()"
+    />
 
 
     <button
       class="filter-icon"
       @click="openFilter"
     >
-      ⚙️
+      <Icon name="filter" size="sm" />
     </button>
 
   </div>
@@ -176,40 +229,29 @@ const closeDetail = () => {
   <!-- 사용내역 리스트 -->
 
   <div
-  v-for="transaction in transactions"
+  v-for="transaction in filteredTransactions"
   :key="transaction.id"
   class="transaction-item"
   @click="openDetail(transaction)"
 >
 
-
-    <div class="top">
-
-      <span>
-        {{ transaction.date }}
-      </span>
-
-
+    <!-- 매장명과 금액 (한 줄) -->
+    <div class="transaction-header">
+      <div class="merchant-title">
+        {{ transaction.merchant }}
+      </div>
       <span class="amount">
         -{{ transaction.amount.toLocaleString() }}원
       </span>
-
     </div>
 
-
-
-    <div class="merchant">
-
-      {{ transaction.merchant }}
-
-    </div>
-
-
-
-    <div class="card-name">
-
-      {{ transaction.cardName }}
-
+    <!-- 상세 정보 (작음) -->
+    <div class="transaction-info">
+      <span class="info-text">{{ transaction.date }}</span>
+      <span class="info-dot">·</span>
+      <span class="info-text">{{ transaction.category }}</span>
+      <span class="info-dot">·</span>
+      <span class="info-text">{{ transaction.cardName }}</span>
     </div>
 
 
@@ -278,7 +320,11 @@ const closeDetail = () => {
 <style scoped>
 
 .transaction-page {
-  padding:20px;
+  padding: var(--space-md);
+  margin: 0 auto;
+  max-width: 480px;
+  box-sizing: border-box;
+  overflow: hidden visible;
 }
 
 
@@ -297,62 +343,60 @@ width:36px;
 height:36px;
 border:none;
 background:none;
-font-size:20px;
+font-size: var(--font-lg);
+cursor: pointer;
 
 }
 
 
 
 .transaction-item {
-
-padding:16px 0;
-
-border-bottom:1px solid #eee;
-
-cursor:pointer;
-
+  padding: var(--space-md) 0;
+  border-bottom: 1px solid var(--color-border);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
 }
 
-
-
-.top {
-
-display:flex;
-
-justify-content:space-between;
-
+.transaction-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-md);
 }
 
-
+.merchant-title {
+  font-size: var(--font-lg);
+  font-weight: var(--font-bold);
+  color: var(--color-text-primary);
+  letter-spacing: -0.3px;
+  flex: 1;
+}
 
 .amount {
-
-color:#e53935;
-
-font-weight:600; 
-
+  color: var(--color-coral);
+  font-weight: var(--font-bold);
+  font-size: var(--font-md);
+  flex-shrink: 0;
+  white-space: nowrap;
 }
 
-
-
-.merchant {
-
-font-size:16px;
-
-font-weight:600;
-
+.transaction-info {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  font-size: var(--font-sm);
+  color: var(--color-text-tertiary);
+  flex-wrap: wrap;
 }
 
+.info-text {
+  color: var(--color-text-secondary);
+}
 
-
-.card-name {
-
-margin-top:4px;
-
-color:#888;
-
-font-size:14px;
-
+.info-dot {
+  color: var(--color-text-tertiary);
 }
 
 </style>

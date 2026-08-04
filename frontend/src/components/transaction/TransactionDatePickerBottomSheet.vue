@@ -1,7 +1,8 @@
-<!-- src/components/transaction/TransactionDatePickerBottomSheet.vue -->
+﻿<!-- src/components/transaction/TransactionDatePickerBottomSheet.vue -->
 
 <script setup>
 import { ref, computed } from 'vue';
+import Icon from '@/components/common/Icon.vue';
 
 
 const emit = defineEmits([
@@ -14,7 +15,8 @@ const emit = defineEmits([
 // 현재 보고 있는 달
 const currentDate = ref(new Date());
 
-
+// 월 선택 모드
+const showMonthPicker = ref(false);
 
 // 선택 날짜
 const startDate = ref('');
@@ -41,6 +43,19 @@ const changeMonth = (value) => {
 
 };
 
+
+
+// 월 선택
+
+const selectMonth = (month) => {
+
+  const year = currentDate.value.getFullYear();
+
+  currentDate.value = new Date(year, month, 1);
+
+  showMonthPicker.value = false;
+
+};
 
 
 
@@ -112,6 +127,9 @@ const calendarDays = computed(() => {
 
 
 });
+
+
+
 
 
 
@@ -228,6 +246,48 @@ const isSelected = (date) => {
 
 
 
+// 범위 내 상태 (시작일과 종료일 사이)
+
+const isBetween = (date) => {
+
+  if (!startDate.value || !endDate.value || !date) return false;
+
+  const dateObj = new Date(date.replace(/\./g, '-'));
+
+  const start = new Date(startDate.value.replace(/\./g, '-'));
+
+  const end = new Date(endDate.value.replace(/\./g, '-'));
+
+  return dateObj > start && dateObj < end;
+
+};
+
+
+
+// 범위의 시작 날짜 (범위가 있을 때만)
+
+const isFirstInRange = (date) => {
+
+  if (!startDate.value || !endDate.value || !date) return false;
+
+  return date === startDate.value;
+
+};
+
+
+
+// 범위의 마지막 날짜 (범위가 있을 때만)
+
+const isLastInRange = (date) => {
+
+  if (!startDate.value || !endDate.value || !date) return false;
+
+  return date === endDate.value;
+
+};
+
+
+
 
 
 
@@ -236,16 +296,28 @@ const isSelected = (date) => {
 
 const apply = () => {
 
+  let applyStartDate = startDate.value;
 
-  if(!startDate.value || !endDate.value) {
+  let applyEndDate = endDate.value;
 
 
-    return;
+  // 날짜 선택이 없으면 현재 월 전체 사용
 
+  if(!applyStartDate || !applyEndDate) {
+
+    const year = currentDate.value.getFullYear();
+
+    const month = currentDate.value.getMonth();
+
+    const firstDay = new Date(year, month, 1);
+
+    const lastDay = new Date(year, month + 1, 0);
+
+    applyStartDate = formatDate(firstDay);
+
+    applyEndDate = formatDate(lastDay);
 
   }
-
-
 
 
   emit(
@@ -254,9 +326,9 @@ const apply = () => {
 
     {
 
-      startDate:startDate.value,
+      startDate:applyStartDate,
 
-      endDate:endDate.value,
+      endDate:applyEndDate,
 
     }
 
@@ -320,7 +392,7 @@ class="overlay"
 
 
 
-<h2>
+<button @click="showMonthPicker = true" style="background:none; border:none; font-size:18px; cursor:pointer; font-weight:bold;">
 
 {{currentDate.getFullYear()}}
 
@@ -330,7 +402,7 @@ class="overlay"
 
 월
 
-</h2>
+</button>
 
 
 
@@ -345,7 +417,7 @@ class="overlay"
 <button
 @click="close"
 >
-✕
+<Icon name="close" size="sm" />
 </button>
 
 
@@ -407,9 +479,27 @@ class="overlay"
 
 
 
-<div class="calendar">
+<div v-if="showMonthPicker" class="month-picker">
 
+<div style="display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin:20px 0;">
 
+<button v-for="month in 12" :key="month" @click="selectMonth(month-1)" style="padding:10px; border:1px solid #ccc; border-radius:8px; cursor:pointer;">
+
+{{month}}월
+
+</button>
+
+</div>
+
+<button @click="showMonthPicker = false" style="width:100%; padding:10px; border:none; background:#ccc; border-radius:8px; cursor:pointer;">
+
+닫기
+
+</button>
+
+</div>
+
+<div v-else class="calendar">
 
 <button
 
@@ -420,20 +510,17 @@ v-for="(day,index) in calendarDays"
 :disabled="!day"
 
 :class="{
-active:isSelected(day)
+active:isSelected(day),
+between:isBetween(day)
 }"
 
 @click="selectDate(day)"
 
 >
 
-
 {{day?.split('.')[2]}}
 
-
 </button>
-
-
 
 </div>
 
@@ -498,7 +585,7 @@ z-index:1200;
 
 width:100%;
 
-background:white;
+background:var(--color-surface);
 
 border-radius:24px 24px 0 0;
 
@@ -514,7 +601,7 @@ width:40px;
 
 height:5px;
 
-background:#ddd;
+background:var(--color-border);
 
 border-radius:10px;
 
@@ -526,11 +613,29 @@ margin:0 auto 20px;
 
 .header {
 
-display:flex;
+display:grid;
 
-align-items:center;
+grid-template-columns:40px 1fr 40px;
 
-justify-content:space-between;
+align-items:start;
+
+justify-items:center;
+
+gap:0;
+
+}
+
+
+
+.header h2 {
+
+margin:0;
+
+font-size: var(--font-lg);
+
+font-weight: var(--font-bold);
+
+grid-column:2;
 
 }
 
@@ -548,13 +653,49 @@ font-size:22px;
 
 
 
+.header button:first-child {
+
+grid-column:1;
+
+}
+
+
+
+.header button:last-child {
+
+grid-column:3;
+
+align-self:start;
+
+margin-top:-8px;
+
+}
+
+
+
 .selected {
+
+display:grid;
+
+grid-template-columns:1fr 1fr;
+
+gap:0;
+
+margin:24px 0;
+
+}
+
+
+
+.selected > div {
 
 display:flex;
 
-justify-content:space-around;
+flex-direction:column;
 
-margin:24px 0;
+align-items:center;
+
+justify-content:center;
 
 }
 
@@ -564,7 +705,9 @@ margin:24px 0;
 
 font-size:13px;
 
-color:#777;
+color:var(--color-text-secondary);
+
+margin:0;
 
 }
 
@@ -573,6 +716,8 @@ color:#777;
 .selected strong {
 
 font-size:16px;
+
+margin:4px 0 0 0;
 
 }
 
@@ -584,7 +729,7 @@ display:grid;
 
 grid-template-columns:repeat(7,1fr);
 
-gap:8px;
+gap:0;
 
 }
 
@@ -596,21 +741,52 @@ height:42px;
 
 border-radius:10px;
 
-border:1px solid #ddd;
+border:none;
 
-background:white;
+background:var(--color-surface);
 
 }
+
+
+
 
 
 
 .calendar button.active {
 
-border:2px solid #4F46E5;
+border:none;
 
-color:#4F46E5;
+background:var(--color-primary);
+
+color:var(--color-btn-primary-text);
+
+border-radius:24px;
+
+margin:0 -6px;
 
 }
+
+
+
+.calendar button.between {
+
+background:rgba(var(--color-primary-dark-rgb), 0.2);
+
+border:none;
+
+border-radius:24px;
+
+margin:0 -6px;
+
+color:var(--color-text-primary);
+
+}
+
+
+
+
+
+
 
 
 
@@ -626,9 +802,14 @@ border:none;
 
 border-radius:12px;
 
-background:#4F46E5;
+background:
+  linear-gradient(
+    90deg,
+    var(--color-btn-primary-start),
+    var(--color-btn-primary-end)
+  );
 
-color:white;
+color:var(--color-btn-primary-text);
 
 }
 

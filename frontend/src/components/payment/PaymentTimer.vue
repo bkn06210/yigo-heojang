@@ -51,16 +51,38 @@ defineProps({
 
 .timer{
 
-  margin-top:16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
 
-  font-size:14px;
+  width: fit-content;
+  margin: 0 auto;
+
+  padding: var(--space-xs) var(--space-md);
+
+  border-radius: var(--radius-full);
+
+  background: linear-gradient(135deg, rgba(230, 217, 77, 0.18) 0%, rgba(230, 217, 77, 0.06) 100%);
+  border: 1px solid rgba(230, 217, 77, 0.3);
+
+  font-size: var(--font-sm);
+  color: var(--color-text-secondary);
+
+}
+
+[data-theme="dark"] .timer{
+
+  background: linear-gradient(135deg, rgba(228, 218, 103, 0.18) 0%, rgba(228, 218, 103, 0.06) 100%);
+  border: 1px solid rgba(228, 218, 103, 0.26);
 
 }
 
 
 .timer strong{
 
-  margin-left:6px;
+  color: var(--color-gold-text);
+  font-weight: var(--font-bold);
 
 }
 

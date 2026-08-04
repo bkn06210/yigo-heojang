@@ -1,188 +1,149 @@
 <script setup>
-import { useRouter } from 'vue-router';
-
-import { maskCardNumber } from '@/utils/card';
+import { useRouter } from 'vue-router'
+import { maskCardNumber } from '@/utils/card'
+import BaseCard from '@/components/common/BaseCard.vue'
+import Icon from '@/components/common/Icon.vue'
 
 const props = defineProps({
   card: {
     type: Object,
     required: true,
   },
-});
+})
 
-const emit = defineEmits([
-  'toggle-pin',
-]);
+const emit = defineEmits(['toggle-pin'])
+const router = useRouter()
 
-const router = useRouter();
-
-
-// 카드 상세 이동
 const goDetail = () => {
-  router.push(`/cards/${props.card.id}`);
-};
+  router.push(`/cards/${props.card.id}`)
+}
 
-
-// 고정 버튼 클릭
-const handlePinClick = () => {
-  emit('toggle-pin', props.card.id);
-};
+const handlePinClick = (e) => {
+  e.stopPropagation()
+  emit('toggle-pin', props.card.id)
+}
 </script>
 
-
 <template>
-  <div
-    class="card-item"
-    @click="goDetail"
-  >
+  <BaseCard clickable class="card-item" @click="goDetail">
+    <div class="card-container">
+      <!-- 카드 이미지 -->
+      <template v-if="card.image">
+        <img
+          :src="card.image"
+          :alt="card.name"
+          class="card-image"
+        />
+      </template>
+      <template v-else>
+        <div class="card-image image-placeholder">CARD</div>
+      </template>
 
-    <!-- 카드 정보 -->
-    <div class="card-left">
-
-      <img
-        :src="card.image"
-        :alt="card.name"
-        class="card-image"
-      />
-
-
+      <!-- 카드 정보 -->
       <div class="card-info">
-
-        <!-- 카드명 -->
-        <div class="card-name">
-          {{ card.name }}
-        </div>
-
-
-        <!-- 카드사 -->
-        <div class="company">
+        <div class="card-name">{{ card.name }}</div>
+        <div class="card-company">
           {{ card.company }}
         </div>
-
-
-        <!-- 카드번호 -->
-        <div class="number">
-
-          {{ card.owner }}
-
-          {{ maskCardNumber(card.cardNumber) }}
-
+        <!-- 달성도 프로그래스 바 -->
+        <div class="progress-wrapper" v-if="card.achievementRate !== undefined">
+          <div class="progress-bar">
+            <div class="progress-fill" :style="{ width: card.achievementRate + '%' }"></div>
+          </div>
+          <div class="progress-text">{{ card.achievementRate }}%</div>
         </div>
-
       </div>
 
+      <!-- 우측 화살표 -->
+      <div class="card-arrow">
+        <span>›</span>
+      </div>
     </div>
-
-
-
-    <!-- 고정 버튼 -->
-    <button
-      class="pin-button"
-      @click.stop="handlePinClick"
-    >
-      {{ card.pinned ? '📌' : '📍' }}
-    </button>
-
-
-  </div>
+  </BaseCard>
 </template>
 
-
-
 <style scoped>
-
-.card-item {
-
-  display:flex;
-
-  justify-content:space-between;
-
-  align-items:center;
-
-  padding:16px 0;
-
-  cursor:pointer;
-
+.card-container {
+  display: flex;
+  flex-direction: row;
+  gap: var(--space-md);
+  width: 100%;
+  align-items: center;
 }
-
-
-.card-left {
-
-  display:flex;
-
-  align-items:center;
-
-  gap:16px;
-
-}
-
-
 
 .card-image {
-
-  width:72px;
-
-  height:auto;
-
-  border-radius:10px;
-
+  width: 60px;
+  height: 95px;
+  border-radius: var(--radius-md);
+  object-fit: contain;
+  background: var(--color-bg);
+  flex-shrink: 0;
 }
 
-
+.image-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-point-bg);
+  color: var(--color-point-icon);
+  font-size: var(--font-xs);
+  font-weight: var(--font-semibold);
+}
 
 .card-info {
-
-  display:flex;
-
-  flex-direction:column;
-
-  gap:4px;
-
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  flex: 1;
+  min-width: 0;
 }
-
-
 
 .card-name {
-
-  font-size:15px;
-
-  font-weight:700;
-
+  font-size: var(--font-sm);
+  font-weight: var(--font-bold);
+  color: var(--color-text-primary);
+  word-break: break-word;
+  line-height: 1.3;
 }
 
-
-
-.company {
-
-  font-size:13px;
-
-  color:#666;
-
+.card-company {
+  font-size: var(--font-xs);
+  color: var(--color-text-tertiary);
+  font-weight: var(--font-medium);
 }
 
-
-
-.number {
-
-  font-size:13px;
-
-  color:#888;
-
+.card-arrow {
+  color: var(--color-text-tertiary);
+  font-size: var(--font-lg);
+  flex-shrink: 0;
 }
 
-
-
-.pin-button {
-
-  background:none;
-
-  border:none;
-
-  font-size:20px;
-
-  cursor:pointer;
-
+.progress-wrapper {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  margin-top: var(--space-xs);
 }
 
+.progress-bar {
+  flex: 1;
+  height: 4px;
+  background: var(--color-bg-subtle);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
 
+.progress-fill {
+  height: 100%;
+  background: var(--color-primary);
+  border-radius: var(--radius-full);
+  transition: width 0.3s ease;
+}
+
+.progress-text {
+  font-size: var(--font-xs);
+  color: var(--color-text-secondary);
+  font-weight: var(--font-semibold);
+  white-space: nowrap;
+}
 </style>

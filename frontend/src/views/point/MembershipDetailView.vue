@@ -1,4 +1,4 @@
-<script setup>
+﻿<script setup>
 
 import { ref } from 'vue'
 
@@ -49,7 +49,7 @@ const deleteMembership = () => {
 
 
     <!-- 헤더 -->
-    <PageHeader title="멤버십 상세" />
+    <PageHeader title="멤버십 상세" @back="router.back()" />
 
 
 
@@ -199,7 +199,10 @@ const deleteMembership = () => {
 
   min-height: 100vh;
 
-  padding-bottom: 80px;
+  padding-bottom: calc(var(--space-xl) + var(--space-2xl) + var(--space-xl));
+  margin: 0 auto;
+  max-width: 480px;
+  box-sizing: border-box;
 
 }
 
@@ -207,7 +210,7 @@ const deleteMembership = () => {
 
 .content {
 
-  padding: 20px;
+  padding: var(--space-lg);
 
 }
 
@@ -215,9 +218,14 @@ const deleteMembership = () => {
 
 .membership-title h1 {
 
-  font-size: 24px;
+  font-size: var(--typo-display-medium-size);
+  font-weight: var(--typo-display-medium-weight);
+  line-height: var(--typo-display-medium-line-height);
+  letter-spacing: var(--typo-display-medium-letter-spacing);
 
-  margin-bottom: 24px;
+  margin-bottom: var(--space-xl);
+
+  color: var(--color-text-primary);
 
 }
 
@@ -225,7 +233,25 @@ const deleteMembership = () => {
 
 .info-section {
 
-  margin-bottom: 28px;
+  margin-bottom: var(--space-xl);
+
+  padding: var(--space-md);
+
+  border-radius: var(--radius-lg);
+
+  background: linear-gradient(135deg, rgba(var(--color-primary-dark-rgb), 0.08) 0%, rgba(var(--color-primary-dark-rgb), 0.02) 100%);
+  border: 1px solid rgba(var(--color-primary-dark-rgb), 0.15);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+
+}
+
+[data-theme="dark"] .info-section {
+
+  background: linear-gradient(135deg, rgba(var(--color-primary-dark-rgb), 0.16) 0%, rgba(var(--color-primary-dark-rgb), 0.05) 100%);
+  border: 1px solid rgba(var(--color-primary-dark-rgb), 0.22);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.05);
 
 }
 
@@ -233,9 +259,13 @@ const deleteMembership = () => {
 
 .info-section h2 {
 
-  font-size: 16px;
+  font-size: var(--font-md);
 
-  margin-bottom: 12px;
+  margin-bottom: var(--space-sm);
+
+  color: var(--color-text-primary);
+
+  font-weight: var(--font-semibold);
 
 }
 
@@ -244,9 +274,9 @@ const deleteMembership = () => {
 .info-section p,
 .info-section li {
 
-  font-size: 15px;
+  font-size: var(--font-sm);
 
-  color: #333;
+  color: var(--color-text-primary);
 
 }
 
@@ -258,11 +288,25 @@ const deleteMembership = () => {
 
   height: 48px;
 
-  border-radius: 12px;
+  border-radius: var(--radius-md);
 
-  background: #1d4ed8;
+  background: linear-gradient(90deg, var(--color-btn-primary-start), var(--color-btn-primary-end));
 
-  color: white;
+  color: var(--color-btn-primary-text);
+
+  border: none;
+
+  font-weight: var(--font-semibold);
+
+  cursor: pointer;
+
+  transition: var(--transition-fast);
+
+}
+
+.official-button:hover {
+
+  opacity: 0.9;
 
 }
 
@@ -274,15 +318,38 @@ const deleteMembership = () => {
 
   height: 48px;
 
-  margin-top: 12px;
+  margin-top: var(--space-sm);
 
-  border-radius: 12px;
+  border-radius: var(--radius-md);
 
-  background: white;
+  background: linear-gradient(135deg, rgba(168, 78, 104, 0.1) 0%, rgba(168, 78, 104, 0.03) 100%);
 
-  color: #ef4444;
+  color: var(--color-coral);
 
-  border: 1px solid #ef4444;
+  border: 1px solid rgba(168, 78, 104, 0.25);
+
+  font-weight: var(--font-semibold);
+
+  cursor: pointer;
+
+  transition: var(--transition-fast);
+
+  backdrop-filter: blur(6px);
+
+  -webkit-backdrop-filter: blur(6px);
+
+}
+
+.delete-button:hover {
+
+  background: linear-gradient(135deg, rgba(168, 78, 104, 0.16) 0%, rgba(168, 78, 104, 0.05) 100%);
+
+}
+
+[data-theme="dark"] .delete-button {
+
+  background: linear-gradient(135deg, rgba(209, 123, 147, 0.16) 0%, rgba(209, 123, 147, 0.05) 100%);
+  border: 1px solid rgba(209, 123, 147, 0.3);
 
 }
 
@@ -300,7 +367,7 @@ const deleteMembership = () => {
 
   align-items: center;
 
-  z-index: 100;
+  z-index: var(--z-modal);
 
 }
 
@@ -309,33 +376,55 @@ const deleteMembership = () => {
 
   width: calc(100% - 40px);
 
-  background: white;
+  border-radius: var(--radius-lg);
 
-  border-radius: 16px;
+  padding: var(--space-xl);
 
-  padding: 24px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.85) 0%, var(--color-surface) 60%);
+
+  border: 1px solid rgba(255, 255, 255, 0.3);
+
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+
+  backdrop-filter: blur(12px);
+
+  -webkit-backdrop-filter: blur(12px);
+
+}
+
+[data-theme="dark"] .modal {
+
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.06) 0%, var(--color-surface) 60%);
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
+
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05);
 
 }
 
 
 .modal h3 {
 
-  font-size: 18px;
+  font-size: var(--font-lg);
 
-  margin-bottom: 12px;
+  margin-bottom: var(--space-sm);
+
+  color: var(--color-text-primary);
+
+  font-weight: var(--font-semibold);
 
 }
 
 
 .modal p {
 
-  font-size: 14px;
+  font-size: var(--font-sm);
 
-  color: #666;
+  color: var(--color-text-secondary);
 
   line-height: 1.5;
 
-  margin-bottom: 24px;
+  margin-bottom: var(--space-xl);
 
 }
 
@@ -344,7 +433,7 @@ const deleteMembership = () => {
 
   display: flex;
 
-  gap: 12px;
+  gap: var(--space-sm);
 
 }
 
@@ -355,23 +444,31 @@ const deleteMembership = () => {
 
   height: 44px;
 
-  border-radius: 10px;
+  border-radius: var(--radius-sm);
+
+  font-weight: var(--font-semibold);
+
+  border: none;
+
+  cursor: pointer;
 
 }
  
 
 .cancel-button {
 
-  background: #f3f4f6;
+  background: var(--color-border);
+
+  color: var(--color-text-primary);
 
 }
 
 
 .confirm-button {
 
-  background: #ef4444;
+  background: var(--color-coral);
 
-  color: white;
+  color: var(--color-btn-primary-text);
 
 }
 

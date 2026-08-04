@@ -164,14 +164,17 @@ const changePassword = () => {
 
 .password-change {
 
-padding:24px;
+padding: var(--space-xl);
 
 }
 
 
 h1 {
 
-margin-bottom:40px;
+margin-bottom: var(--space-2xl);
+font-size: var(--font-2xl);
+font-weight: var(--font-bold);
+color: var(--color-text-primary);
 
 }
 
@@ -179,33 +182,35 @@ margin-bottom:40px;
 label {
 
 display:block;
-font-size:14px;
-font-weight:600;
-margin-bottom:8px;
+font-size: var(--font-sm);
+font-weight: var(--font-semibold);
+margin-bottom: var(--space-xs);
+color: var(--color-text-primary);
 
 }
 
 
 .guide {
 
-font-size:12px;
-color:#888;
-margin-top:8px;
+font-size: var(--font-xs);
+color: var(--color-text-tertiary);
+margin-top: var(--space-xs);
 
 } 
 
 
 .guide.invalid {
 
-color:#ef4444;
+color: var(--color-coral);
 
 }
 
 
 .error {
 
-font-size:12px;
-color:#ef4444;
+font-size: var(--font-xs);
+color: var(--color-coral);
+margin-top: var(--space-xs);
 
 }
 

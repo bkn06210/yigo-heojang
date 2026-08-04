@@ -8,6 +8,7 @@ import PageHeader from '@/components/common/PageHeader.vue';
 import CardScanModal from '@/components/card/CardScanModal.vue';
 import CardUploadModal from '@/components/card/CardUploadModal.vue';
 import CardRegisterCompleteModal from '@/components/card/CardRegisterCompleteModal.vue';
+import Icon from '@/components/common/Icon.vue';
 
 const cardStore = useCardStore();
 
@@ -187,13 +188,26 @@ const registerCard = () => {
     TODO: 추후 카드 등록 API 연결 시 교체
   */
 
+  // cardName에서 회사명 추출 (예: "삼성 ID one" → "삼성카드")
+  const extractCompany = (name) => {
+    if (name.includes('삼성')) return '삼성카드';
+    if (name.includes('롯데')) return '롯데카드';
+    if (name.includes('현대')) return '현대카드';
+    if (name.includes('신한')) return '신한카드';
+    if (name.includes('국민') || name.includes('KB')) return 'KB국민카드';
+    if (name.includes('우리')) return '우리카드';
+    if (name.includes('하나')) return '하나카드';
+    if (name.includes('NH')) return 'NH농협카드';
+    return 'KB국민카드'; // 기본값
+  };
+
   const newCard = {
 
     id: Date.now(),
 
     name: cardName.value,
 
-    company: 'KB국민카드',
+    company: extractCompany(cardName.value),
 
     image: '',
 
@@ -244,7 +258,7 @@ const goCardList = () => {
 <div class="page">
 
 
-<PageHeader title="카드 등록"/>
+<PageHeader title="카드 등록" @back="router.back()"/>
 
 <section class="register-type">
 
@@ -263,7 +277,7 @@ const goCardList = () => {
   @click="openScan"
 >
 
-📷
+<Icon name="camera" size="lg" />
 
 <span>
 카드 촬영
@@ -281,7 +295,7 @@ const goCardList = () => {
   @click="openUpload"
 >
 
-🖼️
+<Icon name="image" size="lg" />
 
 <span>
 사진 첨부
@@ -300,7 +314,7 @@ const goCardList = () => {
   @click="selectManual"
 >
 
-✍️
+<Icon name="edit" size="lg" />
 
 <span>
 직접 입력
@@ -472,7 +486,15 @@ placeholder="앞 2자리"
 
 .page{
 
-padding:20px;
+padding: var(--space-md);
+
+margin: 0 auto;
+
+max-width: 480px;
+
+box-sizing: border-box;
+
+overflow: hidden visible;
 
 }
 
@@ -480,16 +502,18 @@ padding:20px;
 .register-type,
 .form{
 
-margin-top:24px;
+margin-top: var(--space-xl);
 
 }
 
 
 h3{
 
-font-size:16px;
+font-size: var(--font-md);
 
-margin-bottom:14px;
+margin-bottom: var(--space-sm);
+color: var(--color-text-primary);
+font-weight: var(--font-semibold);
 
 }
 
@@ -499,7 +523,7 @@ margin-bottom:14px;
 
 display:flex;
 
-gap:12px;
+gap: var(--space-sm);
 
 }
 
@@ -509,13 +533,15 @@ gap:12px;
 
 flex:1;
 
-padding:20px 10px;
+padding: var(--space-md) var(--space-xs);
 
-border-radius:16px;
+border-radius: var(--radius-md);
 
-border:1px solid #ddd;
+border: 1px solid var(--color-input-border);
 
-background:white;
+background: var(--color-surface);
+color: var(--color-text-primary);
+cursor: pointer;
 
 }
 
@@ -523,7 +549,7 @@ background:white;
 
 .type-card.active{
 
-border:2px solid #4F46E5;
+border: 2px solid var(--color-primary);
 
 }
 
@@ -533,9 +559,9 @@ border:2px solid #4F46E5;
 
 display:block;
 
-font-weight:700;
+font-weight: var(--font-bold);
 
-margin-top:8px;
+margin-top: var(--space-xs);
 
 }
 
@@ -543,9 +569,9 @@ margin-top:8px;
 
 .type-card p{
 
-font-size:12px;
+font-size: var(--font-xs);
 
-color:#888;
+color: var(--color-text-tertiary);
 
 }
 
@@ -553,13 +579,13 @@ color:#888;
 
 .input-box{
 
-margin-top:16px;
+margin-top: var(--space-md);
 
 display:flex;
 
 flex-direction:column;
 
-gap:8px;
+gap: var(--space-xs);
 
 }
 
@@ -567,9 +593,10 @@ gap:8px;
 
 .input-box label{
 
-font-size:14px;
+font-size: var(--font-sm);
 
-color:#555;
+color: var(--color-text-secondary);
+font-weight: var(--font-medium);
 
 }
 
@@ -579,13 +606,16 @@ color:#555;
 
 height:48px;
 
-border-radius:12px;
+border-radius: var(--radius-sm);
 
-border:1px solid #ddd;
+border: 1px solid var(--color-input-border);
 
-padding:0 14px;
+padding: 0 var(--space-sm);
 
-font-size:15px;
+font-size: var(--font-sm);
+color: var(--color-text-primary);
+
+background: var(--color-surface);
 
 }
 
@@ -597,17 +627,19 @@ width:100%;
 
 height:52px;
 
-margin-top:30px;
+margin-top: var(--space-2xl);
 
 border:none;
 
-border-radius:14px;
+border-radius: var(--radius-md);
 
-background:#4F46E5;
+background: var(--color-primary);
 
-color:white;
+color: var(--color-btn-primary-text);
 
-font-size:16px;
+font-size: var(--font-md);
+font-weight: var(--font-semibold);
+cursor: pointer;
 
 }
 

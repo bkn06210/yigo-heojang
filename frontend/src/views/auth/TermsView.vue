@@ -1,8 +1,10 @@
-<script setup>
+﻿<script setup>
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
+import { useToast } from '@/composables/useToast'
 
 const router = useRouter()
+const { showToast } = useToast()
 
 
 // 전체 동의
@@ -76,7 +78,7 @@ const openDetail = (term) => {
 const goSignup = () => {
 
   if (!canNext.value) {
-    alert('필수 약관에 동의해주세요.')
+    showToast('warning', '필수 약관에 동의해주세요.')
     return
   }
 
@@ -89,9 +91,10 @@ const goSignup = () => {
 
 
 <template>
-  <div class="terms">
+  <div class="terms-page">
+    <div class="terms-container">
 
-    <h1>약관 동의</h1>
+      <h1>약관 동의</h1>
 
 
     <label>
@@ -139,34 +142,112 @@ const goSignup = () => {
 
 
 
-    <button
-      :disabled="!canNext"
-      @click="goSignup"
-    >
-      다음
-    </button>
+      <button
+        :disabled="!canNext"
+        @click="goSignup"
+      >
+        다음
+      </button>
 
-
+    </div>
   </div>
 </template>
 
  
 <style scoped>
 
-.terms {
-  padding:24px;
+.terms-page {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 15% 15%, rgba(var(--color-primary-dark-rgb), 0.2) 0%, transparent 45%),
+    radial-gradient(circle at 85% 85%, rgba(var(--color-primary-dark-rgb), 0.15) 0%, transparent 45%),
+    linear-gradient(135deg, #F8F4E8 0%, #F7F8FA 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-xl);
+  box-sizing: border-box;
 }
 
+.terms-container {
+  width: 100%;
+  max-width: 480px;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: var(--radius-lg);
+  padding: var(--space-xl);
+  box-sizing: border-box;
+  box-shadow: var(--shadow-lg);
+}
+
+.terms-container > button {
+  margin-top: var(--space-lg);
+  padding: var(--space-md) var(--space-lg);
+  font-size: var(--font-md);
+}
+
+h1 {
+  font-size: var(--font-2xl);
+  font-weight: var(--font-bold);
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-2xl);
+}
+
+label {
+  font-size: var(--font-sm);
+  color: var(--color-text-primary);
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  cursor: pointer;
+}
+
+label input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+}
 
 .term-item {
-  display:flex;
-  justify-content:space-between;
-  margin-top:16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: var(--space-lg);
+  padding: var(--space-md) 0;
+  border-bottom: 1px solid var(--color-border);
 }
 
+.term-item label {
+  gap: var(--space-sm);
+}
+
+.term-item button {
+  padding: 6px 12px;
+  font-size: var(--font-xs);
+  white-space: nowrap;
+}
 
 button {
-  cursor:pointer;
+  cursor: pointer;
+  background: var(--color-primary);
+  color: var(--color-btn-primary-text);
+  border: none;
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-sm);
+  font-weight: var(--font-semibold);
+  transition: all var(--transition-fast);
+}
+
+button:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+button:disabled {
+  background: var(--color-border);
+  color: var(--color-text-tertiary);
+  cursor: not-allowed;
 }
 
 </style>

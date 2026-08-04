@@ -4,6 +4,7 @@ import { ref } from 'vue';
 import PageHeader from '@/components/common/PageHeader.vue';
 import TransactionFilterBottomSheet from '@/components/transaction/TransactionFilterBottomSheet.vue';
 import TransactionDetailBottomSheet from '@/components/transaction/TransactionDetailBottomSheet.vue';
+import Icon from '@/components/common/Icon.vue';
 
 
 // 조회조건 표시 여부
@@ -91,14 +92,14 @@ const closeDetail = () => {
 
   <div class="header">
 
-    <PageHeader title="카드 사용내역" />
+    <PageHeader title="카드 사용내역" @back="router.back()" />
 
 
     <button
       class="filter-button"
       @click="openFilter"
     >
-      ⚙️
+      <Icon name="filter" size="sm" />
     </button>
 
 
@@ -192,7 +193,7 @@ const closeDetail = () => {
 
 .transaction-detail-page {
 
-  padding:20px;
+  padding: var(--space-md);
 
 }
 
@@ -216,7 +217,7 @@ const closeDetail = () => {
 
   background:none;
 
-  font-size:20px;
+  font-size: var(--font-lg);
 
   cursor:pointer;
 
@@ -226,9 +227,9 @@ const closeDetail = () => {
 
 .transaction-item {
 
-  padding:16px 0;
+  padding: var(--space-md) 0;
 
-  border-bottom:1px solid #eee;
+  border-bottom: 1px solid var(--color-border);
 
   cursor:pointer;
 
@@ -242,9 +243,9 @@ const closeDetail = () => {
 
   justify-content:space-between;
 
-  font-size:14px;
+  font-size: var(--font-sm);
 
-  color:#777;
+  color: var(--color-text-secondary);
 
 }
 
@@ -252,9 +253,9 @@ const closeDetail = () => {
 
 .amount {
 
-  font-weight:600;
+  font-weight: var(--font-semibold);
 
-  color:#222;
+  color: var(--color-text-primary);
 
 }
 
@@ -262,11 +263,12 @@ const closeDetail = () => {
 
 .merchant {
 
-  margin-top:8px;
+  margin-top: var(--space-xs);
 
-  font-size:16px;
+  font-size: var(--font-md);
 
-  font-weight:600;
+  font-weight: var(--font-semibold);
+  color: var(--color-text-primary);
 
 } 
 
@@ -274,11 +276,11 @@ const closeDetail = () => {
 
 .card-name {
 
-  margin-top:4px;
+  margin-top: var(--space-xxs);
 
-  font-size:13px;
+  font-size: var(--font-xs);
 
-  color:#888;
+  color: var(--color-text-tertiary);
 
 }
 

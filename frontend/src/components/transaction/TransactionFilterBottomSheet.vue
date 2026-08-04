@@ -2,6 +2,7 @@
 
 <script setup>
 import { ref, watch } from 'vue';
+import Icon from '@/components/common/Icon.vue';
 
 
 // 부모 전달값
@@ -140,8 +141,6 @@ const periods = [
 
   '3개월',
 
-  '월별 선택',
-
   '직접 선택',
 
 ];
@@ -174,26 +173,44 @@ const selectCard = (card) => {
 
 
 
+// 날짜 포맷팅
+const formatDate = (date) => {
+  return (
+    `${date.getFullYear()}.` +
+    `${String(date.getMonth()+1).padStart(2,'0')}.` +
+    `${String(date.getDate()).padStart(2,'0')}`
+  );
+};
+
 // 기간 선택
-
 const selectPeriod = (item) => {
-
-
   filter.value.period = item;
 
+  const today = new Date();
+  let startDate = new Date(today);
+  let endDate = new Date(today);
 
-
-  if(item === '직접 선택') {
-
-
-    emit(
-      'open-date-picker'
-    );
-
-
+  if (item === '이번달') {
+    startDate = new Date(today.getFullYear(), today.getMonth(), 1);
+    endDate = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+  } else if (item === '1개월') {
+    startDate = new Date(today);
+    startDate.setDate(startDate.getDate() - 30);
+    endDate = new Date(today);
+  } else if (item === '3개월') {
+    startDate = new Date(today);
+    startDate.setDate(startDate.getDate() - 90);
+    endDate = new Date(today);
+  } else if (item === '월별 선택') {
+    // 월별 선택은 나중에 구현
+    return;
+  } else if (item === '직접 선택') {
+    emit('open-date-picker');
+    return;
   }
 
-
+  filter.value.startDate = formatDate(startDate);
+  filter.value.endDate = formatDate(endDate);
 };
 
 
@@ -308,7 +325,7 @@ class="overlay"
 <button
 @click="close"
 >
-✕
+<Icon name="close" size="sm" />
 </button>
 
 
@@ -755,7 +772,7 @@ max-height:85vh;
 
 overflow-y:auto;
 
-background:white;
+background:var(--color-surface);
 
 border-radius:24px 24px 0 0;
 
@@ -771,7 +788,7 @@ width:40px;
 
 height:5px;
 
-background:#ddd;
+background:var(--color-border);
 
 border-radius:10px;
 
@@ -815,7 +832,9 @@ margin-top:24px;
 
 .filter-item h3 {
 
-font-size:15px;
+font-size: var(--font-md);
+
+font-weight: var(--font-semibold);
 
 margin-bottom:12px;
 
@@ -847,9 +866,9 @@ padding:10px 14px;
 
 border-radius:12px;
 
-border:1px solid #ddd;
+border:1px solid var(--color-border);
 
-background:white;
+background:var(--color-surface);
 
 }
 
@@ -857,9 +876,11 @@ background:white;
 
 .chips button.active {
 
-border:2px solid #4F46E5;
+border:2px solid var(--color-primary);
 
-color:#4F46E5;
+background:var(--color-primary);
+
+color:var(--color-btn-primary-text);
 
 }
 
@@ -879,11 +900,11 @@ justify-content:space-between;
 
 align-items:center;
 
-border:1px solid #ddd;
+border:1px solid var(--color-border);
 
 border-radius:12px;
 
-background:white;
+background:var(--color-surface);
 
 }
 
@@ -893,7 +914,7 @@ background:white;
 
 margin-top:12px;
 
-border:1px solid #ddd;
+border:1px solid var(--color-border);
 
 border-radius:16px;
 
@@ -915,11 +936,11 @@ align-items:center;
 
 padding:14px;
 
-background:white;
+background:var(--color-surface);
 
 border:none;
 
-border-bottom:1px solid #eee;
+border-bottom:1px solid var(--color-border);
 
 }
 
@@ -945,7 +966,7 @@ margin:4px 0 0;
 
 font-size:13px;
 
-color:#777;
+color:var(--color-text-secondary);
 
 }
 
@@ -957,7 +978,7 @@ margin-top:12px;
 
 padding:14px;
 
-background:#f7f7f7;
+background:var(--color-bg);
 
 border-radius:12px;
 
@@ -993,9 +1014,9 @@ border-radius:12px;
 
 flex:1;
 
-border:1px solid #ddd;
+border:1px solid var(--color-border);
 
-background:white;
+background:var(--color-surface);
 
 }
 
@@ -1007,9 +1028,16 @@ flex:2;
 
 border:none;
 
-background:#4F46E5;
+background:
+  linear-gradient(
+    90deg,
+    var(--color-btn-primary-start),
+    var(--color-btn-primary-end)
+  );
 
-color:white;
+color:var(--color-btn-primary-text);
+
+font-weight:var(--font-semibold);
 
 }
 

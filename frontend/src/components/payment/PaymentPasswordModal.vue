@@ -203,19 +203,43 @@ const closeModal = () => {
 
   width:340px;
 
-  padding:28px;
+  padding: var(--space-xl);
 
-  border-radius:20px;
-
-  background:#fff;
+  border-radius: var(--radius-xl);
 
   text-align:center;
+
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.85) 0%, var(--color-surface) 60%);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+
+}
+
+[data-theme="dark"] .modal{
+
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.06) 0%, var(--color-surface) 60%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+
+}
+
+.modal h2{
+
+  font-size: var(--font-lg);
+  font-weight: var(--font-bold);
+  color: var(--color-text-primary);
+  margin: 0;
 
 }
 
 .description{
 
-  margin-top:8px;
+  margin-top: var(--space-xs);
+
+  font-size: var(--font-sm);
+  color: var(--color-text-secondary);
 
 }
 
@@ -239,13 +263,13 @@ const closeModal = () => {
 
   border-radius:50%;
 
-  background:#ddd;
+  background:var(--color-border);
 
 }
 
 .dots span.active{
 
-  background:#222;
+  background:var(--color-primary);
 
 }
 
@@ -267,11 +291,27 @@ const closeModal = () => {
 
   height:80px;
 
-  border:none;
+  border:1px solid var(--color-border);
 
   border-radius:50%;
 
   font-size:24px;
+
+  background: var(--color-surface);
+
+  color:var(--color-text-primary);
+
+  font-weight:var(--font-semibold);
+
+  cursor:pointer;
+
+  transition:var(--transition-fast);
+
+}
+
+.keypad button:active{
+
+  transform:scale(0.95);
 
 }
 
@@ -288,6 +328,25 @@ const closeModal = () => {
   margin-top:24px;
 
   height:48px;
+
+  border:none;
+
+  border-radius:12px;
+
+  background:
+    linear-gradient(
+      90deg,
+      var(--color-btn-primary-start),
+      var(--color-btn-primary-end)
+    );
+
+  color:var(--color-btn-primary-text);
+
+  font-weight:var(--font-semibold);
+
+  cursor:pointer;
+
+  transition:var(--transition-fast);
 
 }
 

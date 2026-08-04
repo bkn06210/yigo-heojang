@@ -14,10 +14,10 @@ import MembershipSummaryCard from '@/components/home/MembershipSummaryCard.vue';
 import BottomNavigation from '@/components/layout/BottomNavigation.vue';
 import EmptyStateCard from '@/components/common/EmptyStateCard.vue';
 import BenefitReportCard from '@/components/point/BenefitReportCard.vue';
-
+import SpendingSummaryCard from '@/components/home/SpendingSummaryCard.vue';
+import ToastNotification from '@/components/common/ToastNotification.vue';
 
 const router = useRouter();
-
 
 // 로그인 상태
 // TODO: 실제 API / Pinia 연결
@@ -25,35 +25,51 @@ const authStore = useAuthStore();
 
 const { user } = storeToRefs(authStore);
 
-
 // 카드 store 연결
 const cardStore = useCardStore();
 
 const { cards } = storeToRefs(cardStore);
 
+// 토스트 알림 상태
+const toastType = ref('success');
+const toastMessage = ref('');
+const showToast = ref(false);
 
-const hasMembership = ref(false);
+const showNotification = (type, message) => {
+  toastType.value = type;
+  toastMessage.value = message;
+  showToast.value = true;
+};
 
+const hasMembership = computed(
+  () => (homeData.value.memberships?.length ?? 0) > 0,
+);
 
 const hasCard = computed(() => cards.value.length > 0);
 
+// 홈 "내 카드"에는 카드 목록에서 고정(pinned)한 카드만 노출 (최대 3개까지 고정 가능)
+const pinnedCards = computed(() => cards.value.filter((card) => card.pinned));
+const hasPinnedCard = computed(() => pinnedCards.value.length > 0);
+
+// 두리 브리핑 메시지 - 동적 생성
+const briefingMessage = computed(() => {
+  if (!user.value) {
+    return '로그인 후 나의 카드 혜택과 포인트 분석을 기반으로 맞춤형 추천을 받을 수 있어요.';
+  }
+
+  const nickname = user.value.nickname || user.value.name || '사용자';
+  return `${nickname}님, 카드를 등록하면 맞춤 혜택 분석을 받을 수 있어요.`;
+});
 
 // 홈 데이터
 const homeData = ref({
-
   hasUnreadNotification: true,
 
-
   briefing: {
-
-    content:
-      '약 18,000원의 혜택을 받을 수 있습니다.',
-
+    content: '',
   },
 
-
   myCard: {
-
     image: '',
 
     cardName: '신한 Mr.Life',
@@ -67,150 +83,121 @@ const homeData = ref({
     remainBenefit: 13500,
 
     achievementRate: 60,
-
   },
 
-
   financialPoints: [
-
     {
-      id:1,
-      name:'마이신한포인트',
-      balance:2234,
+      id: 1,
+      name: '마이신한포인트',
+      balance: 2234,
     },
 
     {
-      id:2,
-      name:'포인트리',
-      balance:4456,
+      id: 2,
+      name: '포인트리',
+      balance: 4456,
     },
-
   ],
 
-
-  memberships:[
-
-    {
-      id:1,
-      name:'CJ ONE',
-    },
-
-    {
-      id:2,
-      name:'해피포인트',
-    },
-
-  ],
-
-
+  memberships: [],
 });
-
-
 
 // 혜택 리포트
 // TODO: GET /benefits/report 연결
 
 const benefitReport = {
-
   totalBenefit: 12500,
 
-  maxCategory:'구독/콘텐츠',
-
+  maxCategory: '구독/콘텐츠',
 };
 
+// 이번 달 소비내역 요약 (홈 화면 소비내역 카드용 데이터)
+// TODO: GET /transactions/summary 연결 — 현재는 임시 데이터
+// API 연동 시:
+//   - 엔드포인트: GET /transactions/summary
+//   - 응답 필드:
+//     - count: 이번 달 총 결제 건수 (정수)
+//     - totalAmount: 이번 달 총 소비액 (KRW, 정수, 십원 단위)
+//   - 응답 형식: { success: true, code: "SUCCESS", data: { count, totalAmount }, message: null }
+//   - 쿼리 파라미터 처리: cardId가 없으면 전체, 있으면 해당 카드만 반환
+//     (예: /transactions/summary?cardId=1 → cardId가 1인 카드의 이번 달 요약)
+const spendingSummary = {
+  count: 8,
 
-
+  totalAmount: 342000,
+};
 
 // 헤더
 
 // 챗봇 이동
 const goChatBot = () => {
-
   router.push('/ai/chat');
-
 };
 
 // 알림 이동
 const goNotification = () => {
-
   router.push('/notifications');
-
 };
 
 //프로필 이동
 const goProfile = () => {
-
   router.push('/settings');
-
 };
-
-
 
 // 카드 이동
 
-const goCardDetail = () => {
-
-  router.push('/cards/1');
-
+const goCardDetail = (card) => {
+  router.push(`/cards/${card.id}`);
 };
-
 
 const goCardList = () => {
-
   router.push('/cards');
-
 };
-
-
 
 // 혜택 이동
 
 const goBenefit = () => {
-
   router.push('/benefits');
-
 };
 
-
+// 소비내역 이동 (홈에서는 전체 카드 소비내역)
+const goSpending = () => {
+  router.push('/transactions');
+};
 
 // 포인트
 
 const goPointList = () => {
-
   router.push('/benefits');
-
 };
-
 
 const goPointDetail = (item) => {
-
   console.log('포인트 상세', item);
-
 };
-
-
 
 // 멤버십
 
 const goMembershipDetail = (item) => {
-
   console.log(item);
-
 };
-
 
 const goMembershipRegister = () => {
-
   router.push('/memberships/register');
-
 };
 
+// 로그인 페이지 이동
+const goLogin = () => {
+  router.push('/auth/login');
+};
 
+// 회원가입 페이지 이동
+const goSignup = () => {
+  router.push('/auth/signup');
+};
 
 // 데이터 조회
 
 const loadHome = async () => {
-
   /*
     추후
 
@@ -225,383 +212,389 @@ const loadHome = async () => {
     }
 
   */
-
-
 };
 
+const addMockData = () => {
+  if (!user.value) {
+    authStore.setLogin('dummy-token', {
+      id: 1,
+      email: 'test@example.com',
+      name: '테스트',
+      nickname: '테스트유저'
+    });
+  }
+  if (cards.value.length === 0) {
+    cardStore.addCard({
+      id: 1,
+      name: '신한 Mr.Life',
+      cardNumber: '4111111111111111',
+      company: '신한카드',
+      image: '',
+      pinned: false,
+      achievementRate: 68
+    });
+  }
+};
 
-
-onMounted(async()=>{
-
+onMounted(async () => {
   await loadHome();
-
+  addMockData();
 });
-
 </script>
 
-
-
 <template>
-
-<div class="home-view">
-
-
-<main class="home-content">
-
-
-<HomeHeader
-
-  :has-unread-notification="homeData.hasUnreadNotification"
-
-  :user="user"
-
-  @chat="goChatBot"
-
-  @click-notification="goNotification"
-
-  @profile="goProfile"
-
-/>
-
-
-
-<!-- AI 브리핑 -->
-
-<AIBriefingCard
-
-  v-if="user"
-
-  :is-login="true"
-
-  :message="homeData.briefing.content"
-
-/>
-
-
-<AIBriefingCard
-
-  v-else
-
-  :is-login="false"
-
-  message="로그인하면 맞춤 금융 혜택을 확인할 수 있어요."
-
-/>
-
-
-
-
-
-<!-- 카드 -->
-
-<section class="home-section">
-
-<h2>
-내 카드
-</h2>
-
-
-<MyCardSummaryCard
-
-  v-if="user && hasCard"
-
-  :is-login="true"
-
-  :card="homeData.myCard"
-
-  @click-card="goCardDetail"
-
-  @click-more="goCardList"
-
-/>
-
-
-
-<EmptyStateCard
-
-  v-else-if="user && !hasCard"
-
-  title="등록된 카드가 없어요"
-
-  description="카드를 등록하면 맞춤 혜택을 확인할 수 있습니다."
-
-  buttonText="카드 등록"
-
-  @click="goCardList"
-
-/>
-
-
-
-<EmptyStateCard
-
-  v-else
-
-  title="로그인 후 이용할 수 있어요"
-
-  description="로그인하면 내 카드를 관리할 수 있습니다."
-
-/>
-
-
-</section>
-
-
-
-
-
-<!-- 혜택 리포트 -->
-
-<section class="home-section">
-
-<h2>
-혜택 리포트
-</h2>
-
-
-<BenefitReportCard
-
-  v-if="user && hasCard"
-
-  :report="benefitReport"
-
-  @open="goBenefit"
-
-/>
-
-
-<EmptyStateCard
-
-  v-else-if="user && !hasCard"
-
-  title="등록된 카드가 없어요"
-
-  description="카드를 등록하면 혜택 리포트를 확인할 수 있습니다."
-
-  buttonText="카드 등록"
-
-  @click="goCardList"
-
-/>
-
-
-<EmptyStateCard
-
-  v-else
-
-  title="로그인 후 이용할 수 있어요"
-
-  description="로그인하면 맞춤 혜택을 확인할 수 있습니다."
-
-/>
-
-
-</section>
-
-
-
-
-
-<!-- 금융 포인트 -->
-
-<section class="home-section">
-
-
-<h2>
-금융 포인트
-</h2>
-
-
-<PointSummaryCard
-
-  v-if="user && hasCard"
-
-  :is-login="true"
-
-  :points="homeData.financialPoints"
-
-  @click-more="goPointList"
-
-  @click-item="goPointDetail"
-
-/>
-
-
-<EmptyStateCard
-
-  v-else
-
-  title="금융 포인트를 확인할 수 없어요"
-
-  description="카드 등록 후 포인트를 관리할 수 있습니다."
-
-/>
-
-
-</section>
-
-
-
-
-
-
-<!-- 멤버십 -->
-
-<section class="home-section">
-
-
-<h2>
-멤버십
-</h2>
-
-<MembershipSummaryCard
-
-  :is-login="!!user"
-
-  :memberships="useMockMembership 
-    ? homeData.memberships 
-    : []"
-
-  @click-item="goMembershipDetail"
-
-  @click-register="goMembershipRegister"
-
-  @click-more="goPointList"
-
-/>
-
-
-</section>
-
-
-
-
-</main>
-
-
-<BottomNavigation />
-
-
-</div>
-
+  <div class="home-view">
+    <!-- 토스트 알림 -->
+    <ToastNotification
+      v-if="showToast"
+      :type="toastType"
+      :message="toastMessage"
+      :duration="3000"
+      @close="showToast = false"
+    />
+
+    <main class="home-content">
+      <!-- Phase 3 테스트 버튼 -->
+      <div
+        style="display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap"
+      >
+        <button
+          @click="showNotification('success', '인증이 완료되었습니다')"
+          style="
+            padding: 8px 12px;
+            background: #3d6b52;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+          "
+        >
+          Success
+        </button>
+        <button
+          @click="showNotification('error', '작업을 완료할 수 없습니다')"
+          style="
+            padding: 8px 12px;
+            background: #a84e68;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+          "
+        >
+          Error
+        </button>
+        <button
+          @click="showNotification('info', '새로운 알림 1개가 있습니다')"
+          style="
+            padding: 8px 12px;
+            background: #3d6b52;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+          "
+        >
+          Info
+        </button>
+        <button
+          @click="showNotification('warning', '이 작업은 되돌릴 수 없습니다')"
+          style="
+            padding: 8px 12px;
+            background: #e6d94d;
+            color: #24242a;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+          "
+        >
+          Warning
+        </button>
+      </div>
+
+      <HomeHeader
+        :has-unread-notification="homeData.hasUnreadNotification"
+        :user="user"
+        @chat="goChatBot"
+        @click-notification="goNotification"
+        @profile="goProfile"
+      />
+
+      <!-- AI 브리핑 -->
+
+      <AIBriefingCard v-if="user" :is-login="true" :message="briefingMessage" />
+
+      <AIBriefingCard v-else :is-login="false" :message="briefingMessage" />
+
+      <!-- 혜택 리포트 -->
+
+      <section class="home-section benefit-section">
+        <h2>혜택 리포트</h2>
+
+        <BenefitReportCard
+          v-if="user && hasCard"
+          :report="benefitReport"
+          @open="goBenefit"
+        />
+
+        <EmptyStateCard
+          v-else-if="user && !hasCard"
+          title="등록된 카드가 없어요"
+          description="카드를 등록하면 혜택 리포트를 확인할 수 있습니다."
+          buttonText="카드 등록"
+          @click="goCardList"
+        />
+
+        <EmptyStateCard
+          v-else
+          title="로그인 후 이용할 수 있어요"
+          description="로그인하면 맞춤 혜택을 확인할 수 있습니다."
+          buttonText="로그인"
+          @click="goLogin"
+        />
+      </section>
+
+      <!-- 소비내역 -->
+
+      <section class="home-section spending-section">
+        <h2>소비내역</h2>
+
+        <SpendingSummaryCard
+          v-if="user && hasCard"
+          :count="spendingSummary.count"
+          :total-amount="spendingSummary.totalAmount"
+          @open="goSpending"
+        />
+
+        <EmptyStateCard
+          v-else-if="user && !hasCard"
+          title="등록된 카드가 없어요"
+          description="카드를 등록하면 소비내역을 확인할 수 있습니다."
+          buttonText="카드 등록"
+          @click="goCardList"
+        />
+
+        <EmptyStateCard
+          v-else
+          title="로그인 후 이용할 수 있어요"
+          description="로그인하면 소비내역을 확인할 수 있습니다."
+          buttonText="로그인"
+          @click="goLogin"
+        />
+      </section>
+
+      <!-- 카드 -->
+
+      <section class="home-section">
+        <div class="section-header-row">
+          <h2>내 카드</h2>
+          <button
+            v-if="user && hasCard"
+            type="button"
+            class="section-more-btn"
+            @click="goCardList"
+          >
+            더보기
+          </button>
+        </div>
+
+        <!-- 카드 목록에서 고정(pinned)한 카드만 표시 -->
+        <MyCardSummaryCard
+          v-if="user && hasPinnedCard"
+          :is-login="true"
+          :cards="pinnedCards"
+          @click-card="goCardDetail"
+          @click-more="goCardList"
+        />
+
+        <!-- 카드는 있지만 고정한 카드가 없는 경우: 카드 등록 유도가 아니라 '고정' 유도 -->
+        <EmptyStateCard
+          v-else-if="user && hasCard && !hasPinnedCard"
+          title="고정된 카드가 없어요"
+          description="카드 목록에서 카드를 고정하면 여기에 표시됩니다."
+          buttonText="카드 고정하러 가기"
+          @click="goCardList"
+        />
+
+        <EmptyStateCard
+          v-else-if="user && !hasCard"
+          title="등록된 카드가 없어요"
+          description="카드를 등록하면 맞춤 혜택을 확인할 수 있습니다."
+          buttonText="카드 등록"
+          @click="goCardList"
+        />
+
+        <EmptyStateCard
+          v-else
+          title="로그인 후 이용할 수 있어요"
+          description="로그인하면 내 카드를 관리할 수 있습니다."
+          buttonText="로그인"
+          @click="goLogin"
+        />
+      </section>
+
+      <!-- 금융 포인트 & 멤버십 (Bento UI 2열 레이아웃) -->
+
+      <div class="home-grid">
+        <!-- 금융 포인트 -->
+
+        <section class="home-section point-section">
+          <h2>금융 포인트</h2>
+
+          <PointSummaryCard
+            v-if="user && hasCard"
+            :is-login="true"
+            :points="homeData.financialPoints"
+            @click-more="goPointList"
+            @click-item="goPointDetail"
+          />
+
+          <EmptyStateCard
+            v-else
+            title="금융 포인트를 확인할 수 없어요"
+            description="카드 등록 후 포인트를 관리할 수 있습니다."
+          />
+        </section>
+
+        <!-- 멤버십 -->
+
+        <section class="home-section membership-section">
+          <h2>멤버십</h2>
+
+          <MembershipSummaryCard
+            v-if="user && hasMembership"
+            :memberships="homeData.memberships"
+            @click-item="goMembershipDetail"
+            @click-more="goPointList"
+          />
+
+          <EmptyStateCard
+            v-else-if="user && !hasMembership"
+            title="등록된 멤버십이 없어요"
+            description="멤버십을 등록하면 혜택을 함께 관리할 수 있습니다."
+            buttonText="멤버십 등록"
+            @click="goMembershipRegister"
+          />
+
+          <EmptyStateCard
+            v-else
+            title="로그인 후 이용할 수 있어요"
+            description="로그인하면 멤버십을 관리할 수 있습니다."
+          />
+        </section>
+      </div>
+    </main>
+
+    <BottomNavigation />
+  </div>
 </template>
-
-
 
 <style scoped>
 
 /* 홈 전체 */
 .home-view {
-
   min-height: 100vh;
 
-  padding: 16px;
+  padding: var(--space-md);
 
-  padding-bottom: 90px;
+  padding-bottom: calc(var(--space-xl) + var(--space-2xl) + var(--space-xl));
 
-  background: #fafafa;
+  background: var(--color-bg);
 
+  box-sizing: border-box;
+
+  overflow: hidden visible;
 }
-
-
 
 /* 콘텐츠 영역 */
 .home-content {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: var(--space-xl);
+}
+
+/* 각 섹션 */
+.home-section {
+  width: 100%;
+}
+
+/* 섹션 제목 */
+.home-section h2 {
+  margin: 0 0 var(--space-md);
+
+  color: var(--color-text-primary);
+
+  font-size: var(--font-lg);
+
+  font-weight: var(--font-bold);
+
+  letter-spacing: -0.3px;
+}
+
+/* 제목 + 더보기를 한 줄에 배치하는 헤더 (카드 밖) */
+.section-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-md);
+}
+
+.section-header-row h2 {
+  margin: 0;
+}
+
+.section-more-btn {
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: var(--color-text-secondary);
+  font-size: var(--font-sm);
+}
+
+/* Empty 버튼 영역 */
+.home-section :deep(.button-group) {
+  margin-top: var(--space-xs);
+}
+
+/* Bento UI 그리드 - 금융 포인트 & 멤버십 2열 */
+.home-grid {
+  display: grid;
+
+  grid-template-columns: 1fr 1fr;
+
+  gap: var(--space-md);
+
+  grid-auto-rows: 1fr;
+}
+
+.home-grid .home-section {
+  display: flex;
+
+  flex-direction: column;
+
+  height: 100%;
+}
+
+.home-grid .home-section h2 {
+  margin-bottom: var(--space-md);
+
+  flex-shrink: 0;
+}
+
+.home-grid .home-section :deep(.base-card),
+.home-grid .home-section :deep(.empty-card) {
+  flex: 1;
 
   display: flex;
 
   flex-direction: column;
 
-  gap: 20px;
-
+  justify-content: flex-start;
 }
-
-
-
-/* 각 섹션 카드 간격 */
-.home-section {
-
-  width: 100%;
-
-}
-
-
-
-/* EmptyStateCard가 들어갔을 때 */
-.home-section :deep(.empty-card) {
-
-  margin-top: 8px;
-
-}
-
-
-
-/* 카드/포인트/멤버십 공통 카드 느낌 */
-.home-section :deep(section),
-.home-section :deep(.summary-card) {
-
-  border-radius: 16px;
-
-}
-
-
-
-/* 제목 영역 */
-.home-section h2 {
-
-  margin-bottom: 12px;
-
-  font-size: 18px;
-
-  font-weight: 700;
-
-}
-
-
-
-/* 버튼이 있는 Empty 상태 */
-.home-section :deep(.button-group) {
-
-  margin-top: 8px;
-
-}
-
-
-
-/* 하단 네비 공간 */
-.home-view {
-
-  box-sizing: border-box;
-
-}
-
-.home-section {
-
-  margin-top:24px;
-
-}
-
-
-.home-section h2 {
-
-  font-size:18px;
-
-  margin-bottom:12px;
-
-  font-weight:700;
-
-}
-
-
-.home-content {
-
-  display:flex;
-
-  flex-direction:column;
-
-  gap:20px;
-
-}
-
-
 </style>

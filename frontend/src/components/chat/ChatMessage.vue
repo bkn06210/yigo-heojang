@@ -94,7 +94,9 @@ defineProps({
 
 .ai .bubble{
 
-  background:white;
+  background: var(--color-surface);
+
+  color: var(--color-text-primary);
 
 }
 
@@ -102,9 +104,9 @@ defineProps({
 
 .user .bubble{
 
-  background:#4F46E5;
+  background: var(--color-primary);
 
-  color:white;
+  color: var(--color-btn-primary-text);
 
 }
 
@@ -114,7 +116,7 @@ span{
 
   font-size:12px;
 
-  color:#999;
+  color: var(--color-text-tertiary);
 
   margin-top:4px;
 

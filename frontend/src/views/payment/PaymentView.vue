@@ -1,4 +1,4 @@
-<script setup>
+﻿<script setup>
 
 import { ref, onMounted, onUnmounted } from 'vue';
 import { useRouter } from 'vue-router';
@@ -138,11 +138,9 @@ onUnmounted(()=>{
 
 <template>
 
-
 <div class="payment-page">
 
-
-<PageHeader title="결제"/>
+<PageHeader title="결제" :show-back="false"/>
 
 
 <main>
@@ -255,4 +253,156 @@ class="cancel"
 </div>
 
 
-</template> 
+</template>
+
+
+<style scoped>
+
+.payment-page {
+
+  min-height: 100vh;
+
+  padding: var(--space-md);
+  padding-bottom: calc(var(--space-xl) + var(--space-2xl));
+
+  background: var(--color-bg);
+
+  margin: 0 auto;
+  max-width: 480px;
+
+  box-sizing: border-box;
+  overflow: hidden visible;
+
+}
+
+main {
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+}
+
+/* 결제 금액 (Display Typography) */
+.amount {
+
+  width: 100%;
+  text-align: center;
+
+  margin-top: var(--space-lg);
+
+}
+
+.amount p {
+
+  margin: 0 0 var(--space-xs);
+
+  font-size: var(--font-sm);
+  color: var(--color-text-secondary);
+
+}
+
+.amount h1 {
+
+  margin: 0;
+
+  font-size: var(--typo-display-large-size);
+  font-weight: var(--typo-display-large-weight);
+  line-height: var(--typo-display-large-line-height);
+  letter-spacing: var(--typo-display-large-letter-spacing);
+
+  color: var(--color-text-primary);
+
+}
+
+/* 선택 카드 (Soft Glassmorphism) */
+.card {
+
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+
+  width: 100%;
+  margin-top: var(--space-lg);
+  padding: var(--space-sm) var(--space-md);
+
+  border-radius: var(--radius-md);
+
+  background: linear-gradient(135deg, rgba(var(--color-primary-dark-rgb), 0.1) 0%, rgba(var(--color-primary-dark-rgb), 0.03) 100%);
+  border: 1px solid rgba(var(--color-primary-dark-rgb), 0.2);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+
+  box-sizing: border-box;
+
+}
+
+[data-theme="dark"] .card {
+
+  background: linear-gradient(135deg, rgba(var(--color-primary-dark-rgb), 0.18) 0%, rgba(var(--color-primary-dark-rgb), 0.06) 100%);
+  border: 1px solid rgba(var(--color-primary-dark-rgb), 0.28);
+
+}
+
+.card img {
+
+  width: 48px;
+  height: 30px;
+
+  border-radius: var(--radius-xs);
+
+  object-fit: cover;
+
+}
+
+.card p {
+
+  margin: 0;
+
+  font-size: var(--font-sm);
+  font-weight: var(--font-semibold);
+  color: var(--color-text-primary);
+
+}
+
+.scan-message {
+
+  margin: var(--space-md) 0 0;
+
+  font-size: var(--font-sm);
+  color: var(--color-text-secondary);
+
+}
+
+/* 결제 취소 */
+.cancel {
+
+  width: 100%;
+  height: 52px;
+
+  margin-top: var(--space-2xl);
+
+  border-radius: var(--radius-md);
+
+  background: none;
+  border: 1px solid var(--color-border);
+
+  color: var(--color-text-secondary);
+
+  font-size: var(--font-sm);
+  font-weight: var(--font-semibold);
+
+  cursor: pointer;
+
+  transition: var(--transition-fast);
+
+}
+
+.cancel:hover {
+
+  background: var(--color-surface);
+  color: var(--color-text-primary);
+
+}
+
+</style>

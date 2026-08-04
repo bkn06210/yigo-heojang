@@ -33,7 +33,9 @@ ai-server/ingest/raw/
 ai-server/ingest/out/*.png
 
 # Frontend dependencies
+node_modules/
 frontend/node_modules/
 
 # Frontend build output
+dist/
 frontend/dist/

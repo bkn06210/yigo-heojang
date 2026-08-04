@@ -4,6 +4,7 @@ import { ref } from 'vue';
 import PageHeader from '@/components/common/PageHeader.vue';
 import ChatMessage from '@/components/chat/ChatMessage.vue';
 import QuickQuestion from '@/components/chat/QuickQuestion.vue';
+import Icon from '@/components/common/Icon.vue';
 
 // TODO
 // POST /ai/chat
@@ -58,7 +59,7 @@ const selectQuestion = (question) => {
 
 <template>
   <div class="chat-view">
-    <PageHeader title="AI 금융 비서" />
+    <PageHeader title="AI 금융 비서" @back="router.back()" />
 
     <!-- 채팅 영역 -->
     <section class="chat-area">
@@ -88,7 +89,7 @@ const selectQuestion = (question) => {
         @keyup.enter="sendMessage"
       />
 
-      <button type="button" @click="sendMessage">➤</button>
+      <button type="button" @click="sendMessage"><Icon name="send" size="sm" /></button>
     </section>
   </div>
 </template>
@@ -101,7 +102,7 @@ const selectQuestion = (question) => {
 
   height: 100vh;
 
-  background: #f5f6fa;
+  background: var(--color-bg);
 }
 
 .chat-area {
@@ -113,19 +114,19 @@ const selectQuestion = (question) => {
 
   flex-direction: column;
 
-  gap: 16px;
+  gap: var(--space-md);
 
-  padding: 20px;
+  padding: var(--space-md);
 }
 
 .quick-question-area {
   display: flex;
 
-  gap: 10px;
+  gap: var(--space-xs);
 
   overflow-x: auto;
 
-  padding: 12px 16px;
+  padding: var(--space-xs) var(--space-md);
 }
 
 .quick-question-area::-webkit-scrollbar {
@@ -135,25 +136,32 @@ const selectQuestion = (question) => {
 .input-area {
   display: flex;
 
-  gap: 12px;
+  gap: var(--space-sm);
 
-  padding: 16px;
+  padding: var(--space-md);
 
-  border-top: 1px solid #e5e7eb;
+  border-top: 1px solid var(--color-border);
 
-  background: white;
+  background: var(--color-surface);
 }
 
 .input-area input {
   flex: 1;
 
-  border: 1px solid #ddd;
+  border: 1px solid var(--color-input-border);
 
-  border-radius: 24px;
+  border-radius: var(--radius-full);
 
-  padding: 12px 16px;
+  padding: var(--space-sm) var(--space-md);
 
   outline: none;
+  color: var(--color-text-primary);
+
+  background: var(--color-surface);
+}
+
+.input-area input::placeholder {
+  color: var(--color-text-tertiary);
 }
 
 .input-area button {
@@ -161,11 +169,11 @@ const selectQuestion = (question) => {
 
   border: none;
 
-  border-radius: 50%;
+  border-radius: var(--radius-full);
 
-  background: #4f46e5;
+  background: var(--color-primary);
 
-  color: white;
+  color: var(--color-btn-primary-text);
 
   cursor: pointer;
 }

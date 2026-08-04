@@ -1,6 +1,5 @@
-<script setup>
+﻿<script setup>
 import PageHeader from '@/components/common/PageHeader.vue'
-import AIBriefingCard from '@/components/common/AIBriefingCard.vue'
 
 
 // 임시 데이터
@@ -8,9 +7,6 @@ import AIBriefingCard from '@/components/common/AIBriefingCard.vue'
 const pointData = {
   name: 'KB Pay 포인트',
   totalPoint: 12300,
-
-  aiMessage:
-    '현재 보유 포인트는 카드 결제에 활용하는 것을 추천해요.',
 
   usageMethods: [
     '카드 결제',
@@ -46,13 +42,6 @@ const pointData = {
 
     </section>
 
-
-
-    <!-- AI 브리핑 -->
-   <AIBriefingCard
-     :isLogin="true"
-     :message="pointData.aiMessage"
-   />
 
 
     <!-- 포인트 활용 방법 -->
@@ -110,7 +99,10 @@ const pointData = {
 
 .financial-point-detail {
 
-  padding: 20px;
+  padding: var(--space-md);
+  margin: 0 auto;
+  max-width: 480px;
+  box-sizing: border-box;
 
 }
 
@@ -118,13 +110,25 @@ const pointData = {
 
 .point-summary {
 
-  background: white;
+  border-radius: var(--radius-lg);
 
-  border-radius: 16px;
+  padding: var(--space-xl);
 
-  padding: 24px;
+  margin-bottom: var(--space-lg);
 
-  margin-bottom: 20px;
+  background: linear-gradient(135deg, rgba(var(--color-primary-dark-rgb), 0.1) 0%, rgba(var(--color-primary-dark-rgb), 0.03) 100%);
+  border: 1px solid rgba(var(--color-primary-dark-rgb), 0.2);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+
+}
+
+[data-theme="dark"] .point-summary {
+
+  background: linear-gradient(135deg, rgba(var(--color-primary-dark-rgb), 0.15) 0%, rgba(var(--color-primary-dark-rgb), 0.05) 100%);
+  border: 1px solid rgba(var(--color-primary-dark-rgb), 0.25);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.06);
 
 }
 
@@ -132,9 +136,11 @@ const pointData = {
 
 .label {
 
-  font-size: 14px;
+  font-size: var(--font-sm);
 
-  color: #666;
+  color: var(--color-text-secondary);
+
+  font-weight: var(--font-regular);
 
 }
 
@@ -142,11 +148,13 @@ const pointData = {
 
 .point {
 
-  margin-top: 10px;
+  margin-top: var(--space-xs);
 
-  font-size: 32px;
-
-  font-weight: 700;
+  font-size: var(--typo-display-large-size);
+  font-weight: var(--typo-display-large-weight);
+  line-height: var(--typo-display-large-line-height);
+  letter-spacing: var(--typo-display-large-letter-spacing);
+  color: var(--color-text-primary);
 
 }
 
@@ -155,13 +163,15 @@ const pointData = {
 .usage-section,
 .notice-section {
 
-  background: white;
+  background-color: var(--color-surface);
 
-  border-radius: 16px;
+  border-radius: var(--radius-lg);
 
-  padding: 20px;
+  padding: var(--space-md);
 
-  margin-top: 20px;
+  margin-top: var(--space-md);
+
+  box-shadow: var(--shadow-card);
 
 }
 
@@ -169,9 +179,15 @@ const pointData = {
 
 h2 {
 
-  font-size: 17px;
+  margin: 0 0 var(--space-md);
 
-  margin-bottom: 16px;
+  color: var(--color-text-primary);
+
+  font-size: var(--font-lg);
+
+  font-weight: var(--font-bold);
+
+  letter-spacing: -0.3px;
 
 }
 
@@ -189,9 +205,11 @@ ul {
 
 li {
 
-  padding: 12px 0;
+  padding: var(--space-sm) 0;
 
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid var(--color-border);
+
+  color: var(--color-text-primary);
 
 }
 
@@ -207,11 +225,13 @@ li:last-child {
 
 .notice-section p {
 
-  font-size: 14px; 
+  font-size: var(--font-sm);
 
-  color: #666;
+  color: var(--color-text-secondary);
 
-  margin: 8px 0;
+  margin: var(--space-xs) 0;
+
+  line-height: 1.5;
 
 }
 

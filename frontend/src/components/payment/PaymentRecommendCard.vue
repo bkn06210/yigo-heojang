@@ -64,25 +64,43 @@ class="card"
 .card{
 
 display:flex;
-gap:16px;
-padding:16px;
-border:1px solid #ddd;
-border-radius:16px;
+gap:var(--space-md);
+padding:var(--space-lg);
+border:1px solid var(--color-border);
+border-radius:var(--radius-lg);
+background:var(--color-surface);
+box-shadow:var(--shadow-card);
+cursor:pointer;
+transition:var(--transition-fast);
+
+align-items:center;
+
+overflow:hidden;
+word-break:break-word;
+
+box-sizing:border-box;
 
 }
 
+.card:hover{
+
+transform:translateY(-2px);
+box-shadow:0 4px 16px rgba(0,0,0,0.08);
+
+}
 
 .selected{
 
-border:2px solid #333;
+border:2px solid var(--color-primary);
 
 }
 
 
 img{
 
-width:70px;
-height:100px;
+width:72px;
+height:auto;
+border-radius:var(--radius-sm);
 
 }
 

@@ -1,4 +1,4 @@
-<script setup>
+﻿<script setup>
 
 // 금융 포인트 상세 바텀시트
 //
@@ -19,10 +19,6 @@
 //
 // 페이지인지 바텀시트인지는 프론트 화면 표현 방식 차이
 // 백엔드 API 구조는 그대로 재사용 가능
-
-
-import AIBriefingCard from '@/components/common/AIBriefingCard.vue'
-
 
 
 const props = defineProps({
@@ -127,7 +123,7 @@ const closeSheet = () => {
 <p class="point">
 
 
-{{ point.point.toLocaleString() }}P
+{{ point?.totalPoint?.toLocaleString() }}
 
 
 </p>
@@ -135,19 +131,6 @@ const closeSheet = () => {
 
 </section>
 
-
-
-
-
-<!-- AI 브리핑 -->
-
-<AIBriefingCard
-
-  :isLogin="true"
-
-  :message="point.aiMessage"
-
-/>
 
 
 
@@ -264,15 +247,23 @@ z-index: 1000;
 
 width: 100%;
 
-background: white;
+border-radius: var(--radius-xl) var(--radius-xl) 0 0;
 
-border-radius: 24px 24px 0 0;
-
-padding: 24px;
+padding: var(--space-xl);
 
 max-height: 80vh;
 
 overflow-y: auto;
+
+/* 카드사용내역 상세 바텀시트와 동일하게 불투명 배경으로 통일 */
+background: var(--color-surface);
+box-shadow: 0 -16px 40px rgba(0, 0, 0, 0.12);
+
+}
+
+[data-theme="dark"] .bottom-sheet {
+
+box-shadow: 0 -16px 40px rgba(0, 0, 0, 0.35);
 
 }
 
@@ -286,7 +277,7 @@ justify-content: space-between;
 
 align-items: center;
 
-margin-bottom: 20px;
+margin-bottom: var(--space-xl);
 
 }
 
@@ -294,9 +285,13 @@ margin-bottom: 20px;
 
 .sheet-header h2 {
 
-font-size: 20px;
+font-size: var(--font-xl);
 
-font-weight: 700;
+font-weight: var(--font-bold);
+
+letter-spacing: -0.2px;
+
+color: var(--color-text-primary);
 
 }
 
@@ -310,6 +305,8 @@ background: none;
 
 font-size: 24px;
 
+color: var(--color-text-secondary);
+
 cursor: pointer;
 
 }
@@ -318,13 +315,25 @@ cursor: pointer;
 
 .point-summary {
 
-background: #f8f9fa;
+border-radius: var(--radius-lg);
 
-border-radius: 16px;
+padding: var(--space-lg);
 
-padding: 20px;
+margin-bottom: var(--space-xl);
 
-margin-bottom: 20px;
+background: linear-gradient(135deg, rgba(var(--color-primary-dark-rgb), 0.1) 0%, rgba(var(--color-primary-dark-rgb), 0.03) 100%);
+border: 1px solid rgba(var(--color-primary-dark-rgb), 0.2);
+box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+backdrop-filter: blur(8px);
+-webkit-backdrop-filter: blur(8px);
+
+}
+
+[data-theme="dark"] .point-summary {
+
+background: linear-gradient(135deg, rgba(var(--color-primary-dark-rgb), 0.18) 0%, rgba(var(--color-primary-dark-rgb), 0.06) 100%);
+border: 1px solid rgba(var(--color-primary-dark-rgb), 0.28);
+box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.05);
 
 }
 
@@ -332,9 +341,9 @@ margin-bottom: 20px;
 
 .label {
 
-font-size: 14px;
+font-size: var(--font-sm);
 
-color: #666;
+color: var(--color-text-secondary);
 
 }
 
@@ -342,11 +351,13 @@ color: #666;
 
 .point {
 
-margin-top: 8px;
+margin-top: var(--space-xs);
 
-font-size: 30px;
-
-font-weight: 700;
+font-size: var(--typo-display-large-size);
+font-weight: var(--typo-display-large-weight);
+line-height: var(--typo-display-large-line-height);
+letter-spacing: var(--typo-display-large-letter-spacing);
+color: var(--color-text-primary);
 
 }
 
@@ -354,9 +365,7 @@ font-weight: 700;
 
 .info-section {
 
-background: white;
-
-margin-top: 20px;
+margin-top: var(--space-xl);
 
 }
 
@@ -364,9 +373,13 @@ margin-top: 20px;
 
 .info-section h3 {
 
-font-size: 16px;
+font-size: var(--font-md);
 
-margin-bottom: 12px;
+font-weight: var(--font-semibold);
+
+margin-bottom: var(--space-sm);
+
+color: var(--color-text-primary);
 
 }
 
@@ -388,7 +401,7 @@ li {
 
 padding: 12px 0;
 
-border-bottom: 1px solid #eee;
+border-bottom: 1px solid var(--color-border);
 
 }
 
@@ -406,7 +419,7 @@ border-bottom: none;
 
 font-size: 14px;
 
-color: #666;
+color: var(--color-text-secondary);
 
 margin: 8px 0;
 

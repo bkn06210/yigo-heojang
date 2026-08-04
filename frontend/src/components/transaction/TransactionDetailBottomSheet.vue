@@ -368,7 +368,7 @@ width:40px;
 
 height:5px;
 
-background:#ddd;
+background:var(--color-border);
 
 border-radius:10px;
 
@@ -428,7 +428,7 @@ display:block;
 
 font-size:13px;
 
-color:#777;
+color: var(--color-text-tertiary);
 
 }
 
@@ -491,7 +491,7 @@ text-align:center;
 
 font-size:13px;
 
-color:#777;
+color: var(--color-text-tertiary);
 
 }
 
@@ -513,9 +513,14 @@ background:white;
 
 .calendar button.selected {
 
-background:#4F46E5;
+background:
+  linear-gradient(
+    90deg,
+    var(--color-btn-primary-start),
+    var(--color-btn-primary-end)
+  );
 
-color:white;
+color:var(--color-btn-primary-text);
 
 border:none;
 
@@ -536,9 +541,14 @@ border:none;
 
 border-radius:12px;
 
-background:#4F46E5;
+background:
+  linear-gradient(
+    90deg,
+    var(--color-btn-primary-start),
+    var(--color-btn-primary-end)
+  );
 
-color:white;
+color:var(--color-btn-primary-text);
 
 font-size:16px;
 
@@ -547,6 +557,7 @@ font-size:16px;
 </style> -->
 
 <script setup>
+import Icon from '@/components/common/Icon.vue';
 
 const props = defineProps({
 
@@ -599,7 +610,7 @@ const close = () => {
 <button
 @click="close"
 >
-✕
+<Icon name="close" size="sm" />
 </button>
 
 
@@ -611,18 +622,41 @@ const close = () => {
 <div class="content">
 
 
-<div class="row">
+<div class="amount-box">
 
-<span>
-사용일자
-</span>
+<span>결제 금액</span>
 
-<strong>
-{{ props.transaction.date }}
+<strong class="amount">
+-{{ props.transaction.amount.toLocaleString() }}원
 </strong>
 
 </div>
 
+
+<div class="row">
+
+<span>
+결제 카드
+</span>
+
+<strong>
+{{ props.transaction.cardName }}
+</strong>
+
+</div>
+
+
+<div class="row">
+
+<span>
+카테고리
+</span>
+
+<strong>
+{{ props.transaction.category }}
+</strong>
+
+</div>
 
 
 <div class="row">
@@ -638,31 +672,27 @@ const close = () => {
 </div>
 
 
-
-
 <div class="row">
 
 <span>
-사용 카드
+결제 일시
 </span>
 
 <strong>
-{{ props.transaction.cardName }}
+{{ props.transaction.date }}
 </strong>
 
 </div>
 
 
-
-
-<div class="row amount">
+<div class="row">
 
 <span>
-결제 금액
+결제 상태
 </span>
 
 <strong>
--{{ props.transaction.amount.toLocaleString() }}원
+{{ props.transaction.status }}
 </strong>
 
 </div>
@@ -715,7 +745,7 @@ z-index:1300;
 
 width:100%;
 
-background:white;
+background:var(--color-surface);
 
 border-radius:24px 24px 0 0;
 
@@ -731,7 +761,7 @@ width:40px;
 
 height:5px;
 
-background:#ddd;
+background:var(--color-border);
 
 border-radius:10px;
 
@@ -772,6 +802,46 @@ margin-top:24px;
 }
 
 
+.amount-box {
+
+background:var(--color-bg);
+
+border-radius:12px;
+
+padding:20px;
+
+text-align:center;
+
+margin-bottom:24px;
+
+}
+
+
+.amount-box span {
+
+display:block;
+
+font-size:14px;
+
+color:var(--color-text-secondary);
+
+margin-bottom:8px;
+
+}
+
+
+.amount-box strong {
+
+display:block;
+
+font-size:24px;
+
+color:var(--color-coral);
+
+font-weight:bold;
+
+}
+
 
 .row {
 
@@ -781,7 +851,7 @@ justify-content:space-between;
 
 padding:16px 0;
 
-border-bottom:1px solid #eee;
+border-bottom:1px solid var(--color-border);
 
 }
 
@@ -789,7 +859,7 @@ border-bottom:1px solid #eee;
 
 .row span {
 
-color:#777;
+color:var(--color-text-secondary);
 
 }
 
@@ -797,7 +867,7 @@ color:#777;
 
 .amount strong {
 
-color:#e53935;
+color:var(--color-coral);
 
 font-size:18px;
 
@@ -817,9 +887,14 @@ border:none;
 
 border-radius:12px;
 
-background:#4F46E5;
+background:
+  linear-gradient(
+    90deg,
+    var(--color-btn-primary-start),
+    var(--color-btn-primary-end)
+  );
 
-color:white;
+color:var(--color-btn-primary-text);
 
 }
 

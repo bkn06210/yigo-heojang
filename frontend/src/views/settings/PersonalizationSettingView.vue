@@ -1,13 +1,17 @@
-<script setup>
-import { ref } from 'vue';
+﻿<script setup>
+import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
+import { usePersonalizationStore } from '@/stores/personalization';
 
 import PageHeader from '@/components/common/PageHeader.vue';
 import AppButton from '@/components/common/AppButton.vue';
 import AppCheckbox from '@/components/common/AppCheckbox.vue';
 import AppInput from '@/components/common/AppInput.vue';
+import { useToast } from '@/composables/useToast';
 
 const router = useRouter();
+const personalizationStore = usePersonalizationStore();
+const { showToast } = useToast();
 
 /**
  * 개인화 설정 카테고리 상태
@@ -41,11 +45,11 @@ const brandList = {
   convenience: [
     {
       name: 'GS25',
-      alias: ['gs25'],
+      alias: ['gs25', '지에스25', '지에스'],
     },
     {
       name: 'CU',
-      alias: ['cu'],
+      alias: ['cu', '씨유'],
     },
     {
       name: '이마트24',
@@ -93,7 +97,7 @@ const brandList = {
   culture: [
     {
       name: 'CGV',
-      alias: ['cgv'],
+      alias: ['cgv', '씨지브이'],
     },
     {
       name: '롯데시네마',
@@ -102,21 +106,55 @@ const brandList = {
   ],
 };
 
-// 검색 결과
+// 한글 초성만 추출 (예: "스타벅스" → "ㅅㅌㅂㅅ")
+const extractChoseong = (text) => {
+  const choseong = ['ㄱ', 'ㄲ', 'ㄴ', 'ㄷ', 'ㄸ', 'ㄹ', 'ㅁ', 'ㅂ', 'ㅃ', 'ㅅ', 'ㅆ', 'ㅇ', 'ㅈ', 'ㅉ', 'ㅊ', 'ㅋ', 'ㅌ', 'ㅍ', 'ㅎ'];
+
+  let result = '';
+  for (let char of text) {
+    const code = char.charCodeAt(0);
+    if (code >= 0xAC00 && code <= 0xD7A3) {
+      const temp = code - 0xAC00;
+      const cho = Math.floor(temp / (28 * 21));
+      result += choseong[cho];
+    } else if ((code >= 0x1100 && code <= 0x11FF) || (code >= 0x3130 && code <= 0x318F)) {
+      // 이미 자모인 경우 그대로 추가
+      result += char;
+    } else {
+      result += char;
+    }
+  }
+  return result;
+};
+
+// 검색 결과 (한글 자모 + 완성된 한글 포함)
 const getSuggestions = (category) => {
   const keyword = category.inputTag.trim().toLowerCase();
 
   if (!keyword) return [];
 
+  // 검색어의 초성 추출
+  const keywordChoseong = extractChoseong(keyword);
+
   return (brandList[category.key] || []).filter((brand) => {
-    return brand.alias.some((word) => word.toLowerCase().includes(keyword));
+    return brand.alias.some((word) => {
+      const lowerWord = word.toLowerCase();
+      const wordChoseong = extractChoseong(lowerWord);
+
+      // 완성된 한글, 자모, 초성 모두로 검색
+      return (
+        lowerWord.includes(keyword) ||
+        wordChoseong.includes(keywordChoseong) ||
+        wordChoseong.includes(keyword)
+      );
+    });
   });
 };
 
 // 브랜드 선택
 const selectBrand = (category, brand) => {
   if (category.tags.length >= 3) {
-    alert('최대 3개까지만 입력할 수 있습니다.');
+    showToast('warning', '최대 3개까지만 입력할 수 있습니다.');
     return;
   }
 
@@ -128,103 +166,72 @@ const selectBrand = (category, brand) => {
 /**
  * 검색 alias 하이라이트
  * 예)
- * 검색어: lotte
- * alias: lottemart
- * 결과: <strong>lotte</strong>mart
+ * 검색어: ㅅ
+ * alias: 스타벅스
+ * 결과: <strong>스</strong>타벅<strong>스</strong>
  */
 const highlightAlias = (alias, keyword) => {
   if (!alias || !keyword) return alias;
 
-  // 검색어와 매칭되는 alias 반환
+  const lowerKeyword = keyword.toLowerCase();
+  const lowerAlias = alias.toLowerCase();
+  const keywordChoseong = extractChoseong(lowerKeyword);
+  const aliasChoseong = extractChoseong(lowerAlias);
+
+  // 완성된 한글로 직접 매칭 (예: "lotte" in "lottemart")
+  if (lowerAlias.includes(lowerKeyword)) {
+    const regex = new RegExp(
+      `(${lowerKeyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`,
+      'gi'
+    );
+    return alias.replace(regex, '<strong>$1</strong>');
+  }
+
+  // 초성으로 매칭 (예: "ㅅ" or "스" in "스타벅스")
+  if (aliasChoseong.includes(keywordChoseong) || aliasChoseong.includes(lowerKeyword)) {
+    let result = '';
+    let choseongIndex = 0;
+
+    for (let i = 0; i < alias.length; i++) {
+      const char = alias[i];
+      const charChoseong = extractChoseong(char.toLowerCase());
+
+      if (
+        aliasChoseong.substring(choseongIndex, choseongIndex + keywordChoseong.length) === keywordChoseong ||
+        aliasChoseong.substring(choseongIndex, choseongIndex + lowerKeyword.length) === lowerKeyword
+      ) {
+        result += `<strong>${char}</strong>`;
+        choseongIndex += charChoseong.length;
+      } else {
+        result += char;
+        choseongIndex += charChoseong.length;
+      }
+    }
+    return result;
+  }
+
+  return alias;
+};
+
+// 검색어와 매칭되는 alias 반환 (완성형 + 초성 검색 모두 지원)
 const getMatchedAlias = (brand, keyword) => {
-  return brand.alias.find((a) =>
-    a.toLowerCase().includes(keyword.toLowerCase())
-  );
+  const lowerKeyword = keyword.toLowerCase();
+  const keywordChoseong = extractChoseong(lowerKeyword);
+
+  return brand.alias.find((a) => {
+    const lowerA = a.toLowerCase();
+    const aChoseong = extractChoseong(lowerA);
+
+    return (
+      lowerA.includes(lowerKeyword) ||
+      aChoseong.includes(keywordChoseong) ||
+      aChoseong.includes(lowerKeyword)
+    );
+  });
 };
 
-  const regex = new RegExp(
-    `(${keyword})`,
-    'gi'
-  );
-
-  return alias.replace(
-    regex,
-    '<strong>$1</strong>'
-  );
-};
-
-const categories = ref([
-  {
-    key: 'cafe',
-    label: '카페',
-    checked: true,
-    tags: ['스타벅스'],
-    inputTag: '',
-  },
-  {
-    key: 'convenience',
-    label: '편의점',
-    checked: true,
-    tags: ['GS25', 'CU', '이마트24'],
-    inputTag: '',
-  },
-  {
-    key: 'food',
-    label: '음식점',
-    checked: false,
-    tags: [],
-    inputTag: '',
-  },
-  {
-    key: 'restaurant',
-    label: '외식/배달',
-    checked: false,
-    tags: [],
-    inputTag: '',
-  },
-  {
-    key: 'mart',
-    label: '마트',
-    checked: false,
-    tags: [],
-    inputTag: '',
-  },
-  {
-    key: 'department',
-    label: '백화점/쇼핑몰',
-    checked: false,
-    tags: [],
-    inputTag: '',
-  },
-  {
-    key: 'beauty',
-    label: '뷰티/화장품',
-    checked: false,
-    tags: [],
-    inputTag: '',
-  },
-  {
-    key: 'culture',
-    label: '문화/여가',
-    checked: false,
-    tags: [],
-    inputTag: '',
-  },
-  {
-    key: 'transport',
-    label: '교통',
-    checked: false,
-    tags: [],
-    inputTag: '',
-  },
-  {
-    key: 'gas',
-    label: '주유',
-    checked: false,
-    tags: [],
-    inputTag: '',
-  },
-]);
+// Store의 categories 참조 (양방향 바인딩)
+const categories = computed(() => personalizationStore.categories);
 
 /**
  * 뒤로가기
@@ -242,7 +249,7 @@ const addTag = (category) => {
   if (!value) return;
 
   if (category.tags.length >= 3) {
-    alert('최대 3개까지만 입력할 수 있습니다.');
+    showToast('warning', '최대 3개까지만 입력할 수 있습니다.');
     return;
   }
 
@@ -262,6 +269,9 @@ const removeTag = (category, index) => {
  * TODO: 백엔드 API 연결 예정
  */
 const savePersonalization = () => {
+  // Store에 명시적으로 업데이트
+  personalizationStore.updateCategories(categories.value);
+
   console.log('개인화 설정 저장:', categories.value);
 
   router.go(-1);
@@ -277,6 +287,10 @@ const savePersonalization = () => {
 
     <div class="content-container">
       <!-- 안내 문구 -->
+      <h1 class="guide-title">
+        관심 카테고리
+      </h1>
+
       <p class="guide-text">
         관심 소비 영역을 선택하고, 각 항목별 관심 브랜드를 설정해주세요.
       </p>
@@ -287,6 +301,7 @@ const savePersonalization = () => {
           v-for="category in categories"
           :key="category.key"
           class="category-item"
+          :class="{ 'is-active': category.checked }"
         >
           <!-- 카테고리 헤더 -->
           <div class="category-header">
@@ -309,10 +324,10 @@ const savePersonalization = () => {
                 {{ tag }}
 
                 <span
-                  class="material-icons remove-tag"
+                  class="remove-tag"
                   @click="removeTag(category, index)"
                 >
-                  close
+                  ×
                 </span>
               </span>
             </div>
@@ -340,9 +355,9 @@ const savePersonalization = () => {
     @click="selectBrand(category, brand)"
   >
 
-    <!-- 실제 브랜드명 -->
+    <!-- 실제 브랜드명 (하이라이트) -->
     <div class="brand-name">
-      {{ brand.name }}
+      <span v-html="highlightAlias(brand.name, category.inputTag)"></span>
     </div>
 
 
@@ -394,13 +409,13 @@ const savePersonalization = () => {
 
 .brand-alias {
   margin-top: 3px;
-  font-size: 0.75rem;
-  color: #999;
+  font-size: var(--font-xs);
+  color: var(--color-text-tertiary);
 }
 
-.brand-alias strong {
-  color: #6c5ce7;
-  font-weight: 700;
+.brand-alias :deep(strong) {
+  color: var(--color-gold-text);
+  font-weight: var(--font-bold);
 }
 
 /* 개인화 설정 전체 화면 */
@@ -408,45 +423,71 @@ const savePersonalization = () => {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background-color: #f9f9f9;
+  background-color: var(--color-bg);
+  margin: 0 auto;
+  max-width: 480px;
+  box-sizing: border-box;
 }
 
 /* 본문 영역 */
 .content-container {
   flex: 1;
-  padding: 20px;
-  padding-bottom: 110px;
+  padding: var(--space-md);
+  padding-bottom: 120px;
   /*
     하단 고정 버튼 영역과 겹치지 않도록 여유 공간 확보
     (모바일 화면 기준)
   */
 }
 
+/* 안내 타이틀 (Display Typography) */
+.guide-title {
+  font-size: var(--typo-display-medium-size);
+  font-weight: var(--typo-display-medium-weight);
+  line-height: var(--typo-display-medium-line-height);
+  letter-spacing: var(--typo-display-medium-letter-spacing);
+  color: var(--color-text-primary);
+  margin: 0 0 var(--space-xs);
+}
+
 /* 안내 문구 */
 .guide-text {
-  font-size: 0.9rem;
-  color: #666;
+  font-size: var(--font-sm);
+  color: var(--color-text-secondary);
   line-height: 1.5;
-  margin-bottom: 20px;
+  margin: 0 0 var(--space-xl);
 }
 
-/* 카테고리 카드 영역 */
+/* 카테고리 카드 영역 (Bento: 카드별 독립 배치) */
 .category-list {
-  background-color: white;
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
 }
 
-/* 카테고리 한 줄 */
+/* 카테고리 한 줄 (미선택: 얇은 리스트 행) */
 .category-item {
-  padding: 16px;
-  border-bottom: 1px solid #eee;
+  padding: var(--space-md);
+  border-radius: var(--radius-md);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  transition: var(--transition-fast);
 }
 
-/* 마지막 항목은 구분선 제거 */
-.category-item:last-child {
-  border-bottom: none;
+/* 선택된 카테고리 (Bento 강조 + Soft Glassmorphism) */
+.category-item.is-active {
+  padding: var(--space-md);
+  background: linear-gradient(135deg, rgba(var(--color-primary-dark-rgb), 0.12) 0%, rgba(var(--color-primary-dark-rgb), 0.04) 100%);
+  border: 1px solid rgba(var(--color-primary-dark-rgb), 0.22);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+[data-theme="dark"] .category-item.is-active {
+  background: linear-gradient(135deg, rgba(var(--color-primary-dark-rgb), 0.22) 0%, rgba(var(--color-primary-dark-rgb), 0.08) 100%);
+  border: 1px solid rgba(var(--color-primary-dark-rgb), 0.3);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.06);
 }
 
 /* 카테고리명 + 개수 표시 영역 */
@@ -458,8 +499,8 @@ const savePersonalization = () => {
 
 /* 태그 개수 표시 */
 .limit-text {
-  font-size: 0.8rem;
-  color: #888;
+  font-size: var(--font-xs);
+  color: var(--color-text-tertiary);
 }
 
 /*
@@ -469,92 +510,121 @@ const savePersonalization = () => {
   hasTags=true인 항목만 표시
 */
 .tag-input-section {
-  margin-top: 14px;
-  padding-left: 24px;
+  margin-top: var(--space-sm);
+  padding-left: var(--space-md);
 }
 
 /* 태그 목록 */
 .tag-chips {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 12px;
+  gap: var(--space-xs);
+  margin-bottom: var(--space-sm);
 }
 
-/* 태그 하나 */
+/* 태그 하나 (Soft Glassmorphism, 골드 톤) */
 .tag-chip {
   display: inline-flex;
   align-items: center;
 
-  padding: 6px 10px;
+  padding: var(--space-xxs) var(--space-sm);
 
-  background-color: #f1f1f1;
-  border-radius: 16px;
+  background: linear-gradient(135deg, rgba(230, 217, 77, 0.22) 0%, rgba(230, 217, 77, 0.08) 100%);
+  border: 1px solid rgba(230, 217, 77, 0.35);
+  border-radius: var(--radius-full);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 
-  font-size: 0.85rem;
-  color: #333;
+  font-size: var(--font-xs);
+  font-weight: var(--font-semibold);
+  color: var(--color-text-primary);
+}
+
+[data-theme="dark"] .tag-chip {
+  background: linear-gradient(135deg, rgba(228, 218, 103, 0.22) 0%, rgba(228, 218, 103, 0.08) 100%);
+  border: 1px solid rgba(228, 218, 103, 0.3);
 }
 
 /* 태그 삭제 아이콘 */
 .remove-tag {
-  margin-left: 5px;
+  margin-left: var(--space-xxs);
 
-  font-size: 1rem;
-  color: #999;
+  font-size: var(--font-sm);
+  line-height: 1;
+  color: var(--color-text-tertiary);
 
   cursor: pointer;
 }
 
 .remove-tag:hover {
-  color: #333;
+  color: var(--color-text-primary);
 }
 
 /* 입력창 + 추가 버튼 */
 .input-with-button {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-xs);
 }
 
-/* 브랜드 자동완성 영역 */
+/* 브랜드 자동완성 영역 (Soft Glassmorphism) */
 .suggestion-list {
   width: 100%;
 
-  margin-top: 8px;
+  margin-top: var(--space-xs);
 
-  background: white;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0.2) 100%);
 
-  border-radius: 10px;
+  border-radius: var(--radius-md);
 
-  border: 1px solid #eee;
+  border: 1px solid rgba(255, 255, 255, 0.3);
 
   overflow: hidden;
 
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+[data-theme="dark"] .suggestion-list {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.02) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
 
 .suggestion-item {
-  padding: 12px 14px;
+  padding: var(--space-sm);
 
-  font-size: 0.9rem;
+  font-size: var(--font-sm);
 
-  color: #333;
+  color: var(--color-text-primary);
 
   cursor: pointer;
 }
 
 .suggestion-item + .suggestion-item {
-  border-top: 1px solid #f3f3f3;
+  border-top: 1px solid var(--color-border);
 }
 
 .suggestion-item:hover {
-  background: #f8f8f8;
+  background: rgba(255, 255, 255, 0.15);
 }
 
-.suggestion-item strong {
-  color: #6c5ce7;
+[data-theme="dark"] .suggestion-item:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
 
-  font-weight: 700;
+.suggestion-item :deep(strong) {
+  color: var(--color-gold-text);
+
+  font-weight: var(--font-bold);
+}
+
+.brand-name :deep(strong) {
+  color: var(--color-gold-text);
+
+  font-weight: var(--font-bold);
 }
 
 /*
@@ -570,13 +640,24 @@ const savePersonalization = () => {
 
   width: 100%;
 
-  padding: 15px 20px;
+  padding: var(--space-sm) var(--space-md);
 
-  background-color: white;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.5) 0%, var(--color-surface) 40%);
 
-  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+  border-top: 1px solid rgba(255, 255, 255, 0.3);
+
+  box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.05);
+
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 
   box-sizing: border-box;
+}
+
+[data-theme="dark"] .footer-button-area {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.04) 0%, var(--color-surface) 40%);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.3);
 }
 
 /*
@@ -585,46 +666,24 @@ const savePersonalization = () => {
 */
 @media (max-width: 480px) {
   .content-container {
-    padding: 16px;
+    padding: var(--space-md);
     padding-bottom: 100px;
   }
 
+  .guide-title {
+    font-size: 24px;
+  }
+
   .category-item {
-    padding: 14px;
+    padding: var(--space-sm);
+  }
+
+  .category-item.is-active {
+    padding: var(--space-md);
   }
 
   .guide-text {
-    font-size: 0.85rem;
+    font-size: var(--font-xs);
   }
-}
-
-.suggestion-list {
-  margin-top: 8px;
-
-  background: white;
-
-  border: 1px solid #eee;
-
-  border-radius: 8px;
-
-  overflow: hidden; 
-}
-
-.suggestion-item {
-  padding: 12px;
-
-  cursor: pointer;
-
-  font-size: 0.9rem;
-}
-
-.suggestion-item:hover {
-  background: #f7f7f7;
-}
-
-.suggestion-item strong {
-  color: #6c5ce7;
-
-  font-weight: 700;
 }
 </style>

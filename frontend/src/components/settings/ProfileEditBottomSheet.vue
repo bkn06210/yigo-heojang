@@ -50,6 +50,40 @@ const saveProfile = () => {
     profileImageUrl: form.value.profileImageUrl,
   });
 };
+
+
+// 바텀시트 닫기
+const closeSheet = () => {
+  emit('close');
+};
+
+
+// 숨겨진 파일 input 참조
+const fileInput = ref(null);
+
+
+// 카메라 버튼 클릭 시 파일 선택창 열기
+const openFilePicker = () => {
+  fileInput.value?.click();
+};
+
+
+// 선택한 이미지를 미리보기로 반영
+const changeProfileImage = (event) => {
+  const file = event.target.files?.[0];
+
+  if (!file) {
+    return;
+  }
+
+  const reader = new FileReader();
+
+  reader.onload = () => {
+    form.value.profileImageUrl = reader.result;
+  };
+
+  reader.readAsDataURL(file);
+};
 </script>
 
 <template>
@@ -114,11 +148,21 @@ const saveProfile = () => {
 .bottom-sheet {
   width: 100%;
 
-  background: white;
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
 
-  border-radius: 24px 24px 0 0;
+  padding: var(--space-xl);
 
-  padding: 24px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.6) 0%, var(--color-surface) 30%);
+  border-top: 1px solid rgba(255, 255, 255, 0.35);
+  box-shadow: 0 -16px 40px rgba(0, 0, 0, 0.12);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+[data-theme="dark"] .bottom-sheet {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.06) 0%, var(--color-surface) 30%);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 -16px 40px rgba(0, 0, 0, 0.35);
 }
 
 .handle {
@@ -126,15 +170,20 @@ const saveProfile = () => {
 
   height: 4px;
 
-  background: #ddd;
+  background: var(--color-border);
 
   border-radius: 10px;
 
-  margin: 0 auto 20px;
+  margin: 0 auto var(--space-lg);
 }
 
 h2 {
   text-align: center;
+  color: var(--color-text-primary);
+  font-size: var(--font-xl);
+  font-weight: var(--font-bold);
+  letter-spacing: -0.2px;
+  margin: 0;
 }
 
 .profile-image-area {
@@ -164,7 +213,7 @@ h2 {
 }
 
 .default-image {
-  background: #ddd;
+  background: var(--color-border);
 
   width: 100%;
 
@@ -186,9 +235,21 @@ h2 {
 
   border-radius: 50%;
 
-  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
-  border: 1px solid #ddd;
+  background: linear-gradient(135deg, var(--color-btn-primary-start), var(--color-btn-primary-end));
+
+  border: 2px solid var(--color-surface);
+
+  color: var(--color-btn-primary-text);
+
+  cursor: pointer;
+}
+
+.camera-button .material-icons {
+  font-size: 16px;
 }
 
 .button-area {
