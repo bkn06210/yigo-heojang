@@ -5,6 +5,7 @@ import static com.wallet.common.constant.RequestAttributeNames.AUTHENTICATED_MEM
 import javax.validation.Valid;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -33,15 +34,16 @@ public class UserCardController {
      * JwtAuthenticationFilter가 Access Token 검증 후 request attribute에 넣어준 값을 사용한다.
      * 이렇게 해서 다른 회원 ID를 조작해서 카드를 등록하는 문제를 막는다.
      */
-    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
-    public ApiResponse<UserCardRegisterResponse> registerUserCard(
+    public ResponseEntity<ApiResponse<UserCardRegisterResponse>> registerUserCard(
         @RequestAttribute(AUTHENTICATED_MEMBER_ID) Long memberId,
         @Valid @RequestBody UserCardRegisterRequest request
     ) {
         UserCardRegisterResponse response =
             userCardService.registerUserCard(memberId, request);
 
-        return ApiResponse.success(response);
+        return ResponseEntity
+            .status(HttpStatus.CREATED)
+            .body(ApiResponse.success("보유 카드 등록에 성공했습니다.", response));
     }
 }
