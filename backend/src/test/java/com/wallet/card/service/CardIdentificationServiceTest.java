@@ -18,24 +18,24 @@ import com.wallet.card.domain.CardBin;
 import com.wallet.card.dto.CardCandidateListResponse;
 import com.wallet.card.dto.CardCandidateResponse;
 import com.wallet.card.dto.CardIdentificationRequest;
-import com.wallet.card.mapper.CardBinMapper;
 import com.wallet.card.mapper.CardMapper;
+import com.wallet.card.support.CardBinFinder;
 import com.wallet.common.ErrorCode;
 import com.wallet.common.exception.BusinessException;
 
 class CardIdentificationServiceTest {
-    private CardBinMapper cardBinMapper;
     private CardMapper cardMapper;
+    private CardBinFinder cardBinFinder;
     private CardIdentificationService cardIdentificationService;
 
     @BeforeEach
     void setUp() {
-        cardBinMapper = mock(CardBinMapper.class);
         cardMapper = mock(CardMapper.class);
+        cardBinFinder = mock(CardBinFinder.class);
 
         cardIdentificationService = new CardIdentificationService(
-            cardBinMapper,
-            cardMapper
+            cardMapper,
+            cardBinFinder
         );
     }
 
@@ -63,7 +63,7 @@ class CardIdentificationServiceTest {
             "교통·편의점·외식 생활 혜택 중심 체크카드"
         );
 
-        when(cardBinMapper.findActiveByPrefix("12345678"))
+        when(cardBinFinder.findCardBin("1234567800000006"))
             .thenReturn(cardBin);
 
         when(cardMapper.findActiveCardsByCompanyId(10L))
@@ -88,57 +88,9 @@ class CardIdentificationServiceTest {
         assertThat(candidate.description())
             .isEqualTo("교통·편의점·외식 생활 혜택 중심 체크카드");
 
-        verify(cardBinMapper).findActiveByPrefix("12345678");
-        verify(cardBinMapper, never()).findActiveByPrefix("123456");
+        verify(cardBinFinder).findCardBin("1234567800000006");
+        verify(cardBinFinder, never()).findCardBin("12345600000006");
         verify(cardMapper).findActiveCardsByCompanyId(10L);
-    }
-
-    @Test
-    @DisplayName("카드 상품 후보 조회 성공 - 8자리 BIN이 없으면 6자리 BIN을 사용한다")
-    void findRegistrationCandidates_success_withSixDigitBinFallback() {
-        // given
-        CardIdentificationRequest request =
-            new CardIdentificationRequest("6543-2100-0000-0006");
-
-        CardBin cardBin = new CardBin(
-            2L,
-            20L,
-            "654321",
-            6
-        );
-
-        Card card = new Card(
-            2L,
-            20L,
-            "신한카드",
-            "신한카드 Deep Dream",
-            "CREDIT",
-            "https://example.com/images/cards/shinhan-deepdream.png",
-            "생활 영역 포인트 적립 중심 신용카드"
-        );
-
-        when(cardBinMapper.findActiveByPrefix("65432100"))
-            .thenReturn(null);
-
-        when(cardBinMapper.findActiveByPrefix("654321"))
-            .thenReturn(cardBin);
-
-        when(cardMapper.findActiveCardsByCompanyId(20L))
-            .thenReturn(List.of(card));
-
-        // when
-        CardCandidateListResponse response =
-            cardIdentificationService.findRegistrationCandidates(request);
-
-        // then
-        assertThat(response.issuerName()).isEqualTo("신한카드");
-        assertThat(response.lastFourDigits()).isEqualTo("0006");
-        assertThat(response.cards()).hasSize(1);
-        assertThat(response.cards().get(0).issuerName()).isEqualTo("신한카드");
-
-        verify(cardBinMapper).findActiveByPrefix("65432100");
-        verify(cardBinMapper).findActiveByPrefix("654321");
-        verify(cardMapper).findActiveCardsByCompanyId(20L);
     }
 
     @Test
@@ -158,7 +110,7 @@ class CardIdentificationServiceTest {
         assertThat(exception.getErrorCode())
             .isEqualTo(ErrorCode.CARD_NUMBER_INVALID);
 
-        verify(cardBinMapper, never()).findActiveByPrefix("12345678");
+        verify(cardBinFinder, never()).findCardBin("1234567800000006");
         verify(cardMapper, never()).findActiveCardsByCompanyId(10L);
     }
 
@@ -169,11 +121,8 @@ class CardIdentificationServiceTest {
         CardIdentificationRequest request =
             new CardIdentificationRequest("1234-5678-0000-0006");
 
-        when(cardBinMapper.findActiveByPrefix("12345678"))
-            .thenReturn(null);
-
-        when(cardBinMapper.findActiveByPrefix("123456"))
-            .thenReturn(null);
+        when(cardBinFinder.findCardBin("1234567800000006"))
+            .thenThrow(new BusinessException(ErrorCode.CARD_BIN_NOT_FOUND));
 
         // when
         BusinessException exception = assertThrows(
@@ -185,8 +134,7 @@ class CardIdentificationServiceTest {
         assertThat(exception.getErrorCode())
             .isEqualTo(ErrorCode.CARD_BIN_NOT_FOUND);
 
-        verify(cardBinMapper).findActiveByPrefix("12345678");
-        verify(cardBinMapper).findActiveByPrefix("123456");
+        verify(cardBinFinder).findCardBin("1234567800000006");
         verify(cardMapper, never()).findActiveCardsByCompanyId(10L);
     }
 
@@ -204,7 +152,7 @@ class CardIdentificationServiceTest {
             8
         );
 
-        when(cardBinMapper.findActiveByPrefix("12345678"))
+        when(cardBinFinder.findCardBin("1234567800000006"))
             .thenReturn(cardBin);
 
         when(cardMapper.findActiveCardsByCompanyId(10L))
@@ -220,7 +168,7 @@ class CardIdentificationServiceTest {
         assertThat(exception.getErrorCode())
             .isEqualTo(ErrorCode.CARD_CANDIDATE_NOT_FOUND);
 
-        verify(cardBinMapper).findActiveByPrefix("12345678");
+        verify(cardBinFinder).findCardBin("1234567800000006");
         verify(cardMapper).findActiveCardsByCompanyId(10L);
     }
 }
