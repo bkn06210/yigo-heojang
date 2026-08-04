@@ -88,7 +88,7 @@ public final class BenefitCalculator {
 
     /**
      * 혜택이 붙는 금액. 포인트로 낸 부분엔 혜택이 붙지 않는다.
-     * (현재 팀 합의상 결제금액이 이미 포인트 차감 후 승인액이라 usedPointAmount는 0이지만,
+     * (결제금액이 이미 포인트 차감 후 승인액이라 usedPointAmount는 0이지만,
      *  포인트 부분결제가 들어오면 바로 동작하도록 식은 이 형태로 둔다.)
      */
     private long eligibleAmount(BenefitRule rule, CalcContext context) {

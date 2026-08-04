@@ -11,7 +11,7 @@ package com.wallet.engine.model;
  *
  * performanceMet은 저장 필드가 아니라 파생이다 — (minPerformanceAmount=0, performanceMet=true)
  * 같은 모순 상태를 타입 차원에서 막는다. "require_performance='Y' 충족 = 판정된 구간의
- * min_performance_amount > 0"이 CLAUDE.md의 확정 규칙이다.
+ * min_performance_amount > 0"이 확정 규칙이다.
  *
  * @param tierId               판정된 구간 ID
  * @param minPerformanceAmount 판정된 구간의 최소 전월실적(원)

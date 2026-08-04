@@ -5,7 +5,11 @@
 <mapper namespace="com.wallet.engine.dao.UserCardMapper">
 
     <!-- 카드명은 응답 필드라 card 마스터를 조인해 함께 가져온다 — 카드 수만큼 이름 조회가
-         따로 나가는 것을 막는다. 정렬은 하지 않는다: 추천은 혜택액 기준으로 다시 정렬한다. -->
+         따로 나가는 것을 막는다.
+
+         user_card_id 정렬은 재현성 때문이다. 추천은 혜택액 기준으로 다시 정렬해 순서가 무의미하지만,
+         현황 조회(#2)는 이 순서를 그대로 cards[] 배열로 내보낸다. 정렬이 없으면 같은 데이터에도
+         홈 화면의 카드 순서가 호출마다 달라질 수 있다(조인 순서·인덱스 선택에 따라). -->
     <select id="findActiveCards"
             resultType="com.wallet.engine.dao.dto.UserCardRow">
         SELECT uc.user_card_id,
@@ -15,6 +19,7 @@
         JOIN card c ON c.card_id = uc.card_id
         WHERE uc.member_id = #{memberId}
           AND uc.card_status = 'ACTIVE'
+        ORDER BY uc.user_card_id
     </select>
 
 </mapper>

@@ -36,7 +36,7 @@
     </select>
 
     <!-- APPROVED일 때만 CANCELED로 전환하는 compare-and-set. 영향 행 0이면 이미 취소된 건이다.
-         (협의 안건: expense 쓰기는 본래 소비내역 담당의 몫 — 취소 REST 자립·멱등을 위해 잠정 수행) -->
+         엔진이 expense에 쓰는 유일한 지점이다 — 취소 API의 자립·멱등을 위해 여기서 전환한다. -->
     <update id="markExpenseCanceled">
         UPDATE expense
         SET payment_status = 'CANCELED'
