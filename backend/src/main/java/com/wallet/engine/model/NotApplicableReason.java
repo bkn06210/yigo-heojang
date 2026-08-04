@@ -11,6 +11,8 @@ public enum NotApplicableReason {
     RETROACTIVE_EXCLUDED,
     /** 증정은 결제 이벤트가 없어 매칭·계산 대상이 아니다. 카드 상세 화면이 별도 조회로 표시한다 */
     GIFT_EXCLUDED,
+    /** 무이자할부는 할부수수료 면제라 결제금액 기준 할인액으로 환산할 수 없다. 카드 상세 화면이 정보로만 표시한다 */
+    INSTALLMENT_FREE_EXCLUDED,
     PERFORMANCE_NOT_MET,
     PAYMENT_TYPE_MISMATCH,
     MIN_TXN_AMOUNT_NOT_MET,

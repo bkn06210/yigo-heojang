@@ -65,6 +65,10 @@ public final class BenefitCalculator {
         if (rule.getBenefitKind() == BenefitKind.GIFT) {
             return NotApplicableReason.GIFT_EXCLUDED;
         }
+        // 할부수수료 면제라 결제금액 기준 할인액이 없다. 금액으로 환산하면 카드 비교 순위가 왜곡된다.
+        if (rule.getBenefitKind() == BenefitKind.INSTALLMENT_FREE) {
+            return NotApplicableReason.INSTALLMENT_FREE_EXCLUDED;
+        }
         if (rule.isRequirePerformance() && !context.isPerformanceMet()) {
             return NotApplicableReason.PERFORMANCE_NOT_MET;
         }
