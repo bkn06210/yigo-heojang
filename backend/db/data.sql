@@ -170,7 +170,7 @@ INSERT INTO card (
      '2026-05-01 00:00:00', '2026-06-30 00:00:00');
 
 -- ============================================================
--- 4. 카테고리 표준: 대분류 6 + 중분류 24
+-- 4. 카테고리 표준: 대분류 7 + 중분류 31
 -- ============================================================
 
 -- 대분류
@@ -183,7 +183,8 @@ INSERT INTO category (
     (3, 'TRANSPORT', '교통', NULL, 3),
     (4, 'LIVING', '생활', NULL, 4),
     (5, 'CULTURE_LEISURE', '문화여가', NULL, 5),
-    (6, 'MEDICAL', '의료', NULL, 6);
+    (6, 'MEDICAL', '의료', NULL, 6),
+    (7, 'EDUCATION', '교육', NULL, 7);
 
 -- 외식
 INSERT INTO category VALUES
@@ -199,14 +200,17 @@ INSERT INTO category VALUES
     (203, 'DEPARTMENT_STORE', '백화점', 2, 3),
     (204, 'ONLINE_SHOPPING', '온라인쇼핑', 2, 4),
     (205, 'BEAUTY', '뷰티', 2, 5),
-    (206, 'BOOKSTORE', '서점', 2, 6);
+    (206, 'BOOKSTORE', '서점', 2, 6),
+    (207, 'SUPERMARKET', '슈퍼마켓', 2, 7);
 
 -- 교통
 INSERT INTO category VALUES
     (301, 'PUBLIC_TRANSPORT', '대중교통', 3, 1),
     (302, 'TAXI', '택시', 3, 2),
     (303, 'FUEL', '주유', 3, 3),
-    (304, 'PARKING_MAINTENANCE', '주차정비', 3, 4);
+    (304, 'PARKING_MAINTENANCE', '주차정비', 3, 4),
+    (305, 'RAILWAY', '철도', 3, 5),
+    (306, 'EXPRESS_BUS', '고속시외버스', 3, 6);
 
 -- 생활
 INSERT INTO category VALUES
@@ -214,18 +218,27 @@ INSERT INTO category VALUES
     (402, 'UTILITY', '공과금', 4, 2),
     (403, 'APARTMENT_FEE', '아파트관리비', 4, 3),
     (404, 'INSURANCE', '보험료', 4, 4),
-    (405, 'LIFE_SERVICE', '세탁생활서비스', 4, 5);
+    (405, 'LIFE_SERVICE', '세탁생활서비스', 4, 5),
+    (406, 'RENT', '임대료', 4, 6),
+    (407, 'PERSONAL_CARE', '개인관리서비스', 4, 7);
 
 -- 문화여가
 INSERT INTO category VALUES
     (501, 'MOVIE', '영화', 5, 1),
     (502, 'SUBSCRIPTION_STREAMING', '구독스트리밍', 5, 2),
-    (503, 'SPORTS_LEISURE', '스포츠레저', 5, 3);
+    (503, 'SPORTS_LEISURE', '스포츠레저', 5, 3),
+    (504, 'GOLF', '골프', 5, 4);
 
 -- 의료
 INSERT INTO category VALUES
     (601, 'HOSPITAL', '병원', 6, 1),
-    (602, 'PHARMACY', '약국', 6, 2);
+    (602, 'PHARMACY', '약국', 6, 2),
+    (603, 'ANIMAL_HOSPITAL', '동물병원', 6, 3);
+
+-- 교육
+INSERT INTO category VALUES
+    (701, 'ACADEMY', '학원', 7, 1),
+    (702, 'TUITION', '학교납입금', 7, 2);
 
 -- ============================================================
 -- 5. 가맹점
