@@ -145,87 +145,45 @@ onUnmounted(()=>{
 
 <main>
 
-
+<!-- 상단: 결제 금액 -->
 <section class="amount">
-
-<p>
-결제 금액
-</p>
-
-<h1>
-{{amount.toLocaleString()}}원
-</h1>
-
+  <p>결제 금액</p>
+  <h1>{{amount.toLocaleString()}}원</h1>
 </section>
 
-<!--
-  선택한 카드 정보
-
-  card가 없는 상태에서 화면이 먼저 렌더링될 수 있으므로
-  v-if로 null 체크
-
-  API 연결 후에도 동일하게 사용 가능
--->
-<section
-  v-if="card"
-  class="card"
->
-
-  <img
-    :src="card.image"
-    :alt="card.name"
-  />
-
-  <p>
-    {{ card.name }}
-  </p>
-
+<!-- 중단: 카드 정보 -->
+<section v-if="card" class="card">
+  <img :src="card.image" :alt="card.name" />
+  <p>{{ card.name }}</p>
 </section>
 
+<!-- 하단: 부채꼴 배경 + QR 모달 겹침 -->
+<div class="qr-container">
 
-<!-- 부채꼴 액션 버튼 -->
-<section class="fan-actions">
-  <button class="fan-btn btn-refresh" @click="refreshQR" title="새로고침">
-    새로고침
-  </button>
+  <!-- 배경: 부채꼴 액션 버튼 -->
+  <section class="fan-actions">
+    <button class="fan-btn btn-refresh" @click="refreshQR" title="새로고침">
+      새로고침
+    </button>
+    <button class="fan-btn btn-primary" @click="payment">
+      결제하기
+    </button>
+    <button class="fan-btn btn-cancel" @click="cancelPayment" title="취소">
+      취소
+    </button>
+  </section>
 
-  <button class="fan-btn btn-primary" @click="payment">
-    결제하기
-  </button>
+  <!-- 위: QR 모달 섹션 -->
+  <section class="qr-modal-section">
+    <PaymentQR />
+    <PaymentTimer :seconds="qrSeconds" />
+    <p class="scan-message">QR 코드를 스캔해 결제하세요</p>
+    <PaymentSecurity />
+  </section>
 
-  <button class="fan-btn btn-cancel" @click="cancelPayment" title="취소">
-    취소
-  </button>
-</section>
-
-<PaymentQR />
-
-
-<PaymentTimer
-
-  :seconds="qrSeconds"
-
-/>
-
-<p class="scan-message">
-
-QR 코드를 스캔해 결제하세요
-
-</p>
-
-
-<PaymentSecurity />
+</div>
 
 </main>
-
-
-<button
-class="cancel"
-
-@click="cancelPayment"
->
-결제 취소
-</button>
 
 
 <!--
@@ -420,15 +378,25 @@ main {
 
 }
 
-/* 부채꼴 액션 버튼 */
-.fan-actions {
+/* QR 컨테이너: 겹침 영역 */
+.qr-container {
   position: relative;
   width: 100%;
-  height: 280px;
-  margin: var(--space-2xl) 0;
+  height: 420px;
+  margin-top: var(--space-2xl);
+}
+
+/* 배경: 부채꼴 액션 버튼 */
+.fan-actions {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   display: flex;
   align-items: flex-end;
   justify-content: center;
+  z-index: 10;
 }
 
 .fan-btn {
@@ -454,10 +422,8 @@ main {
   height: 100px;
   background: linear-gradient(135deg, #FFD60A, #FFC300);
   color: #000;
-  bottom: 0;
   left: 50%;
   transform: translateX(-50%);
-  z-index: 100;
   box-shadow: 0 12px 32px rgba(255, 195, 0, 0.35);
 }
 
@@ -472,11 +438,10 @@ main {
 
 /* 왼쪽: 새로고침 */
 .btn-refresh {
-  background: linear-gradient(135deg, rgba(var(--color-primary-dark-rgb), 0.9) 0%, rgba(var(--color-primary-dark-rgb), 0.7) 100%);
+  background: linear-gradient(135deg, var(--color-primary-dark), rgba(var(--color-primary-dark-rgb), 0.7) 100%);
   color: white;
-  left: 10%;
-  bottom: 40px;
-  z-index: 90;
+  left: 15%;
+  bottom: 60px;
   transform: translateX(-50%);
 }
 
@@ -486,17 +451,50 @@ main {
 
 /* 오른쪽: 취소 */
 .btn-cancel {
-  background: linear-gradient(135deg, rgba(var(--color-text-secondary-rgb), 0.8) 0%, rgba(var(--color-text-secondary-rgb), 0.6) 100%);
+  background: linear-gradient(135deg, var(--color-text-secondary), rgba(var(--color-text-secondary), 0.6) 100%);
   color: white;
-  right: 10%;
-  bottom: 40px;
-  z-index: 90;
-  transform: translateX(50%);
+  right: 15%;
+  bottom: 60px;
   left: auto;
+  transform: translateX(50%);
 }
 
 .btn-cancel:hover {
   transform: translateX(50%) scale(1.05);
+}
+
+/* 위: QR 모달 섹션 */
+.qr-modal-section {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 85%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-md);
+  z-index: 20;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, var(--color-surface) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: var(--radius-xl);
+  padding: var(--space-xl);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.12);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+[data-theme="dark"] .qr-modal-section {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.06) 0%, var(--color-surface) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.35);
+}
+
+.scan-message {
+  margin: 0;
+  font-size: var(--font-sm);
+  color: var(--color-text-secondary);
+  text-align: center;
 }
 
 </style>
