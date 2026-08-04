@@ -140,22 +140,32 @@ INSERT INTO merchant (merchant_id, merchant_code, merchant_name, category_id) VA
     (135, 'HYUNDAI_HOMESHOPPING', '현대홈쇼핑', 204),
     (136, 'HOMEPLUS', '홈플러스', 202);
 
-INSERT INTO card (card_id, card_name, issuer, card_type, annual_fee, image_url, description, is_active) VALUES
-    (1, 'ALL point 카드', 'KB국민', 'CREDIT', 9000, NULL, NULL, 'Y'),
-    (2, 'ALL 카드', 'KB국민', 'CREDIT', 20000, NULL, NULL, 'Y'),
-    (3, 'YOU Wish 카드', 'KB국민', 'CREDIT', 15000, NULL, NULL, 'Y'),
-    (4, '마이핏카드(적립형)', 'KB국민', 'CREDIT', 30000, NULL, NULL, 'Y'),
-    (5, '마이핏카드(할인형)', 'KB국민', 'CREDIT', 10000, NULL, NULL, 'Y'),
-    (6, '삼성 iD ON 카드', '삼성', 'CREDIT', 20000, NULL, NULL, 'Y'),
-    (7, '삼성 iD SELECT UP 카드', '삼성', 'CREDIT', 18000, NULL, NULL, 'Y'),
-    (8, '삼성 iD SIMPLE 카드', '삼성', 'CREDIT', 7000, NULL, NULL, 'Y'),
-    (9, '삼성카드 & POINT', '삼성', 'CREDIT', 10000, NULL, NULL, 'Y'),
-    (10, '삼성카드 taptap O', '삼성', 'CREDIT', 10000, NULL, NULL, 'Y'),
-    (11, '신한카드 Deep Once', '신한', 'CREDIT', 0, NULL, NULL, 'Y'),
-    (12, '신한카드 Mr.Life', '신한', 'CREDIT', 0, NULL, NULL, 'Y'),
-    (13, '신한카드 Simple', '신한', 'CREDIT', 0, NULL, NULL, 'Y'),
-    (14, '신한카드 The BEST-XO', '신한', 'CREDIT', 0, NULL, NULL, 'Y'),
-    (15, '신한카드 핏(Fit)', '신한', 'CREDIT', 0, NULL, NULL, 'Y');
+INSERT INTO card_company (card_company_id, company_code, company_name, is_active) VALUES
+    (1, 'KB_CARD', 'KB국민카드', 'Y'),
+    (2, 'SHINHAN_CARD', '신한카드', 'Y'),
+    (3, 'SAMSUNG_CARD', '삼성카드', 'Y');
+
+INSERT INTO card_bin (card_company_id, bin_prefix, bin_length, is_active) VALUES
+    (1, '222879', 6, 'Y'),
+    (2, '356078', 6, 'Y'),
+    (3, '376293', 6, 'Y');
+
+INSERT INTO card (card_id, card_company_id, card_name, card_type, annual_fee, image_url, description, is_active) VALUES
+    (1, 1, 'ALL point 카드', 'CREDIT', 9000, NULL, NULL, 'Y'),
+    (2, 1, 'ALL 카드', 'CREDIT', 20000, NULL, NULL, 'Y'),
+    (3, 1, 'YOU Wish 카드', 'CREDIT', 15000, NULL, NULL, 'Y'),
+    (4, 1, '마이핏카드(적립형)', 'CREDIT', 30000, NULL, NULL, 'Y'),
+    (5, 1, '마이핏카드(할인형)', 'CREDIT', 10000, NULL, NULL, 'Y'),
+    (6, 3, '삼성 iD ON 카드', 'CREDIT', 20000, NULL, NULL, 'Y'),
+    (7, 3, '삼성 iD SELECT UP 카드', 'CREDIT', 18000, NULL, NULL, 'Y'),
+    (8, 3, '삼성 iD SIMPLE 카드', 'CREDIT', 7000, NULL, NULL, 'Y'),
+    (9, 3, '삼성카드 & POINT', 'CREDIT', 10000, NULL, NULL, 'Y'),
+    (10, 3, '삼성카드 taptap O', 'CREDIT', 10000, NULL, NULL, 'Y'),
+    (11, 2, '신한카드 Deep Once', 'CREDIT', 0, NULL, NULL, 'Y'),
+    (12, 2, '신한카드 Mr.Life', 'CREDIT', 0, NULL, NULL, 'Y'),
+    (13, 2, '신한카드 Simple', 'CREDIT', 0, NULL, NULL, 'Y'),
+    (14, 2, '신한카드 The BEST-XO', 'CREDIT', 0, NULL, NULL, 'Y'),
+    (15, 2, '신한카드 핏(Fit)', 'CREDIT', 0, NULL, NULL, 'Y');
 
 INSERT INTO card_annual_fee (card_id, brand, issue_type, total_fee, base_fee, partner_fee) VALUES
     (1, 'K_WORLD', 'PLASTIC', 15000, NULL, NULL),

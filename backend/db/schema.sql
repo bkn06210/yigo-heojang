@@ -204,29 +204,29 @@ CREATE TABLE member_term_agreement (
 -- ════════════════════════════════════════════════════════════
 
 CREATE TABLE card_company (
-                              card_company_id BIGINT      NOT NULL AUTO_INCREMENT COMMENT '카드사 ID',
-                              company_code    VARCHAR(30) NOT NULL COMMENT '카드사 코드',
-                              company_name    VARCHAR(50) NOT NULL COMMENT '카드사명',
-                              is_active       CHAR(1)     NOT NULL DEFAULT 'Y' COMMENT '사용 여부: Y 또는 N',
-                              created_at      DATETIME    NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '생성일시',
-                              PRIMARY KEY (card_company_id),
-                              UNIQUE KEY uk_card_company_code (company_code),
-                              UNIQUE KEY uk_card_company_name (company_name)
+    card_company_id BIGINT      NOT NULL AUTO_INCREMENT COMMENT '카드사 ID',
+    company_code    VARCHAR(30) NOT NULL COMMENT '카드사 코드',
+    company_name    VARCHAR(50) NOT NULL COMMENT '카드사명',
+    is_active       CHAR(1)     NOT NULL DEFAULT 'Y' COMMENT '사용 여부: Y | N',
+    created_at      DATETIME    NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '생성일시',
+    PRIMARY KEY (card_company_id),
+    UNIQUE KEY uk_card_company_code (company_code),
+    UNIQUE KEY uk_card_company_name (company_name)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT '카드사 마스터';
 
+-- 카드번호 앞자리로 카드사를 판별한다. 카드 등록 화면이 입력값을 검증할 때 쓴다.
 CREATE TABLE card_bin (
-                          card_bin_id     BIGINT     NOT NULL AUTO_INCREMENT COMMENT '카드 BIN ID',
-                          card_company_id BIGINT     NOT NULL COMMENT '카드사 ID',
-                          bin_prefix      VARCHAR(8) NOT NULL COMMENT '6자리 또는 8자리 BIN',
-                          bin_length      TINYINT    NOT NULL COMMENT 'BIN 길이: 6 또는 8',
-                          is_active       CHAR(1)    NOT NULL DEFAULT 'Y' COMMENT '사용 여부: Y 또는 N',
-                          created_at      DATETIME   NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '생성일시',
-                          PRIMARY KEY (card_bin_id),
-                          UNIQUE KEY uk_card_bin_prefix (bin_prefix),
-                          KEY idx_card_bin_company (card_company_id),
-
-                          CONSTRAINT fk_card_bin_company FOREIGN KEY (card_company_id) REFERENCES card_company (card_company_id),
-                          CONSTRAINT chk_card_bin_length CHECK (bin_length IN (6, 8))
+    card_bin_id     BIGINT     NOT NULL AUTO_INCREMENT COMMENT '카드 BIN ID',
+    card_company_id BIGINT     NOT NULL COMMENT '카드사 ID',
+    bin_prefix      VARCHAR(8) NOT NULL COMMENT '6자리 또는 8자리 BIN',
+    bin_length      TINYINT    NOT NULL COMMENT 'BIN 길이: 6 또는 8',
+    is_active       CHAR(1)    NOT NULL DEFAULT 'Y' COMMENT '사용 여부: Y | N',
+    created_at      DATETIME   NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '생성일시',
+    PRIMARY KEY (card_bin_id),
+    UNIQUE KEY uk_card_bin_prefix (bin_prefix),
+    KEY idx_card_bin_company (card_company_id),
+    CONSTRAINT fk_card_bin_company FOREIGN KEY (card_company_id) REFERENCES card_company (card_company_id),
+    CONSTRAINT chk_card_bin_length CHECK (bin_length IN (6, 8))
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT '카드 BIN과 카드사 매핑';
 
 CREATE TABLE card (
@@ -234,7 +234,7 @@ CREATE TABLE card (
     card_company_id BIGINT       NOT NULL COMMENT '카드사 ID',
     card_name       VARCHAR(100) NOT NULL COMMENT '카드명 (예: 나라사랑카드)',
     card_type       VARCHAR(20)  NOT NULL COMMENT '카드 종류: CREDIT(신용) | CHECK(체크)',
-    annual_fee      INT          NOT NULL DEFAULT 0 COMMENT '연회비(원). 체크카드는 0',
+    annual_fee      INT          NOT NULL DEFAULT 0 COMMENT '연회비(원). 체크카드는 0. 브랜드·발급형태별 금액은 card_annual_fee',
     image_url       VARCHAR(255) NULL COMMENT '카드 이미지 URL',
     description     VARCHAR(500) NULL COMMENT '카드 한줄 소개',
     is_active       CHAR(1)      NOT NULL DEFAULT 'Y' COMMENT '판매중 여부: Y | N',
@@ -242,7 +242,6 @@ CREATE TABLE card (
     updated_at      DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '수정일시',
     PRIMARY KEY (card_id),
     KEY idx_card_company_active (card_company_id, is_active),
-
     CONSTRAINT fk_card_company FOREIGN KEY (card_company_id) REFERENCES card_company (card_company_id)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT '카드 마스터';
 

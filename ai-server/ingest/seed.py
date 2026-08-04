@@ -78,6 +78,16 @@ def _slug(name: str) -> str:
     return re.sub(r"[^A-Z0-9_]", "", name.upper().replace(" ", "_"))[:30]
 
 
+# 수집 어댑터가 쓰는 카드사 표기 → 카드사 마스터(ID, 코드, 정식 명칭, BIN).
+# BIN은 카드번호 앞자리로 카드사를 판별하는 값이라 수집 대상이 아니고 여기에 고정으로 둔다.
+# 카드사와 BIN이 같은 파일에 있어야 참조가 어긋나지 않는다.
+CARD_COMPANIES = {
+    "KB국민": (1, "KB_CARD", "KB국민카드", "222879"),
+    "신한": (2, "SHINHAN_CARD", "신한카드", "356078"),
+    "삼성": (3, "SAMSUNG_CARD", "삼성카드", "376293"),
+}
+
+
 def build() -> str:
     category_ids = load_category_ids()
     merchants = json.loads(_MERCHANTS_PATH.read_text(encoding="utf-8"))
@@ -108,19 +118,42 @@ def build() -> str:
     lines.append(",\n".join(rows) + ";")
     lines.append("")
 
+    # ── 카드사 · BIN ────────────────────────────────────────
+    companies = sorted(CARD_COMPANIES.values())
+    lines.append(
+        "INSERT INTO card_company (card_company_id, company_code, company_name, is_active) VALUES"
+    )
+    lines.append(",\n".join(
+        f"    ({cid}, {sql_value(code)}, {sql_value(name)}, 'Y')"
+        for cid, code, name, _ in companies
+    ) + ";")
+    lines.append("")
+    lines.append(
+        "INSERT INTO card_bin (card_company_id, bin_prefix, bin_length, is_active) VALUES"
+    )
+    lines.append(",\n".join(
+        f"    ({cid}, {sql_value(prefix)}, {len(prefix)}, 'Y')"
+        for cid, _, _, prefix in companies
+    ) + ";")
+    lines.append("")
+
     # ── 카드 ────────────────────────────────────────────────
     card_ids: Dict[str, int] = {}
     rows = []
     for index, card in enumerate(cards, start=1):
+        company = CARD_COMPANIES.get(card["issuer"])
+        if company is None:
+            warnings.append(f"카드사 매칭 실패: {card['issuer']} ({card['card_name']})")
+            continue
         card_ids[card["card_name"]] = index
         info = card["data"].get("card") or {}
         card_type = info.get("card_type") or "CREDIT"
         rows.append(
-            f"    ({index}, {sql_value(card['card_name'])}, {sql_value(card['issuer'])}, "
+            f"    ({index}, {company[0]}, {sql_value(card['card_name'])}, "
             f"{sql_value(card_type)}, {representative_fee(card)}, NULL, NULL, 'Y')"
         )
     lines.append(
-        "INSERT INTO card (card_id, card_name, issuer, card_type, annual_fee,"
+        "INSERT INTO card (card_id, card_company_id, card_name, card_type, annual_fee,"
         " image_url, description, is_active) VALUES"
     )
     lines.append(",\n".join(rows) + ";")
