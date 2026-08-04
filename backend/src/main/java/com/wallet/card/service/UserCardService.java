@@ -1,5 +1,7 @@
 package com.wallet.card.service;
 
+import java.util.List;
+
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.dao.DuplicateKeyException;
@@ -10,7 +12,10 @@ import com.wallet.card.domain.Card;
 import com.wallet.card.domain.CardBin;
 import com.wallet.card.domain.CardStatus;
 import com.wallet.card.domain.UserCard;
+import com.wallet.card.domain.UserCardListResult;
 import com.wallet.card.domain.UserCardRegistrationResult;
+import com.wallet.card.dto.UserCardListItemResponse;
+import com.wallet.card.dto.UserCardListResponse;
 import com.wallet.card.dto.UserCardRegisterRequest;
 import com.wallet.card.dto.UserCardRegisterResponse;
 import com.wallet.card.mapper.CardMapper;
@@ -62,6 +67,19 @@ public class UserCardService {
         }
 
         return toResponse(result);
+    }
+
+    // 로그인 회원이 보유한 활성 카드 목록을 조회한다.
+    @Transactional(readOnly = true)
+    public UserCardListResponse getUserCards(Long memberId) {
+        List<UserCardListResult> results =
+            userCardMapper.findActiveUserCardsByMemberId(memberId);
+
+        List<UserCardListItemResponse> userCards = results.stream()
+            .map(this::toListItemResponse)
+            .toList();
+
+        return UserCardListResponse.from(userCards);
     }
 
     private Card findSelectedCard(Long cardId) {
@@ -140,6 +158,22 @@ public class UserCardService {
             result.getMaskedCardNumber(),
             result.getImageUrl(),
             result.getRepresentative()
+        );
+    }
+
+    private UserCardListItemResponse toListItemResponse(
+        UserCardListResult result
+    ) {
+        return new UserCardListItemResponse(
+            result.getUserCardId(),
+            result.getCardId(),
+            result.getCardName(),
+            result.getIssuerName(),
+            result.getCardType(),
+            result.getMaskedCardNumber(),
+            result.getImageUrl(),
+            result.getRepresentative(),
+            result.getRegisteredAt()
         );
     }
 }
