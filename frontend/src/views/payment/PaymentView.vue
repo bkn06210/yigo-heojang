@@ -183,6 +183,21 @@ onUnmounted(()=>{
 </section>
 
 
+<!-- 부채꼴 액션 버튼 -->
+<section class="fan-actions">
+  <button class="fan-btn btn-refresh" @click="refreshQR" title="새로고침">
+    새로고침
+  </button>
+
+  <button class="fan-btn btn-primary" @click="payment">
+    결제하기
+  </button>
+
+  <button class="fan-btn btn-cancel" @click="cancelPayment" title="취소">
+    취소
+  </button>
+</section>
+
 <PaymentQR />
 
 
@@ -403,6 +418,85 @@ main {
   background: var(--color-surface);
   color: var(--color-text-primary);
 
+}
+
+/* 부채꼴 액션 버튼 */
+.fan-actions {
+  position: relative;
+  width: 100%;
+  height: 280px;
+  margin: var(--space-2xl) 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.fan-btn {
+  position: absolute;
+  bottom: 0;
+  width: 80px;
+  height: 80px;
+  border: none;
+  border-radius: 50%;
+  font-size: var(--font-xs);
+  font-weight: var(--font-bold);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+/* 중앙: 결제하기 (주요 버튼) */
+.btn-primary {
+  width: 100px;
+  height: 100px;
+  background: linear-gradient(135deg, #FFD60A, #FFC300);
+  color: #000;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
+  box-shadow: 0 12px 32px rgba(255, 195, 0, 0.35);
+}
+
+.btn-primary:hover {
+  transform: translateX(-50%) scale(1.1);
+  box-shadow: 0 16px 40px rgba(255, 195, 0, 0.45);
+}
+
+.btn-primary:active {
+  transform: translateX(-50%) scale(0.95);
+}
+
+/* 왼쪽: 새로고침 */
+.btn-refresh {
+  background: linear-gradient(135deg, rgba(var(--color-primary-dark-rgb), 0.9) 0%, rgba(var(--color-primary-dark-rgb), 0.7) 100%);
+  color: white;
+  left: 10%;
+  bottom: 40px;
+  z-index: 90;
+  transform: translateX(-50%);
+}
+
+.btn-refresh:hover {
+  transform: translateX(-50%) scale(1.05);
+}
+
+/* 오른쪽: 취소 */
+.btn-cancel {
+  background: linear-gradient(135deg, rgba(var(--color-text-secondary-rgb), 0.8) 0%, rgba(var(--color-text-secondary-rgb), 0.6) 100%);
+  color: white;
+  right: 10%;
+  bottom: 40px;
+  z-index: 90;
+  transform: translateX(50%);
+  left: auto;
+}
+
+.btn-cancel:hover {
+  transform: translateX(50%) scale(1.05);
 }
 
 </style>
