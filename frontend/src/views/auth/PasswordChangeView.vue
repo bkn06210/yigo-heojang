@@ -192,7 +192,7 @@ font-size:12px;
 color:#888;
 margin-top:8px;
 
-}
+} 
 
 
 .guide.invalid {

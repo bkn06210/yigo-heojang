@@ -140,7 +140,7 @@ const handleWithdrawal = () => {
   font-size: 0.95rem;
   font-weight: 600;
   color: #333;
-  margin-bottom: 12px;
+  margin-bottom: 12px; 
 }
 
 .reason-list {

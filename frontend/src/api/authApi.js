@@ -25,3 +25,36 @@ export const login = (loginData) => {
   )
 
 }
+
+// 회원가입 이메일 인증 코드 요청
+// POST /api/auth/signup/email-verifications
+// 전달 데이터: email
+export const sendSignupEmailVerification = (email) => {
+
+  return api.post(
+    '/api/auth/signup/email-verifications',
+    {
+      email
+    }
+  )
+
+}
+
+
+// 회원가입 이메일 인증 코드 검증
+// POST /api/auth/signup/email-verifications/verify
+// 전달 데이터: email, verificationCode
+export const verifySignupEmailVerification = (
+  email,
+  verificationCode
+) => {
+
+  return api.post(
+    '/api/auth/signup/email-verifications/verify',
+    {
+      email,
+      verificationCode
+    }
+  )
+
+}
