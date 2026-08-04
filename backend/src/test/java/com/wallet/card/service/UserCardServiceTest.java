@@ -7,6 +7,9 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,7 +19,10 @@ import com.wallet.card.domain.Card;
 import com.wallet.card.domain.CardBin;
 import com.wallet.card.domain.CardStatus;
 import com.wallet.card.domain.UserCard;
+import com.wallet.card.domain.UserCardListResult;
 import com.wallet.card.domain.UserCardRegistrationResult;
+import com.wallet.card.dto.UserCardListItemResponse;
+import com.wallet.card.dto.UserCardListResponse;
 import com.wallet.card.dto.UserCardRegisterRequest;
 import com.wallet.card.dto.UserCardRegisterResponse;
 import com.wallet.card.mapper.CardMapper;
@@ -571,5 +577,122 @@ class UserCardServiceTest {
 
         verify(userCardMapper)
             .findRegistrationResult(memberId, cardId);
+    }
+
+    @Test
+    @DisplayName("보유 카드 목록 조회 성공 - 활성 카드 목록과 전체 개수를 반환한다")
+    void getUserCards_success() {
+        // given
+        Long memberId = 1L;
+
+        LocalDateTime firstRegisteredAt =
+            LocalDateTime.of(2026, 8, 4, 15, 30);
+
+        LocalDateTime secondRegisteredAt =
+            LocalDateTime.of(2026, 8, 3, 11, 20);
+
+        UserCardListResult firstResult = new UserCardListResult(
+            50L,
+            10L,
+            "KB 국민 나라사랑카드",
+            "KB국민카드",
+            "CHECK",
+            "****-****-****-0006",
+            "https://example.com/kb.png",
+            true,
+            firstRegisteredAt
+        );
+
+        UserCardListResult secondResult = new UserCardListResult(
+            51L,
+            11L,
+            "신한카드 Mr.Life",
+            "신한카드",
+            "CREDIT",
+            "****-****-****-1234",
+            "https://example.com/shinhan.png",
+            false,
+            secondRegisteredAt
+        );
+
+        when(userCardMapper.findActiveUserCardsByMemberId(memberId))
+            .thenReturn(List.of(firstResult, secondResult));
+
+        // when
+        UserCardListResponse response =
+            userCardService.getUserCards(memberId);
+
+        // then
+        assertThat(response.totalCount()).isEqualTo(2);
+        assertThat(response.userCards()).hasSize(2);
+
+        UserCardListItemResponse firstCard =
+            response.userCards().get(0);
+
+        assertThat(firstCard.userCardId()).isEqualTo(50L);
+        assertThat(firstCard.cardId()).isEqualTo(10L);
+        assertThat(firstCard.cardName())
+            .isEqualTo("KB 국민 나라사랑카드");
+        assertThat(firstCard.issuerName()).isEqualTo("KB국민카드");
+        assertThat(firstCard.cardType()).isEqualTo("CHECK");
+        assertThat(firstCard.maskedCardNumber())
+            .isEqualTo("****-****-****-0006");
+        assertThat(firstCard.imageUrl())
+            .isEqualTo("https://example.com/kb.png");
+        assertThat(firstCard.representative()).isTrue();
+        assertThat(firstCard.registeredAt())
+            .isEqualTo(firstRegisteredAt);
+
+        UserCardListItemResponse secondCard =
+            response.userCards().get(1);
+
+        assertThat(secondCard.userCardId()).isEqualTo(51L);
+        assertThat(secondCard.cardName())
+            .isEqualTo("신한카드 Mr.Life");
+        assertThat(secondCard.representative()).isFalse();
+        assertThat(secondCard.registeredAt())
+            .isEqualTo(secondRegisteredAt);
+
+        verify(userCardMapper)
+            .findActiveUserCardsByMemberId(memberId);
+    }
+
+    @Test
+    @DisplayName("보유 카드 목록 조회 성공 - 보유 카드가 없으면 빈 목록과 0을 반환한다")
+    void getUserCards_success_emptyList() {
+        // given
+        Long memberId = 1L;
+
+        when(userCardMapper.findActiveUserCardsByMemberId(memberId))
+            .thenReturn(List.of());
+
+        // when
+        UserCardListResponse response =
+            userCardService.getUserCards(memberId);
+
+        // then
+        assertThat(response.userCards()).isEmpty();
+        assertThat(response.totalCount()).isZero();
+
+        verify(userCardMapper)
+            .findActiveUserCardsByMemberId(memberId);
+    }
+
+    @Test
+    @DisplayName("보유 카드 목록 조회 시 로그인 회원 ID를 Mapper에 전달한다")
+    void getUserCards_passAuthenticatedMemberId() {
+        // given
+        Long authenticatedMemberId = 25L;
+
+        when(userCardMapper.findActiveUserCardsByMemberId(
+            authenticatedMemberId
+        )).thenReturn(List.of());
+
+        // when
+        userCardService.getUserCards(authenticatedMemberId);
+
+        // then
+        verify(userCardMapper)
+            .findActiveUserCardsByMemberId(authenticatedMemberId);
     }
 }
