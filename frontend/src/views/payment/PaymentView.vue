@@ -162,14 +162,29 @@ onUnmounted(()=>{
 
   <!-- 배경: 부채꼴 액션 버튼 -->
   <section class="fan-actions">
-    <button class="fan-btn btn-refresh" @click="refreshQR" title="새로고침">
-      새로고침
-    </button>
+    <!-- 중앙: 결제하기 -->
     <button class="fan-btn btn-primary" @click="payment">
       결제하기
     </button>
-    <button class="fan-btn btn-cancel" @click="cancelPayment" title="취소">
-      취소
+
+    <!-- 왼쪽 위 -->
+    <button class="fan-btn btn-secondary btn-1" @click="refreshQR" title="옵션1">
+      옵션1
+    </button>
+
+    <!-- 왼쪽 아래 -->
+    <button class="fan-btn btn-secondary btn-2" @click="cancelPayment" title="옵션2">
+      옵션2
+    </button>
+
+    <!-- 오른쪽 아래 -->
+    <button class="fan-btn btn-secondary btn-3" @click="refreshQR" title="옵션3">
+      옵션3
+    </button>
+
+    <!-- 오른쪽 위 -->
+    <button class="fan-btn btn-secondary btn-4" @click="cancelPayment" title="옵션4">
+      옵션4
     </button>
   </section>
 
@@ -394,16 +409,16 @@ main {
   width: 100%;
   height: 100%;
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   justify-content: center;
   z-index: 10;
 }
 
+/* 기본 부채꼴 버튼 */
 .fan-btn {
   position: absolute;
-  bottom: 0;
-  width: 80px;
-  height: 80px;
+  width: 70px;
+  height: 70px;
   border: none;
   border-radius: 50%;
   font-size: var(--font-xs);
@@ -413,7 +428,7 @@ main {
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
 }
 
 /* 중앙: 결제하기 (주요 버튼) */
@@ -422,45 +437,57 @@ main {
   height: 100px;
   background: linear-gradient(135deg, #FFD60A, #FFC300);
   color: #000;
-  left: 50%;
-  transform: translateX(-50%);
+  z-index: 100;
   box-shadow: 0 12px 32px rgba(255, 195, 0, 0.35);
 }
 
 .btn-primary:hover {
-  transform: translateX(-50%) scale(1.1);
+  transform: scale(1.1);
   box-shadow: 0 16px 40px rgba(255, 195, 0, 0.45);
 }
 
 .btn-primary:active {
-  transform: translateX(-50%) scale(0.95);
+  transform: scale(0.95);
 }
 
-/* 왼쪽: 새로고침 */
-.btn-refresh {
+/* 보조 버튼 기본 스타일 */
+.btn-secondary {
   background: linear-gradient(135deg, var(--color-primary-dark), rgba(var(--color-primary-dark-rgb), 0.7) 100%);
   color: white;
-  left: 15%;
-  bottom: 60px;
-  transform: translateX(-50%);
+  opacity: 0.9;
 }
 
-.btn-refresh:hover {
-  transform: translateX(-50%) scale(1.05);
+.btn-secondary:hover {
+  opacity: 1;
+  transform: scale(1.1);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.2);
 }
 
-/* 오른쪽: 취소 */
-.btn-cancel {
-  background: linear-gradient(135deg, var(--color-text-secondary), rgba(var(--color-text-secondary), 0.6) 100%);
-  color: white;
-  right: 15%;
-  bottom: 60px;
-  left: auto;
-  transform: translateX(50%);
+/* 부채꼴 배치: 원 위에 균등 배치 */
+/* 왼쪽 위 (-60도) */
+.btn-1 {
+  left: calc(50% - 130px);
+  top: calc(50% - 75px);
 }
 
-.btn-cancel:hover {
-  transform: translateX(50%) scale(1.05);
+/* 왼쪽 아래 (-30도) */
+.btn-2 {
+  left: calc(50% - 75px);
+  top: calc(50% + 90px);
+}
+
+/* 중앙 (0도) - 이미 위에서 정의됨 */
+
+/* 오른쪽 아래 (30도) */
+.btn-3 {
+  left: calc(50% + 75px);
+  top: calc(50% + 90px);
+}
+
+/* 오른쪽 위 (60도) */
+.btn-4 {
+  left: calc(50% + 130px);
+  top: calc(50% - 75px);
 }
 
 /* 위: QR 모달 섹션 */
