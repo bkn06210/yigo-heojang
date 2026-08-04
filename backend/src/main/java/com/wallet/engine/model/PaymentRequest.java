@@ -5,7 +5,7 @@ package com.wallet.engine.model;
  *
  * @param target          결제 지점(가맹점·카테고리). 장소 미정이면 {@link PaymentTarget#unspecified()}
  * @param paymentAmount   결제금액(원). 추천 흐름에서는 5천원 단위 구간 대표값
- * @param usedPointAmount 포인트 사용분. 현재 팀 합의상 항상 0이지만 계산식의 자리는 유지한다
+ * @param usedPointAmount 포인트 사용분. amount가 차감 후 값이라 항상 0이지만 계산식의 자리는 유지한다
  * @param paymentType     결제수단(CARD, SIMPLE_PAY 등). null이면 결제수단 조건이 걸린 혜택은 제외된다
  * @param amountEstimated 금액이 구간 대표값이면 true(추천), 확정 금액이면 false(정산 재계산)
  */

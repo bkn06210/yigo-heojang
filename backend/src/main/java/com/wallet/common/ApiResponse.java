@@ -2,7 +2,7 @@ package com.wallet.common;
 
 /**
  * 공통 API 응답 포맷 { success, data, message }.
- * 팀 통일 규약(CLAUDE.md): 프론트 분기 편의를 위해 상태코드 외에 body에도 성공 여부를 명시한다.
+ * 팀 통일 규약: 프론트 분기 편의를 위해 상태코드 외에 body에도 성공 여부를 명시한다.
  *
  * @param <T> data의 타입
  */
