@@ -3,6 +3,12 @@ package com.wallet.auth.domain;
 import java.time.LocalDateTime;
 
 public class RefreshToken {
+    public static final String REVOKE_REASON_LOGOUT = "LOGOUT";
+    public static final String REVOKE_REASON_REISSUED = "REISSUED";
+    public static final String REVOKE_REASON_PASSWORD_RESET = "PASSWORD_RESET";
+    public static final String REVOKE_REASON_PASSWORD_CHANGED = "PASSWORD_CHANGED";
+    public static final String REVOKE_REASON_MEMBER_WITHDRAWN = "MEMBER_WITHDRAWN";
+
     private Long refreshTokenId;
     private Long memberId;
     private String tokenHash;

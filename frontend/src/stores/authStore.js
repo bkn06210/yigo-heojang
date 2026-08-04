@@ -1,7 +1,8 @@
 // src/stores/authStore.js
 
-import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import { ref, computed } from 'vue';
+import { defineStore } from 'pinia';
+import { useRouter } from 'vue-router';
 
 
 export const useAuthStore = defineStore(

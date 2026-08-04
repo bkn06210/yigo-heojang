@@ -164,7 +164,7 @@ watch(
   border-radius: 28px;
 }
 
-.slider:before {
+.slider:before { 
   position: absolute;
   content: '';
   height: 22px;

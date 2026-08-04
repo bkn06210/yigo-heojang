@@ -149,7 +149,7 @@ watch(notifications, (newVal) => {
   position: absolute;
   content: "";
   height: 22px;
-  width: 22px;
+  width: 22px; 
   left: 3px;
   bottom: 3px;
   background-color: white;

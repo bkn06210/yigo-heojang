@@ -6,11 +6,6 @@ import lombok.Getter;
 
 @Getter
 public class SignupEmailVerification {
-    public static final String STATUS_PENDING = "PENDING";
-    public static final String STATUS_VERIFIED = "VERIFIED";
-    public static final String STATUS_USED = "USED";
-    public static final String STATUS_EXPIRED = "EXPIRED";
-
     private Long signupEmailVerificationId;
     private String email;
     private String verificationCodeHash;
@@ -32,7 +27,7 @@ public class SignupEmailVerification {
         SignupEmailVerification verification = new SignupEmailVerification();
         verification.email = email;
         verification.verificationCodeHash = verificationCodeHash;
-        verification.verificationStatus = STATUS_PENDING;
+        verification.verificationStatus = VerificationStatus.PENDING;
         verification.failedAttemptCount = 0;
         verification.verificationCodeExpiresAt = verificationCodeExpiresAt;
         return verification;

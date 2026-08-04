@@ -22,6 +22,17 @@ const goPasswordChange = () => {
 
 const joinedDate = '2026.07.16';
 
+// 보안 설정
+const appLock = ref(false);
+
+const autoLogin = ref(true);
+
+
+// 간편비밀번호 변경 이동
+const goPinChange = () => {
+  router.push('/settings/pin-change');
+};
+
 // 이름 마스킹
 const maskName = (name) => {
   if (!name) return '';
@@ -63,7 +74,7 @@ const navigateTo = (path) => {
 
     <!-- 상단 헤더 -->
     <PageHeader
-      title="계정 정보"
+      title="계정 및 보안"
       @back="goBack"
     />
 
@@ -136,31 +147,111 @@ const navigateTo = (path) => {
 
 
 
-      <!-- 계정 관리 -->
-      <div class="section-group">
+      <!-- 보안 설정 -->
+<div class="section-group">
+
+  <div class="section-title">
+    로그인 및 보안
+  </div>
 
 
-        <div class="menu-list">
+  <div class="menu-list">
 
 
-          <!-- 비밀번호 변경 -->
-          <div
-            class="menu-item"
-            @click="showPasswordVerify = true"
-          >
+    <!-- 앱 잠금 -->
+    <div class="menu-item">
 
-            <span class="menu-label">
-              비밀번호 변경
-            </span>
+      <span class="menu-label">
+        앱 잠금
+      </span>
 
 
-            <span class="chevron-icon">
-              ›
-            </span>
+      <!-- 앱 잠금 -->
+<button
+  class="toggle"
+  :class="{ active: appLock }"
+  @click="appLock = !appLock"
+>
+  <span></span>
+</button>
 
-          </div>
+    </div>
 
 
+
+    <!-- 자동 로그인 -->
+    <div class="menu-item">
+
+      <span class="menu-label">
+        자동 로그인
+      </span>
+
+
+      <!-- 자동 로그인 -->
+<button
+  class="toggle"
+  :class="{ active: autoLogin }"
+  @click="autoLogin = !autoLogin"
+>
+  <span></span>
+</button>
+
+    </div>
+
+
+
+    <!-- 비밀번호 변경 -->
+    <div
+      class="menu-item"
+      @click="showPasswordVerify = true"
+    >
+
+      <span class="menu-label">
+        비밀번호 변경
+      </span>
+
+
+      <span class="chevron-icon">
+        ›
+      </span>
+
+    </div>
+
+
+
+    <!-- 간편비밀번호 -->
+    <div
+      class="menu-item"
+      @click="goPinChange"
+    >
+
+      <span class="menu-label">
+        간편비밀번호 변경
+      </span>
+
+
+      <span class="chevron-icon">
+        ›
+      </span>
+
+    </div>
+
+
+  </div>
+
+</div>
+
+
+
+<!-- 계정 관리 -->
+<div class="section-group">
+
+  <div class="section-title">
+    계정 관리
+  </div>
+
+
+  <div class="menu-list">
 
 
           <!-- 회원 탈퇴 -->
@@ -207,6 +298,48 @@ const navigateTo = (path) => {
 </template>
 
 <style scoped>
+
+.toggle {
+  width: 48px;
+  height: 28px;
+
+  border: none;
+  border-radius: 20px;
+
+  background: #ddd;
+
+  padding: 3px;
+
+  display: flex;
+  align-items: center;
+
+  cursor: pointer;
+
+  transition: 0.2s;
+}
+
+
+.toggle span {
+  width: 22px;
+  height: 22px;
+
+  background: white;
+
+  border-radius: 50%;
+
+  transition: 0.2s;
+}
+
+
+.toggle.active {
+  background: #4f46e5;
+}
+
+
+.toggle.active span {
+  transform: translateX(20px);
+}
+
 .account-info-view {
   display: flex;
   flex-direction: column;

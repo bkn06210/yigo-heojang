@@ -19,4 +19,9 @@ public interface MemberMapper {
         @Param("memberId") Long memberId,
         @Param("nickname") String nickname
     );
+
+    int updatePassword(
+        @Param("memberId") Long memberId,
+        @Param("encodedPassword") String encodedPassword
+    );
 }

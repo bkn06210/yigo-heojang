@@ -150,7 +150,7 @@ const goSignup = () => {
   </div>
 </template>
 
-
+ 
 <style scoped>
 
 .terms {
