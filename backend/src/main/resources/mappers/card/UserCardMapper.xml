@@ -29,6 +29,21 @@
         </constructor>
     </resultMap>
 
+    <resultMap id="userCardListResultMap"
+               type="com.wallet.card.domain.UserCardListResult">
+        <constructor>
+            <idArg column="userCardId" javaType="Long"/>
+            <arg column="cardId" javaType="Long"/>
+            <arg column="cardName" javaType="String"/>
+            <arg column="issuerName" javaType="String"/>
+            <arg column="cardType" javaType="String"/>
+            <arg column="maskedCardNumber" javaType="String"/>
+            <arg column="imageUrl" javaType="String"/>
+            <arg column="representative" javaType="Boolean"/>
+            <arg column="registeredAt" javaType="java.time.LocalDateTime"/>
+        </constructor>
+    </resultMap>
+
     <select id="findByMemberIdAndCardId"
             resultMap="userCardResultMap">
         SELECT
@@ -86,6 +101,30 @@
           AND c.is_active = 'Y'
           AND cc.is_active = 'Y'
             LIMIT 1
+    </select>
+
+    <select id="findActiveUserCardsByMemberId"
+            resultMap="userCardListResultMap">
+        SELECT
+            uc.user_card_id AS userCardId,
+            uc.card_id AS cardId,
+            c.card_name AS cardName,
+            cc.company_name AS issuerName,
+            c.card_type AS cardType,
+            uc.masked_card_number AS maskedCardNumber,
+            c.image_url AS imageUrl,
+            uc.is_representative AS representative,
+            uc.registered_at AS registeredAt
+        FROM user_card uc
+        INNER JOIN card c ON c.card_id = uc.card_id
+        INNER JOIN card_company cc ON cc.card_company_id = c.card_company_id
+        WHERE uc.member_id = #{memberId}
+          AND uc.card_status = 'ACTIVE'
+          AND c.is_active = 'Y'
+          AND cc.is_active = 'Y'
+        ORDER BY
+            uc.registered_at DESC,
+            uc.user_card_id DESC
     </select>
 
 </mapper>
