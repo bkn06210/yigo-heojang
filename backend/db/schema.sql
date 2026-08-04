@@ -62,6 +62,7 @@ DROP TABLE IF EXISTS member_term_agreement;
 DROP TABLE IF EXISTS term_version;
 DROP TABLE IF EXISTS term;
 DROP TABLE IF EXISTS refresh_token;
+DROP TABLE IF EXISTS signup_email_verification;
 DROP TABLE IF EXISTS password_reset_verification;
 DROP TABLE IF EXISTS member_withdrawal;
 DROP TABLE IF EXISTS member;

@@ -2,11 +2,13 @@ package com.wallet.card.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Component;
 
 import com.wallet.card.domain.UserCard;
 import com.wallet.card.domain.UserCardRegistrationResult;
 
 @Mapper
+@Component("cardUserCardMapper") // 빈 이름 충돌 회피용. 다른 UserCardMapper(com.wallet.engine.dao)와 이름이 겹쳐서 임시로 추가함
 public interface UserCardMapper {
     /**
      * 회원과 카드 상품 기준으로 기존 보유 카드 행을 조회한다.

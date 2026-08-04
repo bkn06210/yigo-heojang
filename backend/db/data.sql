@@ -136,14 +136,14 @@ INSERT INTO card_company (
 ) VALUES
     (1, 'KB_CARD', 'KB국민카드', 'Y'),
     (2, 'SHINHAN_CARD', '신한카드', 'Y'),
-    (3, 'SAMSUNG_CARD', '삼성카드', 'Y'),
+    (3, 'SAMSUNG_CARD', '삼성카드', 'Y');
 
 INSERT INTO card_bin (
     card_company_id, bin_prefix, bin_length, is_active
 ) VALUES
     (1, '222879', 6, 'Y'),
     (2, '356078', 6, 'Y'),
-    (3, '376293', 6, 'Y'),
+    (3, '376293', 6, 'Y');
 
 
 INSERT INTO card (
