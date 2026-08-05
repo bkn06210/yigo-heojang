@@ -17,7 +17,7 @@ import org.springframework.dao.DuplicateKeyException;
 
 import com.wallet.card.domain.Card;
 import com.wallet.card.domain.CardBin;
-import com.wallet.card.domain.CardStatus;
+import com.wallet.card.domain.UserCardStatus;
 import com.wallet.card.domain.UserCard;
 import com.wallet.card.domain.UserCardListResult;
 import com.wallet.card.domain.UserCardRegistrationResult;
@@ -151,7 +151,7 @@ class UserCardServiceTest {
             cardId,
             "****-****-****-1111",
             false,
-            CardStatus.DELETED
+            UserCardStatus.DELETED
         );
 
         UserCardRegistrationResult result =
@@ -370,7 +370,7 @@ class UserCardServiceTest {
             cardId,
             "****-****-****-0006",
             false,
-            CardStatus.ACTIVE
+            UserCardStatus.ACTIVE
         );
 
         when(cardMapper.findActiveById(cardId))
@@ -491,7 +491,7 @@ class UserCardServiceTest {
             cardId,
             "****-****-****-1111",
             false,
-            CardStatus.DELETED
+            UserCardStatus.DELETED
         );
 
         when(cardMapper.findActiveById(cardId))

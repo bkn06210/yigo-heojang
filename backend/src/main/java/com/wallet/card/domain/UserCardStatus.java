@@ -1,6 +1,6 @@
 package com.wallet.card.domain;
 
-public enum CardStatus {
+public enum UserCardStatus {
     ACTIVE,
     DELETED
 }

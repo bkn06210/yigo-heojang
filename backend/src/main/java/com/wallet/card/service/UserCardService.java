@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.wallet.card.domain.Card;
 import com.wallet.card.domain.CardBin;
-import com.wallet.card.domain.CardStatus;
+import com.wallet.card.domain.UserCardStatus;
 import com.wallet.card.domain.UserCard;
 import com.wallet.card.domain.UserCardListResult;
 import com.wallet.card.domain.UserCardRegistrationResult;
@@ -122,11 +122,11 @@ public class UserCardService {
         UserCard existingUserCard,
         String maskedCardNumber
     ) {
-        if ((existingUserCard.getCardStatus()) == CardStatus.ACTIVE) {
+        if ((existingUserCard.getStatus()) == UserCardStatus.ACTIVE) {
             throw new BusinessException(ErrorCode.USER_CARD_ALREADY_EXISTS);
         }
 
-        if (existingUserCard.getCardStatus() == CardStatus.DELETED) {
+        if (existingUserCard.getStatus() == UserCardStatus.DELETED) {
             reactivateUserCard(memberId, existingUserCard, maskedCardNumber);
             return;
         }
