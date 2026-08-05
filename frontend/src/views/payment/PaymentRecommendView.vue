@@ -92,7 +92,6 @@ const isQuickPay = ref(false);
 const showAllCards = ref(false);
 
 // 비밀번호 모달
-const showPasswordModal = ref(false);
 const isPasswordModalAnimating = ref(false);
 
 // QR 모달
@@ -139,6 +138,11 @@ const isLoading = ref(false);
 
 // 추천받기 전에는 결과 숨김
 const isRecommended = ref(false);
+
+
+
+// 비밀번호 모달
+const showPasswordModal = ref(false);
 
 
 // 추천 상세 바텀시트
@@ -562,21 +566,6 @@ const refreshPayment = async () => {
 
 
 
-      <!-- 바로 결제 전환 -->
-
-      <button
-
-        v-if="!isQuickPay"
-        type="button"
-        class="quick-pay-toggle"
-
-        @click="openQuickPay"
-
-      >
-
-        바로 결제하기
-
-      </button>
 
 
 
@@ -806,21 +795,6 @@ const refreshPayment = async () => {
 
 
 
-  <!-- 비밀번호 인증 -->
-
-  <PaymentPasswordModal
-
-
-    :visible="showPasswordModal"
-
-
-    @success="onPasswordSuccess"
-
-
-    @close="showPasswordModal = false"
-
-
-  />
 
 
 
@@ -950,14 +924,6 @@ const refreshPayment = async () => {
 
   />
 
-  <!-- 비밀번호 모달 -->
-  <PaymentPasswordModal
-    :visible="showPasswordModal"
-    :animating="isPasswordModalAnimating"
-    @success="onPasswordSuccess"
-    @close="showPasswordModal = false"
-  />
-
   <!-- QR 모달 -->
   <div v-if="showQRModal" class="qr-overlay" :class="{ animating: isQRModalAnimating }">
     <div class="qr-modal">
@@ -1029,7 +995,7 @@ main {
 
   padding: 20px;
 
-  margin-bottom: 18px;
+  margin-bottom: var(--space-lg);
 
   box-shadow: var(--shadow-card);
 
@@ -1221,7 +1187,7 @@ main {
 
 .quick-card-carousel {
 
-  padding-bottom: var(--space-xl);
+  padding-bottom: calc(var(--space-xl) * 2);
 
 }
 
@@ -1314,8 +1280,7 @@ main {
 
   height: 54px;
 
-
-  margin-top: 8px;
+  margin-bottom: var(--space-lg);
 
 
   border: none;

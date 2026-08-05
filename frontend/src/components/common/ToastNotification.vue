@@ -72,7 +72,7 @@ onMounted(() => {
 <style scoped>
 .toast {
   position: fixed;
-  bottom: 24px;
+  bottom: 94px;
   left: 50%;
   transform: translateX(-50%);
   max-width: 400px;

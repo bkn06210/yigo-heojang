@@ -238,7 +238,7 @@ const addMockData = () => {
 
 onMounted(async () => {
   await loadHome();
-  addMockData();
+  // addMockData();
 });
 </script>
 
@@ -507,7 +507,13 @@ onMounted(async () => {
 
   box-sizing: border-box;
 
-  overflow: hidden visible;
+  width: 100%;
+
+  max-width: 480px;
+
+  margin: 0 auto;
+
+  overflow: visible;
 }
 
 /* 콘텐츠 영역 */
@@ -517,11 +523,19 @@ onMounted(async () => {
   flex-direction: column;
 
   gap: var(--space-xl);
+
+  width: 100%;
+
+  max-width: 100%;
+
+  box-sizing: border-box;
 }
 
 /* 각 섹션 */
 .home-section {
   width: 100%;
+
+  box-sizing: border-box;
 }
 
 /* 섹션 제목 */
@@ -571,6 +585,12 @@ onMounted(async () => {
   gap: var(--space-md);
 
   grid-auto-rows: 1fr;
+
+  width: 100%;
+
+  max-width: 100%;
+
+  box-sizing: border-box;
 }
 
 .home-grid .home-section {
@@ -596,5 +616,11 @@ onMounted(async () => {
   flex-direction: column;
 
   justify-content: flex-start;
+}
+
+:deep(.empty-card button:first-child) {
+  background: var(--color-primary);
+
+  color: var(--color-btn-primary-text);
 }
 </style>

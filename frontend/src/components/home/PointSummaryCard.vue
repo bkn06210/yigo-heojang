@@ -63,7 +63,7 @@ const emit = defineEmits(['click-more', 'click-item'])
 
 .point-header {
   display: flex;
-  justify-content: flex-end;
+  justify-content: flex-start;
   align-items: center;
   margin-bottom: var(--space-sm);
 }

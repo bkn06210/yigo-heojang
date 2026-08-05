@@ -17,11 +17,8 @@ const props = defineProps({
 
 
 const emit = defineEmits([
-
   'success',
-
   'close'
-
 ]);
 
 
@@ -64,7 +61,7 @@ const inputNumber = (number) => {
 
       password.value = '';
 
-      emit('success');
+      emit('on-password-success');
 
     }, 200);
 
@@ -91,13 +88,8 @@ const closeModal = () => {
 </script>
 
 <template>
-
-  <div
-    v-if="visible"
-    class="overlay"
-  >
-
-    <div class="modal">
+  <div class="overlay" @click="closeModal">
+    <div class="modal" @click.stop>
 
       <h2>
 
@@ -182,39 +174,51 @@ const closeModal = () => {
 <style scoped>
 
 .overlay{
-
-  position:fixed;
-
-  inset:0;
-
-  background:rgba(0,0,0,.45);
-
   display:flex;
-
   justify-content:center;
-
   align-items:center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1000;
+  animation: overlay-fade-in 0.3s ease-out;
+}
 
-  z-index:9999;
-
+@keyframes overlay-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 .modal{
-
-  width:340px;
-
+  width:300px;
   padding: var(--space-xl);
-
   border-radius: var(--radius-xl);
-
   text-align:center;
-
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.85) 0%, var(--color-surface) 60%);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, var(--color-surface) 60%);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
+  animation: modal-emerge 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
 
+@keyframes modal-emerge {
+  from {
+    opacity: 0;
+    transform: scale(0.85) translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
 }
 
 [data-theme="dark"] .modal{

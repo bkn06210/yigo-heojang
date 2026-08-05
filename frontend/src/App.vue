@@ -35,13 +35,11 @@ const { toast, closeToast } = useToast();
 
 .page-transition-wrapper {
   position: relative;
-  /* 세로도 잘라야 함: 나가는 페이지(leave)가 들어오는 페이지보다 길면(예: 홈)
-     그 초과분이 그대로 스크롤 영역에 잡혔다가 언마운트되는 순간 스크롤바가
-     훅 사라지며 반짝이는 문제가 있었음. 래퍼 높이는 어차피 정상 흐름에 남아있는
-     들어오는 페이지 기준으로 정해지므로, 여기서 잘라도 들어오는 페이지 자체가
-     길어서 필요한 스크롤(html 레벨)에는 영향 없음 */
   overflow: hidden;
   min-height: 100vh;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 /* 나가는 페이지만 absolute로 띄워서 위에 얹고, 들어오는 페이지는 정상 흐름을

@@ -73,7 +73,7 @@ const routes = [
 
   // Payment
   { path: '/payment', name: 'Payment', component: PaymentView },
-  { path: '/payment/recommend', component: PaymentRecommendView },
+  { path: '/payment/recommend', name: 'PaymentRecommend', component: PaymentRecommendView },
 
   // Transaction
   { path: '/transactions', component: TransactionListView },

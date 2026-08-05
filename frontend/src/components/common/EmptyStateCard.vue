@@ -127,11 +127,11 @@ const emit = defineEmits([
 
   border-radius: var(--radius-lg);
 
-  background: var(--color-surface);
+  background: #FFFFFF;
 
-  border: 1px solid var(--color-border);
+  border: 1px solid #D6DADC;
 
-  box-shadow: var(--shadow-md);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
 
   display:flex;
 

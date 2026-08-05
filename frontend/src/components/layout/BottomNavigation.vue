@@ -14,7 +14,7 @@
     </RouterLink>
 
 
-    <RouterLink to="/payment/recommend" class="nav-link">
+    <RouterLink to="/payment" class="nav-link">
       <Icon name="payment" size="md" />
       <span>결제</span>
     </RouterLink>

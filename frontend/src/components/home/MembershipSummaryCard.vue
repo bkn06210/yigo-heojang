@@ -44,7 +44,7 @@ const emit = defineEmits(['click-more', 'click-item'])
 
 .membership-header {
   display: flex;
-  justify-content: flex-end;
+  justify-content: flex-start;
   margin-bottom: var(--space-sm);
 }
 
@@ -67,7 +67,7 @@ const emit = defineEmits(['click-more', 'click-item'])
   flex-direction: column;
   gap: var(--space-xs);
   width: 100%;
-  justify-content: center;
+  justify-content: flex-start;
 }
 
 .membership-item {
