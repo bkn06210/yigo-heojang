@@ -179,6 +179,17 @@ const emit = defineEmits([
 
       </p>
 
+      <!-- PR #25 연동: 카드 현황 API가 계산한 이번 달 실적을 기존 카드 정보 영역에 표시한다. -->
+      <p v-if="props.card.targetAmount">
+        이번 달 실적 {{ Number(props.card.currentAmount || 0).toLocaleString() }}원 /
+        {{ Number(props.card.targetAmount).toLocaleString() }}원
+      </p>
+
+      <!-- PR #25 연동: 실적 조건이 없는 카드는 달성률 대신 별도 문구를 표시한다. -->
+      <p>
+        {{ props.card.achievementRate == null ? '실적 조건 없음' : `달성률 ${props.card.achievementRate}%` }}
+      </p>
+
 
 
     </div>
@@ -373,3 +384,4 @@ const emit = defineEmits([
 }
 
 </style>
+<!-- 07_25 연동 변경: 홈 카드 요약을 실제 보유카드 API 응답으로 표시한다. -->

@@ -194,6 +194,17 @@ v-for="method in point.usageMethods"
 
 
 
+<section class="info-section">
+  <h3>포인트 이용내역</h3>
+  <ul v-if="point.histories?.length">
+    <li v-for="history in point.histories" :key="history.pointHistoryId">
+      {{ history.content || history.providerName }}
+      {{ history.pointType === 'USE' ? '-' : '+' }}{{ Number(history.pointAmount || 0).toLocaleString() }}P
+    </li>
+  </ul>
+  <p v-else>포인트 이용내역이 없습니다.</p>
+</section>
+
 <!-- 포인트 안내 -->
 
 
@@ -415,3 +426,4 @@ margin: 8px 0;
 
 
 </style>
+<!-- 07_25 연동 변경: 금융포인트 상세 API 응답을 바텀시트에 표시한다. -->

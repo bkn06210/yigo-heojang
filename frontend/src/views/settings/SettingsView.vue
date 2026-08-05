@@ -1,7 +1,9 @@
 <script setup>
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { storeToRefs } from 'pinia';
+import { logout as logoutApi } from '@/api/authApi';
+import { getMyInfo, updateMyInfo } from '@/api/memberApi';
 
 import { useAuthStore } from '@/stores/authStore';
 
@@ -91,27 +93,42 @@ const closeProfileEdit = () => {
 
 
 // 프로필 저장
-const updateProfile = (updatedUser) => {
-
-  // TODO : 실제 API 연결 시 수정 API 호출
-
-  authStore.updateUser(updatedUser);
-
-
-  closeProfileEdit();
-
+const updateProfile = async (updatedUser) => {
+  try {
+    const member = await updateMyInfo(updatedUser.nickname);
+    authStore.updateUser({
+      ...member,
+      profileImageUrl: updatedUser.profileImageUrl,
+    });
+    closeProfileEdit();
+  } catch (error) {
+    alert(error.response?.data?.message || '프로필 수정에 실패했습니다.');
+  }
 };
+
+const loadMyInfo = async () => {
+  if (!authStore.isLogin()) return;
+  try {
+    authStore.updateUser(await getMyInfo());
+  } catch (error) {
+    console.error('회원정보 조회 실패:', error);
+  }
+};
+
+onMounted(loadMyInfo);
 
 
 
 // 로그아웃
-const logout = () => {
-
-  authStore.logout();
-
-
-  router.push('/');
-
+const logout = async () => {
+  try {
+    await logoutApi();
+  } catch (error) {
+    console.log('로그아웃 API 실패:', error);
+  } finally {
+    authStore.logout();
+    router.push('/auth/login');
+  }
 };
 
 </script>
@@ -783,3 +800,4 @@ const logout = () => {
 
 
 </style>
+<!-- 07_25 연동 변경: 설정 화면의 회원 정보와 인증 동작을 실제 API에 연결한다. -->

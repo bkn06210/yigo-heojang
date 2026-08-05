@@ -1,6 +1,9 @@
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { getMembershipProviders, registerMembership } from '@/api/walletApi'
+import { getPartnerUsagePlaces } from '@/utils/partnerUsagePlaces'
+import { getPartnerLogo } from '@/utils/partnerLogos'
 
 
 const router = useRouter()
@@ -20,35 +23,24 @@ const selectedMembership = ref(null)
 
 // 임시 멤버십 데이터
 // 추후 API 응답 데이터로 교체 예정
-const membershipList = ref([
-  {
-    id: 1,
-    name: 'CJ ONE',
-    mainUses: [
-      '뚜레쥬르',
-      '올리브영',
-      'CGV'
-    ]
-  },
-  {
-    id: 2,
-    name: '해피포인트',
-    mainUses: [
-      '파리바게뜨',
-      '던킨',
-      '배스킨라빈스'
-    ]
-  },
-  {
-    id: 3,
-    name: 'KT 멤버십',
-    mainUses: [
-      '편의점',
-      '영화관',
-      '카페'
-    ]
+const membershipList = ref([])
+const errorMessage = ref('')
+
+const loadProviders = async () => {
+  try {
+    const data = await getMembershipProviders()
+    membershipList.value = (data?.providers || data || [])
+      .filter((provider) => !provider.isRegistered)
+      .map((provider) => ({
+        id: Number(provider.pointProviderId),
+        name: provider.providerName,
+        logo: getPartnerLogo(provider.providerName, provider.logoImageUrl),
+        mainUses: getPartnerUsagePlaces(provider.providerName).slice(0, 3).map((place) => place.placeName),
+      }))
+  } catch (error) {
+    errorMessage.value = error?.response?.data?.message || error?.message || '제휴 멤버십을 불러오지 못했습니다.'
   }
-])
+}
 
 
 // 검색 결과
@@ -93,12 +85,15 @@ const popularMemberships = computed(() => {
 
 
 // 멤버십 추가 클릭
-const addMembership = (membership) => {
-
-  selectedMembership.value = membership
-
-  showModal.value = true
-
+const addMembership = async (membership) => {
+  try {
+    await registerMembership(membership.id)
+    selectedMembership.value = membership
+    showModal.value = true
+    membershipList.value = membershipList.value.filter((item) => item.id !== membership.id)
+  } catch (error) {
+    errorMessage.value = error?.response?.data?.message || error?.message || '멤버십 추가에 실패했습니다.'
+  }
 }
 
 
@@ -142,6 +137,8 @@ const selectSuggestion = (membership) => {
 
 }
 
+onMounted(loadProviders)
+
 </script>
 
 
@@ -161,6 +158,8 @@ const selectSuggestion = (membership) => {
     <p class="description">
       자주 사용하는 멤버십을 추가해보세요
     </p>
+
+    <p v-if="errorMessage" class="description">{{ errorMessage }}</p>
 
 
 
@@ -223,8 +222,14 @@ const selectSuggestion = (membership) => {
         class="membership-item"
       >
 
-        <span>
-          {{ membership.name }}
+        <span class="membership-label">
+          <img
+            v-if="membership.logo"
+            :src="membership.logo"
+            :alt="`${membership.name} 로고`"
+            class="membership-logo"
+          />
+          <span>{{ membership.name }}</span>
         </span>
 
 
@@ -379,6 +384,22 @@ h2 {
 
 }
 
+.membership-label {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.membership-logo {
+  width: 44px;
+  height: 44px;
+  flex: 0 0 44px;
+  border-radius: 12px;
+  object-fit: contain;
+  background: #fff;
+}
+
 
 
 button {
@@ -523,3 +544,4 @@ button {
 }
 
 </style>
+<!-- 07_25 연동 변경: 제휴 멤버십 목록 조회와 멤버십 추가 API를 연결한다. -->

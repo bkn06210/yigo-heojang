@@ -1,5 +1,7 @@
 <script setup>
 import { ref, watch } from 'vue'
+import { useRouter } from 'vue-router'
+import { resetPassword } from '@/api/authApi'
 
 
 import AppButton from '@/components/common/AppButton.vue'
@@ -17,6 +19,10 @@ const passwordValid = ref(true)
 
 // 확인 오류
 const passwordConfirmError = ref('')
+const submitError = ref('')
+const loading = ref(false)
+const router = useRouter()
+const passwordResetToken = window.history.state?.passwordResetToken || ''
 
 
 
@@ -81,17 +87,39 @@ watch(passwordConfirm, () => {
 
 
 // 변경 버튼
-const changePassword = () => {
+const changePassword = async () => {
+
+  submitError.value = ''
+
+  if (!password.value || !passwordConfirm.value) {
+    submitError.value = '새 비밀번호와 비밀번호 확인을 입력해주세요.'
+    return
+  }
 
   if (!passwordValid.value ||
       passwordConfirmError.value) {
 
+    submitError.value = '비밀번호 입력값을 확인해주세요.'
     return
 
   }
 
 
-  console.log('비밀번호 변경 API 연결 예정')
+  if (!passwordResetToken) {
+    submitError.value = '비밀번호 인증 정보가 없습니다. 로그인 화면에서 다시 인증해주세요.'
+    return
+  }
+
+  loading.value = true
+  try {
+    await resetPassword(passwordResetToken, password.value)
+    alert('비밀번호가 변경되었습니다. 새 비밀번호로 로그인해주세요.')
+    router.replace('/auth/login')
+  } catch (error) {
+    submitError.value = error?.response?.data?.message || error?.message || '비밀번호 변경에 실패했습니다.'
+  } finally {
+    loading.value = false
+  }
 
 }
 
@@ -145,10 +173,12 @@ const changePassword = () => {
 {{ passwordConfirmError }}
 </p>
 
+<p v-if="submitError" class="error">{{ submitError }}</p>
+
 
 
 <AppButton
- text="확인"
+ :text="loading ? '변경 중...' : '확인'"
  @click="changePassword"
 />
 
@@ -211,3 +241,4 @@ color:#ef4444;
 
 
 </style>
+<!-- 07_25 연동 변경: 비밀번호 재설정 인증·변경 API 흐름을 화면에 연결한다. -->

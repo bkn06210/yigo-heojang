@@ -1,10 +1,11 @@
 <script setup>
 
-import { computed } from 'vue';
+import { computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { storeToRefs } from 'pinia';
 
 import { useCardStore } from '@/stores/cardStore';
+import { useAuthStore } from '@/stores/authStore';
 
 import CardItem from '@/components/card/CardItem.vue';
 import CardCompanyGroup from '@/components/card/CardCompanyGroup.vue';
@@ -18,6 +19,7 @@ const router = useRouter();
 
 // 카드 Store 연결
 const cardStore = useCardStore();
+const authStore = useAuthStore();
 
 const { cards } = storeToRefs(cardStore);
 
@@ -28,7 +30,18 @@ console.log('카드 목록 진입:', cards.value);
 
 // 로그인 상태
 // TODO: 추후 authStore 연결
-const isLogin = true;
+// PR #25 연동: 로그인 상태일 때만 인증이 필요한 카드 현황 API를 호출한다.
+const isLogin = computed(() => Boolean(authStore.token || localStorage.getItem('token')));
+
+// PR #32 연동: 기본 보유카드 목록을 조회한 뒤 PR #25 실적 정보를 카드 ID로 결합한다.
+onMounted(async () => {
+  if (!isLogin.value) return;
+  try {
+    await cardStore.loadCards();
+  } catch (error) {
+    console.error('카드 현황 조회 실패', error);
+  }
+});
 
 
 
@@ -459,3 +472,4 @@ const togglePin = (id) => {
 
 
 </style>
+<!-- 07_25 연동 변경: 로그인 회원의 실제 보유카드 목록 API를 화면 진입 시 호출한다. -->

@@ -75,6 +75,7 @@ const selectCard = () => {
       >
 
         <img
+          v-if="card.image"
           :src="card.image"
           :alt="card.name"
           class="card-image"
@@ -260,3 +261,4 @@ const selectCard = () => {
 }
 
 </style>
+<!-- 07_25 연동 변경: 추천 API의 상세 계산 결과를 바텀시트에 표시한다. -->

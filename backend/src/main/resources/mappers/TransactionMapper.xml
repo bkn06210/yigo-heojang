@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.wallet.transaction.mapper.TransactionMapper">
+
+    <select id="selectTransactionList"
+            resultType="com.wallet.transaction.dto.TransactionResponse">
+
+        SELECT
+        e.expense_id AS expenseId,
+        e.user_card_id AS userCardId,
+        cd.card_name AS cardName,
+        cd.card_type AS cardType,
+        e.category_id AS categoryId,
+        c.category_name AS categoryName,
+        e.merchant_name AS merchantName,
+        e.amount AS paymentAmount,
+        COALESCE(e.discount_amount, 0) AS discountAmount,
+        DATE_FORMAT(e.payment_date, '%Y-%m-%dT%H:%i:%s') AS paymentDate,
+        e.payment_status AS paymentStatus,
+        e.approval_status AS approvalStatus,
+        e.transaction_type AS transactionType,
+        e.region AS region,
+        e.input_type AS inputType
+        FROM expense e
+        JOIN user_card uc
+        ON e.user_card_id = uc.user_card_id
+        JOIN card cd
+        ON uc.card_id = cd.card_id
+        JOIN category c
+        ON e.category_id = c.category_id
+        WHERE e.member_id = #{userId}
+
+        <if test="yearMonth != null and yearMonth != ''">
+            AND DATE_FORMAT(e.payment_date, '%Y-%m') = #{yearMonth}
+        </if>
+
+        <if test="categoryId != null">
+            AND e.category_id = #{categoryId}
+        </if>
+
+        <if test="userCardId != null">
+            AND e.user_card_id = #{userCardId}
+        </if>
+
+        <if test="paymentStatus != null and paymentStatus != ''">
+            AND e.payment_status = #{paymentStatus}
+        </if>
+
+        <if test="approvalStatus != null and approvalStatus != ''">
+            AND e.approval_status = #{approvalStatus}
+        </if>
+
+        <if test="cardType != null and cardType != ''">
+            AND cd.card_type = #{cardType}
+        </if>
+
+        <if test="region != null and region != ''">
+            AND e.region = #{region}
+        </if>
+
+        <if test="transactionType != null and transactionType != ''">
+            AND e.transaction_type = #{transactionType}
+        </if>
+
+        <if test="startDate != null and startDate != ''">
+            AND e.payment_date &gt;= CONCAT(#{startDate}, ' 00:00:00')
+        </if>
+
+        <if test="endDate != null and endDate != ''">
+            AND e.payment_date &lt; DATE_ADD(#{endDate}, INTERVAL 1 DAY)
+        </if>
+
+        ORDER BY e.payment_date DESC
+
+    </select>
+
+
+    <select id="selectTransactionDetail"
+            resultType="com.wallet.transaction.dto.TransactionDetailResponse">
+
+        SELECT
+            e.expense_id AS expenseId,
+            e.user_card_id AS userCardId,
+            cd.card_name AS cardName,
+            e.category_id AS categoryId,
+            c.category_name AS categoryName,
+
+            e.merchant_id AS merchantId,
+            e.merchant_name AS merchantName,
+            e.amount AS paymentAmount,
+
+            e.applied_benefit_id AS appliedBenefitId,
+            b.benefit_name AS appliedBenefitName,
+            COALESCE(e.discount_amount, 0) AS discountAmount,
+
+            e.payment_type AS paymentType,
+            e.is_interest_free AS interestFreeYn,
+
+            DATE_FORMAT(e.payment_date, '%Y-%m-%dT%H:%i:%s') AS paymentDate,
+            e.payment_status AS paymentStatus,
+            e.input_type AS inputType,
+            DATE_FORMAT(e.created_at, '%Y-%m-%dT%H:%i:%s') AS createdAt
+
+        FROM expense e
+                 JOIN user_card uc
+                      ON e.user_card_id = uc.user_card_id
+                 JOIN card cd
+                      ON uc.card_id = cd.card_id
+                 JOIN category c
+                      ON e.category_id = c.category_id
+                 LEFT JOIN benefit b
+                           ON e.applied_benefit_id = b.benefit_id
+        WHERE e.member_id = #{userId}
+          AND e.expense_id = #{expenseId}
+
+    </select>
+
+
+    <select id="selectExpenseCategories"
+            resultType="com.wallet.transaction.dto.ExpenseCategoryResponse">
+
+        SELECT
+            category_id AS categoryId,
+            category_name AS categoryName,
+            category_code AS categoryCode
+        FROM category
+        ORDER BY category_id ASC
+
+    </select>
+    <select id="selectTransactionsByMemberId"
+            resultType="com.wallet.transaction.dto.TransactionDetailResponse">
+
+        SELECT
+            e.expense_id AS expenseId,
+            e.user_card_id AS userCardId,
+            NULL AS cardName,
+            e.category_id AS categoryId,
+            c.category_name AS categoryName,
+            e.merchant_id AS merchantId,
+            e.merchant_name AS merchantName,
+            e.amount AS paymentAmount,
+            e.applied_benefit_id AS appliedBenefitId,
+            NULL AS appliedBenefitName,
+            e.discount_amount AS discountAmount,
+            e.payment_type AS paymentType,
+            e.is_interest_free AS interestFreeYn,
+            DATE_FORMAT(e.payment_date, '%Y-%m-%dT%H:%i:%s') AS paymentDate,
+            e.payment_status AS paymentStatus,
+            e.input_type AS inputType,
+            DATE_FORMAT(e.created_at, '%Y-%m-%dT%H:%i:%s') AS createdAt
+        FROM expense e
+                 LEFT JOIN category c
+                           ON e.category_id = c.category_id
+        WHERE e.member_id = #{memberId}
+        ORDER BY e.payment_date DESC
+
+    </select>
+</mapper>

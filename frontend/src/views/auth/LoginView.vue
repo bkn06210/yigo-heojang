@@ -158,11 +158,11 @@ const findPassword = () => {
 
 
 // 본인인증 완료
-const verifyPasswordFind = () => {
+const verifyPasswordFind = (passwordResetToken) => {
 
   showPasswordFind.value = false;
 
-  router.push('/auth/password-change');
+  router.push({ path: '/auth/password-change', state: { passwordResetToken } });
 
 };
 
@@ -311,3 +311,4 @@ span,
 }
 
 </style>
+<!-- 07_25 연동 변경: 로그인 입력을 실제 인증 API와 연결하고 오류를 표시한다. -->

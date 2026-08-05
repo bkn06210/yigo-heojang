@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.wallet.payment.mapper.PaymentQrMapper">
+
+    <select id="countActiveUserCard" resultType="int">
+        SELECT COUNT(*)
+        FROM user_card
+        WHERE member_id = #{memberId}
+          AND user_card_id = #{userCardId}
+          AND card_status = 'ACTIVE'
+    </select>
+
+    <insert id="insertPaymentQr"
+            parameterType="com.wallet.payment.dto.PaymentQrInsertParam">
+        INSERT INTO payment_qr (
+            qr_token,
+            member_id,
+            user_card_id,
+            status,
+            expires_at,
+            created_at
+        ) VALUES (
+                     #{qrToken},
+                     #{memberId},
+                     #{userCardId},
+                     #{status},
+                     #{expiresAt},
+                     NOW()
+                 )
+    </insert>
+
+    <select id="selectPaymentQrByToken"
+            resultType="com.wallet.payment.dto.PaymentQrRecord">
+        SELECT
+            qr_token AS qrToken,
+            member_id AS memberId,
+            user_card_id AS userCardId,
+            status AS status,
+            expires_at AS expiresAt,
+            used_at AS usedAt,
+            payment_id AS paymentId
+        FROM payment_qr
+        WHERE qr_token = #{qrToken}
+    </select>
+
+    <select id="selectPaymentQrForUpdate"
+            resultType="com.wallet.payment.dto.PaymentQrRecord">
+        SELECT
+            qr_token AS qrToken,
+            member_id AS memberId,
+            user_card_id AS userCardId,
+            status AS status,
+            expires_at AS expiresAt,
+            used_at AS usedAt,
+            payment_id AS paymentId
+        FROM payment_qr
+        WHERE qr_token = #{qrToken}
+            FOR UPDATE
+    </select>
+
+    <update id="markQrExpired">
+        UPDATE payment_qr
+        SET status = 'EXPIRED'
+        WHERE qr_token = #{qrToken}
+          AND status = 'READY'
+    </update>
+
+    <insert id="insertExpenseByQr"
+            parameterType="com.wallet.payment.dto.PaymentQrPayParam"
+            useGeneratedKeys="true"
+            keyProperty="expenseId"
+            keyColumn="expense_id">
+        INSERT INTO expense (
+            member_id,
+            user_card_id,
+            category_id,
+            merchant_id,
+            merchant_name,
+            amount,
+            payment_date,
+            input_type,
+            payment_status,
+            approval_status,
+            applied_benefit_id,
+            discount_amount,
+            payment_type,
+            is_interest_free,
+            created_at
+        ) VALUES (
+                     #{memberId},
+                     #{userCardId},
+                     #{categoryId},
+                     #{merchantId},
+                     #{merchantName},
+                     #{paymentAmount},
+                     NOW(),
+                     'PAYMENT',
+                     'APPROVED',
+                     'CONFIRMED',
+                     NULL,
+                     0,
+                     'CARD',
+                     'N',
+                     NOW()
+                 )
+    </insert>
+
+    <insert id="insertPaymentByQr"
+            parameterType="com.wallet.payment.dto.PaymentQrPayParam"
+            useGeneratedKeys="true"
+            keyProperty="paymentId"
+            keyColumn="payment_id">
+        INSERT INTO payment (
+            member_id,
+            user_card_id,
+            payment_channel,
+            is_recommend_based,
+            expense_id,
+            merchant_id,
+            merchant_name,
+            payment_amount,
+            payment_status,
+            requested_at,
+            completed_at
+        ) VALUES (
+                     #{memberId},
+                     #{userCardId},
+                     'QR',
+                     'N',
+                     #{expenseId},
+                     #{merchantId},
+                     #{merchantName},
+                     #{paymentAmount},
+                     'SUCCESS',
+                     NOW(),
+                     NOW()
+                 )
+    </insert>
+
+    <update id="markQrUsed">
+        UPDATE payment_qr
+        SET
+            status = 'USED',
+            used_at = NOW(),
+            payment_id = #{paymentId}
+        WHERE qr_token = #{qrToken}
+          AND status = 'READY'
+    </update>
+    <update id="markQrFailed">
+
+        UPDATE payment_qr
+        SET
+            status = 'FAILED',
+            failed_at = NOW(),
+            fail_reason = #{failReason}
+        WHERE qr_token = #{qrToken}
+          AND status = 'READY'
+
+    </update>
+</mapper>

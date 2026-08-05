@@ -42,8 +42,14 @@ const emit = defineEmits([
     <div class="membership-item">
 
 
-      <span class="membership-name">
-        {{ membership.name }}
+      <span class="membership-main">
+        <img
+          v-if="membership.logo"
+          :src="membership.logo"
+          :alt="`${membership.name} 로고`"
+          class="membership-logo"
+        />
+        <span class="membership-name">{{ membership.name }}</span>
       </span>
 
 
@@ -107,6 +113,22 @@ const emit = defineEmits([
 
 }
 
+.membership-main {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.membership-logo {
+  width: 44px;
+  height: 44px;
+  flex: 0 0 44px;
+  border-radius: 12px;
+  object-fit: contain;
+  background: #fff;
+}
+
 
 .move-button {
 
@@ -125,3 +147,4 @@ const emit = defineEmits([
 }
 
 </style>
+<!-- 07_25 연동 변경: 멤버십 API 데이터와 제휴사 로고를 카드에 표시한다. -->

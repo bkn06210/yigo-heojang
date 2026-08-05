@@ -24,6 +24,7 @@ import CardRegisterView from '@/views/card/CardRegisterView.vue'
 // Payment
 import PaymentView from '@/views/payment/PaymentView.vue'
 import PaymentRecommendView from '@/views/payment/PaymentRecommendView.vue' //주소 명칭 변경
+import PaymentQrView from '@/views/payment/PaymentQrView.vue'
 // import CardRecommendResultView from '@/views/card/CardRecommendResultView.vue' //모달로 뺐음
 
 
@@ -85,6 +86,7 @@ const routes = [
   // 결제 직전 AI 카드 추천 기능 포함이라 /card로 정의함
   { path: '/payment',  name: 'Payment', component: PaymentView },
   { path: '/payment/recommend', component: PaymentRecommendView }, //주소 명칭 변경
+  { path: '/payments/qr', name: 'PaymentQr', component: PaymentQrView },
   // { path: '/cards/recommend/result', component: CardRecommendResultView }, //모달로 뺐음
 
   // Transaction
@@ -126,3 +128,4 @@ const router = createRouter({
 })
 
 export default router
+// 07_25 연동 변경: 추가된 API 시연 화면의 프론트 라우트를 등록한다.

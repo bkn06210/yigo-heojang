@@ -29,6 +29,7 @@ import com.wallet.common.ErrorCode;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private static final String AUTHORIZATION_HEADER = "Authorization";
     private static final String BEARER_PREFIX = "Bearer ";
+    private static final String FRONTEND_ORIGIN = "http://localhost:5173";
 
     // CORS preflight 요청은 브라우저의 사전 확인용이므로, Access Token이 없어도 인증 필터를 통과시켜야 한다.
     private static final String OPTIONS_METHOD = "OPTIONS";
@@ -64,7 +65,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String accessToken = extractAccessToken(request);
 
         if (accessToken == null) {
-            writeErrorResponse(response, ErrorCode.ACCESS_TOKEN_INVALID);
+            writeErrorResponse(request, response, ErrorCode.ACCESS_TOKEN_INVALID);
             return;
         }
 
@@ -76,9 +77,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             filterChain.doFilter(request, response);
         } catch (ExpiredJwtException e) {
-            writeErrorResponse(response, ErrorCode.ACCESS_TOKEN_EXPIRED);
+            writeErrorResponse(request, response, ErrorCode.ACCESS_TOKEN_EXPIRED);
         } catch (JwtException | IllegalArgumentException e) {
-            writeErrorResponse(response, ErrorCode.ACCESS_TOKEN_INVALID);
+            writeErrorResponse(request, response, ErrorCode.ACCESS_TOKEN_INVALID);
         }
     }
 
@@ -128,7 +129,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             && authorizationHeader.length() > BEARER_PREFIX.length();
     }
 
-    private void writeErrorResponse(HttpServletResponse response, ErrorCode errorCode) throws IOException {
+    private void writeErrorResponse(
+        HttpServletRequest request,
+        HttpServletResponse response,
+        ErrorCode errorCode
+    ) throws IOException {
+        String origin = request.getHeader("Origin");
+        if (FRONTEND_ORIGIN.equals(origin)) {
+            response.setHeader("Access-Control-Allow-Origin", FRONTEND_ORIGIN);
+            response.setHeader("Access-Control-Allow-Credentials", "true");
+            response.setHeader("Vary", "Origin");
+        }
         response.setStatus(errorCode.getStatus().value());
         response.setContentType("application/json;charset=UTF-8");
 

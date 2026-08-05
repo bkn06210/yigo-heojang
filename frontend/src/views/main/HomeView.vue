@@ -29,7 +29,8 @@ const { user } = storeToRefs(authStore);
 // 카드 store 연결
 const cardStore = useCardStore();
 
-const { cards } = storeToRefs(cardStore);
+// PR #25 연동: 카드 목록과 서버가 생성한 홈 브리핑을 같은 Store에서 사용한다.
+const { cards, briefing: cardBriefing } = storeToRefs(cardStore);
 
 
 const hasMembership = ref(false);
@@ -148,9 +149,11 @@ const goProfile = () => {
 
 // 카드 이동
 
-const goCardDetail = () => {
+const goCardDetail = (card) => {
 
-  router.push('/cards/1');
+  // PR #25 연동: 고정 ID가 아니라 API에서 받은 실제 userCardId로 상세 화면을 연다.
+  const userCardId = card?.id || cards.value[0]?.id;
+  if (userCardId) router.push(`/cards/${userCardId}`);
 
 };
 
@@ -226,6 +229,15 @@ const loadHome = async () => {
 
   */
 
+  if (!user.value && !localStorage.getItem('token')) return;
+  try {
+    // PR #25 연동: 홈 진입 시 카드 현황/브리핑을 한 번의 API 호출로 조회한다.
+    await cardStore.loadMonthlyStatuses();
+    homeData.value.myCard = cards.value[0] || null;
+    homeData.value.briefing.content = cardBriefing.value?.message || '이번 달 카드 실적을 확인해보세요.';
+  } catch (error) {
+    console.error('홈 카드 현황 조회 실패', error);
+  }
 
 };
 
@@ -605,3 +617,4 @@ onMounted(async()=>{
 
 
 </style>
+<!-- 07_25 연동 변경: 홈 요약 데이터를 카드·포인트·멤버십 API에서 조회한다. -->

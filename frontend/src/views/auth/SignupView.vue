@@ -151,9 +151,18 @@ const nextStep = async () => {
       email: email.value,
       password: password.value,
       signupVerificationToken: signupVerificationToken.value,
+      termsAgreements: JSON.parse(sessionStorage.getItem('termsAgreements') || '[]'),
     };
 
+    if (!userData.termsAgreements.length) {
+      alert('약관 동의 정보를 다시 확인해주세요.');
+      router.push('/auth/terms');
+      return;
+    }
+
     await signup(userData);
+
+    sessionStorage.removeItem('termsAgreements');
 
     alert('회원가입이 완료되었습니다.');
 
@@ -322,3 +331,4 @@ footer div {
   margin-bottom: 16px;
 }
 </style>
+<!-- 07_25 연동 변경: 회원가입 이메일 인증과 가입 API를 화면에 연결한다. -->

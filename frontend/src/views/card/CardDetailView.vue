@@ -1,9 +1,10 @@
 <script setup>
 
-import { ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
 import { useCardStore } from '@/stores/cardStore';
+import { getCardMonthlyStatus } from '@/api/walletApi';
 
 import PageHeader from '@/components/common/PageHeader.vue';
 
@@ -117,7 +118,7 @@ const confirmDelete = () => {
 
 // 임시 데이터
 // 추후 카드 상세 API 연결
-const card = {
+const card = ref({
   id: route.params.id,
 
   name: 'Deep Dream (체크)',
@@ -129,7 +130,31 @@ const card = {
   cardNumber: '1234567890127034',
 
   image: '/images/cards/shinhan.png',
-};
+});
+
+// PR #25 연동: 선택한 카드의 월 실적과 혜택 사용 현황을 서버 응답으로 보관한다.
+const cardStatus = ref(null);
+const statusError = ref('');
+
+// PR #25 연동: API 혜택 배열을 기존 진행률 UI에서 바로 사용할 수 있게 정규화한다.
+const benefitStatuses = computed(() => (cardStatus.value?.benefits || []).map((benefit) => ({
+  ...benefit,
+  usagePercent: benefit.usageRate == null ? 0 : Number(benefit.usageRate),
+})));
+
+// PR #25 연동: GET /api/cards/{userCardId}/monthly-status로 카드 상세 현황을 조회한다.
+onMounted(async () => {
+  try {
+    cardStatus.value = await getCardMonthlyStatus(Number(route.params.id));
+    card.value = {
+      ...card.value,
+      id: cardStatus.value.userCardId,
+      name: cardStatus.value.cardName,
+    };
+  } catch (error) {
+    statusError.value = error?.response?.data?.message || error?.message || '카드 현황을 불러오지 못했습니다.';
+  }
+});
 
 // 카드번호 표시
 const maskCardNumber = (number) => {
@@ -142,7 +167,7 @@ const maskCardNumber = (number) => {
 
 // 혜택 상세 이동
 const goBenefitDetail = () => {
-  router.push(`/benefits/${card.id}`);
+  router.push(`/benefits/${card.value.id}`);
 };
 
 // 소비내역 이동
@@ -280,12 +305,38 @@ const toggleMemo = () => {
 </section>
 
     <!-- 혜택 상세 -->
+    <!-- PR #25 연동: API가 계산한 카드 실적과 혜택별 사용률을 상세 화면에 표시한다. -->
+    <section v-if="cardStatus" class="benefit-progress">
+      <h2>이번 달 카드 현황</h2>
+      <p>
+        실적 {{ Number(cardStatus.currentPerformanceAmount).toLocaleString() }}원 /
+        {{ Number(cardStatus.targetPerformance).toLocaleString() }}원
+      </p>
+      <p>
+        {{ cardStatus.achievementRate == null ? '실적 조건 없음' : `달성률 ${cardStatus.achievementRate}%` }}
+      </p>
+
+      <!-- PR #25 연동: 한도 없는 혜택은 퍼센트 대신 '한도 없음'으로 구분한다. -->
+      <div v-for="benefit in benefitStatuses" :key="benefit.benefitId" class="benefit-item">
+        <div class="benefit-title">
+          <span>{{ benefit.benefitName }}</span>
+          <span>{{ benefit.usageRate == null ? '한도 없음' : `${benefit.usagePercent}%` }}</span>
+        </div>
+        <div v-if="benefit.usageRate != null" class="progress-bar">
+          <div class="progress" :style="{ width: `${benefit.usagePercent}%` }" />
+        </div>
+      </div>
+    </section>
+
+    <!-- PR #25 연동: 조회 실패 시 서버 오류 메시지를 표시한다. -->
+    <p v-if="statusError" class="error">{{ statusError }}</p>
+
     <button class="benefit-button" @click="goBenefitDetail">
       혜택 자세히 보기
     </button>
 
     <!-- 혜택 달성 -->
-    <section class="benefit-progress">
+    <section v-if="!cardStatus" class="benefit-progress">
       <h2>주요 혜택 달성</h2>
 
       <div class="benefit-item">
@@ -734,3 +785,4 @@ h2 {
   color: white;
 }
 </style>
+<!-- 07_25 연동 변경: 카드 상세·실적·혜택 API 응답을 기존 UI에 표시한다. -->
