@@ -1,7 +1,10 @@
 package com.wallet.engine.dao;
 
+import com.wallet.engine.dao.dto.BenefitPeriodUsageRow;
 import com.wallet.engine.dao.dto.BenefitUsageRow;
 import com.wallet.engine.dao.dto.CardMonthlyStateRow;
+import com.wallet.engine.dao.dto.CardPerformanceSumRow;
+import com.wallet.engine.dao.dto.OptionSelectionRow;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -54,4 +57,47 @@ public interface CardStateMapper {
      */
     List<BenefitUsageRow> findUsages(@Param("memberId") long memberId,
                                      @Param("baseYearMonth") String baseYearMonth);
+
+    /**
+     * 회원의 활성 보유카드별 혜택 소진을 <b>연월 구간으로 합산</b>해 조회한다.
+     * 분기 한도면 그 분기의 시작월부터, 연 한도면 1월부터 기준월까지를 넘긴다.
+     *
+     * 구간 끝을 기준월로 막는 이유는 지난달 현황 조회 때문이다. 분기 전체를 합산하면
+     * 조회한 달 이후에 쌓인 소진까지 섞여, 그 달 시점에는 있지도 않던 값으로 한도가 판정된다.
+     *
+     * 연월이 <code>YYYY-MM</code> 고정 폭 문자열이라 사전순 비교가 곧 시간순 비교다.
+     *
+     * @param memberId       회원 ID (소유권 필터)
+     * @param fromYearMonth  구간 시작 연월 (YYYY-MM, 포함)
+     * @param toYearMonth    구간 끝 연월 (YYYY-MM, 포함). 기준월
+     */
+    List<BenefitPeriodUsageRow> findPeriodUsages(@Param("memberId") long memberId,
+                                                 @Param("fromYearMonth") String fromYearMonth,
+                                                 @Param("toYearMonth") String toYearMonth);
+
+    /**
+     * 회원의 활성 보유카드별 선택형 혜택 선택을 조회한다.
+     *
+     * 선택 기록이 없는 묶음은 그달에 고르지 않은 것이고, 그 묶음의 혜택은 하나도 적용되지 않는다.
+     * 기본값으로 아무거나 켜면 회원이 고르지 않은 혜택을 받은 것으로 기록된다.
+     *
+     * @param memberId      회원 ID (소유권 필터)
+     * @param baseYearMonth 기준 연월 (YYYY-MM)
+     */
+    List<OptionSelectionRow> findOptionSelections(@Param("memberId") long memberId,
+                                                  @Param("baseYearMonth") String baseYearMonth);
+
+    /**
+     * 회원의 활성 보유카드별 실적인정액을 연월 구간으로 합산해 조회한다 — 전분기 실적 판정용.
+     *
+     * 전월실적과 마찬가지로 저장된 집계값(current_performance_amount)을 읽을 뿐 거래를 재합산하지
+     * 않는다. 전분기는 그 분기 세 달의 합이므로 직전 분기의 시작월~끝월을 넘긴다.
+     *
+     * @param memberId      회원 ID (소유권 필터)
+     * @param fromYearMonth 구간 시작 연월 (YYYY-MM, 포함)
+     * @param toYearMonth   구간 끝 연월 (YYYY-MM, 포함)
+     */
+    List<CardPerformanceSumRow> findPerformanceSums(@Param("memberId") long memberId,
+                                                    @Param("fromYearMonth") String fromYearMonth,
+                                                    @Param("toYearMonth") String toYearMonth);
 }

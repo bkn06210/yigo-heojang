@@ -37,6 +37,11 @@ public final class PerformanceAmountCalculator {
             if (transaction.isCanceled()) {
                 continue;
             }
+            // 혜택 쪽에서 지정된 제외다(benefit.exclude_from_performance). 카드 규칙과 축이 달라
+            // 규칙 목록이 아니라 거래 속성으로 판정한다 — 그 혜택을 받은 거래만 빠진다.
+            if (transaction.isBenefitExcludedFromPerformance()) {
+                continue;
+            }
             if (compiled.excludes(transaction)) {
                 continue;
             }

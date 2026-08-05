@@ -18,6 +18,37 @@ class PerformanceAmountCalculatorTest {
     private final PerformanceAmountCalculator calculator = new PerformanceAmountCalculator();
 
     @Nested
+    @DisplayName("혜택이 지정한 실적 제외 (benefit.exclude_from_performance)")
+    class BenefitExcluded {
+
+        @Test
+        void 그_혜택을_받은_거래는_제외_규칙이_없어도_빠진다() {
+            List<PerformanceTransaction> transactions = List.of(
+                    tx().amount(10000L).discountAmount(500L).benefitExcludedFromPerformance(true).build(),
+                    tx().amount(3000L).build());
+
+            PerformanceAmountResult result = calculator.calculate(transactions, List.of());
+
+            assertThat(result.amount()).isEqualTo(3000L);
+        }
+
+        /**
+         * 카드 전체 규칙(TRANSACTION_ATTR='DISCOUNTED')으로 적으면 다른 혜택을 받은 거래까지 빠져
+         * 실적이 실제보다 낮아진다. 혜택 단위 지정은 그 혜택을 받은 거래만 뺀다.
+         */
+        @Test
+        void 다른_혜택을_받은_거래는_그대로_인정된다() {
+            List<PerformanceTransaction> transactions = List.of(
+                    tx().amount(10000L).discountAmount(500L).benefitExcludedFromPerformance(true).build(),
+                    tx().amount(7000L).discountAmount(300L).benefitExcludedFromPerformance(false).build());
+
+            PerformanceAmountResult result = calculator.calculate(transactions, List.of());
+
+            assertThat(result.amount()).isEqualTo(7000L);
+        }
+    }
+
+    @Nested
     @DisplayName("기본 합산")
     class Basic {
 

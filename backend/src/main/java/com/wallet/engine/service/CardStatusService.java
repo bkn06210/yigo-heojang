@@ -12,10 +12,12 @@ import com.wallet.engine.dao.UserCardMapper;
 import com.wallet.engine.dao.dto.BenefitRow;
 import com.wallet.engine.dao.dto.BenefitUsageRow;
 import com.wallet.engine.dao.dto.CardMonthlyStateRow;
+import com.wallet.engine.dao.dto.CardPerformanceSumRow;
 import com.wallet.engine.dao.dto.PerformanceTierRow;
 import com.wallet.engine.dao.dto.UserCardRow;
 import com.wallet.engine.dto.CardMonthlyStatus;
 import com.wallet.engine.dto.CardStatusOverview;
+import com.wallet.engine.model.PerformancePeriod;
 import com.wallet.engine.model.PerformanceStatus;
 import com.wallet.engine.model.PerformanceTier;
 import org.springframework.stereotype.Service;
@@ -139,13 +141,21 @@ public class CardStatusService {
         Map<Long, List<PerformanceTierRow>> tiersByCard = performanceMapper
                 .findTiersByCardIds(cards.stream().map(UserCardRow::getCardId).distinct().toList()).stream()
                 .collect(Collectors.groupingBy(PerformanceTierRow::getCardId));
+        // 전분기 실적 — 분기 구간표를 쓰는 혜택의 개별한도 조회 키를 정한다
+        Map<Long, Long> quarterPerformanceByUserCard = cardStateMapper
+                .findPerformanceSums(memberId,
+                        UsagePeriod.previousQuarterStart(baseMonth).toString(),
+                        UsagePeriod.previousQuarterEnd(baseMonth).toString()).stream()
+                .collect(Collectors.toMap(
+                        CardPerformanceSumRow::getUserCardId, CardPerformanceSumRow::getPerformanceAmount));
 
         List<CardMonthlyStatus> statuses = new ArrayList<>(cards.size());
         for (UserCardRow card : cards) {
             statuses.add(buildStatus(card, baseYearMonth, previousYearMonth,
                     statesByUserCard.getOrDefault(card.getUserCardId(), List.of()),
                     usagesByUserCard.getOrDefault(card.getUserCardId(), List.of()),
-                    tiersByCard.getOrDefault(card.getCardId(), List.of())));
+                    tiersByCard.getOrDefault(card.getCardId(), List.of()),
+                    quarterPerformanceByUserCard.getOrDefault(card.getUserCardId(), 0L)));
         }
         return statuses;
     }
@@ -153,16 +163,24 @@ public class CardStatusService {
     /** 카드 한 장의 현황. 조회한 값을 계산기에 물려주기만 하고 새 계산 규칙은 두지 않는다. */
     private CardMonthlyStatus buildStatus(UserCardRow card, String baseYearMonth, String previousYearMonth,
                                           List<CardMonthlyStateRow> stateRows, List<BenefitUsageRow> usageRows,
-                                          List<PerformanceTierRow> tierRows) {
+                                          List<PerformanceTierRow> tierRows, long quarterPerformanceAmount) {
         long prevPerformanceAmount = cardStateAssembler.resolvePrevPerformanceAmount(
                 stateRows, baseYearMonth, previousYearMonth);
 
-        // 구간이 없으면 judge가 예외를 던진다 — 모든 카드가 0원 구간을 갖는다는 전제가 깨진 시드 오류다
-        List<PerformanceTier> tiers = performanceInputAssembler.toTiers(tierRows);
+        // 구간이 없으면 judge가 예외를 던진다 — 모든 카드가 0원 구간을 갖는다는 전제가 깨진 시드 오류다.
+        // 실적 진행률(달성률·남은실적)은 전월 축 기준이라 분기 구간표를 섞으면 목표 금액이 뒤바뀐다.
+        List<PerformanceTier> tiers = performanceInputAssembler.toTiers(tierRows, PerformancePeriod.MONTH);
         PerformanceStatus status = tierResolver.judge(tiers, prevPerformanceAmount);
 
+        List<PerformanceTier> quarterTiers =
+                performanceInputAssembler.toTiers(tierRows, PerformancePeriod.QUARTER);
+        Long quarterTierId = quarterTiers.isEmpty()
+                ? null
+                : tierResolver.judge(quarterTiers, quarterPerformanceAmount).tierId();
+
         // 혜택별 개별한도는 구간마다 다르므로 판정된 구간 기준으로 조회한다
-        List<BenefitRow> benefitRows = benefitMapper.findActiveBenefits(card.getCardId(), status.tierId());
+        List<BenefitRow> benefitRows = benefitMapper.findActiveBenefits(
+                card.getCardId(), status.tierId(), quarterTierId);
         Map<Long, Long> usedAmountByBenefit = usageRows.stream()
                 .collect(Collectors.toMap(BenefitUsageRow::getBenefitId, BenefitUsageRow::getUsedAmount));
 

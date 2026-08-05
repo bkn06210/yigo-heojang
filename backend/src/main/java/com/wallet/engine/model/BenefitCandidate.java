@@ -17,8 +17,21 @@ public final class BenefitCandidate {
     private final TargetType targetType;
     private final Long targetCategoryId;
     private final Long targetMerchantId;
-    /** 묶음 한도 코드. 같은 카드 내 같은 코드끼리 monthly_limit을 공유한다. null이면 단독 */
+    /** 금액 묶음 코드. 같은 카드 내 같은 코드끼리 기간별 금액 한도를 공유한다. null이면 단독 */
     private final String limitGroupCode;
+    /**
+     * 횟수 묶음 코드. null이면 limitGroupCode를 따른다.
+     *
+     * 금액 묶음과 횟수 묶음의 범위가 다를 때 쓴다 — "택시·커피·영화관 합쳐 월 5천원"(금액)에
+     * "영화관 3사 합쳐 연 4회"(횟수)가 겹치는 경우, 하나로 묶으면 연 4회가 12회가 된다.
+     */
+    private final String countGroupCode;
+    /** 선택형 혜택 묶음 코드. 같은 코드 중 그달에 고른 선택지만 적용된다. null이면 상시 적용 */
+    private final String optionGroupCode;
+    /** 이 혜택이 속한 선택지. 선택지 하나가 혜택 여러 개로 이뤄질 수 있어 혜택 id가 아니라 이 값으로 고른다 */
+    private final String optionKey;
+    /** 이 혜택의 실적 조건이 어느 기간 축인가. 같은 카드에서 혜택마다 다를 수 있다 */
+    private final PerformancePeriod performancePeriod;
     private final List<BenefitExclusion> exclusions;
     private final BenefitRule rule;
 
@@ -34,6 +47,12 @@ public final class BenefitCandidate {
         this.targetCategoryId = builder.targetCategoryId;
         this.targetMerchantId = builder.targetMerchantId;
         this.limitGroupCode = builder.limitGroupCode;
+        this.countGroupCode = builder.countGroupCode;
+        this.optionGroupCode = builder.optionGroupCode;
+        this.optionKey = builder.optionKey;
+        this.performancePeriod = builder.performancePeriod == null
+                ? PerformancePeriod.MONTH
+                : builder.performancePeriod;
         this.exclusions = builder.exclusions == null
                 ? List.of()
                 : Collections.unmodifiableList(List.copyOf(builder.exclusions));
@@ -85,6 +104,23 @@ public final class BenefitCandidate {
         return limitGroupCode;
     }
 
+    /** 횟수 묶음 코드. 지정이 없으면 금액 묶음을 따른다 */
+    public String getCountGroupCode() {
+        return countGroupCode == null ? limitGroupCode : countGroupCode;
+    }
+
+    public String getOptionGroupCode() {
+        return optionGroupCode;
+    }
+
+    public String getOptionKey() {
+        return optionKey;
+    }
+
+    public PerformancePeriod getPerformancePeriod() {
+        return performancePeriod;
+    }
+
     public List<BenefitExclusion> getExclusions() {
         return exclusions;
     }
@@ -98,6 +134,10 @@ public final class BenefitCandidate {
         private Long targetCategoryId;
         private Long targetMerchantId;
         private String limitGroupCode;
+        private String countGroupCode;
+        private String optionGroupCode;
+        private String optionKey;
+        private PerformancePeriod performancePeriod;
         private List<BenefitExclusion> exclusions;
         private BenefitRule rule;
 
@@ -121,6 +161,26 @@ public final class BenefitCandidate {
 
         public Builder limitGroupCode(String limitGroupCode) {
             this.limitGroupCode = limitGroupCode;
+            return this;
+        }
+
+        public Builder countGroupCode(String countGroupCode) {
+            this.countGroupCode = countGroupCode;
+            return this;
+        }
+
+        public Builder optionGroupCode(String optionGroupCode) {
+            this.optionGroupCode = optionGroupCode;
+            return this;
+        }
+
+        public Builder optionKey(String optionKey) {
+            this.optionKey = optionKey;
+            return this;
+        }
+
+        public Builder performancePeriod(PerformancePeriod performancePeriod) {
+            this.performancePeriod = performancePeriod;
             return this;
         }
 

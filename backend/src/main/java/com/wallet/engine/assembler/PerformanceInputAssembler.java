@@ -5,6 +5,7 @@ import com.wallet.engine.dao.dto.PerformanceTierRow;
 import com.wallet.engine.dao.dto.PerformanceTransactionRow;
 import com.wallet.engine.model.PerformanceExclusion;
 import com.wallet.engine.model.PerformanceExclusionType;
+import com.wallet.engine.model.PerformancePeriod;
 import com.wallet.engine.model.PerformanceTier;
 import com.wallet.engine.model.PerformanceTransaction;
 import org.springframework.stereotype.Component;
@@ -38,6 +39,8 @@ public class PerformanceInputAssembler {
                 .paymentType(row.getPaymentType())
                 .interestFree("Y".equals(row.getIsInterestFree()))
                 .discountAmount(row.getDiscountAmount())
+                // 혜택 미적용 거래는 조인 결과가 NULL이라 자연히 false가 된다
+                .benefitExcludedFromPerformance("Y".equals(row.getExcludeFromPerformance()))
                 .build();
     }
 
@@ -59,10 +62,25 @@ public class PerformanceInputAssembler {
         return rows.stream().map(this::toTier).toList();
     }
 
+    /**
+     * 한 기간 축의 구간표만 골라낸다.
+     *
+     * 판정은 같은 기간의 행끼리만 비교해야 한다 — 전월 축과 전분기 축을 섞으면 전분기 100만원
+     * 조건이 전월 금액으로 판정돼, 충족한 회원이 미충족으로 읽힌다.
+     * 그 기간의 구간표가 아예 없으면 빈 목록이며, 호출자가 "판정 불가"로 다룬다.
+     */
+    public List<PerformanceTier> toTiers(List<PerformanceTierRow> rows, PerformancePeriod period) {
+        return rows.stream()
+                .map(this::toTier)
+                .filter(tier -> tier.periodType() == period)
+                .toList();
+    }
+
     public PerformanceTier toTier(PerformanceTierRow row) {
         // sharedMonthlyLimit은 Long 그대로 넘긴다 — NULL(통합한도 없음)≠0(혜택 없음)을 유지한다
         return new PerformanceTier(
                 row.getTierId(),
+                PerformancePeriod.from(row.getPeriodType()),
                 row.getMinPerformanceAmount(),
                 row.getSharedMonthlyLimit());
     }

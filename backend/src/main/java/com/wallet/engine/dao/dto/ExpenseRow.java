@@ -20,7 +20,13 @@ public class ExpenseRow {
     private long userCardId;
     /** 카드 마스터 ID. 실적 제외 규칙·혜택 조회 키 (user_card 조인) */
     private long cardId;
+    /** 가맹점 ID. 미등록 가맹점이면 NULL. 스탬프 되돌림의 대상 매칭에 쓴다 */
+    private Long merchantId;
+    private String merchantCode;
+    private long categoryId;
     private String categoryCode;
+    /** 상위(대분류) 카테고리 ID. 대분류면 NULL */
+    private Long parentCategoryId;
     /** 상위(대분류) 카테고리 코드. 대분류면 NULL(LEFT JOIN 미매칭) */
     private String parentCategoryCode;
     private long amount;
@@ -34,6 +40,11 @@ public class ExpenseRow {
     private LocalDateTime paymentDate;
     /** 적용 혜택의 통합한도 사용 여부 'Y'/'N' (benefit 조인). 적용 혜택이 없으면 NULL */
     private String useSharedLimit;
+    /**
+     * 적용 혜택이 실적 제외 대상인지 'Y'/'N' (benefit 조인). 적용 혜택이 없으면 NULL.
+     * 가산 때 이 거래를 실적에 안 넣었다면 취소 때도 빼지 않아야 양쪽이 어긋나지 않는다.
+     */
+    private String excludeFromPerformance;
 
     public long getExpenseId() {
         return expenseId;
@@ -57,6 +68,38 @@ public class ExpenseRow {
 
     public void setCardId(long cardId) {
         this.cardId = cardId;
+    }
+
+    public Long getMerchantId() {
+        return merchantId;
+    }
+
+    public void setMerchantId(Long merchantId) {
+        this.merchantId = merchantId;
+    }
+
+    public String getMerchantCode() {
+        return merchantCode;
+    }
+
+    public void setMerchantCode(String merchantCode) {
+        this.merchantCode = merchantCode;
+    }
+
+    public long getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(long categoryId) {
+        this.categoryId = categoryId;
+    }
+
+    public Long getParentCategoryId() {
+        return parentCategoryId;
+    }
+
+    public void setParentCategoryId(Long parentCategoryId) {
+        this.parentCategoryId = parentCategoryId;
     }
 
     public String getCategoryCode() {
@@ -137,5 +180,13 @@ public class ExpenseRow {
 
     public void setUseSharedLimit(String useSharedLimit) {
         this.useSharedLimit = useSharedLimit;
+    }
+
+    public String getExcludeFromPerformance() {
+        return excludeFromPerformance;
+    }
+
+    public void setExcludeFromPerformance(String excludeFromPerformance) {
+        this.excludeFromPerformance = excludeFromPerformance;
     }
 }
