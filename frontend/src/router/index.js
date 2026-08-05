@@ -110,7 +110,7 @@ const router = createRouter({
 })
 
 // 하단 네비게이션 탭의 루트 경로 — 탭 간 이동은 슬라이드 대신 페이드로 처리
-const TAB_ROOTS = ['/home', '/cards', '/payment/recommend', '/points', '/settings']
+const TAB_ROOTS = ['/home', '/cards', '/payment', '/points', '/settings']
 
 // 현재까지 쌓인 이동 경로 스택 — router.back() 시 이전 경로와 비교해 뒤로가기 여부를 판단
 let pathStack = []

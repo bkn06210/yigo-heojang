@@ -147,8 +147,6 @@ const handleTouchMove = (e) => {
     if (flipProgress.value >= 0.5) {
       showPasswordModal.value = true;
     }
-  } else {
-    showPasswordModal.value = false;
   }
 };
 
@@ -189,7 +187,6 @@ const handleTouchEnd = () => {
     cardUpOffset.value = 0;
     flipProgress.value = 0;
     flippingIndex.value = null;
-    showPasswordModal.value = false;
   }
 };
 
@@ -272,13 +269,8 @@ const handleTimeoutCancel = () => {
 };
 
 const payment = () => {
-  if (!isFlipping.value) {
-    flippingIndex.value = selectedIndex.value;
-    isFlipping.value = true;
-    setTimeout(() => {
-      showPasswordModal.value = true;
-    }, CAROUSEL_CONFIG.MODAL_SHOW_DELAY);
-  }
+  flipProgress.value = 1; // 모달이 보이도록 설정
+  showPasswordModal.value = true;
 };
 
 const closeModal = () => {
@@ -326,7 +318,7 @@ const closeModal = () => {
       <!-- 모달들 -->
       <PaymentPasswordModal v-if="showPasswordModal"
                             :style="getModalStyle()"
-                            @on-password-success="handlePasswordSuccess"
+                            @success="handlePasswordSuccess"
                             @close="handlePasswordClose" />
       <PaymentQRModal v-if="showQRModal"
                       @close="handleQRClose"

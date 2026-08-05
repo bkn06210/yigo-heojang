@@ -31,6 +31,7 @@ const addMockCards = () => {
 import PageHeader from '@/components/common/PageHeader.vue';
 
 import PaymentPasswordModal from '@/components/payment/PaymentPasswordModal.vue';
+import PaymentQRModal from '@/components/payment/PaymentQRModal.vue';
 import PaymentQR from '@/components/payment/PaymentQR.vue';
 import PaymentTimer from '@/components/payment/PaymentTimer.vue';
 import PaymentRecommendationDetailSheet from '@/components/payment/PaymentRecommendationDetailSheet.vue';
@@ -492,7 +493,7 @@ const refreshPayment = async () => {
 
 <div class="payment-page">
 
-  <PageHeader title="결제 추천" :show-back="false" @back="router.back()" />
+  <PageHeader title="결제 추천" :show-back="true" @back="router.push('/payment')" />
 
 
 
@@ -924,22 +925,16 @@ const refreshPayment = async () => {
 
   />
 
+  <!-- 비밀번호 모달 -->
+  <PaymentPasswordModal v-if="showPasswordModal"
+                        @success="onPasswordSuccess"
+                        @close="cancelPayment" />
+
   <!-- QR 모달 -->
-  <div v-if="showQRModal" class="qr-overlay" :class="{ animating: isQRModalAnimating }">
-    <div class="qr-modal">
-      <div class="qr-modal-content">
-        <PaymentQR />
-
-        <PaymentTimer :seconds="qrSeconds" />
-
-        <p class="scan-message">QR 코드를 스캔해 결제하세요</p>
-
-        <button class="cancel" @click="cancelPayment">
-          결제 취소
-        </button>
-      </div>
-    </div>
-  </div>
+  <PaymentQRModal v-if="showQRModal"
+                  @close="cancelPayment"
+                  @timeout="cancelPayment"
+                  @success="cancelPayment" />
 
 <BottomNavigation/>
 

@@ -160,7 +160,7 @@ const formatTime = (seconds) => {
   width: 100%;
   padding: var(--space-md);
   height: 48px;
-  border: 1px solid var(--color-border);
+  border: 2px solid var(--color-primary);
   border-radius: var(--radius-md);
   background: transparent;
   color: var(--color-text-primary);
@@ -169,10 +169,13 @@ const formatTime = (seconds) => {
   cursor: pointer;
   transition: all 0.2s;
   margin-top: var(--space-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .cancel-btn:hover {
-  background: var(--color-border);
+  background: rgba(var(--color-primary-rgb), 0.1);
 }
 
 .cancel-btn:active {

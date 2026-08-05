@@ -61,7 +61,7 @@ const inputNumber = (number) => {
 
       password.value = '';
 
-      emit('on-password-success');
+      emit('success');
 
     }, 200);
 
