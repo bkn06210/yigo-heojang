@@ -93,8 +93,8 @@ class CardMonthlyStatusBuilderTest {
     }
 
     @Test
-    @DisplayName("한도 없는 혜택은 이용 현황 목록에서 빠진다")
-    void 한도_없는_혜택은_목록에서_빠진다() {
+    @DisplayName("한도 없는 혜택도 목록에 담되 한도·잔여·이용률은 null이다")
+    void 한도_없는_혜택은_한도_관련_값이_null이다() {
         BenefitRow limited = benefitRow(10, "편의점 5% 할인", null, 5_000L, null);
         BenefitRow unlimited = benefitRow(30, "전 가맹점 0.7% 적립", null, null, null);
 
@@ -102,8 +102,63 @@ class CardMonthlyStatusBuilderTest {
                 1, "카드", "2026-08", 350_000, 0, 0, TIERS,
                 List.of(limited, unlimited), Map.of(10L, 1_000L, 30L, 5_000L));
 
-        // 한도 없는 혜택은 잔여·이용률이 정의되지 않아 뺀다
-        assertThat(status.benefits()).extracting(BenefitUsageStatus::benefitId).containsExactly(10L);
+        assertThat(status.benefits()).extracting(BenefitUsageStatus::benefitId)
+                .containsExactly(10L, 30L);
+        // 한도 없는 혜택 — 소진액은 실제 값, 나머지 셋은 "제약 없음"이라 null(0이 아니다)
+        BenefitUsageStatus noLimit = status.benefits().get(1);
+        assertThat(noLimit.usedAmount()).isEqualTo(5_000L);
+        assertThat(noLimit.monthlyLimit()).isNull();
+        assertThat(noLimit.remainingLimit()).isNull();
+        assertThat(noLimit.usageRate()).isNull();
+    }
+
+    @Test
+    @DisplayName("소진이 한도를 넘어도 이용률은 100%를 넘지 않는다")
+    void 이용률은_100을_넘지_않는다() {
+        // 엔진 가산으로는 나올 수 없는 상태(계산기가 한도에서 자른다). 손으로 넣은 데이터에만 있다
+        BenefitRow row = benefitRow(60, "그룹 한도 초과 혜택", null, 10_000L, null);
+
+        CardMonthlyStatus status = builder.build(
+                1, "카드", "2026-08", 350_000, 0, 0, TIERS, List.of(row), Map.of(60L, 11_600L));
+
+        BenefitUsageStatus benefit = only(status);
+        // 잔여는 0으로 깎으면서 이용률만 116%를 내보내면 응답이 자기모순이다
+        assertThat(benefit.remainingLimit()).isZero();
+        assertThat(benefit.usageRate()).isEqualByComparingTo("100.0");
+    }
+
+    @Test
+    @DisplayName("한도 0(혜택 없음)은 잔여 0이되 이용률은 null이다")
+    void 한도_0인_혜택은_이용률이_null이다() {
+        BenefitRow row = benefitRow(50, "구간 미달로 한도 0", null, 0L, null);
+
+        CardMonthlyStatus status = builder.build(
+                1, "카드", "2026-08", 350_000, 0, 0, TIERS, List.of(row), Map.of());
+
+        BenefitUsageStatus benefit = only(status);
+        assertThat(benefit.monthlyLimit()).isZero();
+        assertThat(benefit.remainingLimit()).isZero();
+        // 0으로 나눌 수 없다 — 이용률 0%("아직 안 씀")로 뭉개면 안 된다
+        assertThat(benefit.usageRate()).isNull();
+    }
+
+    @Test
+    @DisplayName("실적 조건부 혜택도 상세 목록에 담고 requirePerformance로 표시한다")
+    void 실적_조건부_혜택은_담되_표시한다() {
+        BenefitRow conditional = benefitRow(10, "실적 조건부 혜택", null, 5_000L, null);
+        conditional.setRequirePerformance("Y");
+        BenefitRow unconditional = benefitRow(20, "조건 없는 혜택", null, 5_000L, null);
+        unconditional.setRequirePerformance("N");
+
+        // 전월실적 0 → 0원 구간 → 실적 미충족. 상세는 그래도 둘 다 보여준다
+        CardMonthlyStatus status = builder.build(
+                1, "카드", "2026-08", 0, 0, 0, TIERS,
+                List.of(conditional, unconditional), Map.of());
+
+        assertThat(status.performanceMet()).isFalse();
+        assertThat(status.benefits()).hasSize(2);
+        assertThat(status.benefits().get(0).requirePerformance()).isTrue();
+        assertThat(status.benefits().get(1).requirePerformance()).isFalse();
     }
 
     @Test

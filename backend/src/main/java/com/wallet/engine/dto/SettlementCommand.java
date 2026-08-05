@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
  * 소비내역 도메인이 결제 트랜잭션 안에서 이 값을 채워 엔진을 자바 메서드로 직접 호출한다(REST 아님).
  * 엔진은 이 정보로 혜택을 계산해 applied_benefit_id·discount_amount를 돌려주고, 상태를 가산한다.
  *
- * <b>시그니처는 잠정이다</b> — 소비내역 담당과 협의 후 확정한다(작업로그 6번 미결 안건).
+ * <b>시그니처는 잠정이다</b> — 소비내역 도메인과 연동을 맞추면서 확정한다.
  * merchantId·categoryId는 id로 받고, 매칭에 쓸 코드는 엔진이 조회로 펼친다(추천 흐름과 대칭).
  *
  * @param userCardId   보유카드 ID (상태 테이블 키)

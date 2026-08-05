@@ -2111,10 +2111,13 @@ GET /api/cards/monthly-status
 ◦ 카드가 여러 장이라도 한 번의 호출로 처리한다 (개별 호출 반복 금지).
 ◦ 보유 카드가 0장이면 에러가 아니라 cards: [], briefing: null을 반환한다 (정상 상태).
 ◦ 3번(상세)과의 분리 근거: 목록에서 카드마다 전체 혜택 상세를 반복 전송하면 응답이 커지므로, 목록은 요약(benefitsSummary)만, 혜택 상세(benefits, 이용률 포함)는 3번 개별 호출로 나눈다.
-◦ briefing은 실적 달성이 가장 임박한 카드 안내 — 판단·문구 모두 엔진 생성 (화면 표기는 "추천", "AI 브리핑" 라벨 지양).
+◦ briefing은 실적 달성이 가장 임박한 카드 안내 — 판단·문구 모두 엔진 생성 (화면 표기는 "추천", "AI 브리핑" 라벨 지양). 후보에서 빠지는 카드는 둘이다: 실적 조건이 없는 카드(targetPerformance=0)와 이미 최고 구간까지 채운 카드(remainingPerformance=0). 남은 카드 중 달성률 최대, 동률이면 남은 금액이 적은 쪽 → userCardId 오름차순. 후보가 없으면 `null`.
 ◦ performanceMet: 현재 실적 충족 여부(bool). false면 전월실적 조건이 걸린 혜택은 이번 달 적용되지 않는다.
 ◦ sharedLimit은 `int|null`. **null = 통합한도가 없는 카드**(혜택별 개별한도만 적용), 0 = 혜택 없음. 둘을 뭉개면 안 된다.
-◦ benefitsSummary[].remainingLimit은 묶음 한도에 속한 혜택이면 **그룹 기준 잔여액**이다 (31번의 limitGroupCode 참조).
+◦ **benefitsSummary는 묶음 한도(limitGroupCode) 그룹을 한 줄로 접어 내려준다.** 한도를 공유하는 혜택을 각각 내려주면 목록 화면이 그대로 더해 실제 지갑보다 몇 배 큰 금액으로 보이기 때문이다. 대표는 그룹에서 가장 작은 benefitId, 표시명은 `"대표 혜택명 외 N건"`. 상세는 31번(접지 않고 혜택별로 전부 내려감).
+◦ benefitsSummary는 **지금 쓸 수 있는 혜택만** 담는다. 빠지는 것은 둘 — 잔여 0(이번 달 소진), 그리고 **실적 미충족 카드(`performanceMet: false`)의 실적 조건부 혜택**(이번 달 계산에서 아예 적용되지 않으므로). 한도가 없는 혜택은 `remainingLimit: null`로 남는다 — null은 "제약 없음"이지 소진이 아니다.
+◦ **통합한도와 개별한도는 성격이 다른 두 잔액이라 더하면 안 된다.** 결제 한 건의 할인액은 두 잔액을 동시에 깎는다 (카페 5만원 10% 할인 → 카페 혜택 개별 잔여 −5,000, 카드 통합 잔여 −5,000). 실제로 받을 수 있는 금액은 항상 두 잔액 중 작은 쪽에 막힌다. `benefitsSummary[].remainingLimit`을 세로로 더하면 통합한도를 넘는 값이 나오므로, 합계로 쓸 값은 **통합 잔여**(`sharedLimit − sharedLimitUsed`)이고 개별 잔여는 그 안에서의 배분이다. 화면은 통합 잔여를 카드 단위로 한 줄 두고 그 아래에 혜택별 개별 잔여를 나열한다. `sharedLimit`이 null인 카드는 통합 잔여 줄 없이 개별 잔여만 쓴다.
+◦ `yearMonth` 형식이 `YYYY-MM`이 아니면 `INPUT_INVALID(400)`. 조용히 이번 달로 넘기지 않는다(다른 달 숫자를 그 달 값으로 오인하게 되므로).
 
 **화면** W*CardList W_Main*홈 · **라우트** /home /cards · **담당** 현준 고 · **상태 코드** 200 OK
 
@@ -2152,12 +2155,20 @@ GET /api/cards/monthly-status
           {
             "benefitId": 31,
             "benefitName": "교통 10% 할인",
+            "limitGroupCode": null,
             "remainingLimit": 5000
           },
           {
-            "benefitId": 55,
-            "benefitName": "편의점 2천원 할인",
+            "benefitId": 61,
+            "benefitName": "통신요금 10% 할인 외 2건",
+            "limitGroupCode": "LIVING3",
             "remainingLimit": 2000
+          },
+          {
+            "benefitId": 70,
+            "benefitName": "전 가맹점 0.5% 적립",
+            "limitGroupCode": null,
+            "remainingLimit": null
           }
         ]
       }
@@ -2180,8 +2191,14 @@ GET /api/cards/{userCardId}/monthly-status
 • 사용 목적: 카드 상세 화면용. 특정 보유 카드 한 장의 실적 현황과 **혜택별 이용 현황(잔여 한도 포함)**까지 상세 반환한다.
 • 주의사항:
 ◦ 달성률·이용률·잔여 한도는 저장값이 아니라 계산값이다 (원본만 저장, 조회 시 계산).
-◦ **limitGroupCode가 같은 혜택들은 한도를 공유한다.** monthlyLimit·usedAmount·remainingLimit·usageRate가 모두 같은 값으로 내려가므로, 화면에서 혜택마다 따로 더하면 한도가 실제보다 몇 배로 보인다. 같은 코드끼리 묶어 한 줄로 표시하거나 그룹 잔여액을 한 번만 노출한다. null이면 이 혜택 단독.
+◦ **limitGroupCode가 같은 혜택들은 한도를 공유한다.** monthlyLimit·usedAmount·remainingLimit·usageRate가 모두 같은 값으로 내려가므로, 화면에서 혜택마다 따로 더하면 한도가 실제보다 몇 배로 보인다. 같은 코드끼리 묶어 한 줄로 표시하거나 그룹 잔여액을 한 번만 노출한다. null이면 이 혜택 단독. (30번은 서버가 미리 접어서 내려주고, 여기서는 접지 않는다 — 상세 화면이 혜택별로 다 보여야 하기 때문.)
+◦ **한도가 없는 혜택도 목록에 담는다.** 이때 monthlyLimit·remainingLimit·usageRate가 모두 `null`이다 — "제약 없음"이지 "다 씀"이 아니다. 화면은 잔여액 대신 혜택명만 표시한다.
+◦ 증정(GIFT)·사후정산(RETROACTIVE)은 계산 대상이 아니라 이 목록에 없다. 카드 상세 화면에서 정보로 표시하려면 benefit 목록을 별도 조회한다.
+◦ **실적 미충족이어도 혜택을 빼지 않는다.** 이 화면은 "이 카드에 어떤 혜택이 있나"를 보는 자리다. 혜택별 `requirePerformance`(bool)와 카드의 `performanceMet`이 각각 `true`·`false`면 이번 달엔 적용되지 않으므로, 화면은 "실적 채우면 받을 수 있어요"로 표시한다. 30번(홈 요약)은 반대로 그 혜택을 아예 빼서 "지금 쓸 수 있는 것"만 보여준다.
+◦ `remainingLimit`은 이 혜택의 **개별 잔액**일 뿐이다. 통합한도를 쓰는 혜택은 카드의 통합 잔여에 한 번 더 막힌다 — 30번의 주의 참고.
+◦ `usageRate`는 **0~100 범위**다. 소진이 한도를 넘는 데이터가 있어도 100에서 자른다 — `remainingLimit`을 0으로 깎으면서 이용률만 100을 넘기면 응답이 서로 어긋나고 화면 진행 막대가 칸을 넘친다.
 ◦ performanceMet: 현재 실적 충족 여부(bool). sharedLimit은 `int|null` (null = 통합한도 없는 카드).
+◦ `yearMonth` 형식이 `YYYY-MM`이 아니면 `INPUT_INVALID(400)`.
 
 **화면** W_CardDetail · **라우트** /cards/:id · **담당** 현준 고 · **상태 코드** 200 OK
 
@@ -2215,7 +2232,8 @@ GET /api/cards/{userCardId}/monthly-status
         "usedAmount": 8000,
         "monthlyLimit": 10000,
         "remainingLimit": 2000,
-        "usageRate": 80.0
+        "usageRate": 80.0,
+        "requirePerformance": true
       },
       {
         "benefitId": 61,
@@ -2224,7 +2242,18 @@ GET /api/cards/{userCardId}/monthly-status
         "usedAmount": 3000,
         "monthlyLimit": 5000,
         "remainingLimit": 2000,
-        "usageRate": 60.0
+        "usageRate": 60.0,
+        "requirePerformance": true
+      },
+      {
+        "benefitId": 70,
+        "benefitName": "전 가맹점 0.5% 적립",
+        "limitGroupCode": null,
+        "usedAmount": 1200,
+        "monthlyLimit": null,
+        "remainingLimit": null,
+        "usageRate": null,
+        "requirePerformance": false
       }
     ]
   },
@@ -2234,7 +2263,7 @@ GET /api/cards/{userCardId}/monthly-status
 
 **고유 에러**
 
-`NOT_FOUND(404)`
+`NOT_FOUND(404)` — 없는 카드와 타인 소유 카드를 구분 없이 404 (존재 비노출)
 
 ### 32. 결제 취소 상태 갱신
 
@@ -2246,6 +2275,9 @@ POST /api/settlements/cancel
 - 주의사항:
 - 결제(가산)와 취소(차감)의 처리 경로가 다르다 — 아래 4-A / 4-B 참고.
 - 놓친 혜택(최적 대비 차액)은 계산·저장하지 않는다. (범위 밖)
+- 취소는 당월 건만 처리한다. 전월 이전 거래 취소는 범위 밖(`RESOURCE_STATE_INVALID`, 400) — 전월실적이 바뀌면 실적구간·통합한도 재판정이 필요하기 때문.
+- 취소 상태 전환(`APPROVED→CANCELED`)은 엔진이 compare-and-set으로 수행한다(중복 취소 차단 = 멱등). expense 상태 변경 주체는 소비내역 담당과 협의 대상(잠정).
+- 가산 시 한도 소진으로 혜택액이 0원이면 `applied_benefit_id`·소진(횟수·사용액)을 기록하지 않는다. 단 그 거래의 실적 인정분은 정상 가산된다.
 
 **담당** 현준 고 · **상태 코드** 200 OK
 
@@ -2291,7 +2323,7 @@ POST /api/settlements/cancel
 
 **고유 에러**
 
-`NOT_FOUND(404) ALREADY_CANCELED(409)`
+`NOT_FOUND(404) ALREADY_CANCELED(409) RESOURCE_STATE_INVALID(400)`
 
 ### 33. 포인트 추천
 

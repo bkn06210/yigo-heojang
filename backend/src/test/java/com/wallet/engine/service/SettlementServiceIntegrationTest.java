@@ -242,8 +242,13 @@ class SettlementServiceIntegrationTest {
                 "INSERT INTO merchant (merchant_code, merchant_name, category_id) VALUES (?, ?, ?)",
                 "IT_STL_STARBUCKS", "IT정산스타벅스", cafeCategoryId);
 
-        cardId = insert("INSERT INTO card (card_name, issuer, card_type) VALUES (?, ?, ?)",
-                "정산IT_카페카드", "TEST", "CREDIT");
+        long cardCompanyId = insert(
+            "INSERT INTO card_company (company_code, company_name) VALUES (?, ?)",
+            "TEST_CARD", "테스트카드사"
+        );
+
+        cardId = insert("INSERT INTO card (card_name, card_company_id, card_type) VALUES (?, ?, ?)",
+                "정산IT_카페카드", cardCompanyId, "CREDIT");
         userCardId = insert(
                 "INSERT INTO user_card (member_id, card_id, masked_card_number) VALUES (?, ?, ?)",
                 memberId, cardId, "3333-****-****-3333");

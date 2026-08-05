@@ -17,7 +17,7 @@ package com.wallet.engine.model;
 public final class CalcContext {
 
     private final long paymentAmount;
-    /** 포인트 사용분. 현재 팀 합의상 amount가 이미 차감 후 값이라 항상 0이지만, 계산식은 이 자리를 유지한다 */
+    /** 포인트 사용분. amount가 이미 차감 후 값이라 항상 0이지만, 계산식은 이 자리를 유지한다 */
     private final long usedPointAmount;
     private final String paymentType;
     private final boolean performanceMet;
