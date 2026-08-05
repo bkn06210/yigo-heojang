@@ -27,13 +27,17 @@ import com.wallet.card.support.CardMaskingSupport;
 import com.wallet.card.support.CardNumberSupport;
 import com.wallet.common.ErrorCode;
 import com.wallet.common.exception.BusinessException;
+import com.wallet.member.mapper.MemberMapper;
 
 @RequiredArgsConstructor
 @Service
 public class UserCardService {
+    private static final int MAX_REPRESENTATIVE_CARD_COUNT = 3;
+
     private final CardMapper cardMapper;
     private final UserCardMapper userCardMapper;
     private final CardBinFinder cardBinFinder;
+    private final MemberMapper memberMapper;
 
     @Transactional
     public UserCardRegisterResponse registerUserCard(
@@ -97,6 +101,40 @@ public class UserCardService {
         return UserCardDetailResponse.from(detailResult);
     }
 
+    // 보유 카드의 대표 카드 여부를 요청한 최종 상태로 변경한다.
+    @Transactional
+    public void updateRepresentative(
+        Long memberId,
+        Long userCardId,
+        boolean representative
+    ) {
+        lockActiveMember(memberId);
+
+        UserCard userCard =
+            userCardMapper.findActiveByIdAndMemberId(memberId, userCardId);
+        if (userCard == null) {
+            throw new BusinessException(ErrorCode.USER_CARD_NOT_FOUND);
+        }
+
+        if (isSameRepresentativeStatus(userCard, representative)) {
+            return;
+        }
+
+        if (representative) {
+            validateRepresentativeCardLimit(memberId);
+        }
+
+        int updatedCount = userCardMapper.updateRepresentative(
+            memberId,
+            userCardId,
+            representative
+        );
+
+        if (updatedCount != 1) {
+            throw new BusinessException(ErrorCode.USER_CARD_NOT_FOUND);
+        }
+    }
+
     // 로그인 회원이 소유한 활성 보유 카드를 삭제 상태로 변경한다.
     @Transactional
     public void deleteUserCard(Long memberId, Long userCardId) {
@@ -105,6 +143,33 @@ public class UserCardService {
 
         if (updatedCount != 1) {
             throw new BusinessException(ErrorCode.USER_CARD_NOT_FOUND);
+        }
+    }
+
+    private void lockActiveMember(Long memberId) {
+        Long lockedMemberId = memberMapper.lockActiveMemberById(memberId);
+
+        if (lockedMemberId == null) {
+            throw new BusinessException(ErrorCode.MEMBER_NOT_FOUND);
+        }
+    }
+
+    private boolean isSameRepresentativeStatus(
+        UserCard userCard,
+        boolean representative
+    ) {
+        return Boolean.valueOf(representative)
+            .equals(userCard.getRepresentative());
+    }
+
+    private void validateRepresentativeCardLimit(Long memberId) {
+        int representativeCardCount =
+            userCardMapper.countActiveRepresentativeCards(memberId);
+
+        if (representativeCardCount >= MAX_REPRESENTATIVE_CARD_COUNT) {
+            throw new BusinessException(
+                ErrorCode.REPRESENTATIVE_CARD_LIMIT_EXCEEDED
+            );
         }
     }
 
