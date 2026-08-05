@@ -11,5 +11,5 @@ public class UserCard {
     private final Long cardId;
     private final String maskedCardNumber;
     private final Boolean representative;
-    private final CardStatus cardStatus;
+    private final UserCardStatus status;
 }

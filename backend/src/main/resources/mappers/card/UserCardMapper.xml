@@ -13,7 +13,7 @@
             <arg column="cardId" javaType="Long"/>
             <arg column="maskedCardNumber" javaType="String"/>
             <arg column="representative" javaType="Boolean"/>
-            <arg column="cardStatus" javaType="com.wallet.card.domain.CardStatus"/>
+            <arg column="cardStatus" javaType="com.wallet.card.domain.UserCardStatus"/>
         </constructor>
     </resultMap>
 
@@ -26,6 +26,21 @@
             <arg column="maskedCardNumber" javaType="String"/>
             <arg column="imageUrl" javaType="String"/>
             <arg column="representative" javaType="Boolean"/>
+        </constructor>
+    </resultMap>
+
+    <resultMap id="userCardListResultMap"
+               type="com.wallet.card.domain.UserCardListResult">
+        <constructor>
+            <idArg column="userCardId" javaType="Long"/>
+            <arg column="cardId" javaType="Long"/>
+            <arg column="cardName" javaType="String"/>
+            <arg column="issuerName" javaType="String"/>
+            <arg column="cardType" javaType="String"/>
+            <arg column="maskedCardNumber" javaType="String"/>
+            <arg column="imageUrl" javaType="String"/>
+            <arg column="representative" javaType="Boolean"/>
+            <arg column="registeredAt" javaType="java.time.LocalDateTime"/>
         </constructor>
     </resultMap>
 
@@ -86,6 +101,35 @@
           AND c.is_active = 'Y'
           AND cc.is_active = 'Y'
             LIMIT 1
+    </select>
+
+    <!--
+    보유 카드 목록은 사용자가 실제로 등록한 카드 기준으로 조회한다.
+
+    card.is_active는 카드 상품의 신규 노출/발급 가능 여부에 가까우므로,
+    단종되었지만 기존 사용자가 유효기간까지 사용할 수 있는 카드가
+    목록에서 사라지지 않도록 조건에서 제외한다.
+    -->
+    <select id="findActiveUserCardsByMemberId"
+            resultMap="userCardListResultMap">
+        SELECT
+            uc.user_card_id AS userCardId,
+            uc.card_id AS cardId,
+            c.card_name AS cardName,
+            cc.company_name AS issuerName,
+            c.card_type AS cardType,
+            uc.masked_card_number AS maskedCardNumber,
+            c.image_url AS imageUrl,
+            uc.is_representative AS representative,
+            uc.registered_at AS registeredAt
+        FROM user_card uc
+        INNER JOIN card c ON c.card_id = uc.card_id
+        INNER JOIN card_company cc ON cc.card_company_id = c.card_company_id
+        WHERE uc.member_id = #{memberId}
+          AND uc.card_status = 'ACTIVE'
+        ORDER BY
+            uc.registered_at DESC,
+            uc.user_card_id DESC
     </select>
 
 </mapper>
