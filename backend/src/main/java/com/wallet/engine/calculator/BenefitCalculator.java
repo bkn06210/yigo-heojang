@@ -21,16 +21,17 @@ import java.math.RoundingMode;
  * <pre>
  * 0.  종류 게이트    RETROACTIVE·GIFT → 미적용
  * 1.  조건 게이트    실적 → 결제수단 → 건당최소금액
- * 1.5 횟수 게이트    일 횟수 → 월 횟수
+ * 1.5 횟수 게이트    일 → 월 → 분기 → 연 횟수
  * 2.  대상금액       min(결제금액 − 포인트사용액, 대상금액상한)
- * 3.  계산           RATE: 대상금액 × 율 / FIXED: 정액
+ * 3.  계산           RATE: 대상금액 × 율 / FIXED: 정액 / COUNT_STEP: N회째만 정액, 아니면 0원
  * 3.5 결제금액 클램프 min(계산값, 대상금액)  — 할인이 결제액을 넘지 않게
- * 4~7 상한 클램프    건당 → 일 → 월 → 통합. 각 잔여는 max(0, 한도 − 소진)
- * 8.  절사           원 미만 버림
+ * 4~9 상한 클램프    건당 → 일 → 월 → 분기 → 연 → 통합. 각 잔여는 max(0, 한도 − 소진)
+ * 10. 절사           원 미만 버림
  * </pre>
  *
- * 4~7은 전부 min 연산이라 금액만 보면 순서가 무관하다(교환법칙). 순서가 실제로 영향을 주는 건
+ * 4~9는 전부 min 연산이라 금액만 보면 순서가 무관하다(교환법칙). 순서가 실제로 영향을 주는 건
  * "어느 상한에 걸렸나"(CapType) 기록뿐이며, 동률이면 위 순서의 첫 번째를 남긴다 — 테스트 재현성.
+ * 기간 축은 좁은 것부터 넓은 것으로 두어, 동시에 걸렸을 때 더 자주 리셋되는 쪽이 사유로 남게 한다.
  */
 public final class BenefitCalculator {
 
@@ -47,7 +48,7 @@ public final class BenefitCalculator {
         }
 
         long eligibleAmount = eligibleAmount(rule, context);
-        BigDecimal rawBenefit = rawBenefit(rule, eligibleAmount);
+        BigDecimal rawBenefit = rawBenefit(rule, context, eligibleAmount);
 
         ClampResult clamped = applyCaps(rule, context, rawBenefit, eligibleAmount);
         long benefitAmount = clamped.amount().setScale(0, RoundingMode.DOWN).longValue();
@@ -65,6 +66,10 @@ public final class BenefitCalculator {
         if (rule.getBenefitKind() == BenefitKind.GIFT) {
             return NotApplicableReason.GIFT_EXCLUDED;
         }
+        // 할부수수료 면제라 결제금액 기준 할인액이 없다. 금액으로 환산하면 카드 비교 순위가 왜곡된다.
+        if (rule.getBenefitKind() == BenefitKind.INSTALLMENT_FREE) {
+            return NotApplicableReason.INSTALLMENT_FREE_EXCLUDED;
+        }
         if (rule.isRequirePerformance() && !context.isPerformanceMet()) {
             return NotApplicableReason.PERFORMANCE_NOT_MET;
         }
@@ -77,13 +82,37 @@ public final class BenefitCalculator {
         if (rule.getMinTxnAmount() != null && context.getPaymentAmount() < rule.getMinTxnAmount()) {
             return NotApplicableReason.MIN_TXN_AMOUNT_NOT_MET;
         }
-        if (rule.getDailyCountLimit() != null && context.getDailyUsedCount() >= rule.getDailyCountLimit()) {
+        // 횟수 한도는 일·월·분기·연 네 축이 각각 독립이다. 좁은 기간부터 검사해 사유를 구체적으로 남긴다.
+        if (exceedsCount(rule, rule.getDailyCountLimit(), context.getDailyUsedCount())) {
             return NotApplicableReason.DAILY_COUNT_EXCEEDED;
         }
-        if (rule.getMonthlyCountLimit() != null && context.getMonthlyUsedCount() >= rule.getMonthlyCountLimit()) {
+        if (exceedsCount(rule, rule.getMonthlyCountLimit(), context.getMonthlyUsedCount())) {
             return NotApplicableReason.MONTHLY_COUNT_EXCEEDED;
         }
+        if (exceedsCount(rule, rule.getQuarterlyCountLimit(), context.getQuarterlyUsedCount())) {
+            return NotApplicableReason.QUARTERLY_COUNT_EXCEEDED;
+        }
+        if (exceedsCount(rule, rule.getYearlyCountLimit(), context.getYearlyUsedCount())) {
+            return NotApplicableReason.YEARLY_COUNT_EXCEEDED;
+        }
         return null;
+    }
+
+    /**
+     * 횟수 한도 도달 여부. 한도의 단위는 "혜택을 받은 횟수"다.
+     *
+     * COUNT_STEP은 소진 횟수가 "스탬프가 찍힌 횟수"(조건을 충족한 결제 수)라 단위가 다르다.
+     * "5회마다 지급, 월 1회 한"인 혜택에서 소진 횟수를 그대로 비교하면 두 번째 결제에서 막혀
+     * 스탬프를 채울 기회 자체가 사라진다. 지급 횟수는 저장하지 않고 여기서 도출한다.
+     */
+    private boolean exceedsCount(BenefitRule rule, Integer countLimit, int usedCount) {
+        if (countLimit == null) {
+            return false;
+        }
+        if (rule.getCalcMethod() == CalcMethod.COUNT_STEP) {
+            return usedCount / rule.getStepCount() >= countLimit;
+        }
+        return usedCount >= countLimit;
     }
 
     /**
@@ -99,13 +128,26 @@ public final class BenefitCalculator {
         return targetAmount;
     }
 
-    private BigDecimal rawBenefit(BenefitRule rule, long eligibleAmount) {
+    private BigDecimal rawBenefit(BenefitRule rule, CalcContext context, long eligibleAmount) {
         if (rule.getCalcMethod() == CalcMethod.RATE) {
             return BigDecimal.valueOf(eligibleAmount)
                     .multiply(rule.getBenefitValue())
                     .divide(PERCENT_DIVISOR, 10, RoundingMode.DOWN);
         }
+        if (rule.getCalcMethod() == CalcMethod.COUNT_STEP) {
+            return isStepReached(rule, context) ? rule.getBenefitValue() : BigDecimal.ZERO;
+        }
         return rule.getBenefitValue();
+    }
+
+    /**
+     * 이번 결제로 스탬프가 채워지는가. 이번 건을 포함해 센다(5회째 결제에서 지급).
+     *
+     * 채워지지 않은 결제도 "미적용"이 아니라 "적용 + 0원"이다. 스탬프는 그 결제에서
+     * 다른 혜택을 받았는지와 무관하게 찍히므로, 미적용으로 두면 진행 횟수를 올릴 근거가 사라진다.
+     */
+    private boolean isStepReached(BenefitRule rule, CalcContext context) {
+        return (context.getMonthlyUsedCount() + 1) % rule.getStepCount() == 0;
     }
 
     private ClampResult applyCaps(BenefitRule rule, CalcContext context,
@@ -117,6 +159,10 @@ public final class BenefitCalculator {
         result = result.clampTo(rule.getMaxBenefitPerTxn(), CapType.MAX_BENEFIT_PER_TXN);
         result = result.clampTo(remaining(rule.getDailyLimit(), context.getDailyUsedAmount()), CapType.DAILY_LIMIT);
         result = result.clampTo(remaining(rule.getMonthlyLimit(), context.getMonthlyUsedAmount()), CapType.MONTHLY_LIMIT);
+        result = result.clampTo(
+                remaining(rule.getQuarterlyLimit(), context.getQuarterlyUsedAmount()), CapType.QUARTERLY_LIMIT);
+        result = result.clampTo(
+                remaining(rule.getYearlyLimit(), context.getYearlyUsedAmount()), CapType.YEARLY_LIMIT);
         if (rule.isUseSharedLimit()) {
             result = result.clampTo(
                     remaining(context.getSharedMonthlyLimit(), context.getSharedLimitUsed()), CapType.SHARED_LIMIT);
@@ -137,7 +183,8 @@ public final class BenefitCalculator {
      * 정액이거나, 어떤 상한에 걸려 값이 고정됐거나, 금액이 확정 입력이면 확정이다.
      */
     private boolean isEstimate(BenefitRule rule, CalcContext context, ClampResult clamped) {
-        if (rule.getCalcMethod() == CalcMethod.FIXED) {
+        // 금액이 결제액에 비례하는 것은 RATE뿐이다. 나머지는 결제금액이 달라져도 값이 안 변한다.
+        if (rule.getCalcMethod() != CalcMethod.RATE) {
             return false;
         }
         if (!context.isAmountEstimated()) {

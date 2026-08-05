@@ -1,0 +1,1659 @@
+{
+ "card": {
+  "card_name": "YOU Wish 카드",
+  "card_type": "CREDIT",
+  "annual_fee": 15000,
+  "annual_fees": [
+   {
+    "brand": "LOCAL",
+    "issue_type": "PLASTIC",
+    "base_fee": 7000,
+    "partner_fee": 8000,
+    "_source": "연회비 표 - 일반카드 / 국내전용(Local): 15,000원 (기본연회비 7천원, 제휴연회비 8천원)"
+   },
+   {
+    "brand": "MASTERCARD",
+    "issue_type": "PLASTIC",
+    "base_fee": 7000,
+    "partner_fee": 8000,
+    "_source": "연회비 표 - 일반카드 / 국내외겸용(Mastercard, Amex): 15,000원 (기본연회비 7천원, 제휴연회비 8천원)"
+   },
+   {
+    "brand": "AMEX",
+    "issue_type": "PLASTIC",
+    "base_fee": 7000,
+    "partner_fee": 8000,
+    "_source": "연회비 표 - 일반카드 / 국내외겸용(Mastercard, Amex): 15,000원 (기본연회비 7천원, 제휴연회비 8천원)"
+   },
+   {
+    "brand": "LOCAL",
+    "issue_type": "MOBILE",
+    "base_fee": 1000,
+    "partner_fee": 8000,
+    "_source": "연회비 표 - 모바일 단독카드 / 국내전용(Local): 9,000원 (기본연회비 1천원, 제휴연회비 8천원)"
+   },
+   {
+    "brand": "MASTERCARD",
+    "issue_type": "MOBILE",
+    "base_fee": 1000,
+    "partner_fee": 8000,
+    "_source": "연회비 표 - 모바일 단독카드 / 국내외겸용(Mastercard, Amex): 9,000원 (기본연회비 1천원, 제휴연회비 8천원)"
+   },
+   {
+    "brand": "AMEX",
+    "issue_type": "MOBILE",
+    "base_fee": 1000,
+    "partner_fee": 8000,
+    "_source": "연회비 표 - 모바일 단독카드 / 국내외겸용(Mastercard, Amex): 9,000원 (기본연회비 1천원, 제휴연회비 8천원)"
+   }
+  ],
+  "_source": {
+   "card_name": "KB YOU Wish 카드 / 유 위시 카드 (상품설명서 A-20260415-9162-00780-00)",
+   "card_type": "연체 이자율·단기카드대출(현금서비스)·장기카드대출(카드론) 조항이 있는 신용카드 상품설명서",
+   "annual_fee": "일반카드 15,000원(기본연회비 7천원, 제휴연회비 8천원) — 브랜드와 무관하게 동일하여 가장 흔한 조합인 일반카드 총액을 대표값으로 사용"
+  },
+  "_needs_review": []
+ },
+ "card_exclusions": [
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "INTEREST_FREE",
+   "_source": "할인서비스 제외대상: 무이자할부 이용금액"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "CASH_ADVANCE",
+   "_source": "할인서비스 제외대상: 단기카드대출(현금서비스)"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "CARD_LOAN",
+   "_source": "할인서비스 제외대상: 장기카드대출(카드론)"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "GIFT_CARD",
+   "_source": "할인서비스 제외대상: 상품권 및 선불카드(선불전자지급수단 포함) 구입·충전금액"
+  },
+  {
+   "exclusion_type": "CATEGORY",
+   "exclusion_value": "APARTMENT_FEE",
+   "_source": "할인서비스 제외대상: 아파트 관리비"
+  },
+  {
+   "exclusion_type": "CATEGORY",
+   "exclusion_value": "TUITION",
+   "_source": "할인서비스 제외대상: 초·중·고 학교 납입금 전체, 대학(원)등록금"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "GOV_SUBSIDY",
+   "_source": "할인서비스 제외대상: 정부지원금(보육료/유치원보조비/바우처 이용금액 등)"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "TAX",
+   "_source": "할인서비스 제외대상: 국세, 지방세"
+  },
+  {
+   "exclusion_type": "CATEGORY",
+   "exclusion_value": "UTILITY",
+   "_source": "할인서비스 제외대상: 공과금(전기/수도 등)"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "SOCIAL_INSURANCE",
+   "_source": "할인서비스 제외대상: 4대 사회보험료(건강/연금/고용/산재)"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "FEE_INTEREST",
+   "_source": "할인서비스 제외대상: 각종 수수료 및 이자, 연체료"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "ANNUAL_FEE",
+   "_source": "할인서비스 제외대상: 연회비"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "CANCELED",
+   "_source": "할인서비스 제외대상: 취소금액"
+  }
+ ],
+ "performance_tiers": [
+  {
+   "period_type": "MONTH",
+   "min_performance_amount": 0,
+   "shared_monthly_limit": null,
+   "_source": "전월 이용실적 40만원 이상 시 제공 — 미달 시 할인서비스 미제공 (0원 구간)"
+  },
+  {
+   "period_type": "MONTH",
+   "min_performance_amount": 400000,
+   "shared_monthly_limit": null,
+   "_source": "전월 이용실적 40만원 이상 시 제공. 카드 전체 통합 할인한도 없이 서비스 묶음별 월 할인한도만 존재하여 shared_monthly_limit은 null"
+  }
+ ],
+ "performance_exclusions": [
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "DISCOUNTED",
+   "_source": "전월 이용실적 제외 대상: 'KB YOU Wish 카드'로 할인 적용 받은 매출 전체"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "CASH_ADVANCE",
+   "_source": "전월 이용실적 제외 대상: 단기카드대출(현금서비스)"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "CARD_LOAN",
+   "_source": "전월 이용실적 제외 대상: 장기카드대출(카드론)"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "GIFT_CARD",
+   "_source": "전월 이용실적 제외 대상: 상품권 및 선불카드(선불전자지급수단 포함) 구입·충전 금액"
+  },
+  {
+   "exclusion_type": "CATEGORY",
+   "exclusion_value": "APARTMENT_FEE",
+   "_source": "전월 이용실적 제외 대상: 아파트관리비"
+  },
+  {
+   "exclusion_type": "CATEGORY",
+   "exclusion_value": "TUITION",
+   "_source": "전월 이용실적 제외 대상: 초·중·고 학교 납입금 전체, 대학(원) 등록금"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "GOV_SUBSIDY",
+   "_source": "전월 이용실적 제외 대상: 정부지원금(보육료/유치원보조비/바우처 이용금액 등)"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "TAX",
+   "_source": "전월 이용실적 제외 대상: 국세, 지방세"
+  },
+  {
+   "exclusion_type": "CATEGORY",
+   "exclusion_value": "UTILITY",
+   "_source": "전월 이용실적 제외 대상: 공과금(전기/수도 등)"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "SOCIAL_INSURANCE",
+   "_source": "전월 이용실적 제외 대상: 4대 사회보험료(건강/연금/고용/산재)"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "FEE_INTEREST",
+   "_source": "전월 이용실적 제외 대상: 각종 수수료 및 이자, 연체료"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "ANNUAL_FEE",
+   "_source": "전월 이용실적 제외 대상: 연회비"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "UNAPPROVED",
+   "_source": "전월 이용실적 제외 대상: 무승인전표(RF후불교통요금/자판기/터널 이용료/항공기내 이용 등)"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "POSTPAID_TRANSIT",
+   "_source": "전월 이용실적 제외 대상: 무승인전표(RF후불교통요금/자판기/터널 이용료/항공기내 이용 등)"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "CANCELED",
+   "_source": "전월 이용실적 제외 대상: 취소금액"
+  }
+ ],
+ "benefits": [
+  {
+   "benefit_name": "위시 베이직 - KB Pay 10% 청구할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 10,
+   "step_count": null,
+   "apply_timing": "BILLED",
+   "target_type": "ALL",
+   "target_category_code": null,
+   "target_merchant_name": null,
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": "KB_PAY",
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": 2500,
+   "monthly_limit": 5000,
+   "limit_group_code": null,
+   "monthly_count_limit": null,
+   "daily_count_limit": null,
+   "daily_limit": null,
+   "yearly_count_limit": null,
+   "quarterly_count_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "국내 가맹점에서 KB Pay로 결제한 이용건. 다른 할인서비스와 중복 적용 가능(한 결제에 혜택 1개만 적용하는 구조라 중복은 표현되지 않음).",
+   "tier_limits": [],
+   "exclusions": [
+    {
+     "exclusion_type": "TRANSACTION_ATTR",
+     "exclusion_value": "OVERSEAS",
+     "_source": "※ 해외 가맹점 결제건 제외"
+    }
+   ],
+   "_source": {
+    "benefit_value": "KB Pay 10% 청구할인",
+    "apply_timing": "청구할인",
+    "require_payment_type": "국내 가맹점에서 KB Pay로 결제한 이용건",
+    "monthly_limit": "월 할인한도 안내 - KB Pay 10% 5천원 (건당 2,500원 한도)",
+    "max_benefit_per_txn": "5천원 (건당 2,500원 한도)",
+    "require_performance": "전월 이용실적 40만원 이상 시 제공"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "위시 베이직 - 음식점 10% 청구할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 10,
+   "step_count": null,
+   "apply_timing": "BILLED",
+   "target_type": "CATEGORY",
+   "target_category_code": "RESTAURANT",
+   "target_merchant_name": null,
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": 2500,
+   "monthly_limit": 5000,
+   "limit_group_code": "BASIC_DINING_CVS_5000",
+   "monthly_count_limit": null,
+   "daily_count_limit": null,
+   "daily_limit": null,
+   "yearly_count_limit": null,
+   "quarterly_count_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "음식점(한식, 일식, 중식, 양식, 뷔페, 패밀리레스토랑, 일반음식점 업종). 백화점/대형마트 등 일부 입점 매장 제외. 음식점·편의점 합산 월 5천원 한도.",
+   "tier_limits": [],
+   "exclusions": [
+    {
+     "exclusion_type": "MERCHANT_LOCATION",
+     "exclusion_value": "IN_DEPARTMENT_STORE",
+     "_source": "※ 백화점/대형마트 등 일부 입점 매장 제외"
+    },
+    {
+     "exclusion_type": "MERCHANT_LOCATION",
+     "exclusion_value": "IN_LARGE_MART",
+     "_source": "※ 백화점/대형마트 등 일부 입점 매장 제외"
+    }
+   ],
+   "_source": {
+    "benefit_value": "음식점, 편의점 10% 청구할인",
+    "target_category_code": "음식점(한식, 일식, 중식, 양식, 뷔페, 패밀리레스토랑, 일반음식점 업종)",
+    "monthly_limit": "월 할인한도 안내 - 음식점, 편의점 10% 5천원 (건당 2,500원 한도)",
+    "max_benefit_per_txn": "5천원 (건당 2,500원 한도)",
+    "limit_group_code": "한도표에서 음식점과 편의점이 한 행으로 묶여 월 5천원을 공유"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "위시 베이직 - 편의점(GS25) 10% 청구할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 10,
+   "step_count": null,
+   "apply_timing": "BILLED",
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": "GS25",
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": 2500,
+   "monthly_limit": 5000,
+   "limit_group_code": "BASIC_DINING_CVS_5000",
+   "monthly_count_limit": null,
+   "daily_count_limit": null,
+   "daily_limit": null,
+   "yearly_count_limit": null,
+   "quarterly_count_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "편의점(GS25, CU) 중 GS25. 편의점은 오프라인매장 일반결제건에 한함(온라인가맹점 제외). 백화점/대형마트 등 일부 입점 매장 제외.",
+   "tier_limits": [],
+   "exclusions": [
+    {
+     "exclusion_type": "MERCHANT_LOCATION",
+     "exclusion_value": "IN_DEPARTMENT_STORE",
+     "_source": "※ 백화점/대형마트 등 일부 입점 매장 제외"
+    },
+    {
+     "exclusion_type": "MERCHANT_LOCATION",
+     "exclusion_value": "IN_LARGE_MART",
+     "_source": "※ 백화점/대형마트 등 일부 입점 매장 제외"
+    }
+   ],
+   "_source": {
+    "benefit_value": "음식점, 편의점 10% 청구할인",
+    "target_merchant_name": "편의점(GS25, CU)",
+    "monthly_limit": "월 할인한도 안내 - 음식점, 편의점 10% 5천원 (건당 2,500원 한도)",
+    "max_benefit_per_txn": "5천원 (건당 2,500원 한도)"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "위시 베이직 - 편의점(CU) 10% 청구할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 10,
+   "step_count": null,
+   "apply_timing": "BILLED",
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": "CU",
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": 2500,
+   "monthly_limit": 5000,
+   "limit_group_code": "BASIC_DINING_CVS_5000",
+   "monthly_count_limit": null,
+   "daily_count_limit": null,
+   "daily_limit": null,
+   "yearly_count_limit": null,
+   "quarterly_count_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "편의점(GS25, CU) 중 CU. 편의점은 오프라인매장 일반결제건에 한함(온라인가맹점 제외). 백화점/대형마트 등 일부 입점 매장 제외.",
+   "tier_limits": [],
+   "exclusions": [
+    {
+     "exclusion_type": "MERCHANT_LOCATION",
+     "exclusion_value": "IN_DEPARTMENT_STORE",
+     "_source": "※ 백화점/대형마트 등 일부 입점 매장 제외"
+    },
+    {
+     "exclusion_type": "MERCHANT_LOCATION",
+     "exclusion_value": "IN_LARGE_MART",
+     "_source": "※ 백화점/대형마트 등 일부 입점 매장 제외"
+    }
+   ],
+   "_source": {
+    "benefit_value": "음식점, 편의점 10% 청구할인",
+    "target_merchant_name": "편의점(GS25, CU)",
+    "monthly_limit": "월 할인한도 안내 - 음식점, 편의점 10% 5천원 (건당 2,500원 한도)",
+    "max_benefit_per_txn": "5천원 (건당 2,500원 한도)"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "위시 베이직 - 이동통신요금(SKT) 10% 청구할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 10,
+   "step_count": null,
+   "apply_timing": "BILLED",
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": "SKT",
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": "AUTO_TRANSFER",
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": 2500,
+   "monthly_limit": 5000,
+   "limit_group_code": "BASIC_TELECOM_OTT_5000",
+   "monthly_count_limit": null,
+   "daily_count_limit": null,
+   "daily_limit": null,
+   "yearly_count_limit": null,
+   "quarterly_count_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "SKT, KT, LG U+, Liiv M 이동통신 자동납부 요금. 인터넷, IPTV 등 결합상품 제외. 이동통신요금·OTT 합산 월 5천원 한도.",
+   "tier_limits": [],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "이동통신요금 10% 청구할인",
+    "target_merchant_name": "SKT, KT, LG U+, Liiv M 이동통신 자동납부 요금",
+    "require_payment_type": "이동통신 자동납부 요금",
+    "monthly_limit": "월 할인한도 안내 - 이동통신요금 10% / OTT 30% 5천원 (건당 2,500원 한도)",
+    "max_benefit_per_txn": "5천원 (건당 2,500원 한도)",
+    "limit_group_code": "한도표에서 이동통신요금과 OTT가 한 셀로 묶여 월 5천원을 공유"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "위시 베이직 - 이동통신요금(KT) 10% 청구할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 10,
+   "step_count": null,
+   "apply_timing": "BILLED",
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": "KT",
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": "AUTO_TRANSFER",
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": 2500,
+   "monthly_limit": 5000,
+   "limit_group_code": "BASIC_TELECOM_OTT_5000",
+   "monthly_count_limit": null,
+   "daily_count_limit": null,
+   "daily_limit": null,
+   "yearly_count_limit": null,
+   "quarterly_count_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "SKT, KT, LG U+, Liiv M 이동통신 자동납부 요금. 인터넷, IPTV 등 결합상품 제외.",
+   "tier_limits": [],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "이동통신요금 10% 청구할인",
+    "target_merchant_name": "SKT, KT, LG U+, Liiv M 이동통신 자동납부 요금",
+    "monthly_limit": "월 할인한도 안내 - 이동통신요금 10% / OTT 30% 5천원 (건당 2,500원 한도)",
+    "max_benefit_per_txn": "5천원 (건당 2,500원 한도)"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "위시 베이직 - 이동통신요금(LG U+) 10% 청구할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 10,
+   "step_count": null,
+   "apply_timing": "BILLED",
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": "LG U+",
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": "AUTO_TRANSFER",
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": 2500,
+   "monthly_limit": 5000,
+   "limit_group_code": "BASIC_TELECOM_OTT_5000",
+   "monthly_count_limit": null,
+   "daily_count_limit": null,
+   "daily_limit": null,
+   "yearly_count_limit": null,
+   "quarterly_count_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "SKT, KT, LG U+, Liiv M 이동통신 자동납부 요금. 인터넷, IPTV 등 결합상품 제외.",
+   "tier_limits": [],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "이동통신요금 10% 청구할인",
+    "target_merchant_name": "SKT, KT, LG U+, Liiv M 이동통신 자동납부 요금",
+    "monthly_limit": "월 할인한도 안내 - 이동통신요금 10% / OTT 30% 5천원 (건당 2,500원 한도)",
+    "max_benefit_per_txn": "5천원 (건당 2,500원 한도)"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "위시 베이직 - 이동통신요금(Liiv M) 10% 청구할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 10,
+   "step_count": null,
+   "apply_timing": "BILLED",
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": "Liiv M",
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": "AUTO_TRANSFER",
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": 2500,
+   "monthly_limit": 5000,
+   "limit_group_code": "BASIC_TELECOM_OTT_5000",
+   "monthly_count_limit": null,
+   "daily_count_limit": null,
+   "daily_limit": null,
+   "yearly_count_limit": null,
+   "quarterly_count_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "SKT, KT, LG U+, Liiv M 이동통신 자동납부 요금. 인터넷, IPTV 등 결합상품 제외.",
+   "tier_limits": [],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "이동통신요금 10% 청구할인",
+    "target_merchant_name": "SKT, KT, LG U+, Liiv M 이동통신 자동납부 요금",
+    "monthly_limit": "월 할인한도 안내 - 이동통신요금 10% / OTT 30% 5천원 (건당 2,500원 한도)",
+    "max_benefit_per_txn": "5천원 (건당 2,500원 한도)"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "위시 베이직 - OTT(넷플릭스) 30% 청구할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 30,
+   "step_count": null,
+   "apply_timing": "BILLED",
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": "넷플릭스",
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": 2500,
+   "monthly_limit": 5000,
+   "limit_group_code": "BASIC_TELECOM_OTT_5000",
+   "monthly_count_limit": null,
+   "daily_count_limit": null,
+   "daily_limit": null,
+   "yearly_count_limit": null,
+   "quarterly_count_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "공식 홈페이지를 통한 정기결제 이용건. 간편결제, 인앱 결제, 단건 결제, 포인트 및 캐시 충전 등은 제외. 이동통신요금·OTT 합산 월 5천원 한도.",
+   "tier_limits": [],
+   "exclusions": [
+    {
+     "exclusion_type": "PAYMENT_TYPE",
+     "exclusion_value": "간편결제",
+     "_source": "※ 간편결제, 인앱 결제, 단건 결제, 포인트 및 캐시 충전 등은 제외"
+    },
+    {
+     "exclusion_type": "PAYMENT_TYPE",
+     "exclusion_value": "인앱결제",
+     "_source": "※ 간편결제, 인앱 결제, 단건 결제, 포인트 및 캐시 충전 등은 제외"
+    }
+   ],
+   "_source": {
+    "benefit_value": "OTT 30% 청구할인",
+    "target_merchant_name": "넷플릭스, 유튜브프리미엄, 웨이브, 티빙, 디즈니 플러스 공식 홈페이지를 통한 정기결제 이용건",
+    "monthly_limit": "월 할인한도 안내 - 이동통신요금 10% / OTT 30% 5천원 (건당 2,500원 한도)",
+    "max_benefit_per_txn": "5천원 (건당 2,500원 한도)"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "위시 베이직 - OTT(유튜브 프리미엄) 30% 청구할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 30,
+   "step_count": null,
+   "apply_timing": "BILLED",
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": "유튜브 프리미엄",
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": 2500,
+   "monthly_limit": 5000,
+   "limit_group_code": "BASIC_TELECOM_OTT_5000",
+   "monthly_count_limit": null,
+   "daily_count_limit": null,
+   "daily_limit": null,
+   "yearly_count_limit": null,
+   "quarterly_count_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "공식 홈페이지를 통한 정기결제 이용건. 간편결제, 인앱 결제, 단건 결제, 포인트 및 캐시 충전 등은 제외. 유튜브는 유튜브 프리미엄 멤버십 결제 건에 한함(채널 구독 등 제외).",
+   "tier_limits": [],
+   "exclusions": [
+    {
+     "exclusion_type": "PAYMENT_TYPE",
+     "exclusion_value": "간편결제",
+     "_source": "※ 간편결제, 인앱 결제, 단건 결제, 포인트 및 캐시 충전 등은 제외"
+    },
+    {
+     "exclusion_type": "PAYMENT_TYPE",
+     "exclusion_value": "인앱결제",
+     "_source": "※ 간편결제, 인앱 결제, 단건 결제, 포인트 및 캐시 충전 등은 제외"
+    }
+   ],
+   "_source": {
+    "benefit_value": "OTT 30% 청구할인",
+    "target_merchant_name": "넷플릭스, 유튜브프리미엄, 웨이브, 티빙, 디즈니 플러스 공식 홈페이지를 통한 정기결제 이용건",
+    "monthly_limit": "월 할인한도 안내 - 이동통신요금 10% / OTT 30% 5천원 (건당 2,500원 한도)",
+    "max_benefit_per_txn": "5천원 (건당 2,500원 한도)"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "위시 베이직 - OTT(웨이브) 30% 청구할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 30,
+   "step_count": null,
+   "apply_timing": "BILLED",
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": "웨이브",
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": 2500,
+   "monthly_limit": 5000,
+   "limit_group_code": "BASIC_TELECOM_OTT_5000",
+   "monthly_count_limit": null,
+   "daily_count_limit": null,
+   "daily_limit": null,
+   "yearly_count_limit": null,
+   "quarterly_count_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "공식 홈페이지를 통한 정기결제 이용건. 간편결제, 인앱 결제, 단건 결제, 포인트 및 캐시 충전 등은 제외.",
+   "tier_limits": [],
+   "exclusions": [
+    {
+     "exclusion_type": "PAYMENT_TYPE",
+     "exclusion_value": "간편결제",
+     "_source": "※ 간편결제, 인앱 결제, 단건 결제, 포인트 및 캐시 충전 등은 제외"
+    },
+    {
+     "exclusion_type": "PAYMENT_TYPE",
+     "exclusion_value": "인앱결제",
+     "_source": "※ 간편결제, 인앱 결제, 단건 결제, 포인트 및 캐시 충전 등은 제외"
+    }
+   ],
+   "_source": {
+    "benefit_value": "OTT 30% 청구할인",
+    "target_merchant_name": "넷플릭스, 유튜브프리미엄, 웨이브, 티빙, 디즈니 플러스 공식 홈페이지를 통한 정기결제 이용건",
+    "monthly_limit": "월 할인한도 안내 - 이동통신요금 10% / OTT 30% 5천원 (건당 2,500원 한도)",
+    "max_benefit_per_txn": "5천원 (건당 2,500원 한도)"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "위시 베이직 - OTT(티빙) 30% 청구할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 30,
+   "step_count": null,
+   "apply_timing": "BILLED",
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": "티빙",
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": 2500,
+   "monthly_limit": 5000,
+   "limit_group_code": "BASIC_TELECOM_OTT_5000",
+   "monthly_count_limit": null,
+   "daily_count_limit": null,
+   "daily_limit": null,
+   "yearly_count_limit": null,
+   "quarterly_count_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "공식 홈페이지를 통한 정기결제 이용건. 간편결제, 인앱 결제, 단건 결제, 포인트 및 캐시 충전 등은 제외.",
+   "tier_limits": [],
+   "exclusions": [
+    {
+     "exclusion_type": "PAYMENT_TYPE",
+     "exclusion_value": "간편결제",
+     "_source": "※ 간편결제, 인앱 결제, 단건 결제, 포인트 및 캐시 충전 등은 제외"
+    },
+    {
+     "exclusion_type": "PAYMENT_TYPE",
+     "exclusion_value": "인앱결제",
+     "_source": "※ 간편결제, 인앱 결제, 단건 결제, 포인트 및 캐시 충전 등은 제외"
+    }
+   ],
+   "_source": {
+    "benefit_value": "OTT 30% 청구할인",
+    "target_merchant_name": "넷플릭스, 유튜브프리미엄, 웨이브, 티빙, 디즈니 플러스 공식 홈페이지를 통한 정기결제 이용건",
+    "monthly_limit": "월 할인한도 안내 - 이동통신요금 10% / OTT 30% 5천원 (건당 2,500원 한도)",
+    "max_benefit_per_txn": "5천원 (건당 2,500원 한도)"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "위시 베이직 - OTT(디즈니 플러스) 30% 청구할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 30,
+   "step_count": null,
+   "apply_timing": "BILLED",
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": "디즈니 플러스",
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": 2500,
+   "monthly_limit": 5000,
+   "limit_group_code": "BASIC_TELECOM_OTT_5000",
+   "monthly_count_limit": null,
+   "daily_count_limit": null,
+   "daily_limit": null,
+   "yearly_count_limit": null,
+   "quarterly_count_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "공식 홈페이지를 통한 정기결제 이용건. 간편결제, 인앱 결제, 단건 결제, 포인트 및 캐시 충전 등은 제외.",
+   "tier_limits": [],
+   "exclusions": [
+    {
+     "exclusion_type": "PAYMENT_TYPE",
+     "exclusion_value": "간편결제",
+     "_source": "※ 간편결제, 인앱 결제, 단건 결제, 포인트 및 캐시 충전 등은 제외"
+    },
+    {
+     "exclusion_type": "PAYMENT_TYPE",
+     "exclusion_value": "인앱결제",
+     "_source": "※ 간편결제, 인앱 결제, 단건 결제, 포인트 및 캐시 충전 등은 제외"
+    }
+   ],
+   "_source": {
+    "benefit_value": "OTT 30% 청구할인",
+    "target_merchant_name": "넷플릭스, 유튜브프리미엄, 웨이브, 티빙, 디즈니 플러스 공식 홈페이지를 통한 정기결제 이용건",
+    "monthly_limit": "월 할인한도 안내 - 이동통신요금 10% / OTT 30% 5천원 (건당 2,500원 한도)",
+    "max_benefit_per_txn": "5천원 (건당 2,500원 한도)"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "위시 픽(배달팩) - 배달의민족 5% 청구할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 5,
+   "step_count": null,
+   "apply_timing": "BILLED",
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": "배달의민족",
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "monthly_limit": 5000,
+   "limit_group_code": "PICK_DELIVERY_5000",
+   "monthly_count_limit": null,
+   "daily_count_limit": null,
+   "daily_limit": null,
+   "yearly_count_limit": null,
+   "quarterly_count_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": "WISH_PICK",
+   "option_key": "DELIVERY",
+   "description": "위시 픽 서비스팩 3개 중 택1(배달팩). 배달앱(배달의민족, 요기요, 마켓컬리)과 커피/음료전문점 업종이 합산 월 5천원 한도. 배달 현장 결제건 제외. 백화점/대형마트 등 일부 입점 매장 제외.",
+   "tier_limits": [],
+   "exclusions": [
+    {
+     "exclusion_type": "TRANSACTION_ATTR",
+     "exclusion_value": "GIFT_CARD",
+     "_source": "※ 상품권(선물하기 등), 선불카드(선불전자지급수단 포함) 제외"
+    },
+    {
+     "exclusion_type": "MERCHANT_LOCATION",
+     "exclusion_value": "IN_DEPARTMENT_STORE",
+     "_source": "※ 백화점/대형마트 등 일부 입점 매장 제외"
+    },
+    {
+     "exclusion_type": "MERCHANT_LOCATION",
+     "exclusion_value": "IN_LARGE_MART",
+     "_source": "※ 백화점/대형마트 등 일부 입점 매장 제외"
+    }
+   ],
+   "_source": {
+    "benefit_value": "배달/커피 5% 청구할인",
+    "target_merchant_name": "배달앱(배달의민족, 요기요, 마켓컬리)",
+    "monthly_limit": "월 할인한도 안내 - 배달: 배달, 커피 5% 5천원",
+    "option_group_code": "상품서비스 ② 위시 픽(서비스팩 3개중 택1)"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "위시 픽(배달팩) - 요기요 5% 청구할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 5,
+   "step_count": null,
+   "apply_timing": "BILLED",
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": "요기요",
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "monthly_limit": 5000,
+   "limit_group_code": "PICK_DELIVERY_5000",
+   "monthly_count_limit": null,
+   "daily_count_limit": null,
+   "daily_limit": null,
+   "yearly_count_limit": null,
+   "quarterly_count_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": "WISH_PICK",
+   "option_key": "DELIVERY",
+   "description": "위시 픽 서비스팩 3개 중 택1(배달팩). 배달 현장 결제건 제외. 백화점/대형마트 등 일부 입점 매장 제외.",
+   "tier_limits": [],
+   "exclusions": [
+    {
+     "exclusion_type": "TRANSACTION_ATTR",
+     "exclusion_value": "GIFT_CARD",
+     "_source": "※ 상품권(선물하기 등), 선불카드(선불전자지급수단 포함) 제외"
+    },
+    {
+     "exclusion_type": "MERCHANT_LOCATION",
+     "exclusion_value": "IN_DEPARTMENT_STORE",
+     "_source": "※ 백화점/대형마트 등 일부 입점 매장 제외"
+    },
+    {
+     "exclusion_type": "MERCHANT_LOCATION",
+     "exclusion_value": "IN_LARGE_MART",
+     "_source": "※ 백화점/대형마트 등 일부 입점 매장 제외"
+    }
+   ],
+   "_source": {
+    "benefit_value": "배달/커피 5% 청구할인",
+    "target_merchant_name": "배달앱(배달의민족, 요기요, 마켓컬리)",
+    "monthly_limit": "월 할인한도 안내 - 배달: 배달, 커피 5% 5천원"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "위시 픽(배달팩) - 마켓컬리 5% 청구할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 5,
+   "step_count": null,
+   "apply_timing": "BILLED",
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": "마켓컬리",
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "monthly_limit": 5000,
+   "limit_group_code": "PICK_DELIVERY_5000",
+   "monthly_count_limit": null,
+   "daily_count_limit": null,
+   "daily_limit": null,
+   "yearly_count_limit": null,
+   "quarterly_count_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": "WISH_PICK",
+   "option_key": "DELIVERY",
+   "description": "위시 픽 서비스팩 3개 중 택1(배달팩). 배달 현장 결제건 제외. 백화점/대형마트 등 일부 입점 매장 제외.",
+   "tier_limits": [],
+   "exclusions": [
+    {
+     "exclusion_type": "TRANSACTION_ATTR",
+     "exclusion_value": "GIFT_CARD",
+     "_source": "※ 상품권(선물하기 등), 선불카드(선불전자지급수단 포함) 제외"
+    },
+    {
+     "exclusion_type": "MERCHANT_LOCATION",
+     "exclusion_value": "IN_DEPARTMENT_STORE",
+     "_source": "※ 백화점/대형마트 등 일부 입점 매장 제외"
+    },
+    {
+     "exclusion_type": "MERCHANT_LOCATION",
+     "exclusion_value": "IN_LARGE_MART",
+     "_source": "※ 백화점/대형마트 등 일부 입점 매장 제외"
+    }
+   ],
+   "_source": {
+    "benefit_value": "배달/커피 5% 청구할인",
+    "target_merchant_name": "배달앱(배달의민족, 요기요, 마켓컬리)",
+    "monthly_limit": "월 할인한도 안내 - 배달: 배달, 커피 5% 5천원"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "위시 픽(배달팩) - 커피 5% 청구할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 5,
+   "step_count": null,
+   "apply_timing": "BILLED",
+   "target_type": "CATEGORY",
+   "target_category_code": "CAFE",
+   "target_merchant_name": null,
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "monthly_limit": 5000,
+   "limit_group_code": "PICK_DELIVERY_5000",
+   "monthly_count_limit": null,
+   "daily_count_limit": null,
+   "daily_limit": null,
+   "yearly_count_limit": null,
+   "quarterly_count_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": "WISH_PICK",
+   "option_key": "DELIVERY",
+   "description": "위시 픽 서비스팩 3개 중 택1(배달팩). 커피/음료전문점 업종. 백화점/대형마트 등 일부 입점 매장 제외.",
+   "tier_limits": [],
+   "exclusions": [
+    {
+     "exclusion_type": "TRANSACTION_ATTR",
+     "exclusion_value": "GIFT_CARD",
+     "_source": "※ 상품권(선물하기 등), 선불카드(선불전자지급수단 포함) 제외"
+    },
+    {
+     "exclusion_type": "MERCHANT_LOCATION",
+     "exclusion_value": "IN_DEPARTMENT_STORE",
+     "_source": "※ 백화점/대형마트 등 일부 입점 매장 제외"
+    },
+    {
+     "exclusion_type": "MERCHANT_LOCATION",
+     "exclusion_value": "IN_LARGE_MART",
+     "_source": "※ 백화점/대형마트 등 일부 입점 매장 제외"
+    }
+   ],
+   "_source": {
+    "benefit_value": "배달/커피 5% 청구할인",
+    "target_category_code": "커피/음료전문점 업종",
+    "monthly_limit": "월 할인한도 안내 - 배달: 배달, 커피 5% 5천원"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "위시 픽(일상팩) - 택시 5% 청구할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 5,
+   "step_count": null,
+   "apply_timing": "BILLED",
+   "target_type": "CATEGORY",
+   "target_category_code": "TAXI",
+   "target_merchant_name": null,
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "monthly_limit": 5000,
+   "limit_group_code": "PICK_DAILY_5000",
+   "monthly_count_limit": null,
+   "daily_count_limit": null,
+   "daily_limit": null,
+   "yearly_count_limit": null,
+   "quarterly_count_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": "WISH_PICK",
+   "option_key": "DAILY",
+   "description": "위시 픽 서비스팩 3개 중 택1(일상팩). 택시·커피·영화관 합산 월 5천원 한도. 백화점/대형마트 등 일부 입점 매장 제외.",
+   "tier_limits": [],
+   "exclusions": [
+    {
+     "exclusion_type": "MERCHANT_LOCATION",
+     "exclusion_value": "IN_DEPARTMENT_STORE",
+     "_source": "※ 백화점/대형마트 등 일부 입점 매장 제외"
+    },
+    {
+     "exclusion_type": "MERCHANT_LOCATION",
+     "exclusion_value": "IN_LARGE_MART",
+     "_source": "※ 백화점/대형마트 등 일부 입점 매장 제외"
+    }
+   ],
+   "_source": {
+    "benefit_value": "택시/커피 5%, 영화관 30% 청구할인",
+    "target_category_code": "택시, 커피: 택시, 커피/음료전문점 업종",
+    "monthly_limit": "월 할인한도 안내 - 일상: 택시, 커피 5% / 영화관 30% → 월 할인한도 5천원(두 행이 한 셀로 묶임)"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "위시 픽(일상팩) - 커피 5% 청구할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 5,
+   "step_count": null,
+   "apply_timing": "BILLED",
+   "target_type": "CATEGORY",
+   "target_category_code": "CAFE",
+   "target_merchant_name": null,
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "monthly_limit": 5000,
+   "limit_group_code": "PICK_DAILY_5000",
+   "monthly_count_limit": null,
+   "daily_count_limit": null,
+   "daily_limit": null,
+   "yearly_count_limit": null,
+   "quarterly_count_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": "WISH_PICK",
+   "option_key": "DAILY",
+   "description": "위시 픽 서비스팩 3개 중 택1(일상팩). 커피/음료전문점 업종. 백화점/대형마트 등 일부 입점 매장 제외.",
+   "tier_limits": [],
+   "exclusions": [
+    {
+     "exclusion_type": "MERCHANT_LOCATION",
+     "exclusion_value": "IN_DEPARTMENT_STORE",
+     "_source": "※ 백화점/대형마트 등 일부 입점 매장 제외"
+    },
+    {
+     "exclusion_type": "MERCHANT_LOCATION",
+     "exclusion_value": "IN_LARGE_MART",
+     "_source": "※ 백화점/대형마트 등 일부 입점 매장 제외"
+    }
+   ],
+   "_source": {
+    "benefit_value": "택시/커피 5%, 영화관 30% 청구할인",
+    "target_category_code": "택시, 커피: 택시, 커피/음료전문점 업종",
+    "monthly_limit": "월 할인한도 안내 - 일상: 택시, 커피 5% / 영화관 30% → 월 할인한도 5천원(두 행이 한 셀로 묶임)"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "위시 픽(일상팩) - 영화관(CGV) 30% 청구할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 30,
+   "step_count": null,
+   "apply_timing": "BILLED",
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": "CGV",
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "monthly_limit": 5000,
+   "limit_group_code": "PICK_DAILY_5000",
+   "monthly_count_limit": null,
+   "daily_count_limit": null,
+   "daily_limit": null,
+   "yearly_count_limit": 4,
+   "quarterly_count_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": 20000,
+   "count_group_code": "MOVIE_YEAR_4",
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": "WISH_PICK",
+   "option_key": "DAILY",
+   "description": "위시 픽 서비스팩 3개 중 택1(일상팩). 영화관: CGV, 롯데시네마, 메가박스. 매점, 관람권(상품권) 구입, 예매대행사이트는 제외. 영화관 할인은 연 4회(연 2만원) 이내 제공. 금액은 택시·커피와 합쳐 월 5천원, 횟수는 영화관 3사끼리만 연 4회로 범위가 달라 count_group_code를 따로 둔다.",
+   "tier_limits": [],
+   "exclusions": [
+    {
+     "exclusion_type": "TRANSACTION_ATTR",
+     "exclusion_value": "GIFT_CARD",
+     "_source": "※ 매점, 관람권(상품권) 구입, 예매대행사이트는 제외"
+    }
+   ],
+   "_source": {
+    "benefit_value": "택시/커피 5%, 영화관 30% 청구할인",
+    "target_merchant_name": "영화관: CGV, 롯데시네마, 메가박스",
+    "monthly_limit": "월 할인한도 안내 - 일상: 택시, 커피 5% / 영화관 30% → 월 할인한도 5천원(두 행이 한 셀로 묶임)",
+    "yearly_count_limit": "영화관할인은 연 4회(연 2만원) 이내 제공",
+    "count_group_code": "영화관 3사가 연 4회를 나눠 씀",
+    "yearly_limit": "영화관할인은 연 4회(연 2만원) 이내 제공"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "위시 픽(일상팩) - 영화관(롯데시네마) 30% 청구할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 30,
+   "step_count": null,
+   "apply_timing": "BILLED",
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": "롯데시네마",
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "monthly_limit": 5000,
+   "limit_group_code": "PICK_DAILY_5000",
+   "monthly_count_limit": null,
+   "daily_count_limit": null,
+   "daily_limit": null,
+   "yearly_count_limit": 4,
+   "quarterly_count_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": 20000,
+   "count_group_code": "MOVIE_YEAR_4",
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": "WISH_PICK",
+   "option_key": "DAILY",
+   "description": "위시 픽 서비스팩 3개 중 택1(일상팩). 매점, 관람권(상품권) 구입, 예매대행사이트는 제외. 영화관 할인은 연 4회(연 2만원) 이내 제공.",
+   "tier_limits": [],
+   "exclusions": [
+    {
+     "exclusion_type": "TRANSACTION_ATTR",
+     "exclusion_value": "GIFT_CARD",
+     "_source": "※ 매점, 관람권(상품권) 구입, 예매대행사이트는 제외"
+    }
+   ],
+   "_source": {
+    "benefit_value": "택시/커피 5%, 영화관 30% 청구할인",
+    "target_merchant_name": "영화관: CGV, 롯데시네마, 메가박스",
+    "monthly_limit": "월 할인한도 안내 - 일상: 택시, 커피 5% / 영화관 30% → 월 할인한도 5천원(두 행이 한 셀로 묶임)",
+    "yearly_count_limit": "영화관할인은 연 4회(연 2만원) 이내 제공",
+    "yearly_limit": "영화관할인은 연 4회(연 2만원) 이내 제공"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "위시 픽(일상팩) - 영화관(메가박스) 30% 청구할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 30,
+   "step_count": null,
+   "apply_timing": "BILLED",
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": "메가박스",
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "monthly_limit": 5000,
+   "limit_group_code": "PICK_DAILY_5000",
+   "monthly_count_limit": null,
+   "daily_count_limit": null,
+   "daily_limit": null,
+   "yearly_count_limit": 4,
+   "quarterly_count_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": 20000,
+   "count_group_code": "MOVIE_YEAR_4",
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": "WISH_PICK",
+   "option_key": "DAILY",
+   "description": "위시 픽 서비스팩 3개 중 택1(일상팩). 매점, 관람권(상품권) 구입, 예매대행사이트는 제외. 영화관 할인은 연 4회(연 2만원) 이내 제공.",
+   "tier_limits": [],
+   "exclusions": [
+    {
+     "exclusion_type": "TRANSACTION_ATTR",
+     "exclusion_value": "GIFT_CARD",
+     "_source": "※ 매점, 관람권(상품권) 구입, 예매대행사이트는 제외"
+    }
+   ],
+   "_source": {
+    "benefit_value": "택시/커피 5%, 영화관 30% 청구할인",
+    "target_merchant_name": "영화관: CGV, 롯데시네마, 메가박스",
+    "monthly_limit": "월 할인한도 안내 - 일상: 택시, 커피 5% / 영화관 30% → 월 할인한도 5천원(두 행이 한 셀로 묶임)",
+    "yearly_count_limit": "영화관할인은 연 4회(연 2만원) 이내 제공",
+    "yearly_limit": "영화관할인은 연 4회(연 2만원) 이내 제공"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "위시 픽(관리팩) - 미용실 5% 청구할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 5,
+   "step_count": null,
+   "apply_timing": "BILLED",
+   "target_type": "CATEGORY",
+   "target_category_code": null,
+   "target_merchant_name": null,
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "monthly_limit": 10000,
+   "limit_group_code": "PICK_CARE_10000",
+   "monthly_count_limit": null,
+   "daily_count_limit": null,
+   "daily_limit": null,
+   "yearly_count_limit": null,
+   "quarterly_count_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": "WISH_PICK",
+   "option_key": "CARE",
+   "description": "위시 픽 서비스팩 3개 중 택1(관리팩). 미용실 업종. 미용실·스포츠·온라인서점·올리브영 합산 월 1만원 한도. 표준 카테고리에 미용실 업종에 대응하는 코드가 없어 target_category_code를 비워 둔다.",
+   "tier_limits": [],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "미용실/스포츠/온라인서점/올리브영 5% 청구할인",
+    "monthly_limit": "월 할인한도 안내 - 관리: 미용실, 스포츠, 온라인서점, 올리브영 5% 1만원"
+   },
+   "_needs_review": [
+    "target_category_code"
+   ]
+  },
+  {
+   "benefit_name": "위시 픽(관리팩) - 스포츠 5% 청구할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 5,
+   "step_count": null,
+   "apply_timing": "BILLED",
+   "target_type": "CATEGORY",
+   "target_category_code": "SPORTS_LEISURE",
+   "target_merchant_name": null,
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "monthly_limit": 10000,
+   "limit_group_code": "PICK_CARE_10000",
+   "monthly_count_limit": null,
+   "daily_count_limit": null,
+   "daily_limit": null,
+   "yearly_count_limit": null,
+   "quarterly_count_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": "WISH_PICK",
+   "option_key": "CARE",
+   "description": "위시 픽 서비스팩 3개 중 택1(관리팩). 스포츠: 종합스포츠센터, 테니스장, 수영장, 요가, 볼링장, 스포츠용품점, 레저용품점 업종. 열거된 업종 중 골프(연습)장은 별도 행(GOLF)으로 분리.",
+   "tier_limits": [],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "미용실/스포츠/온라인서점/올리브영 5% 청구할인",
+    "target_category_code": "스포츠: 종합스포츠센터, 골프(연습)장, 테니스장, 수영장, 요가, 볼링장, 스포츠용품점, 레저용품점 업종",
+    "monthly_limit": "월 할인한도 안내 - 관리: 미용실, 스포츠, 온라인서점, 올리브영 5% 1만원"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "위시 픽(관리팩) - 골프(연습)장 5% 청구할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 5,
+   "step_count": null,
+   "apply_timing": "BILLED",
+   "target_type": "CATEGORY",
+   "target_category_code": "GOLF",
+   "target_merchant_name": null,
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "monthly_limit": 10000,
+   "limit_group_code": "PICK_CARE_10000",
+   "monthly_count_limit": null,
+   "daily_count_limit": null,
+   "daily_limit": null,
+   "yearly_count_limit": null,
+   "quarterly_count_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": "WISH_PICK",
+   "option_key": "CARE",
+   "description": "위시 픽 서비스팩 3개 중 택1(관리팩). 스포츠 업종 열거 중 골프(연습)장.",
+   "tier_limits": [],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "미용실/스포츠/온라인서점/올리브영 5% 청구할인",
+    "target_category_code": "스포츠: 종합스포츠센터, 골프(연습)장, 테니스장, 수영장, 요가, 볼링장, 스포츠용품점, 레저용품점 업종",
+    "monthly_limit": "월 할인한도 안내 - 관리: 미용실, 스포츠, 온라인서점, 올리브영 5% 1만원"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "위시 픽(관리팩) - 온라인서점(교보문고) 5% 청구할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 5,
+   "step_count": null,
+   "apply_timing": "BILLED",
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": "교보문고",
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "monthly_limit": 10000,
+   "limit_group_code": "PICK_CARE_10000",
+   "monthly_count_limit": null,
+   "daily_count_limit": null,
+   "daily_limit": null,
+   "yearly_count_limit": null,
+   "quarterly_count_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": "WISH_PICK",
+   "option_key": "CARE",
+   "description": "위시 픽 서비스팩 3개 중 택1(관리팩). 온라인서점: 교보문고, YES24 공식 홈페이지(앱). 오프라인 매장 결제 건은 제외.",
+   "tier_limits": [],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "미용실/스포츠/온라인서점/올리브영 5% 청구할인",
+    "target_merchant_name": "온라인서점: 교보문고, YES24 공식 홈페이지(앱)",
+    "monthly_limit": "월 할인한도 안내 - 관리: 미용실, 스포츠, 온라인서점, 올리브영 5% 1만원"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "위시 픽(관리팩) - 온라인서점(YES24) 5% 청구할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 5,
+   "step_count": null,
+   "apply_timing": "BILLED",
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": "YES24",
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "monthly_limit": 10000,
+   "limit_group_code": "PICK_CARE_10000",
+   "monthly_count_limit": null,
+   "daily_count_limit": null,
+   "daily_limit": null,
+   "yearly_count_limit": null,
+   "quarterly_count_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": "WISH_PICK",
+   "option_key": "CARE",
+   "description": "위시 픽 서비스팩 3개 중 택1(관리팩). 온라인서점: 교보문고, YES24 공식 홈페이지(앱). 오프라인 매장 결제 건은 제외.",
+   "tier_limits": [],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "미용실/스포츠/온라인서점/올리브영 5% 청구할인",
+    "target_merchant_name": "온라인서점: 교보문고, YES24 공식 홈페이지(앱)",
+    "monthly_limit": "월 할인한도 안내 - 관리: 미용실, 스포츠, 온라인서점, 올리브영 5% 1만원"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "위시 픽(관리팩) - 올리브영 5% 청구할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 5,
+   "step_count": null,
+   "apply_timing": "BILLED",
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": "올리브영",
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "monthly_limit": 10000,
+   "limit_group_code": "PICK_CARE_10000",
+   "monthly_count_limit": null,
+   "daily_count_limit": null,
+   "daily_limit": null,
+   "yearly_count_limit": null,
+   "quarterly_count_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": "WISH_PICK",
+   "option_key": "CARE",
+   "description": "위시 픽 서비스팩 3개 중 택1(관리팩). 올리브영: 오프라인 매장 및 온라인 공식 쇼핑몰(앱). 백화점/대형마트 등 일부 입점 매장 제외.",
+   "tier_limits": [],
+   "exclusions": [
+    {
+     "exclusion_type": "MERCHANT_LOCATION",
+     "exclusion_value": "IN_DEPARTMENT_STORE",
+     "_source": "※ 백화점/대형마트 등 일부 입점 매장 제외"
+    },
+    {
+     "exclusion_type": "MERCHANT_LOCATION",
+     "exclusion_value": "IN_LARGE_MART",
+     "_source": "※ 백화점/대형마트 등 일부 입점 매장 제외"
+    }
+   ],
+   "_source": {
+    "benefit_value": "미용실/스포츠/온라인서점/올리브영 5% 청구할인",
+    "target_merchant_name": "올리브영: 오프라인 매장 및 온라인 공식 쇼핑몰(앱)",
+    "monthly_limit": "월 할인한도 안내 - 관리: 미용실, 스포츠, 온라인서점, 올리브영 5% 1만원"
+   },
+   "_needs_review": []
+  }
+ ],
+ "unmapped": [
+  {
+   "text": "※ 편의점은 오프라인매장 일반결제건에 한함 (온라인가맹점 제외)",
+   "why": "결제 채널(오프라인/온라인) 조건은 범위 밖이다"
+  },
+  {
+   "text": "※ 배달 현장 결제건 제외",
+   "why": "결제 채널(앱 결제 / 현장 결제) 조건은 범위 밖이다"
+  },
+  {
+   "text": "온라인서점: 교보문고, YES24 공식 홈페이지(앱) ※ 오프라인 매장 결제 건은 제외",
+   "why": "결제 채널 조건은 범위 밖이다"
+  },
+  {
+   "text": "넷플릭스, 유튜브프리미엄, 웨이브, 티빙, 디즈니 플러스 공식 홈페이지를 통한 정기결제 이용건 ※ 간편결제, 인앱 결제, 단건 결제, 포인트 및 캐시 충전 등은 제외",
+   "why": "'공식 홈페이지를 통한 정기결제'라는 채널 조건과 '단건 결제·충전 제외'라는 상품 단위 조건은 범위 밖이다. 간편결제·인앱결제만 PAYMENT_TYPE 예외로 옮겼다"
+  },
+  {
+   "text": "※ 유튜브는 유튜브 프리미엄 멤버십 결제 건에 한함 (채널 구독 등 제외)",
+   "why": "가맹점 안의 상품(멤버십/채널 구독) 단위 조건은 범위 밖이다"
+  },
+  {
+   "text": "SKT, KT, LG U+, Liiv M 이동통신 자동납부 요금 ※ 인터넷, IPTV 등 결합상품 제외",
+   "why": "결합상품 여부는 상품 단위 조건이라 범위 밖이다"
+  },
+  {
+   "text": "영화관: CGV, 롯데시네마, 메가박스 ※ 매점, 관람권(상품권) 구입, 예매대행사이트는 제외",
+   "why": "매점은 가맹점 내부 구분, 예매대행사이트는 판매 채널 조건이라 범위 밖이다. 관람권(상품권) 구입만 GIFT_CARD 예외로 옮겼다"
+  },
+  {
+   "text": "해외 이용 시(해외사이트 거래 포함) 미화(USD)기준 거래미화금액에 접수일의(KB국민은행) 최초 고시 전신환매도율을 적용한 후, 국제브랜드사가 부과하는 국제브랜드 수수료(Mastercard 1.0%, AMEX 1.4%)와 KB국민카드가 부과하는 해외 서비스 수수료(0.25%)를 포함하여 원화로 청구됩니다.",
+   "why": "해외 결제 관련 조항은 범위 밖이다"
+  },
+  {
+   "text": "선택서비스 변경시 신청일 기준 다음달 1일부터 적용(월 단위 제공). 변경 방법: 모바일앱/홈페이지/고객센터(1588-1688)",
+   "why": "선택 변경 시점은 회원 상태 변경 규칙이라 혜택 행의 컬럼으로 담을 대상이 아니다. option_group_code로 '택1'만 표현한다"
+  },
+  {
+   "text": "KB YOU Wish 카드는 가족카드 발급 불가 - 본인 카드만 발급 가능",
+   "why": "가족카드는 범위 밖이다"
+  },
+  {
+   "text": "KB YOU Wish 카드를 모바일 단독카드로 발급받는 경우 국내 일부 및 해외 오프라인 가맹점에서 사용이 제한됩니다.",
+   "why": "발급 형태에 따른 사용처 제한은 혜택 규칙이 아니라 카드 이용 조건이다"
+  },
+  {
+   "text": "할인 받은 이용 건을 취소할 경우 취소 전표가 실시간으로 접수되지 않아 할인한도가 즉시 복원되지 않을 수 있습니다.",
+   "why": "취소 전표 접수 시점에 따른 한도 복원 지연은 운영 규칙이라 혜택 규칙으로 표현할 대상이 아니다"
+  },
+  {
+   "text": "이용순서대로 월간 한도 내 할인이 적용되며, 잔여 할인한도는 이월되지 않습니다.",
+   "why": "한도 적용 순서와 이월 여부는 엔진 동작 규칙이라 혜택 행의 컬럼으로 표현할 대상이 아니다"
+  }
+ ],
+ "_schema_gap": [
+  {
+   "text": "KB Pay 10% 청구할인 ※ 다른 할인서비스와 중복 적용 가능",
+   "missing": "benefit.allow_stacking(혜택 중복 적용 허용 플래그)와 결제 건당 복수 혜택 기록",
+   "why": "한 결제에 카드당 혜택 1개만 적용하는 전제라 KB Pay 10%와 음식점 10%가 함께 붙는 실제 동작을 표현할 수 없다. 지금 구조로는 둘 중 큰 하나만 적용되어 실제보다 적게 계산된다"
+  },
+  {
+   "text": "01. Happy Birth Month — 고객님의 생일을 진심으로 축하드리는 마음을 담아, 생일 월에는 '위시 픽' 할인한도가 2배 제공됩니다. 배달/일상: 월 5천원 → 월 1만원, 관리: 월 1만원 → 월 2만원",
+   "missing": "특정 월(회원 생일월)에 한도가 배수로 바뀌는 규칙을 담을 컬럼",
+   "why": "monthly_limit은 고정값 하나뿐이라 회원마다 다른 달에만 적용되는 한도 배수를 표현할 수 없다. tier_limits는 실적 구간축이라 이 조건과 축이 다르다"
+  },
+  {
+   "text": "02. 전월실적 채워드림 — 전월 이용실적이 부족하여 할인 혜택을 못 받을 때 할인 혜택이 제공될 수 있도록 KB YOU Wish 카드의 전월 실적을 채워드리는 서비스. 서비스 대상: 전월 이용실적이 35만원 이상 40만원 미만인 고객. 5만원 한도 내로 연 2회 무료. 본인 회원 기준 월 1회, 연 2회 신청 가능. 서비스 신청 후 다음날부터 신청월 말일까지 서비스 적용",
+   "missing": "회원 신청으로 전월실적을 보정하는 규칙(신청 이력·연 2회 소진 상태)",
+   "why": "performance_tier는 실적 금액에서 한도로 가는 매핑만 담고, 회원이 신청해 실적 자체를 끌어올리는 서비스를 담을 자리가 없다"
+  },
+  {
+   "text": "최초 발급받은 YOU Wish 카드 사용등록일(KB Pay 등 간편결제 등록 포함)로부터 다음달 말일(실적유예기간)까지는 전월 이용실적 40만원 미만 시에도 할인서비스 제공",
+   "missing": "카드 사용등록일(발급일)과 실적 유예기간 판정",
+   "why": "카드 사용등록일 정보가 없어 유예기간에 해당하는지 판정할 수 없다"
+  },
+  {
+   "text": "할인서비스 제외대상: … 신차구매청구(환급)할인 전표 전체",
+   "missing": "TRANSACTION_ATTR 표준값 중 신차구매 청구·환급 할인 전표에 해당하는 값",
+   "why": "표준값 목록에 대응하는 값이 없고 임의로 새 값을 만들지 않는다"
+  },
+  {
+   "text": "가맹점 정보가 해당 업체가 아닌 결제대행업체(PG) 또는 간편결제 전용 가맹점으로 확인되는 경우 '결제대행업체' 또는 '간편결제' 가맹점으로 분류되어 적립대상에서 제외됩니다. 예시) 음식점에서 네이버페이로 결제 시 가맹점명이 '네이버페이'인 경우 음식점 가맹점이 아닌 '간편결제' 가맹점으로 분류",
+   "missing": "결제 건의 가맹점 분류가 PG·간편결제로 바뀌는 경우를 나타내는 속성",
+   "why": "가맹점은 실제 브랜드 기준으로만 매칭되어, 같은 결제가 PG 가맹점으로 잡혀 혜택에서 빠지는 상황을 표현할 수 없다"
+  }
+ ]
+}

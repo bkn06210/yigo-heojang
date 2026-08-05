@@ -19,6 +19,11 @@ public class PerformanceTransactionRow {
     /** 무이자할부 여부 원값 'Y'/'N'. boolean 변환은 assembler가 한다 */
     private String isInterestFree;
     private long discountAmount;
+    /**
+     * 적용 혜택의 실적 제외 지정 원값 'Y'/'N' (benefit 조인).
+     * 혜택 미적용 거래는 NULL이고, assembler가 false로 접는다.
+     */
+    private String excludeFromPerformance;
 
     public long getExpenseId() {
         return expenseId;
@@ -82,5 +87,13 @@ public class PerformanceTransactionRow {
 
     public void setDiscountAmount(long discountAmount) {
         this.discountAmount = discountAmount;
+    }
+
+    public String getExcludeFromPerformance() {
+        return excludeFromPerformance;
+    }
+
+    public void setExcludeFromPerformance(String excludeFromPerformance) {
+        this.excludeFromPerformance = excludeFromPerformance;
     }
 }

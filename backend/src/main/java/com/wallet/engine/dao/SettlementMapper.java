@@ -1,8 +1,10 @@
 package com.wallet.engine.dao;
 
+import com.wallet.engine.dao.dto.BenefitPeriodUsageRow;
 import com.wallet.engine.dao.dto.BenefitUsageRow;
 import com.wallet.engine.dao.dto.ExpenseRow;
 import com.wallet.engine.dao.dto.MonthlyStatusRow;
+import com.wallet.engine.dao.dto.OptionSelectionRow;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -131,4 +133,37 @@ public interface SettlementMapper {
      */
     List<BenefitUsageRow> findUsagesByUserCard(@Param("userCardId") long userCardId,
                                                @Param("baseYearMonth") String baseYearMonth);
+
+    /**
+     * 카드 한 장의 혜택 소진을 연월 구간으로 합산해 조회한다 — 분기·연 한도 판정용.
+     * 회원 단위로 읽는 조회 경로(CardStateMapper.findPeriodUsages)와 달리 카드 하나로 좁힌다.
+     *
+     * @param userCardId    보유카드 ID
+     * @param fromYearMonth 구간 시작 연월 (YYYY-MM, 포함)
+     * @param toYearMonth   구간 끝 연월 (YYYY-MM, 포함). 기준월
+     */
+    List<BenefitPeriodUsageRow> findPeriodUsagesByUserCard(@Param("userCardId") long userCardId,
+                                                           @Param("fromYearMonth") String fromYearMonth,
+                                                           @Param("toYearMonth") String toYearMonth);
+
+    /**
+     * 카드 한 장의 선택형 혜택 선택을 조회한다. 기록이 없는 묶음은 그달에 고르지 않은 것이다.
+     *
+     * @param userCardId    보유카드 ID
+     * @param baseYearMonth 기준 연월 (YYYY-MM)
+     */
+    List<OptionSelectionRow> findOptionSelectionsByUserCard(@Param("userCardId") long userCardId,
+                                                            @Param("baseYearMonth") String baseYearMonth);
+
+    /**
+     * 카드 한 장의 실적인정액을 연월 구간으로 합산해 조회한다 — 전분기 실적 판정용.
+     * 그 기간에 상태 행이 하나도 없으면 0이다(실적이 실제로 0이므로 정답이다).
+     *
+     * @param userCardId    보유카드 ID
+     * @param fromYearMonth 구간 시작 연월 (YYYY-MM, 포함)
+     * @param toYearMonth   구간 끝 연월 (YYYY-MM, 포함)
+     */
+    long findPerformanceSumByUserCard(@Param("userCardId") long userCardId,
+                                      @Param("fromYearMonth") String fromYearMonth,
+                                      @Param("toYearMonth") String toYearMonth);
 }

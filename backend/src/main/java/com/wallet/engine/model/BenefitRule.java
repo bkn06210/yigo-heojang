@@ -11,6 +11,9 @@ import java.math.BigDecimal;
  * NULL 규약: 상한·조건 필드(Long/Integer)의 null은 "제약 없음", 0은 "혜택 없음/항상 미달".
  * 이 구분을 뭉개면 혜택이 통째로 사라지므로 원시 타입(long/int)으로 받지 않는다.
  *
+ * 기간 상한은 일·월·분기·연 × 금액·횟수 여덟 축이 각각 독립이다. 좁은 기간의 한도를 넓은 기간
+ * 필드에 넣거나 환산하면 리셋 주기가 달라져 금액만 조용히 틀린다(분기 한도를 월에 넣으면 세 배).
+ *
  * limit_group_code는 여기 없다 — 묶음 한도의 그룹 합산은 호출자(카드 단위 계산) 책임이고,
  * 계산기는 CalcContext.monthlyUsedAmount에 합산된 값이 들어온다는 계약만 안다.
  */
@@ -19,8 +22,10 @@ public final class BenefitRule {
     private final long benefitId;
     private final BenefitKind benefitKind;
     private final CalcMethod calcMethod;
-    /** RATE면 퍼센트(예: 10.50 = 10.5%), FIXED면 원 단위 금액. DECIMAL(10,2) — double 금지 */
+    /** RATE면 퍼센트(예: 10.50 = 10.5%), FIXED·COUNT_STEP이면 원 단위 금액. DECIMAL(10,2) — double 금지 */
     private final BigDecimal benefitValue;
+    /** COUNT_STEP에서 몇 회마다 지급하는지. 다른 계산 방식이면 null */
+    private final Integer stepCount;
     private final boolean requirePerformance;
     /** 결제수단 조건(예: SIMPLE_PAY). null이면 수단 무관 */
     private final String requirePaymentType;
@@ -29,8 +34,12 @@ public final class BenefitRule {
     private final Long maxBenefitPerTxn;
     private final Long monthlyLimit;
     private final Long dailyLimit;
+    private final Long quarterlyLimit;
+    private final Long yearlyLimit;
     private final Integer monthlyCountLimit;
     private final Integer dailyCountLimit;
+    private final Integer quarterlyCountLimit;
+    private final Integer yearlyCountLimit;
     private final boolean useSharedLimit;
 
     private BenefitRule(Builder builder) {
@@ -43,10 +52,17 @@ public final class BenefitRule {
         if (builder.benefitValue == null) {
             throw new IllegalArgumentException("benefitValue는 필수다 (GIFT는 0)");
         }
+        // stepCount 없이 COUNT_STEP을 만들면 "몇 회마다"를 모른 채 계산하게 된다.
+        // 0으로 뭉개면 나눗셈이 터지고, 1로 뭉개면 매 결제 지급이라 실제의 N배가 나간다.
+        if (builder.calcMethod == CalcMethod.COUNT_STEP
+                && (builder.stepCount == null || builder.stepCount <= 0)) {
+            throw new IllegalArgumentException("COUNT_STEP은 stepCount가 1 이상이어야 한다: " + builder.stepCount);
+        }
         this.benefitId = builder.benefitId;
         this.benefitKind = builder.benefitKind;
         this.calcMethod = builder.calcMethod;
         this.benefitValue = builder.benefitValue;
+        this.stepCount = builder.stepCount;
         this.requirePerformance = builder.requirePerformance;
         this.requirePaymentType = builder.requirePaymentType;
         this.minTxnAmount = builder.minTxnAmount;
@@ -54,8 +70,12 @@ public final class BenefitRule {
         this.maxBenefitPerTxn = builder.maxBenefitPerTxn;
         this.monthlyLimit = builder.monthlyLimit;
         this.dailyLimit = builder.dailyLimit;
+        this.quarterlyLimit = builder.quarterlyLimit;
+        this.yearlyLimit = builder.yearlyLimit;
         this.monthlyCountLimit = builder.monthlyCountLimit;
         this.dailyCountLimit = builder.dailyCountLimit;
+        this.quarterlyCountLimit = builder.quarterlyCountLimit;
+        this.yearlyCountLimit = builder.yearlyCountLimit;
         this.useSharedLimit = builder.useSharedLimit;
     }
 
@@ -70,6 +90,7 @@ public final class BenefitRule {
         builder.benefitKind = this.benefitKind;
         builder.calcMethod = this.calcMethod;
         builder.benefitValue = this.benefitValue;
+        builder.stepCount = this.stepCount;
         builder.requirePerformance = this.requirePerformance;
         builder.requirePaymentType = this.requirePaymentType;
         builder.minTxnAmount = this.minTxnAmount;
@@ -77,8 +98,12 @@ public final class BenefitRule {
         builder.maxBenefitPerTxn = this.maxBenefitPerTxn;
         builder.monthlyLimit = this.monthlyLimit;
         builder.dailyLimit = this.dailyLimit;
+        builder.quarterlyLimit = this.quarterlyLimit;
+        builder.yearlyLimit = this.yearlyLimit;
         builder.monthlyCountLimit = this.monthlyCountLimit;
         builder.dailyCountLimit = this.dailyCountLimit;
+        builder.quarterlyCountLimit = this.quarterlyCountLimit;
+        builder.yearlyCountLimit = this.yearlyCountLimit;
         builder.useSharedLimit = this.useSharedLimit;
         return builder;
     }
@@ -97,6 +122,10 @@ public final class BenefitRule {
 
     public BigDecimal getBenefitValue() {
         return benefitValue;
+    }
+
+    public Integer getStepCount() {
+        return stepCount;
     }
 
     public boolean isRequirePerformance() {
@@ -127,12 +156,28 @@ public final class BenefitRule {
         return dailyLimit;
     }
 
+    public Long getQuarterlyLimit() {
+        return quarterlyLimit;
+    }
+
+    public Long getYearlyLimit() {
+        return yearlyLimit;
+    }
+
     public Integer getMonthlyCountLimit() {
         return monthlyCountLimit;
     }
 
     public Integer getDailyCountLimit() {
         return dailyCountLimit;
+    }
+
+    public Integer getQuarterlyCountLimit() {
+        return quarterlyCountLimit;
+    }
+
+    public Integer getYearlyCountLimit() {
+        return yearlyCountLimit;
     }
 
     public boolean isUseSharedLimit() {
@@ -144,6 +189,7 @@ public final class BenefitRule {
         private BenefitKind benefitKind;
         private CalcMethod calcMethod;
         private BigDecimal benefitValue;
+        private Integer stepCount;
         private boolean requirePerformance;
         private String requirePaymentType;
         private Long minTxnAmount;
@@ -151,8 +197,12 @@ public final class BenefitRule {
         private Long maxBenefitPerTxn;
         private Long monthlyLimit;
         private Long dailyLimit;
+        private Long quarterlyLimit;
+        private Long yearlyLimit;
         private Integer monthlyCountLimit;
         private Integer dailyCountLimit;
+        private Integer quarterlyCountLimit;
+        private Integer yearlyCountLimit;
         private boolean useSharedLimit;
 
         private Builder() {
@@ -175,6 +225,11 @@ public final class BenefitRule {
 
         public Builder benefitValue(BigDecimal benefitValue) {
             this.benefitValue = benefitValue;
+            return this;
+        }
+
+        public Builder stepCount(Integer stepCount) {
+            this.stepCount = stepCount;
             return this;
         }
 
@@ -213,6 +268,16 @@ public final class BenefitRule {
             return this;
         }
 
+        public Builder quarterlyLimit(Long quarterlyLimit) {
+            this.quarterlyLimit = quarterlyLimit;
+            return this;
+        }
+
+        public Builder yearlyLimit(Long yearlyLimit) {
+            this.yearlyLimit = yearlyLimit;
+            return this;
+        }
+
         public Builder monthlyCountLimit(Integer monthlyCountLimit) {
             this.monthlyCountLimit = monthlyCountLimit;
             return this;
@@ -220,6 +285,16 @@ public final class BenefitRule {
 
         public Builder dailyCountLimit(Integer dailyCountLimit) {
             this.dailyCountLimit = dailyCountLimit;
+            return this;
+        }
+
+        public Builder quarterlyCountLimit(Integer quarterlyCountLimit) {
+            this.quarterlyCountLimit = quarterlyCountLimit;
+            return this;
+        }
+
+        public Builder yearlyCountLimit(Integer yearlyCountLimit) {
+            this.yearlyCountLimit = yearlyCountLimit;
             return this;
         }
 

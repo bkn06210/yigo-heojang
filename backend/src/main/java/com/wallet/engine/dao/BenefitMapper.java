@@ -25,9 +25,17 @@ public interface BenefitMapper {
      * 합산이 이번 결제와 무관한 혜택의 소진분까지 봐야 하기 때문이다(CardBenefitSelector 계약).
      *
      * @param cardId 카드 마스터 ID
-     * @param tierId 판정된 실적구간 ID (benefit_tier_limit 조회 키)
+     * 구간별 개별한도는 혜택의 실적 기간 축에 맞는 구간에서 가져온다. 한 카드가 전월 축과
+     * 전분기 축 구간표를 함께 가질 수 있어, 하나의 tierId로 조인하면 분기 혜택이 월 구간의
+     * 개별한도를 쓰게 된다(에러 없이 한도만 틀린다).
+     *
+     * @param cardId        카드 ID
+     * @param monthTierId   전월 실적으로 판정된 구간 ID
+     * @param quarterTierId 전분기 실적으로 판정된 구간 ID. 분기 구간표가 없는 카드면 null
      */
-    List<BenefitRow> findActiveBenefits(@Param("cardId") long cardId, @Param("tierId") long tierId);
+    List<BenefitRow> findActiveBenefits(@Param("cardId") long cardId,
+                                        @Param("monthTierId") long monthTierId,
+                                        @Param("quarterTierId") Long quarterTierId);
 
     /** 카드의 활성 혜택에 걸린 제외 규칙을 조회한다. benefitId로 그룹핑해 각 혜택에 붙인다. */
     List<BenefitExclusionRow> findExclusions(@Param("cardId") long cardId);

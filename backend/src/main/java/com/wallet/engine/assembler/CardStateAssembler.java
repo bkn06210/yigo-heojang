@@ -1,5 +1,6 @@
 package com.wallet.engine.assembler;
 
+import com.wallet.engine.dao.dto.BenefitPeriodUsageRow;
 import com.wallet.engine.dao.dto.BenefitUsageRow;
 import com.wallet.engine.dao.dto.CardMonthlyStateRow;
 import com.wallet.engine.model.BenefitUsage;
@@ -8,8 +9,12 @@ import com.wallet.engine.model.PerformanceStatus;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * 상태 조회 row → 전월실적·CardState 변환기.
@@ -78,6 +83,24 @@ public class CardStateAssembler {
     public CardState toCardState(List<CardMonthlyStateRow> cardRows, String baseYearMonth,
                                  List<BenefitUsageRow> usageRows, PerformanceStatus status,
                                  LocalDate today) {
+        return toCardState(cardRows, baseYearMonth, usageRows, List.of(), List.of(), Map.of(),
+                status, null, today);
+    }
+
+    /**
+     * @param quarterUsageRows   이 카드의 분기 합산 소진. 분기 한도 판정용
+     * @param yearUsageRows      이 카드의 연 합산 소진. 연 한도 판정용
+     * @param selectedOptionKeys 선택형 혜택 묶음별 그달의 선택 (option_group_code → option_key)
+     * @param status             전월 실적으로 판정한 구간
+     * @param quarterStatus      전분기 실적으로 판정한 구간. 분기 구간표가 없는 카드면 null
+     */
+    public CardState toCardState(List<CardMonthlyStateRow> cardRows, String baseYearMonth,
+                                 List<BenefitUsageRow> usageRows,
+                                 List<BenefitPeriodUsageRow> quarterUsageRows,
+                                 List<BenefitPeriodUsageRow> yearUsageRows,
+                                 Map<String, String> selectedOptionKeys,
+                                 PerformanceStatus status, PerformanceStatus quarterStatus,
+                                 LocalDate today) {
         if (status == null) {
             throw new IllegalArgumentException("실적 판정 결과(status)는 필수다");
         }
@@ -86,32 +109,72 @@ public class CardStateAssembler {
         }
         CardMonthlyStateRow baseMonthRow = findRow(cardRows, baseYearMonth);
         return new CardState(
-                status.performanceMet(),
-                // 통합한도는 판정된 구간의 값이다 — Long 그대로 넘겨 NULL(한도 없음)≠0(혜택 없음)을 유지한다
-                status.sharedMonthlyLimit(),
+                status,
+                quarterStatus,
                 baseMonthRow == null ? 0L : baseMonthRow.getSharedLimitUsed(),
-                toUsages(usageRows, today));
+                toUsages(usageRows, quarterUsageRows, yearUsageRows, today),
+                selectedOptionKeys);
     }
 
     public List<BenefitUsage> toUsages(List<BenefitUsageRow> rows, LocalDate today) {
+        return toUsages(rows, List.of(), List.of(), today);
+    }
+
+    /**
+     * 세 출처(기준월·분기 합산·연 합산)를 혜택 id 기준으로 합친다.
+     *
+     * <b>혜택 id는 세 목록의 합집합이어야 한다.</b> 기준월 목록만 훑으면 "1월에 쓰고 3월에 조회"
+     * 같은 경우에 연 소진이 통째로 빠진다 — 3월 행이 없어 목록에 안 잡히기 때문이다.
+     * 그러면 연 한도가 비어 있는 것으로 계산돼 이미 다 쓴 혜택이 다시 지급된다.
+     */
+    public List<BenefitUsage> toUsages(List<BenefitUsageRow> monthRows,
+                                       List<BenefitPeriodUsageRow> quarterRows,
+                                       List<BenefitPeriodUsageRow> yearRows,
+                                       LocalDate today) {
+        Map<Long, BenefitUsageRow> monthByBenefit = indexByBenefitId(monthRows, BenefitUsageRow::getBenefitId);
+        Map<Long, BenefitPeriodUsageRow> quarterByBenefit =
+                indexByBenefitId(quarterRows, BenefitPeriodUsageRow::getBenefitId);
+        Map<Long, BenefitPeriodUsageRow> yearByBenefit =
+                indexByBenefitId(yearRows, BenefitPeriodUsageRow::getBenefitId);
+
+        Set<Long> benefitIds = new LinkedHashSet<>();
+        benefitIds.addAll(monthByBenefit.keySet());
+        benefitIds.addAll(quarterByBenefit.keySet());
+        benefitIds.addAll(yearByBenefit.keySet());
+
+        return benefitIds.stream()
+                .map(benefitId -> toUsage(benefitId, monthByBenefit.get(benefitId),
+                        quarterByBenefit.get(benefitId), yearByBenefit.get(benefitId), today))
+                .toList();
+    }
+
+    private <T> Map<Long, T> indexByBenefitId(List<T> rows, java.util.function.ToLongFunction<T> benefitIdOf) {
         if (rows == null) {
-            return List.of();
+            return Map.of();
         }
-        return rows.stream().map(row -> toUsage(row, today)).toList();
+        Map<Long, T> indexed = new LinkedHashMap<>();
+        rows.forEach(row -> indexed.put(benefitIdOf.applyAsLong(row), row));
+        return indexed;
     }
 
     /**
      * 월 소진은 원값 그대로, 일 소진은 last_applied_date가 오늘일 때만 유효한 값으로 접는다.
      * 한 번도 안 쓴 혜택은 last_applied_date가 NULL이라 자연히 0이 된다.
      */
-    private BenefitUsage toUsage(BenefitUsageRow row, LocalDate today) {
-        boolean appliedToday = Objects.equals(row.getLastAppliedDate(), today);
+    private BenefitUsage toUsage(long benefitId, BenefitUsageRow monthRow,
+                                 BenefitPeriodUsageRow quarterRow, BenefitPeriodUsageRow yearRow,
+                                 LocalDate today) {
+        boolean appliedToday = monthRow != null && Objects.equals(monthRow.getLastAppliedDate(), today);
         return new BenefitUsage(
-                row.getBenefitId(),
-                row.getUsedAmount(),
-                row.getUsedCount(),
-                appliedToday ? row.getDailyUsedAmount() : 0L,
-                appliedToday ? row.getDailyUsedCount() : 0);
+                benefitId,
+                monthRow == null ? 0L : monthRow.getUsedAmount(),
+                monthRow == null ? 0 : monthRow.getUsedCount(),
+                appliedToday ? monthRow.getDailyUsedAmount() : 0L,
+                appliedToday ? monthRow.getDailyUsedCount() : 0,
+                quarterRow == null ? 0L : quarterRow.getUsedAmount(),
+                quarterRow == null ? 0 : quarterRow.getUsedCount(),
+                yearRow == null ? 0L : yearRow.getUsedAmount(),
+                yearRow == null ? 0 : yearRow.getUsedCount());
     }
 
     /** 해당 연월의 상태 행을 찾는다. 없으면 null — 그 달에 아직 결제가 없었다는 뜻이다 */

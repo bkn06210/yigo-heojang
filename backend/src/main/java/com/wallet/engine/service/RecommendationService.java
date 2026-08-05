@@ -12,9 +12,12 @@ import com.wallet.engine.dao.CardStateMapper;
 import com.wallet.engine.dao.PaymentTargetMapper;
 import com.wallet.engine.dao.PerformanceMapper;
 import com.wallet.engine.dao.UserCardMapper;
+import com.wallet.engine.dao.dto.BenefitPeriodUsageRow;
 import com.wallet.engine.dao.dto.BenefitRow;
 import com.wallet.engine.dao.dto.BenefitUsageRow;
 import com.wallet.engine.dao.dto.CardMonthlyStateRow;
+import com.wallet.engine.dao.dto.CardPerformanceSumRow;
+import com.wallet.engine.dao.dto.OptionSelectionRow;
 import com.wallet.engine.dao.dto.PaymentTargetRow;
 import com.wallet.engine.dao.dto.PerformanceTierRow;
 import com.wallet.engine.dao.dto.UserCardRow;
@@ -22,10 +25,13 @@ import com.wallet.engine.dto.RecommendationItem;
 import com.wallet.engine.dto.RecommendationRequest;
 import com.wallet.engine.dto.RecommendationResponse;
 import com.wallet.engine.model.BenefitCandidate;
+import com.wallet.engine.model.CalcMethod;
+import com.wallet.engine.model.CapType;
 import com.wallet.engine.model.CardBenefitSelection;
 import com.wallet.engine.model.CardState;
 import com.wallet.engine.model.PaymentRequest;
 import com.wallet.engine.model.PaymentTarget;
+import com.wallet.engine.model.PerformancePeriod;
 import com.wallet.engine.model.PerformanceStatus;
 import com.wallet.engine.model.PerformanceTier;
 import org.springframework.stereotype.Service;
@@ -129,6 +135,25 @@ public class RecommendationService {
         Map<Long, List<BenefitUsageRow>> usagesByUserCard = cardStateMapper
                 .findUsages(memberId, baseYearMonth).stream()
                 .collect(Collectors.groupingBy(BenefitUsageRow::getUserCardId));
+        // 분기·연 한도는 저장값이 없어 월 소진 행을 그 기간만큼 합산해 얻는다
+        Map<Long, List<BenefitPeriodUsageRow>> quarterUsagesByUserCard = cardStateMapper
+                .findPeriodUsages(memberId, UsagePeriod.quarterStart(baseMonth).toString(), baseYearMonth).stream()
+                .collect(Collectors.groupingBy(BenefitPeriodUsageRow::getUserCardId));
+        Map<Long, List<BenefitPeriodUsageRow>> yearUsagesByUserCard = cardStateMapper
+                .findPeriodUsages(memberId, UsagePeriod.yearStart(baseMonth).toString(), baseYearMonth).stream()
+                .collect(Collectors.groupingBy(BenefitPeriodUsageRow::getUserCardId));
+        Map<Long, Map<String, String>> optionSelectionsByUserCard = cardStateMapper
+                .findOptionSelections(memberId, baseYearMonth).stream()
+                .collect(Collectors.groupingBy(OptionSelectionRow::getUserCardId,
+                        Collectors.toMap(OptionSelectionRow::getOptionGroupCode,
+                                OptionSelectionRow::getSelectedOptionKey)));
+        // 전분기 실적 — 분기 구간표를 쓰는 혜택의 판정 기준. 전월실적과 같이 저장 집계값을 읽는다
+        Map<Long, Long> quarterPerformanceByUserCard = cardStateMapper
+                .findPerformanceSums(memberId,
+                        UsagePeriod.previousQuarterStart(baseMonth).toString(),
+                        UsagePeriod.previousQuarterEnd(baseMonth).toString()).stream()
+                .collect(Collectors.toMap(
+                        CardPerformanceSumRow::getUserCardId, CardPerformanceSumRow::getPerformanceAmount));
         Map<Long, List<PerformanceTierRow>> tiersByCard = performanceMapper
                 .findTiersByCardIds(cards.stream().map(UserCardRow::getCardId).distinct().toList()).stream()
                 .collect(Collectors.groupingBy(PerformanceTierRow::getCardId));
@@ -138,6 +163,10 @@ public class RecommendationService {
             outcomes.add(evaluateCard(card, paymentRequest, today, baseYearMonth, previousYearMonth,
                     statesByUserCard.getOrDefault(card.getUserCardId(), List.of()),
                     usagesByUserCard.getOrDefault(card.getUserCardId(), List.of()),
+                    quarterUsagesByUserCard.getOrDefault(card.getUserCardId(), List.of()),
+                    yearUsagesByUserCard.getOrDefault(card.getUserCardId(), List.of()),
+                    optionSelectionsByUserCard.getOrDefault(card.getUserCardId(), Map.of()),
+                    quarterPerformanceByUserCard.getOrDefault(card.getUserCardId(), 0L),
                     tiersByCard.getOrDefault(card.getCardId(), List.of())));
         }
         return RecommendationResponse.of(toRankedItems(outcomes));
@@ -147,20 +176,27 @@ public class RecommendationService {
     private CardOutcome evaluateCard(UserCardRow card, PaymentRequest paymentRequest, LocalDate today,
                                      String baseYearMonth, String previousYearMonth,
                                      List<CardMonthlyStateRow> stateRows, List<BenefitUsageRow> usageRows,
+                                     List<BenefitPeriodUsageRow> quarterUsageRows,
+                                     List<BenefitPeriodUsageRow> yearUsageRows,
+                                     Map<String, String> selectedOptionKeys,
+                                     long quarterPerformanceAmount,
                                      List<PerformanceTierRow> tierRows) {
         long prevPerformanceAmount = cardStateAssembler.resolvePrevPerformanceAmount(
                 stateRows, baseYearMonth, previousYearMonth);
 
         // 구간이 없으면 judge가 예외를 던진다 — 모든 카드가 0원 구간을 갖는다는 전제가 깨진 시드 오류다.
         // 조용히 넘기면 실적 조건이 있는 혜택이 통째로 사라지므로 드러나게 둔다.
-        List<PerformanceTier> tiers = performanceInputAssembler.toTiers(tierRows);
-        PerformanceStatus status = tierResolver.judge(tiers, prevPerformanceAmount);
+        List<PerformanceTier> monthTiers = performanceInputAssembler.toTiers(tierRows, PerformancePeriod.MONTH);
+        PerformanceStatus status = tierResolver.judge(monthTiers, prevPerformanceAmount);
+        PerformanceStatus quarterStatus = judgeQuarter(tierRows, quarterPerformanceAmount);
 
         CardState cardState = cardStateAssembler.toCardState(
-                stateRows, baseYearMonth, usageRows, status, today);
+                stateRows, baseYearMonth, usageRows, quarterUsageRows, yearUsageRows,
+                selectedOptionKeys, status, quarterStatus, today);
 
         // 판정된 구간의 개별한도를 함께 가져온다. 매칭 여부로 거르지 않는 이유는 묶음 한도 합산이다.
-        List<BenefitRow> benefitRows = benefitMapper.findActiveBenefits(card.getCardId(), status.tierId());
+        List<BenefitRow> benefitRows = benefitMapper.findActiveBenefits(
+                card.getCardId(), status.tierId(), quarterStatus == null ? null : quarterStatus.tierId());
         List<BenefitCandidate> candidates = benefitCandidateAssembler.toCandidates(
                 benefitRows, benefitMapper.findExclusions(card.getCardId()));
 
@@ -174,15 +210,28 @@ public class RecommendationService {
     }
 
     /**
+     * 전분기 실적으로 분기 구간을 판정한다. 분기 구간표가 없는 카드면 null —
+     * 판정할 구간표가 없으니 분기 실적 조건을 충족했다고 볼 근거가 없다.
+     */
+    private PerformanceStatus judgeQuarter(List<PerformanceTierRow> tierRows, long quarterPerformanceAmount) {
+        List<PerformanceTier> quarterTiers =
+                performanceInputAssembler.toTiers(tierRows, PerformancePeriod.QUARTER);
+        return quarterTiers.isEmpty() ? null : tierResolver.judge(quarterTiers, quarterPerformanceAmount);
+    }
+
+    /**
      * 소진 기록만 지운 가상 상태 — "이번 달 아직 안 썼다면 얼마였을까".
      *
      * 한도 자체는 그대로 둔다. 한도까지 없애면 실제로는 받을 수 없는 금액이 나와,
      * "평소엔 이 카드가 유리하다"는 안내가 사실과 어긋난다.
      * 실적 판정 결과(performanceMet·통합한도)는 지난달 실적으로 이미 정해진 값이라 건드리지 않는다.
+     * 선택형 혜택의 그달 선택도 그대로 둔다 — 지우면 고른 혜택이 후보에서 빠져,
+     * 가상 계산에서만 그 카드의 혜택이 통째로 사라진다.
      */
     private CardState withoutUsage(CardState cardState) {
         return new CardState(
-                cardState.performanceMet(), cardState.sharedMonthlyLimit(), 0L, List.of());
+                cardState.monthStatus(), cardState.quarterStatus(), 0L, List.of(),
+                cardState.selectedOptionKeys());
     }
 
     /**
@@ -250,18 +299,35 @@ public class RecommendationService {
         if (!selection.hasBenefit()) {
             return NO_BENEFIT_REASON;
         }
-        String benefitName = benefitRows.stream()
-                .filter(row -> row.getBenefitId() == selection.benefitId())
-                .map(BenefitRow::getBenefitName)
+        BenefitRow row = benefitRows.stream()
+                .filter(candidate -> candidate.getBenefitId() == selection.benefitId())
                 .findFirst()
-                .orElse("혜택");
+                .orElse(null);
+        String benefitName = row == null ? "혜택" : row.getBenefitName();
 
-        // 조건은 통과했는데 0원이면 한도가 남지 않은 것이다 — "0원"보다 이유를 보여준다
+        // 조건은 통과했는데 0원인 경우 — "0원"보다 이유를 보여준다
         if (selection.benefitAmount() == 0L) {
-            return benefitName + " — 잔여 한도 없음";
+            return benefitName + " — " + zeroBenefitReason(selection, row);
         }
         String amount = String.format("%,d원", selection.benefitAmount());
         return selection.estimate() ? benefitName + " 예상 " + amount : benefitName + " " + amount;
+    }
+
+    /**
+     * 혜택이 적용됐는데 0원인 이유.
+     *
+     * 0원의 원인이 하나가 아니다. 한도를 다 쓴 것과, 스탬프형(COUNT_STEP)이라 아직 지급 회차가
+     * 아닌 것은 사용자가 해야 할 일이 정반대다 — 앞은 다음 달을 기다려야 하고,
+     * 뒤는 몇 번 더 쓰면 받는다. 둘을 같은 문구로 묶으면 화면이 사실과 다른 말을 하게 된다.
+     */
+    private String zeroBenefitReason(CardBenefitSelection selection, BenefitRow row) {
+        if (selection.appliedCap() != CapType.NONE) {
+            return "잔여 한도 없음";
+        }
+        if (row != null && CalcMethod.COUNT_STEP.name().equals(row.getCalcMethod())) {
+            return row.getStepCount() + "회마다 적립 (이번 결제는 해당 없음)";
+        }
+        return "적용 금액 없음";
     }
 
     /**
