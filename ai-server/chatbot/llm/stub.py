@@ -1,0 +1,76 @@
+"""개발용 가짜 LLM.
+
+API 를 한 번도 부르지 않고 챗봇 전체 흐름을 돌리기 위한 것이다.
+분류 → 엔티티 해석 → 조회 → 답변 조립까지 전부 진짜로 돌고, LLM 두 자리만 가짜다.
+
+규칙 기반이라 등록해둔 표현만 알아듣는다. 실제 사용자는 아무 말이나 하므로
+시연 전에는 반드시 실제 모델로 한 번 돌려봐야 한다.
+
+가짜라는 사실을 답변에 남긴다. 개발용 응답이 그대로 화면에 나가는 것을
+눈으로 알아챌 수 있어야 한다.
+"""
+
+import re
+from typing import Dict, List, Optional, Tuple
+
+from .base import Answer, Intent, IntentName, LlmClient
+
+STUB_SOURCE = "개발용 응답 (LLM 미호출)"
+
+# 의도 판정 규칙. 위에서부터 먼저 걸리는 것을 쓴다.
+# 순서가 의미를 갖는다 — "이번 달 얼마 아꼈어"는 금액 질문이지 현황 질문이 아니다.
+_INTENT_RULES: Tuple[Tuple[str, str], ...] = (
+    (IntentName.BENEFIT_SUM, r"얼마|할인받|혜택.*받|아꼈|절약"),
+    (IntentName.RECOMMEND_CARD, r"어느 ?카드|어떤 ?카드|무슨 ?카드|뭘로|추천"),
+    (IntentName.CARD_STATUS, r"실적|한도|남은|달성|채웠|채워"),
+    (IntentName.TERM_QA, r"약관|청구|언제 빠져|분실|잃어버|해지|연회비|재발급|수수료"),
+)
+
+# LLM 이라면 문맥으로 뽑아낼 표현들. 가짜라서 목록으로 대신한다.
+# 여기 없는 말은 UNKNOWN 이 되고, 서버가 되묻는다.
+_MERCHANT_WORDS: Tuple[str, ...] = ("스벅", "스타벅스", "GS25", "CU", "이마트", "쿠팡", "배민")
+_CATEGORY_WORDS: Tuple[str, ...] = ("편의점", "카페", "커피", "마트", "주유", "대중교통", "배달")
+_PERIOD_WORDS: Tuple[str, ...] = ("이번 달", "이번달", "지난달", "저번 달", "이번 주", "오늘", "어제")
+
+_AMOUNT_PATTERN = re.compile(r"(\d[\d,]*)\s*(만원|원)")
+
+
+class StubLlmClient(LlmClient):
+    provider = "stub"
+
+    def classify(self, question: str) -> Intent:
+        name = self._match_intent(question)
+        return Intent(
+            name=name,
+            merchant_text=_first_hit(question, _MERCHANT_WORDS),
+            category_text=_first_hit(question, _CATEGORY_WORDS),
+            period_text=_first_hit(question, _PERIOD_WORDS),
+            amount=_parse_amount(question),
+            raw={"matchedBy": "stub-rule"},
+        )
+
+    def compose(self, question: str, context: str) -> Answer:
+        # 문장을 다듬는 일이 LLM 의 몫이라 가짜는 컨텍스트를 그대로 돌려준다.
+        # 지어내지 않는 편이 낫다 — 숫자가 맞는지 눈으로 확인할 수 있다.
+        return Answer(text=context, sources=[STUB_SOURCE])
+
+    def _match_intent(self, question: str) -> str:
+        for name, pattern in _INTENT_RULES:
+            if re.search(pattern, question):
+                return name
+        return IntentName.UNKNOWN
+
+
+def _first_hit(question: str, words: Tuple[str, ...]) -> Optional[str]:
+    for word in words:
+        if word in question:
+            return word
+    return None
+
+
+def _parse_amount(question: str) -> Optional[int]:
+    match = _AMOUNT_PATTERN.search(question)
+    if not match:
+        return None
+    value = int(match.group(1).replace(",", ""))
+    return value * 10000 if match.group(2) == "만원" else value
