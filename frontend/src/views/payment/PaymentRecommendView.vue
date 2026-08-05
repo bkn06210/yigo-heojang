@@ -141,11 +141,6 @@ const isLoading = ref(false);
 const isRecommended = ref(false);
 
 
-
-// 비밀번호 모달
-const showPasswordModal = ref(false);
-
-
 // 추천 상세 바텀시트
 const showDetailSheet = ref(false);
 
