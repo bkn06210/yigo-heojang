@@ -132,4 +132,14 @@
             uc.user_card_id DESC
     </select>
 
+    <update id="softDeleteByIdAndMemberId">
+        UPDATE user_card
+        SET
+            card_status = 'DELETED',
+            is_representative = 0
+        WHERE user_card_id = #{userCardId}
+          AND member_id = #{memberId}
+          AND card_status = 'ACTIVE'
+    </update>
+
 </mapper>
