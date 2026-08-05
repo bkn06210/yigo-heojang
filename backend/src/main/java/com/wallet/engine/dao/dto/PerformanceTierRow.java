@@ -12,6 +12,8 @@ public class PerformanceTierRow {
 
     private long cardId;
     private long tierId;
+    /** 이 구간표의 기준 기간 원값 'MONTH'/'QUARTER'. enum 변환은 assembler가 한다 */
+    private String periodType;
     private long minPerformanceAmount;
     private Long sharedMonthlyLimit;
 
@@ -45,5 +47,13 @@ public class PerformanceTierRow {
 
     public void setSharedMonthlyLimit(Long sharedMonthlyLimit) {
         this.sharedMonthlyLimit = sharedMonthlyLimit;
+    }
+
+    public String getPeriodType() {
+        return periodType;
+    }
+
+    public void setPeriodType(String periodType) {
+        this.periodType = periodType;
     }
 }

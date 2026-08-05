@@ -45,4 +45,52 @@
           AND u.base_year_month = #{baseYearMonth}
     </select>
 
+    <!-- 분기·연 한도 판정용 합산. 소진을 기간별 컬럼으로 저장하지 않고 월 행을 더한다 —
+         저장하면 기간이 바뀔 때 리셋 판정이 또 필요해지고, 빠뜨리면 몇 달 뒤에야 드러난다.
+
+         base_year_month가 'YYYY-MM' 고정 폭이라 문자열 BETWEEN이 곧 연월 범위 비교다.
+         구간 끝을 기준월로 막아, 지난달을 조회할 때 그 이후 소진이 섞이지 않게 한다. -->
+    <select id="findPeriodUsages"
+            resultType="com.wallet.engine.dao.dto.BenefitPeriodUsageRow">
+        SELECT u.user_card_id,
+               u.benefit_id,
+               SUM(u.used_amount) AS used_amount,
+               SUM(u.used_count)  AS used_count
+        FROM user_benefit_usage u
+        JOIN user_card uc ON uc.user_card_id = u.user_card_id
+        WHERE uc.member_id = #{memberId}
+          AND uc.card_status = 'ACTIVE'
+          AND u.base_year_month BETWEEN #{fromYearMonth} AND #{toYearMonth}
+        GROUP BY u.user_card_id, u.benefit_id
+    </select>
+
+    <!-- 전분기 실적 판정용 합산. 전월실적과 같은 방식으로 저장된 집계값을 읽는다(거래 재합산 아님).
+         그 달에 결제가 없어 행이 없으면 합에서 자연히 빠지고, 셋 다 없으면 결과에 안 담긴다
+         (호출자가 0으로 본다 — 실적이 실제로 0이므로 정답이다). -->
+    <select id="findPerformanceSums"
+            resultType="com.wallet.engine.dao.dto.CardPerformanceSumRow">
+        SELECT s.user_card_id,
+               SUM(s.current_performance_amount) AS performance_amount
+        FROM user_card_monthly_state s
+        JOIN user_card uc ON uc.user_card_id = s.user_card_id
+        WHERE uc.member_id = #{memberId}
+          AND uc.card_status = 'ACTIVE'
+          AND s.base_year_month BETWEEN #{fromYearMonth} AND #{toYearMonth}
+        GROUP BY s.user_card_id
+    </select>
+
+    <!-- 선택 기록이 없는 묶음은 그달에 고르지 않은 것이다. 행이 없으면 결과에 안 담기고,
+         계산기가 그 묶음의 혜택을 전부 제외한다. -->
+    <select id="findOptionSelections"
+            resultType="com.wallet.engine.dao.dto.OptionSelectionRow">
+        SELECT sel.user_card_id,
+               sel.option_group_code,
+               sel.selected_option_key
+        FROM user_card_benefit_selection sel
+        JOIN user_card uc ON uc.user_card_id = sel.user_card_id
+        WHERE uc.member_id = #{memberId}
+          AND uc.card_status = 'ACTIVE'
+          AND sel.base_year_month = #{baseYearMonth}
+    </select>
+
 </mapper>

@@ -145,6 +145,39 @@ class BenefitCalculatorTest {
         }
 
         @Test
+        void 분기_횟수_한도에_도달하면_미적용이다() {
+            BenefitRule rule = rateRule().quarterlyCountLimit(2).build();
+
+            assertThat(calculator.calculate(rule, context().quarterlyUsedCount(1).build()).applied()).isTrue();
+            assertThat(calculator.calculate(rule, context().quarterlyUsedCount(2).build()).notApplicableReason())
+                    .isEqualTo(NotApplicableReason.QUARTERLY_COUNT_EXCEEDED);
+        }
+
+        @Test
+        void 연_횟수_한도에_도달하면_미적용이다() {
+            BenefitRule rule = rateRule().yearlyCountLimit(4).build();
+
+            assertThat(calculator.calculate(rule, context().yearlyUsedCount(3).build()).applied()).isTrue();
+            assertThat(calculator.calculate(rule, context().yearlyUsedCount(4).build()).notApplicableReason())
+                    .isEqualTo(NotApplicableReason.YEARLY_COUNT_EXCEEDED);
+        }
+
+        /**
+         * "영화관 3사 합쳐 연 4회"를 월 4회로 옮겨 적으면 매달 리셋되어 연 48회가 된다.
+         * 축이 실제로 분리돼 있는지를 고정한다 — 연 소진이 차 있어도 월 소진이 비면 통과하면 안 된다.
+         */
+        @Test
+        void 월_횟수가_남아도_연_횟수가_차면_미적용이다() {
+            BenefitRule rule = rateRule().monthlyCountLimit(2).yearlyCountLimit(4).build();
+
+            BenefitResult result = calculator.calculate(
+                    rule, context().monthlyUsedCount(0).yearlyUsedCount(4).build());
+
+            assertThat(result.applied()).isFalse();
+            assertThat(result.notApplicableReason()).isEqualTo(NotApplicableReason.YEARLY_COUNT_EXCEEDED);
+        }
+
+        @Test
         void 횟수_한도_NULL은_무제한이고_0은_항상_미적용이다() {
             BenefitRule unlimited = rateRule().monthlyCountLimit(null).build();
             BenefitRule zero = rateRule().monthlyCountLimit(0).build();
@@ -295,6 +328,54 @@ class BenefitCalculatorTest {
         }
 
         @Test
+        void 분기_한도가_일부_소진됐으면_잔여만큼만_받는다() {
+            BenefitRule rule = rateRule().quarterlyLimit(30000L).build();
+
+            BenefitResult result = calculator.calculate(rule,
+                    context().paymentAmount(50000L).quarterlyUsedAmount(29000L).build());
+
+            assertThat(result.benefitAmount()).isEqualTo(1000L);
+            assertThat(result.appliedCap()).isEqualTo(CapType.QUARTERLY_LIMIT);
+        }
+
+        @Test
+        void 연_한도가_일부_소진됐으면_잔여만큼만_받는다() {
+            BenefitRule rule = rateRule().yearlyLimit(100000L).build();
+
+            BenefitResult result = calculator.calculate(rule,
+                    context().paymentAmount(50000L).yearlyUsedAmount(98000L).build());
+
+            assertThat(result.benefitAmount()).isEqualTo(2000L);
+            assertThat(result.appliedCap()).isEqualTo(CapType.YEARLY_LIMIT);
+        }
+
+        /**
+         * 분기 한도를 월 필드에 옮겨 적으면 매달 리셋되어 실제의 세 배가 나간다.
+         * 월 소진이 비어 있어도 분기 소진이 차 있으면 막혀야 축이 분리된 것이다.
+         */
+        @Test
+        void 월_잔여가_남아도_분기_잔여가_없으면_0원이다() {
+            BenefitRule rule = rateRule().monthlyLimit(30000L).quarterlyLimit(60000L).build();
+
+            BenefitResult result = calculator.calculate(rule,
+                    context().paymentAmount(50000L).monthlyUsedAmount(0L).quarterlyUsedAmount(60000L).build());
+
+            assertThat(result.benefitAmount()).isZero();
+            assertThat(result.appliedCap()).isEqualTo(CapType.QUARTERLY_LIMIT);
+        }
+
+        @Test
+        void 분기_연_한도_NULL은_제약없음이고_0은_혜택없음이다() {
+            BenefitRule unlimited = rateRule().quarterlyLimit(null).yearlyLimit(null).build();
+            BenefitRule quarterlyZero = rateRule().quarterlyLimit(0L).build();
+            BenefitRule yearlyZero = rateRule().yearlyLimit(0L).build();
+
+            assertThat(calculator.calculate(unlimited, context().build()).benefitAmount()).isEqualTo(1000L);
+            assertThat(calculator.calculate(quarterlyZero, context().build()).benefitAmount()).isZero();
+            assertThat(calculator.calculate(yearlyZero, context().build()).benefitAmount()).isZero();
+        }
+
+        @Test
         void 통합_한도_NULL은_통합한도_없는_카드다() {
             BenefitRule rule = rateRule().useSharedLimit(true).build();
 
@@ -358,6 +439,119 @@ class BenefitCalculatorTest {
                     context().paymentAmount(50000L).monthlyUsedAmount(4500L).build());
 
             assertThat(result.benefitAmount()).isEqualTo(500L);
+        }
+    }
+
+    @Nested
+    @DisplayName("COUNT_STEP — N회마다 정액 지급(스탬프형)")
+    class CountStep {
+
+        /** 5회마다 2,000원. 시드의 편의점 Stamp와 같은 형태 */
+        private BenefitRule.Builder stampRule() {
+            return BenefitRule.builder()
+                    .benefitId(3L)
+                    .benefitKind(BenefitKind.POINT)
+                    .calcMethod(CalcMethod.COUNT_STEP)
+                    .benefitValue(new BigDecimal("2000.00"))
+                    .stepCount(5);
+        }
+
+        @Test
+        void 스탬프가_안_찼으면_적용되지만_0원이다() {
+            BenefitRule rule = stampRule().build();
+
+            BenefitResult result = calculator.calculate(rule, context().monthlyUsedCount(2).build());
+
+            assertThat(result.applied()).isTrue();
+            assertThat(result.benefitAmount()).isZero();
+        }
+
+        @Test
+        void 이번_결제로_스탬프가_차면_정액을_지급한다() {
+            BenefitRule rule = stampRule().build();
+
+            // 이미 4번 찍혔고 이번이 5번째
+            BenefitResult result = calculator.calculate(rule, context().monthlyUsedCount(4).build());
+
+            assertThat(result.benefitAmount()).isEqualTo(2000L);
+        }
+
+        /** FIXED로 넣으면 결제마다 지급되어 실제의 step_count배가 나간다 — 그 차이를 고정한다 */
+        @Test
+        void 다섯_번의_결제_중_한_번만_지급된다() {
+            BenefitRule rule = stampRule().build();
+
+            long total = 0;
+            for (int stamped = 0; stamped < 5; stamped++) {
+                total += calculator.calculate(rule, context().monthlyUsedCount(stamped).build()).benefitAmount();
+            }
+
+            assertThat(total).isEqualTo(2000L);
+        }
+
+        @Test
+        void 두_바퀴째도_같은_주기로_지급된다() {
+            BenefitRule rule = stampRule().build();
+
+            assertThat(calculator.calculate(rule, context().monthlyUsedCount(8).build()).benefitAmount()).isZero();
+            assertThat(calculator.calculate(rule, context().monthlyUsedCount(9).build()).benefitAmount())
+                    .isEqualTo(2000L);
+        }
+
+        /**
+         * 횟수 한도의 단위는 "받은 횟수"다. 스탬프 소진 횟수를 그대로 비교하면
+         * 두 번째 결제에서 막혀 스탬프를 채울 기회 자체가 사라진다.
+         */
+        @Test
+        void 월_지급횟수_한도는_스탬프_진행_횟수가_아니라_지급_횟수로_판정한다() {
+            BenefitRule rule = stampRule().monthlyCountLimit(1).build();
+
+            // 4번 찍힌 상태 — 아직 한 번도 지급 안 됨. 막히면 안 된다
+            assertThat(calculator.calculate(rule, context().monthlyUsedCount(4).build()).benefitAmount())
+                    .isEqualTo(2000L);
+            // 5번 찍혀 이미 1회 지급 — 월 1회 한도에 걸린다
+            assertThat(calculator.calculate(rule, context().monthlyUsedCount(5).build()).notApplicableReason())
+                    .isEqualTo(NotApplicableReason.MONTHLY_COUNT_EXCEEDED);
+        }
+
+        @Test
+        void 건당_최소금액에_미달하면_스탬프가_찍히지_않는다() {
+            BenefitRule rule = stampRule().minTxnAmount(5000L).build();
+
+            BenefitResult result = calculator.calculate(
+                    rule, context().paymentAmount(4900L).monthlyUsedCount(4).build());
+
+            assertThat(result.applied()).isFalse();
+            assertThat(result.notApplicableReason()).isEqualTo(NotApplicableReason.MIN_TXN_AMOUNT_NOT_MET);
+        }
+
+        @Test
+        void 지급액은_결제금액을_넘지_않는다() {
+            BenefitRule rule = stampRule().build();
+
+            BenefitResult result = calculator.calculate(
+                    rule, context().paymentAmount(1500L).monthlyUsedCount(4).build());
+
+            assertThat(result.benefitAmount()).isEqualTo(1500L);
+            assertThat(result.appliedCap()).isEqualTo(CapType.PAYMENT_AMOUNT);
+        }
+
+        @Test
+        void 지급액은_결제금액에_비례하지_않으므로_항상_확정이다() {
+            BenefitRule rule = stampRule().build();
+
+            BenefitResult result = calculator.calculate(
+                    rule, context().monthlyUsedCount(4).amountEstimated(true).build());
+
+            assertThat(result.estimate()).isFalse();
+        }
+
+        @Test
+        void stepCount가_없거나_0이면_규칙_생성에서_막힌다() {
+            assertThatIllegalArgumentException()
+                    .isThrownBy(() -> stampRule().stepCount(null).build());
+            assertThatIllegalArgumentException()
+                    .isThrownBy(() -> stampRule().stepCount(0).build());
         }
     }
 

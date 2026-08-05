@@ -9,7 +9,7 @@ import java.math.BigDecimal;
  * 다르므로 원시 타입으로 받으면 안 된다. 'Y'/'N'·enum 문자열의 해석은 여기서 하지 않고
  * BenefitCandidateAssembler가 한다 (DAO는 flat row만 반환한다).
  *
- * tierMonthlyLimit·tierBenefitValue는 구간별 개별한도(benefit_tier_limit) 조인 결과다.
+ * tier*는 구간별 개별한도(benefit_tier_limit) 조인 결과다.
  * 판정된 구간에 해당 행이 없으면 NULL이며, TierLimitResolver가 base 값을 그대로 유지한다.
  */
 public class BenefitRow {
@@ -32,8 +32,20 @@ public class BenefitRow {
     private Integer monthlyCountLimit;
     private Integer dailyCountLimit;
     private Long dailyLimit;
+    private Long quarterlyLimit;
+    private Long yearlyLimit;
+    private Integer quarterlyCountLimit;
+    private Integer yearlyCountLimit;
+    private String countGroupCode;
+    private Integer stepCount;
+    private String performancePeriod;
+    private String excludeFromPerformance;
+    private String optionGroupCode;
+    private String optionKey;
     private String useSharedLimit;
     private Long tierMonthlyLimit;
+    private Long tierQuarterlyLimit;
+    private Long tierYearlyLimit;
     private BigDecimal tierBenefitValue;
 
     public long getBenefitId() {
@@ -180,6 +192,86 @@ public class BenefitRow {
         this.dailyLimit = dailyLimit;
     }
 
+    public Long getQuarterlyLimit() {
+        return quarterlyLimit;
+    }
+
+    public void setQuarterlyLimit(Long quarterlyLimit) {
+        this.quarterlyLimit = quarterlyLimit;
+    }
+
+    public Long getYearlyLimit() {
+        return yearlyLimit;
+    }
+
+    public void setYearlyLimit(Long yearlyLimit) {
+        this.yearlyLimit = yearlyLimit;
+    }
+
+    public Integer getQuarterlyCountLimit() {
+        return quarterlyCountLimit;
+    }
+
+    public void setQuarterlyCountLimit(Integer quarterlyCountLimit) {
+        this.quarterlyCountLimit = quarterlyCountLimit;
+    }
+
+    public Integer getYearlyCountLimit() {
+        return yearlyCountLimit;
+    }
+
+    public void setYearlyCountLimit(Integer yearlyCountLimit) {
+        this.yearlyCountLimit = yearlyCountLimit;
+    }
+
+    public String getCountGroupCode() {
+        return countGroupCode;
+    }
+
+    public void setCountGroupCode(String countGroupCode) {
+        this.countGroupCode = countGroupCode;
+    }
+
+    public Integer getStepCount() {
+        return stepCount;
+    }
+
+    public void setStepCount(Integer stepCount) {
+        this.stepCount = stepCount;
+    }
+
+    public String getPerformancePeriod() {
+        return performancePeriod;
+    }
+
+    public void setPerformancePeriod(String performancePeriod) {
+        this.performancePeriod = performancePeriod;
+    }
+
+    public String getExcludeFromPerformance() {
+        return excludeFromPerformance;
+    }
+
+    public void setExcludeFromPerformance(String excludeFromPerformance) {
+        this.excludeFromPerformance = excludeFromPerformance;
+    }
+
+    public String getOptionGroupCode() {
+        return optionGroupCode;
+    }
+
+    public void setOptionGroupCode(String optionGroupCode) {
+        this.optionGroupCode = optionGroupCode;
+    }
+
+    public String getOptionKey() {
+        return optionKey;
+    }
+
+    public void setOptionKey(String optionKey) {
+        this.optionKey = optionKey;
+    }
+
     public String getUseSharedLimit() {
         return useSharedLimit;
     }
@@ -194,6 +286,22 @@ public class BenefitRow {
 
     public void setTierMonthlyLimit(Long tierMonthlyLimit) {
         this.tierMonthlyLimit = tierMonthlyLimit;
+    }
+
+    public Long getTierQuarterlyLimit() {
+        return tierQuarterlyLimit;
+    }
+
+    public void setTierQuarterlyLimit(Long tierQuarterlyLimit) {
+        this.tierQuarterlyLimit = tierQuarterlyLimit;
+    }
+
+    public Long getTierYearlyLimit() {
+        return tierYearlyLimit;
+    }
+
+    public void setTierYearlyLimit(Long tierYearlyLimit) {
+        this.tierYearlyLimit = tierYearlyLimit;
     }
 
     public BigDecimal getTierBenefitValue() {

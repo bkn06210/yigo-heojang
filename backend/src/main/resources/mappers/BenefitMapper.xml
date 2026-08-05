@@ -7,7 +7,9 @@
      'Y'/'N'·enum 문자열 변환은 여기서 하지 않는다 — assembler의 몫이다. -->
 <mapper namespace="com.wallet.engine.dao.BenefitMapper">
 
-    <!-- 판정된 구간(tierId)의 benefit_tier_limit을 LEFT JOIN해 구간별 개별한도·혜택값을 함께 가져온다.
+    <!-- 판정된 구간의 benefit_tier_limit을 LEFT JOIN해 구간별 개별한도·혜택값을 함께 가져온다.
+         조인 키는 혜택의 실적 기간 축을 따른다 — 한 카드가 전월 축과 전분기 축 구간표를 함께
+         가질 수 있어, 하나로 조인하면 분기 혜택이 월 구간의 개별한도를 쓰게 된다.
          해당 구간에 행이 없으면 tier_monthly_limit·tier_benefit_value가 NULL이 되고,
          조립 단계에서 TierLimitResolver가 base 값을 그대로 유지한다.
          매칭 여부로 거르지 않고 카드의 활성 혜택 전부를 반환한다 — 묶음 한도 합산 때문이다.
@@ -39,13 +41,27 @@
                b.monthly_count_limit,
                b.daily_count_limit,
                b.daily_limit,
+               b.quarterly_limit,
+               b.yearly_limit,
+               b.quarterly_count_limit,
+               b.yearly_count_limit,
+               b.count_group_code,
+               b.step_count,
+               b.performance_period,
+               b.exclude_from_performance,
+               b.option_group_code,
+               b.option_key,
                b.use_shared_limit,
                tl.tier_monthly_limit,
+               tl.tier_quarterly_limit,
+               tl.tier_yearly_limit,
                tl.tier_benefit_value
         FROM benefit b
         LEFT JOIN benefit_tier_limit tl
                ON tl.benefit_id = b.benefit_id
-              AND tl.tier_id = #{tierId}
+              AND tl.tier_id = CASE WHEN b.performance_period = 'QUARTER'
+                                    THEN #{quarterTierId}
+                                    ELSE #{monthTierId} END
         WHERE b.card_id = #{cardId}
           AND b.is_active = 'Y'
           AND b.benefit_kind NOT IN ('GIFT', 'INSTALLMENT_FREE', 'RETROACTIVE')

@@ -9,7 +9,9 @@ import com.wallet.engine.model.BenefitKind;
 import com.wallet.engine.model.BenefitRule;
 import com.wallet.engine.model.CalcMethod;
 import com.wallet.engine.model.ExclusionType;
+import com.wallet.engine.model.PerformancePeriod;
 import com.wallet.engine.model.TargetType;
+import com.wallet.engine.model.TierLimitOverride;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -49,14 +51,21 @@ public class BenefitCandidateAssembler {
 
     private BenefitCandidate toCandidate(BenefitRow row, List<BenefitExclusion> exclusions) {
         // 구간별 개별한도·혜택값을 먼저 반영해 계산기가 상속을 몰라도 되게 만든다
-        BenefitRule rule = tierLimitResolver.resolve(
-                toBaseRule(row), row.getTierMonthlyLimit(), row.getTierBenefitValue());
+        BenefitRule rule = tierLimitResolver.resolve(toBaseRule(row), new TierLimitOverride(
+                row.getTierMonthlyLimit(),
+                row.getTierQuarterlyLimit(),
+                row.getTierYearlyLimit(),
+                row.getTierBenefitValue()));
 
         return BenefitCandidate.builder()
                 .targetType(TargetType.valueOf(row.getTargetType()))
                 .targetCategoryId(row.getTargetCategoryId())
                 .targetMerchantId(row.getTargetMerchantId())
                 .limitGroupCode(row.getLimitGroupCode())
+                .countGroupCode(row.getCountGroupCode())
+                .optionGroupCode(row.getOptionGroupCode())
+                .optionKey(row.getOptionKey())
+                .performancePeriod(PerformancePeriod.from(row.getPerformancePeriod()))
                 .exclusions(exclusions)
                 .rule(rule)
                 .build();
@@ -75,8 +84,12 @@ public class BenefitCandidateAssembler {
                 .maxBenefitPerTxn(row.getMaxBenefitPerTxn())
                 .monthlyLimit(row.getMonthlyLimit())
                 .dailyLimit(row.getDailyLimit())
+                .quarterlyLimit(row.getQuarterlyLimit())
+                .yearlyLimit(row.getYearlyLimit())
                 .monthlyCountLimit(row.getMonthlyCountLimit())
                 .dailyCountLimit(row.getDailyCountLimit())
+                .quarterlyCountLimit(row.getQuarterlyCountLimit())
+                .yearlyCountLimit(row.getYearlyCountLimit())
                 .useSharedLimit("Y".equals(row.getUseSharedLimit()))
                 .build();
     }

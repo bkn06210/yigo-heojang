@@ -633,7 +633,9 @@ CREATE TABLE card_benefit_exclusion (
 -- 선택 기록이 없는 달은 그 묶음의 혜택이 하나도 적용되지 않는다.
 CREATE TABLE user_card_benefit_selection (
     user_card_id      BIGINT  NOT NULL COMMENT '보유카드 ID',
-    base_year_month   CHAR(6) NOT NULL COMMENT '적용 연월 (YYYYMM)',
+    -- 다른 월 상태 테이블(user_card_monthly_state·user_benefit_usage)과 같은 형식이다.
+    -- 같은 개념에 형식이 둘이면 조회 키가 에러 없이 안 맞아 선택이 없는 것으로 읽힌다.
+    base_year_month   CHAR(7) NOT NULL COMMENT '기준 연월 (YYYY-MM)',
     option_group_code VARCHAR(30) NOT NULL COMMENT '선택형 혜택 묶음 코드',
     -- 혜택 ID가 아니라 선택지를 저장한다. 선택지 하나가 혜택 여러 개로 이뤄지는 경우가 있어
     -- ("배달팩을 고르면 4개 혜택이 함께 켜진다") 혜택 ID로는 고른 것을 담지 못한다.

@@ -16,7 +16,11 @@
         SELECT e.expense_id,
                e.user_card_id,
                uc.card_id,
+               e.merchant_id,
+               e.category_id,
+               m.merchant_code,
                c.category_code        AS category_code,
+               c.parent_category_id   AS parent_category_id,
                pc.category_code       AS parent_category_code,
                e.amount,
                e.applied_benefit_id,
@@ -30,6 +34,7 @@
         JOIN user_card uc     ON uc.user_card_id = e.user_card_id
         JOIN category c       ON c.category_id = e.category_id
         LEFT JOIN category pc ON pc.category_id = c.parent_category_id
+        LEFT JOIN merchant m  ON m.merchant_id = e.merchant_id
         LEFT JOIN benefit b   ON b.benefit_id = e.applied_benefit_id
         WHERE e.expense_id = #{expenseId}
           AND e.member_id = #{memberId}
@@ -93,6 +98,39 @@
         FROM user_benefit_usage u
         WHERE u.user_card_id = #{userCardId}
           AND u.base_year_month = #{baseYearMonth}
+    </select>
+
+    <!-- 분기·연 한도 판정용 합산. base_year_month가 'YYYY-MM' 고정 폭이라
+         문자열 BETWEEN이 곧 연월 범위 비교다. -->
+    <select id="findPeriodUsagesByUserCard"
+            resultType="com.wallet.engine.dao.dto.BenefitPeriodUsageRow">
+        SELECT u.user_card_id,
+               u.benefit_id,
+               SUM(u.used_amount) AS used_amount,
+               SUM(u.used_count)  AS used_count
+        FROM user_benefit_usage u
+        WHERE u.user_card_id = #{userCardId}
+          AND u.base_year_month BETWEEN #{fromYearMonth} AND #{toYearMonth}
+        GROUP BY u.user_card_id, u.benefit_id
+    </select>
+
+    <!-- 전분기 실적. 저장된 집계값을 읽을 뿐 거래를 재합산하지 않는다.
+         COALESCE로 행이 없을 때 NULL 대신 0을 돌려준다 — 반환 타입이 원시 long이라 NULL이면 터진다. -->
+    <select id="findPerformanceSumByUserCard" resultType="long">
+        SELECT COALESCE(SUM(s.current_performance_amount), 0)
+        FROM user_card_monthly_state s
+        WHERE s.user_card_id = #{userCardId}
+          AND s.base_year_month BETWEEN #{fromYearMonth} AND #{toYearMonth}
+    </select>
+
+    <select id="findOptionSelectionsByUserCard"
+            resultType="com.wallet.engine.dao.dto.OptionSelectionRow">
+        SELECT sel.user_card_id,
+               sel.option_group_code,
+               sel.selected_option_key
+        FROM user_card_benefit_selection sel
+        WHERE sel.user_card_id = #{userCardId}
+          AND sel.base_year_month = #{baseYearMonth}
     </select>
 
     <!-- 결제 가산: 없으면 만들며 prev를 이월(월 롤오버), 있으면 두 소진값만 누적.
