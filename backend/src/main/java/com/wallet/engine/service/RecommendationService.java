@@ -25,6 +25,8 @@ import com.wallet.engine.dto.RecommendationItem;
 import com.wallet.engine.dto.RecommendationRequest;
 import com.wallet.engine.dto.RecommendationResponse;
 import com.wallet.engine.model.BenefitCandidate;
+import com.wallet.engine.model.CalcMethod;
+import com.wallet.engine.model.CapType;
 import com.wallet.engine.model.CardBenefitSelection;
 import com.wallet.engine.model.CardState;
 import com.wallet.engine.model.PaymentRequest;
@@ -297,18 +299,35 @@ public class RecommendationService {
         if (!selection.hasBenefit()) {
             return NO_BENEFIT_REASON;
         }
-        String benefitName = benefitRows.stream()
-                .filter(row -> row.getBenefitId() == selection.benefitId())
-                .map(BenefitRow::getBenefitName)
+        BenefitRow row = benefitRows.stream()
+                .filter(candidate -> candidate.getBenefitId() == selection.benefitId())
                 .findFirst()
-                .orElse("혜택");
+                .orElse(null);
+        String benefitName = row == null ? "혜택" : row.getBenefitName();
 
-        // 조건은 통과했는데 0원이면 한도가 남지 않은 것이다 — "0원"보다 이유를 보여준다
+        // 조건은 통과했는데 0원인 경우 — "0원"보다 이유를 보여준다
         if (selection.benefitAmount() == 0L) {
-            return benefitName + " — 잔여 한도 없음";
+            return benefitName + " — " + zeroBenefitReason(selection, row);
         }
         String amount = String.format("%,d원", selection.benefitAmount());
         return selection.estimate() ? benefitName + " 예상 " + amount : benefitName + " " + amount;
+    }
+
+    /**
+     * 혜택이 적용됐는데 0원인 이유.
+     *
+     * 0원의 원인이 하나가 아니다. 한도를 다 쓴 것과, 스탬프형(COUNT_STEP)이라 아직 지급 회차가
+     * 아닌 것은 사용자가 해야 할 일이 정반대다 — 앞은 다음 달을 기다려야 하고,
+     * 뒤는 몇 번 더 쓰면 받는다. 둘을 같은 문구로 묶으면 화면이 사실과 다른 말을 하게 된다.
+     */
+    private String zeroBenefitReason(CardBenefitSelection selection, BenefitRow row) {
+        if (selection.appliedCap() != CapType.NONE) {
+            return "잔여 한도 없음";
+        }
+        if (row != null && CalcMethod.COUNT_STEP.name().equals(row.getCalcMethod())) {
+            return row.getStepCount() + "회마다 적립 (이번 결제는 해당 없음)";
+        }
+        return "적용 금액 없음";
     }
 
     /**
