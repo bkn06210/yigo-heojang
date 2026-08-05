@@ -72,7 +72,7 @@ public class SmtpEmailSender implements EmailSender {
         long expiresInMinutes
     ) {
         return String.join(System.lineSeparator(),
-            "안녕하세요. 이고허장입니다.",
+            "안녕하세요. 두리입니다.",
             "",
             "회원가입을 계속하려면 아래 인증 코드를 입력해 주세요.",
             "",
@@ -88,7 +88,7 @@ public class SmtpEmailSender implements EmailSender {
         long expiresInMinutes
     ) {
         return String.join(System.lineSeparator(),
-            "안녕하세요. 이고허장입니다.",
+            "안녕하세요. 두리입니다.",
             "",
             "비밀번호 재설정을 계속하려면 아래 인증 코드를 입력해 주세요.",
             "",
