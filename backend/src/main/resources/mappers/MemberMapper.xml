@@ -93,4 +93,20 @@
           AND member_status = 'ACTIVE'
           AND withdrawn_at IS NULL
     </update>
+
+    <!--
+    SELECT ... FOR UPDATE는 조회한 행에 쓰기 잠금을 건다.
+
+    이 쿼리는 반드시 @Transactional이 적용된 Service 메서드 안에서 호출해야 한다.
+    트랜잭션이 끝날 때까지 같은 member_id에 대한 다른 FOR UPDATE 요청은 대기하게 된다.
+    -->
+    <select id="lockActiveMemberById"
+            resultType="long">
+        SELECT member_id
+        FROM member
+        WHERE member_id = #{memberId}
+          AND member_status = 'ACTIVE'
+          AND withdrawn_at IS NULL
+            FOR UPDATE
+    </select>
 </mapper>
