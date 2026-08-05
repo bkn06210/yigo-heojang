@@ -131,27 +131,41 @@ INSERT INTO member_term_agreement (
 -- ============================================================
 -- 3. 카드 마스터
 -- ============================================================
+INSERT INTO card_company (
+    card_company_id, company_code, company_name, is_active
+) VALUES
+    (1, 'KB_CARD', 'KB국민카드', 'Y'),
+    (2, 'SHINHAN_CARD', '신한카드', 'Y'),
+    (3, 'SAMSUNG_CARD', '삼성카드', 'Y');
+
+INSERT INTO card_bin (
+    card_company_id, bin_prefix, bin_length, is_active
+) VALUES
+    (1, '222879', 6, 'Y'),
+    (2, '356078', 6, 'Y'),
+    (3, '376293', 6, 'Y');
+
 
 INSERT INTO card (
-    card_id, card_name, issuer, card_type, annual_fee,
+    card_id, card_company_id, card_name, card_type, annual_fee,
     image_url, description, is_active, created_at, updated_at
 ) VALUES
-    (1, 'KB 국민 나라사랑카드', 'KB국민카드', 'CHECK', 0,
+    (1, 1, 'KB 국민 나라사랑카드', 'CHECK', 0,
      'https://example.com/images/cards/kb-narasarang.png',
      '교통·편의점·외식 생활 혜택 중심 체크카드', 'Y',
      '2026-06-01 00:00:00', '2026-06-01 00:00:00'),
 
-    (2, '삼성 iD ON 카드', '삼성카드', 'CREDIT', 20000,
+    (2, 3, '삼성 iD ON 카드', 'CREDIT', 20000,
      'https://example.com/images/cards/samsung-id-on.png',
      '카페·교통·통신 자동 맞춤 할인 카드', 'Y',
      '2026-06-01 00:00:00', '2026-06-01 00:00:00'),
 
-    (3, '신한 Deep Dream 카드', '신한카드', 'CREDIT', 8000,
+    (3, 2, '신한 Deep Dream 카드', 'CREDIT', 8000,
      'https://example.com/images/cards/shinhan-deep-dream.png',
      '전 가맹점 기본 적립과 생활 영역 추가 적립 카드', 'Y',
      '2026-06-01 00:00:00', '2026-06-01 00:00:00'),
 
-    (4, '판매 종료 테스트 카드', '테스트카드사', 'CREDIT', 10000,
+    (4, 1, '판매 종료 테스트 카드', 'CREDIT', 10000,
      NULL, '판매 종료 카드 조회 테스트용', 'N',
      '2026-05-01 00:00:00', '2026-06-30 00:00:00');
 

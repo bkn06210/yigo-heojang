@@ -1,0 +1,575 @@
+package com.wallet.card.service;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.dao.DuplicateKeyException;
+
+import com.wallet.card.domain.Card;
+import com.wallet.card.domain.CardBin;
+import com.wallet.card.domain.CardStatus;
+import com.wallet.card.domain.UserCard;
+import com.wallet.card.domain.UserCardRegistrationResult;
+import com.wallet.card.dto.UserCardRegisterRequest;
+import com.wallet.card.dto.UserCardRegisterResponse;
+import com.wallet.card.mapper.CardMapper;
+import com.wallet.card.mapper.UserCardMapper;
+import com.wallet.card.support.CardBinFinder;
+import com.wallet.common.ErrorCode;
+import com.wallet.common.exception.BusinessException;
+
+class UserCardServiceTest {
+    private CardMapper cardMapper;
+    private UserCardMapper userCardMapper;
+    private CardBinFinder cardBinFinder;
+    private UserCardService userCardService;
+
+    @BeforeEach
+    void setUp() {
+        cardMapper = mock(CardMapper.class);
+        userCardMapper = mock(UserCardMapper.class);
+        cardBinFinder = mock(CardBinFinder.class);
+
+        userCardService = new UserCardService(
+            cardMapper,
+            userCardMapper,
+            cardBinFinder
+        );
+    }
+
+    @Test
+    @DisplayName("보유 카드 등록 성공 - 기존 보유 카드가 없으면 신규 등록한다")
+    void registerUserCard_success_insert() {
+        // given
+        Long memberId = 1L;
+        Long cardId = 10L;
+
+        UserCardRegisterRequest request =
+            new UserCardRegisterRequest(cardId, "1234-5678-0000-0006");
+
+        Card card = new Card(
+            cardId,
+            100L,
+            "KB국민카드",
+            "KB 국민 나라사랑카드",
+            "CHECK",
+            "https://example.com/kb.png",
+            "생활 혜택 체크카드"
+        );
+
+        CardBin cardBin = new CardBin(
+            1L,
+            100L,
+            "12345678",
+            8
+        );
+
+        UserCardRegistrationResult result =
+            new UserCardRegistrationResult(
+                50L,
+                "KB 국민 나라사랑카드",
+                "KB국민카드",
+                "****-****-****-0006",
+                "https://example.com/kb.png",
+                false
+            );
+
+        when(cardMapper.findActiveById(cardId))
+            .thenReturn(card);
+
+        when(cardBinFinder.findCardBin("1234567800000006"))
+            .thenReturn(cardBin);
+
+        when(userCardMapper.findByMemberIdAndCardId(memberId, cardId))
+            .thenReturn(null);
+
+        when(userCardMapper.findRegistrationResult(memberId, cardId))
+            .thenReturn(result);
+
+        // when
+        UserCardRegisterResponse response =
+            userCardService.registerUserCard(memberId, request);
+
+        // then
+        assertThat(response.userCardId()).isEqualTo(50L);
+        assertThat(response.cardName()).isEqualTo("KB 국민 나라사랑카드");
+        assertThat(response.issuerName()).isEqualTo("KB국민카드");
+        assertThat(response.maskedCardNumber()).isEqualTo("****-****-****-0006");
+        assertThat(response.imageUrl()).isEqualTo("https://example.com/kb.png");
+        assertThat(response.representative()).isFalse();
+
+        verify(userCardMapper)
+            .insertUserCard(memberId, cardId, "****-****-****-0006");
+
+        verify(userCardMapper, never())
+            .reactivateUserCard(50L, memberId, "****-****-****-0006");
+    }
+
+    @Test
+    @DisplayName("보유 카드 등록 성공 - 기존 보유 카드가 DELETED 상태면 재활성화한다")
+    void registerUserCard_success_reactivateDeletedCard() {
+        // given
+        Long memberId = 1L;
+        Long cardId = 10L;
+
+        UserCardRegisterRequest request =
+            new UserCardRegisterRequest(cardId, "1234-5678-0000-0006");
+
+        Card card = new Card(
+            cardId,
+            100L,
+            "KB국민카드",
+            "KB 국민 나라사랑카드",
+            "CHECK",
+            "https://example.com/kb.png",
+            "생활 혜택 체크카드"
+        );
+
+        CardBin cardBin = new CardBin(
+            1L,
+            100L,
+            "12345678",
+            8
+        );
+
+        UserCard deletedUserCard = new UserCard(
+            50L,
+            memberId,
+            cardId,
+            "****-****-****-1111",
+            false,
+            CardStatus.DELETED
+        );
+
+        UserCardRegistrationResult result =
+            new UserCardRegistrationResult(
+                50L,
+                "KB 국민 나라사랑카드",
+                "KB국민카드",
+                "****-****-****-0006",
+                "https://example.com/kb.png",
+                false
+            );
+
+        when(cardMapper.findActiveById(cardId))
+            .thenReturn(card);
+
+        when(cardBinFinder.findCardBin("1234567800000006"))
+            .thenReturn(cardBin);
+
+        when(userCardMapper.findByMemberIdAndCardId(memberId, cardId))
+            .thenReturn(deletedUserCard);
+
+        when(userCardMapper.reactivateUserCard(
+            50L,
+            memberId,
+            "****-****-****-0006"
+        )).thenReturn(1);
+
+        when(userCardMapper.findRegistrationResult(memberId, cardId))
+            .thenReturn(result);
+
+        // when
+        UserCardRegisterResponse response =
+            userCardService.registerUserCard(memberId, request);
+
+        // then
+        assertThat(response.userCardId()).isEqualTo(50L);
+        assertThat(response.maskedCardNumber()).isEqualTo("****-****-****-0006");
+
+        verify(userCardMapper, never())
+            .insertUserCard(memberId, cardId, "****-****-****-0006");
+
+        verify(userCardMapper)
+            .reactivateUserCard(50L, memberId, "****-****-****-0006");
+    }
+
+    @Test
+    @DisplayName("보유 카드 등록 실패 - 카드번호 형식이 유효하지 않으면 예외가 발생한다")
+    void registerUserCard_fail_invalidCardNumber() {
+        // given
+        Long memberId = 1L;
+
+        UserCardRegisterRequest request =
+            new UserCardRegisterRequest(10L, "1234-5678-0000-0001");
+
+        // when
+        BusinessException exception = assertThrows(
+            BusinessException.class,
+            () -> userCardService.registerUserCard(memberId, request)
+        );
+
+        // then
+        assertThat(exception.getErrorCode())
+            .isEqualTo(ErrorCode.CARD_NUMBER_INVALID);
+
+        verify(cardMapper, never()).findActiveById(10L);
+        verify(cardBinFinder, never()).findCardBin("1234567800000006");
+        verify(userCardMapper, never()).findByMemberIdAndCardId(memberId, 10L);
+    }
+
+    @Test
+    @DisplayName("보유 카드 등록 실패 - 선택한 카드 상품이 존재하지 않으면 예외가 발생한다")
+    void registerUserCard_fail_cardNotFound() {
+        // given
+        Long memberId = 1L;
+        Long cardId = 10L;
+
+        UserCardRegisterRequest request =
+            new UserCardRegisterRequest(cardId, "1234-5678-0000-0006");
+
+        when(cardMapper.findActiveById(cardId))
+            .thenReturn(null);
+
+        // when
+        BusinessException exception = assertThrows(
+            BusinessException.class,
+            () -> userCardService.registerUserCard(memberId, request)
+        );
+
+        // then
+        assertThat(exception.getErrorCode())
+            .isEqualTo(ErrorCode.CARD_NOT_FOUND);
+
+        verify(cardMapper).findActiveById(cardId);
+        verify(cardBinFinder, never()).findCardBin("1234567800000006");
+        verify(userCardMapper, never()).findByMemberIdAndCardId(memberId, cardId);
+    }
+
+    @Test
+    @DisplayName("보유 카드 등록 실패 - BIN 데이터가 없으면 예외가 발생한다")
+    void registerUserCard_fail_binNotFound() {
+        // given
+        Long memberId = 1L;
+        Long cardId = 10L;
+
+        UserCardRegisterRequest request =
+            new UserCardRegisterRequest(cardId, "1234-5678-0000-0006");
+
+        Card card = new Card(
+            cardId,
+            100L,
+            "KB국민카드",
+            "KB 국민 나라사랑카드",
+            "CHECK",
+            "https://example.com/kb.png",
+            "생활 혜택 체크카드"
+        );
+
+        when(cardMapper.findActiveById(cardId))
+            .thenReturn(card);
+
+        when(cardBinFinder.findCardBin("1234567800000006"))
+            .thenThrow(new BusinessException(ErrorCode.CARD_BIN_NOT_FOUND));
+
+        // when
+        BusinessException exception = assertThrows(
+            BusinessException.class,
+            () -> userCardService.registerUserCard(memberId, request)
+        );
+
+        // then
+        assertThat(exception.getErrorCode())
+            .isEqualTo(ErrorCode.CARD_BIN_NOT_FOUND);
+
+        verify(cardBinFinder).findCardBin("1234567800000006");
+        verify(userCardMapper, never()).findByMemberIdAndCardId(memberId, cardId);
+    }
+
+    @Test
+    @DisplayName("보유 카드 등록 실패 - BIN 카드사와 선택 카드 상품의 카드사가 다르면 예외가 발생한다")
+    void registerUserCard_fail_cardCompanyMismatch() {
+        // given
+        Long memberId = 1L;
+        Long cardId = 10L;
+
+        UserCardRegisterRequest request =
+            new UserCardRegisterRequest(cardId, "1234-5678-0000-0006");
+
+        Card selectedCard = new Card(
+            cardId,
+            100L,
+            "KB국민카드",
+            "KB 국민 나라사랑카드",
+            "CHECK",
+            "https://example.com/kb.png",
+            "생활 혜택 체크카드"
+        );
+
+        CardBin cardBin = new CardBin(
+            1L,
+            200L,
+            "12345678",
+            8
+        );
+
+        when(cardMapper.findActiveById(cardId))
+            .thenReturn(selectedCard);
+
+        when(cardBinFinder.findCardBin("1234567800000006"))
+            .thenReturn(cardBin);
+
+        // when
+        BusinessException exception = assertThrows(
+            BusinessException.class,
+            () -> userCardService.registerUserCard(memberId, request)
+        );
+
+        // then
+        assertThat(exception.getErrorCode())
+            .isEqualTo(ErrorCode.CARD_COMPANY_MISMATCH);
+
+        verify(userCardMapper, never()).findByMemberIdAndCardId(memberId, cardId);
+        verify(userCardMapper, never())
+            .insertUserCard(memberId, cardId, "****-****-****-0006");
+    }
+
+    @Test
+    @DisplayName("보유 카드 등록 실패 - 이미 ACTIVE 상태로 등록된 카드면 예외가 발생한다")
+    void registerUserCard_fail_alreadyActiveUserCard() {
+        // given
+        Long memberId = 1L;
+        Long cardId = 10L;
+
+        UserCardRegisterRequest request =
+            new UserCardRegisterRequest(cardId, "1234-5678-0000-0006");
+
+        Card card = new Card(
+            cardId,
+            100L,
+            "KB국민카드",
+            "KB 국민 나라사랑카드",
+            "CHECK",
+            "https://example.com/kb.png",
+            "생활 혜택 체크카드"
+        );
+
+        CardBin cardBin = new CardBin(
+            1L,
+            100L,
+            "12345678",
+            8
+        );
+
+        UserCard activeUserCard = new UserCard(
+            50L,
+            memberId,
+            cardId,
+            "****-****-****-0006",
+            false,
+            CardStatus.ACTIVE
+        );
+
+        when(cardMapper.findActiveById(cardId))
+            .thenReturn(card);
+
+        when(cardBinFinder.findCardBin("1234567800000006"))
+            .thenReturn(cardBin);
+
+        when(userCardMapper.findByMemberIdAndCardId(memberId, cardId))
+            .thenReturn(activeUserCard);
+
+        // when
+        BusinessException exception = assertThrows(
+            BusinessException.class,
+            () -> userCardService.registerUserCard(memberId, request)
+        );
+
+        // then
+        assertThat(exception.getErrorCode())
+            .isEqualTo(ErrorCode.USER_CARD_ALREADY_EXISTS);
+
+        verify(userCardMapper, never())
+            .insertUserCard(memberId, cardId, "****-****-****-0006");
+
+        verify(userCardMapper, never())
+            .reactivateUserCard(50L, memberId, "****-****-****-0006");
+    }
+
+    @Test
+    @DisplayName("보유 카드 등록 실패 - 동시 등록으로 unique key 충돌이 발생하면 중복 등록 예외로 변환한다")
+    void registerUserCard_fail_duplicateKey() {
+        // given
+        Long memberId = 1L;
+        Long cardId = 10L;
+
+        UserCardRegisterRequest request =
+            new UserCardRegisterRequest(cardId, "1234-5678-0000-0006");
+
+        Card card = new Card(
+            cardId,
+            100L,
+            "KB국민카드",
+            "KB 국민 나라사랑카드",
+            "CHECK",
+            "https://example.com/kb.png",
+            "생활 혜택 체크카드"
+        );
+
+        CardBin cardBin = new CardBin(
+            1L,
+            100L,
+            "12345678",
+            8
+        );
+
+        when(cardMapper.findActiveById(cardId))
+            .thenReturn(card);
+
+        when(cardBinFinder.findCardBin("1234567800000006"))
+            .thenReturn(cardBin);
+
+        when(userCardMapper.findByMemberIdAndCardId(memberId, cardId))
+            .thenReturn(null);
+
+        when(userCardMapper.insertUserCard(
+            memberId,
+            cardId,
+            "****-****-****-0006"
+        )).thenThrow(new DuplicateKeyException("duplicate"));
+
+        // when
+        BusinessException exception = assertThrows(
+            BusinessException.class,
+            () -> userCardService.registerUserCard(memberId, request)
+        );
+
+        // then
+        assertThat(exception.getErrorCode())
+            .isEqualTo(ErrorCode.USER_CARD_ALREADY_EXISTS);
+
+        verify(userCardMapper)
+            .insertUserCard(memberId, cardId, "****-****-****-0006");
+
+        verify(userCardMapper, never())
+            .findRegistrationResult(memberId, cardId);
+    }
+
+    @Test
+    @DisplayName("보유 카드 등록 실패 - 재활성화 update count가 1이 아니면 예외가 발생한다")
+    void registerUserCard_fail_reactivateFailed() {
+        // given
+        Long memberId = 1L;
+        Long cardId = 10L;
+
+        UserCardRegisterRequest request =
+            new UserCardRegisterRequest(cardId, "1234-5678-0000-0006");
+
+        Card card = new Card(
+            cardId,
+            100L,
+            "KB국민카드",
+            "KB 국민 나라사랑카드",
+            "CHECK",
+            "https://example.com/kb.png",
+            "생활 혜택 체크카드"
+        );
+
+        CardBin cardBin = new CardBin(
+            1L,
+            100L,
+            "12345678",
+            8
+        );
+
+        UserCard deletedUserCard = new UserCard(
+            50L,
+            memberId,
+            cardId,
+            "****-****-****-1111",
+            false,
+            CardStatus.DELETED
+        );
+
+        when(cardMapper.findActiveById(cardId))
+            .thenReturn(card);
+
+        when(cardBinFinder.findCardBin("1234567800000006"))
+            .thenReturn(cardBin);
+
+        when(userCardMapper.findByMemberIdAndCardId(memberId, cardId))
+            .thenReturn(deletedUserCard);
+
+        when(userCardMapper.reactivateUserCard(
+            50L,
+            memberId,
+            "****-****-****-0006"
+        )).thenReturn(0);
+
+        // when
+        BusinessException exception = assertThrows(
+            BusinessException.class,
+            () -> userCardService.registerUserCard(memberId, request)
+        );
+
+        // then
+        assertThat(exception.getErrorCode())
+            .isEqualTo(ErrorCode.USER_CARD_REGISTRATION_FAILED);
+
+        verify(userCardMapper, never())
+            .findRegistrationResult(memberId, cardId);
+    }
+
+    @Test
+    @DisplayName("보유 카드 등록 실패 - 등록 후 결과 조회가 되지 않으면 예외가 발생한다")
+    void registerUserCard_fail_registrationResultNotFound() {
+        // given
+        Long memberId = 1L;
+        Long cardId = 10L;
+
+        UserCardRegisterRequest request =
+            new UserCardRegisterRequest(cardId, "1234-5678-0000-0006");
+
+        Card card = new Card(
+            cardId,
+            100L,
+            "KB국민카드",
+            "KB 국민 나라사랑카드",
+            "CHECK",
+            "https://example.com/kb.png",
+            "생활 혜택 체크카드"
+        );
+
+        CardBin cardBin = new CardBin(
+            1L,
+            100L,
+            "12345678",
+            8
+        );
+
+        when(cardMapper.findActiveById(cardId))
+            .thenReturn(card);
+
+        when(cardBinFinder.findCardBin("1234567800000006"))
+            .thenReturn(cardBin);
+
+        when(userCardMapper.findByMemberIdAndCardId(memberId, cardId))
+            .thenReturn(null);
+
+        when(userCardMapper.findRegistrationResult(memberId, cardId))
+            .thenReturn(null);
+
+        // when
+        BusinessException exception = assertThrows(
+            BusinessException.class,
+            () -> userCardService.registerUserCard(memberId, request)
+        );
+
+        // then
+        assertThat(exception.getErrorCode())
+            .isEqualTo(ErrorCode.USER_CARD_REGISTRATION_FAILED);
+
+        verify(userCardMapper)
+            .insertUserCard(memberId, cardId, "****-****-****-0006");
+
+        verify(userCardMapper)
+            .findRegistrationResult(memberId, cardId);
+    }
+}

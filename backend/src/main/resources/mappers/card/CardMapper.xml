@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.wallet.card.mapper.CardMapper">
+    <resultMap id="cardResultMap" type="com.wallet.card.domain.Card">
+        <constructor>
+            <idArg column="cardId" javaType="Long"/>
+            <arg column="cardCompanyId" javaType="Long"/>
+            <arg column="companyName" javaType="String"/>
+            <arg column="cardName" javaType="String"/>
+            <arg column="cardType" javaType="String"/>
+            <arg column="imageUrl" javaType="String"/>
+            <arg column="description" javaType="String"/>
+        </constructor>
+    </resultMap>
+
+    <select id="findActiveCardsByCompanyId"
+            resultType="com.wallet.card.domain.Card">
+        SELECT
+            c.card_id AS cardId,
+            c.card_company_id AS cardCompanyId,
+            cc.company_name AS companyName,
+            c.card_name AS cardName,
+            c.card_type AS cardType,
+            c.image_url AS imageUrl,
+            c.description AS description
+        FROM card c
+        INNER JOIN card_company cc ON cc.card_company_id = c.card_company_id
+        WHERE c.card_company_id = #{cardCompanyId}
+          AND c.is_active = 'Y'
+          AND cc.is_active = 'Y'
+        ORDER BY c.card_name ASC
+    </select>
+
+    <select id="findActiveById"
+            resultType="com.wallet.card.domain.Card">
+        SELECT
+            c.card_id AS cardId,
+            c.card_company_id AS cardCompanyId,
+            cc.company_name AS companyName,
+            c.card_name AS cardName,
+            c.card_type AS cardType,
+            c.image_url AS imageUrl,
+            c.description AS description
+        FROM card c
+        INNER JOIN card_company cc ON cc.card_company_id = c.card_company_id
+        WHERE c.card_id = #{cardId}
+          AND c.is_active = 'Y'
+          AND cc.is_active = 'Y'
+            LIMIT 1
+    </select>
+
+</mapper>
