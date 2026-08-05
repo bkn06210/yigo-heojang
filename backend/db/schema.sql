@@ -255,6 +255,11 @@ CREATE TABLE card_annual_fee (
     -- NULL로 두면 UNIQUE 제약이 중복을 못 막으므로 값으로 표현한다.
     brand              VARCHAR(30) NOT NULL COMMENT '국제브랜드: LOCAL(국내전용) | VISA | MASTERCARD | AMEX | UNIONPAY | K_WORLD | ANY(브랜드 무관)',
     issue_type         VARCHAR(20) NOT NULL DEFAULT 'PLASTIC' COMMENT '발급 형태: PLASTIC(실물) | MOBILE(모바일단독) | ANY',
+    -- 같은 카드가 리워드 종류로 갈리며 연회비가 다른 경우가 있다.
+    -- 약관 예) The BEST-XO는 마이신한포인트형과 스카이패스형의 연회비가 2만원 차이난다.
+    -- 브랜드·발급형태와는 다른 축이라 그 컬럼에 넣으면 의미가 어긋나고, 빼면 같은 (카드,브랜드)에
+    -- 금액이 둘이 되어 UNIQUE 제약에 걸린다. 갈리지 않는 카드는 ANY다.
+    variant            VARCHAR(30) NOT NULL DEFAULT 'ANY' COMMENT '상품형(리워드 종류). 갈리지 않으면 ANY',
     -- 실제로 청구되는 금액이라 항상 있다.
     total_fee          INT         NOT NULL COMMENT '총 연회비(원)',
     -- 약관이 "20,000원(기본 7천 + 제휴 13천)"처럼 나눠 적을 때만 채운다.
@@ -262,7 +267,7 @@ CREATE TABLE card_annual_fee (
     base_fee           INT         NULL COMMENT '기본연회비(원). 약관이 분리 표기할 때만',
     partner_fee        INT         NULL COMMENT '제휴연회비(원). 약관이 분리 표기할 때만',
     PRIMARY KEY (card_annual_fee_id),
-    UNIQUE KEY uk_card_annual_fee (card_id, brand, issue_type),
+    UNIQUE KEY uk_card_annual_fee (card_id, brand, issue_type, variant),
     CONSTRAINT fk_card_annual_fee_card FOREIGN KEY (card_id) REFERENCES card (card_id),
     -- 나눠 적었으면 합이 총액과 맞아야 한다. 안 맞으면 추출이 틀린 것이다.
     CONSTRAINT ck_card_annual_fee_total CHECK (
@@ -573,9 +578,11 @@ CREATE TABLE benefit (
      OR (calc_method <> 'COUNT_STEP' AND step_count IS NULL)
     ),
     -- 할인 시점은 할인 혜택에만 있다. 적립·특가·증정·사후정산은 NULL이어야 한다.
+    -- 할인인데 NULL인 것은 허용한다 — 약관이 즉시/청구를 밝히지 않는 경우가 실제로 많고
+    -- (카드 15장 중 33개 혜택), 기본값을 정해 채우면 약관에 없는 값을 만드는 것이 된다.
+    -- 엔진은 이 값을 계산에 쓰지 않는다(표시용).
     CONSTRAINT ck_benefit_apply_timing CHECK (
-        (benefit_kind = 'DISCOUNT' AND apply_timing IS NOT NULL)
-     OR (benefit_kind <> 'DISCOUNT' AND apply_timing IS NULL)
+        benefit_kind = 'DISCOUNT' OR apply_timing IS NULL
     )
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT '혜택 규칙';
 

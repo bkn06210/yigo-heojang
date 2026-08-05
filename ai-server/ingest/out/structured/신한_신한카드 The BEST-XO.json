@@ -1,1227 +1,1231 @@
 {
- "card": {
-  "card_name": "신한카드 The BEST-XO",
-  "card_type": "CREDIT",
-  "annual_fee": null,
-  "annual_fees": [
-   {
-    "brand": "LOCAL",
-    "issue_type": null,
-    "base_fee": 7000,
-    "partner_fee": 290000,
-    "_source": "마이신한포인트형 / 국내전용 Local / 총연회비 29만7천원 / 기본연회비 7천원 / 서비스연회비 29만원"
-   },
-   {
-    "brand": "MASTERCARD",
-    "issue_type": null,
-    "base_fee": 7000,
-    "partner_fee": 293000,
-    "_source": "마이신한포인트형 / 해외겸용 Mastercard World / 총연회비 30만원 / 기본연회비 7천원 / 서비스연회비 29만3천원"
-   },
-   {
-    "brand": "LOCAL",
-    "issue_type": null,
-    "base_fee": 7000,
-    "partner_fee": 310000,
-    "_source": "스카이패스형 / 국내전용 Local / 총연회비 31만7천원 / 기본연회비 7천원 / 서비스연회비 31만원"
-   },
-   {
-    "brand": "MASTERCARD",
-    "issue_type": null,
-    "base_fee": 7000,
-    "partner_fee": 313000,
-    "_source": "스카이패스형 / 해외겸용 Mastercard World / 총연회비 32만원 / 기본연회비 7천원 / 서비스연회비 31만3천원"
-   }
+  "card": {
+    "card_name": "신한카드 The BEST-XO",
+    "card_type": "CREDIT",
+    "annual_fee": null,
+    "annual_fees": [
+      {
+        "brand": "LOCAL",
+        "issue_type": null,
+        "base_fee": 7000,
+        "partner_fee": 290000,
+        "_source": "마이신한포인트형 / 국내전용 Local / 총연회비 29만7천원 / 기본연회비 7천원 / 서비스연회비 29만원",
+        "variant": "POINT"
+      },
+      {
+        "brand": "MASTERCARD",
+        "issue_type": null,
+        "base_fee": 7000,
+        "partner_fee": 293000,
+        "_source": "마이신한포인트형 / 해외겸용 Mastercard World / 총연회비 30만원 / 기본연회비 7천원 / 서비스연회비 29만3천원",
+        "variant": "POINT"
+      },
+      {
+        "brand": "LOCAL",
+        "issue_type": null,
+        "base_fee": 7000,
+        "partner_fee": 310000,
+        "_source": "스카이패스형 / 국내전용 Local / 총연회비 31만7천원 / 기본연회비 7천원 / 서비스연회비 31만원",
+        "variant": "SKYPASS"
+      },
+      {
+        "brand": "MASTERCARD",
+        "issue_type": null,
+        "base_fee": 7000,
+        "partner_fee": 313000,
+        "_source": "스카이패스형 / 해외겸용 Mastercard World / 총연회비 32만원 / 기본연회비 7천원 / 서비스연회비 31만3천원",
+        "variant": "SKYPASS"
+      }
+    ],
+    "_source": {
+      "card_name": "Shinhancard The BEST-XO",
+      "annual_fees": "연회비는 카드별로 기본 연회비와 서비스 연회비를 합산한 총 연회비가 청구됩니다."
+    },
+    "_needs_review": [
+      "annual_fee",
+      "annual_fees[].issue_type"
+    ]
+  },
+  "card_exclusions": [
+    {
+      "exclusion_type": "TRANSACTION_ATTR",
+      "exclusion_value": "CASH_ADVANCE",
+      "_source": "리워드 서비스 제외 대상은 아래와 같습니다. - 단기카드대출(현금서비스), 장기카드대출(카드론)"
+    },
+    {
+      "exclusion_type": "TRANSACTION_ATTR",
+      "exclusion_value": "CARD_LOAN",
+      "_source": "리워드 서비스 제외 대상은 아래와 같습니다. - 단기카드대출(현금서비스), 장기카드대출(카드론)"
+    },
+    {
+      "exclusion_type": "TRANSACTION_ATTR",
+      "exclusion_value": "ANNUAL_FEE",
+      "_source": "리워드 서비스 제외 대상 - 연회비, 각종 수수료/이자(할부수수료, 연체이자 등)"
+    },
+    {
+      "exclusion_type": "TRANSACTION_ATTR",
+      "exclusion_value": "FEE_INTEREST",
+      "_source": "리워드 서비스 제외 대상 - 연회비, 각종 수수료/이자(할부수수료, 연체이자 등) / 할인 서비스 제외 대상 - 각종 수수료/이자(할부수수료, 연체이자 등)"
+    },
+    {
+      "exclusion_type": "TRANSACTION_ATTR",
+      "exclusion_value": "GIFT_CARD",
+      "_source": "리워드·할인 서비스 제외 대상 - 기프트카드/선불카드 구매 · 충전금액 / - 상품권/선불전자지급수단 구매 · 충전금액 / - 포인트/캐시/사이버머니/예치금 등 전자지급(결제)수단 구매 · 충전금액"
+    },
+    {
+      "exclusion_type": "TRANSACTION_ATTR",
+      "exclusion_value": "POINT_USED",
+      "_source": "리워드·할인 서비스 제외 대상 - 포인트 사용거래 중 포인트 금액"
+    },
+    {
+      "exclusion_type": "TRANSACTION_ATTR",
+      "exclusion_value": "INTEREST_FREE",
+      "_source": "리워드·할인 서비스 제외 대상 - 무이자할부(슬림할부 등 부분 무이자 포함) 이용거래"
+    },
+    {
+      "exclusion_type": "TRANSACTION_ATTR",
+      "exclusion_value": "TAX",
+      "_source": "리워드 서비스 제외 대상 - 지방세, 국세, 지방세외수입, 환경개선부담금"
+    },
+    {
+      "exclusion_type": "TRANSACTION_ATTR",
+      "exclusion_value": "LEVY",
+      "_source": "리워드 서비스 제외 대상 - 지방세, 국세, 지방세외수입, 환경개선부담금 (환경개선부담금)"
+    },
+    {
+      "exclusion_type": "TRANSACTION_ATTR",
+      "exclusion_value": "SOCIAL_INSURANCE",
+      "_source": "리워드 서비스 제외 대상 - 4대보험(국민연금, 고용보험, 건강보험, 산재보험)"
+    },
+    {
+      "exclusion_type": "TRANSACTION_ATTR",
+      "exclusion_value": "DISCOUNTED",
+      "_source": "리워드·할인 서비스 제외 대상 - 신한카드 The BEST-XO로 할인서비스(이벤트 포함)를 적용받은 모든 거래(해당 거래금액 전체)"
+    },
+    {
+      "exclusion_type": "TRANSACTION_ATTR",
+      "exclusion_value": "CANCELED",
+      "_source": "리워드·할인 서비스 제외 대상 - 거래 취소금액"
+    },
+    {
+      "exclusion_type": "CATEGORY",
+      "exclusion_value": "TUITION",
+      "_source": "리워드 서비스 제외 대상 - 유치원/초중고 납입금(스쿨뱅킹), 대학(원)등록금"
+    },
+    {
+      "exclusion_type": "CATEGORY",
+      "exclusion_value": "APARTMENT_FEE",
+      "_source": "리워드 서비스 제외 대상 - 아파트관리비, 도시가스, 전기요금, TV수신료, 수도요금"
+    },
+    {
+      "exclusion_type": "CATEGORY",
+      "exclusion_value": "UTILITY",
+      "_source": "리워드 서비스 제외 대상 - 아파트관리비, 도시가스, 전기요금, TV수신료, 수도요금"
+    }
   ],
-  "_source": {
-   "card_name": "Shinhancard The BEST-XO",
-   "annual_fees": "연회비는 카드별로 기본 연회비와 서비스 연회비를 합산한 총 연회비가 청구됩니다."
-  },
-  "_needs_review": [
-   "annual_fee",
-   "annual_fees[].issue_type"
+  "performance_tiers": [
+    {
+      "period_type": "MONTH",
+      "min_performance_amount": 0,
+      "shared_monthly_limit": null,
+      "_source": "전월 이용금액이 50만원 이상인 경우에 한하여, 당월 이용금액에 대하여 기본 리워드 및 특별 리워드 서비스가 제공됩니다. (50만원 미만은 서비스 미제공 구간). 카드 통합 할인한도 개념이 없어 shared_monthly_limit은 null."
+    },
+    {
+      "period_type": "MONTH",
+      "min_performance_amount": 500000,
+      "shared_monthly_limit": null,
+      "_source": "전월 이용금액이 50만원 이상인 경우에 한하여, 당월 이용금액에 대하여 기본 리워드 및 특별 리워드 서비스가 제공됩니다. / ※ 신한카드 The BEST-XO 카드로 전월 일시불 및 할부 50만원 이상 이용 시 제공됩니다."
+    },
+    {
+      "period_type": "MONTH",
+      "min_performance_amount": 3000000,
+      "shared_monthly_limit": null,
+      "_source": "전월 일시불/할부 300만원 이상 이용 시 일시불/할부 이용금액 0.5% 마이신한포인트 추가 적립"
+    }
+  ],
+  "performance_exclusions": [
+    {
+      "exclusion_type": "TRANSACTION_ATTR",
+      "exclusion_value": "CASH_ADVANCE",
+      "_source": "전월 이용금액 제외 대상 - 단기카드대출(현금서비스), 장기카드대출(카드론)"
+    },
+    {
+      "exclusion_type": "TRANSACTION_ATTR",
+      "exclusion_value": "CARD_LOAN",
+      "_source": "전월 이용금액 제외 대상 - 단기카드대출(현금서비스), 장기카드대출(카드론)"
+    },
+    {
+      "exclusion_type": "TRANSACTION_ATTR",
+      "exclusion_value": "ANNUAL_FEE",
+      "_source": "전월 이용금액 제외 대상 - 연회비, 각종 수수료/이자(할부수수료, 연체이자 등)"
+    },
+    {
+      "exclusion_type": "TRANSACTION_ATTR",
+      "exclusion_value": "FEE_INTEREST",
+      "_source": "전월 이용금액 제외 대상 - 연회비, 각종 수수료/이자(할부수수료, 연체이자 등)"
+    },
+    {
+      "exclusion_type": "TRANSACTION_ATTR",
+      "exclusion_value": "GIFT_CARD",
+      "_source": "전월 이용금액 제외 대상 - 기프트카드/선불카드 구매 · 충전금액 / - 상품권/선불전자지급수단 구매 · 충전금액 / - 포인트/캐시/사이버머니/예치금 등 전자지급(결제)수단 구매 · 충전금액"
+    },
+    {
+      "exclusion_type": "TRANSACTION_ATTR",
+      "exclusion_value": "TAX",
+      "_source": "전월 이용금액 제외 대상 - 지방세, 국세, 지방세외수입, 환경개선부담금"
+    },
+    {
+      "exclusion_type": "TRANSACTION_ATTR",
+      "exclusion_value": "LEVY",
+      "_source": "전월 이용금액 제외 대상 - 지방세, 국세, 지방세외수입, 환경개선부담금 (환경개선부담금)"
+    },
+    {
+      "exclusion_type": "TRANSACTION_ATTR",
+      "exclusion_value": "SOCIAL_INSURANCE",
+      "_source": "전월 이용금액 제외 대상 - 4대보험(국민연금, 고용보험, 건강보험, 산재보험)"
+    },
+    {
+      "exclusion_type": "TRANSACTION_ATTR",
+      "exclusion_value": "DISCOUNTED",
+      "_source": "전월 이용금액 제외 대상 - 신한카드 The BEST-XO로 할인서비스(이벤트 포함)를 적용받은 모든 거래(해당 거래금액 전체)"
+    },
+    {
+      "exclusion_type": "TRANSACTION_ATTR",
+      "exclusion_value": "CANCELED",
+      "_source": "전월 이용금액 제외 대상 - 거래 취소금액"
+    },
+    {
+      "exclusion_type": "CATEGORY",
+      "exclusion_value": "TUITION",
+      "_source": "전월 이용금액 제외 대상 - 유치원/초중고 납입금(스쿨뱅킹), 대학(원)등록금"
+    },
+    {
+      "exclusion_type": "CATEGORY",
+      "exclusion_value": "APARTMENT_FEE",
+      "_source": "전월 이용금액 제외 대상 - 아파트관리비, 도시가스, 전기요금, TV수신료, 수도요금"
+    },
+    {
+      "exclusion_type": "CATEGORY",
+      "exclusion_value": "UTILITY",
+      "_source": "전월 이용금액 제외 대상 - 아파트관리비, 도시가스, 전기요금, TV수신료, 수도요금"
+    }
+  ],
+  "benefits": [
+    {
+      "benefit_name": "Gift Option 1 - 신세계상품권 20만원 모바일 교환권",
+      "benefit_kind": "GIFT",
+      "calc_method": "FIXED",
+      "benefit_value": 200000,
+      "step_count": null,
+      "apply_timing": null,
+      "target_type": "ALL",
+      "target_category_code": null,
+      "target_merchant_name": null,
+      "require_performance": "N",
+      "performance_period": "MONTH",
+      "require_payment_type": null,
+      "min_txn_amount": null,
+      "max_eligible_amount": null,
+      "max_benefit_per_txn": null,
+      "monthly_limit": null,
+      "limit_group_code": null,
+      "monthly_count_limit": null,
+      "daily_count_limit": null,
+      "daily_limit": null,
+      "yearly_count_limit": 1,
+      "count_group_code": null,
+      "use_shared_limit": "N",
+      "exclude_from_performance": "N",
+      "option_group_code": "GIFT_OPTION",
+      "option_key": "SHINSEGAE_VOUCHER",
+      "description": "연 1회 Gift Option 6가지 중 택 1(option_group_code=GIFT_OPTION). 연회비 납부 및 100만원 이상(일시불+할부) 이용 시 제공되며, 신청 시점에 지급되고 결제 트랜잭션이 없다. 실적 조건의 판정 기간이 달력 월이 아니라 연회비 청구 주기라 require_performance로 표현하지 못했다. 전국 이마트 매장 내 설치된 상품권 교환 키오스크에서 신세계 상품권으로 교환 후 사용한다(신세계 백화점 제외). 모바일 교환권 교환기간은 발송일로부터 12개월이다.",
+      "tier_limits": [],
+      "exclusions": [],
+      "_source": {
+        "option_group_code": "신한카드 The BEST-XO 고객님께 매년 1회 아래 Option 중 선택하신 한 가지의 기프트를 제공해 드립니다.",
+        "option_key": "Option 1. 신세계상품권 20만원 모바일 교환권",
+        "yearly_count_limit": "* 연간 기프트 옵션은 연회비 청구 주기 내 1회 제공됩니다.",
+        "benefit_value": "Option 1. 신세계상품권 20만원 모바일 교환권"
+      },
+      "_needs_review": [
+        "require_performance"
+      ]
+    },
+    {
+      "benefit_name": "Gift Option 2 - 플래티넘 호텔 외식 통합 23만원 이용권",
+      "benefit_kind": "GIFT",
+      "calc_method": "FIXED",
+      "benefit_value": 230000,
+      "step_count": null,
+      "apply_timing": null,
+      "target_type": "ALL",
+      "target_category_code": null,
+      "target_merchant_name": null,
+      "require_performance": "N",
+      "performance_period": "MONTH",
+      "require_payment_type": null,
+      "min_txn_amount": null,
+      "max_eligible_amount": null,
+      "max_benefit_per_txn": null,
+      "monthly_limit": null,
+      "limit_group_code": null,
+      "monthly_count_limit": null,
+      "daily_count_limit": null,
+      "daily_limit": null,
+      "yearly_count_limit": 1,
+      "count_group_code": null,
+      "use_shared_limit": "N",
+      "exclude_from_performance": "N",
+      "option_group_code": "GIFT_OPTION",
+      "option_key": "PLATINUM_HOTEL_DINING",
+      "description": "연 1회 Gift Option 6가지 중 택 1(option_group_code=GIFT_OPTION). 연회비 납부 및 100만원 이상(일시불+할부) 이용 시 제공되며, 신청 시점에 지급되고 결제 트랜잭션이 없다. 실적 조건의 판정 기간이 달력 월이 아니라 연회비 청구 주기라 require_performance로 표현하지 못했다. 제휴 매장 현황은 별도 사이트에서 확인한다. 이용권 유효기간은 발행일로부터 1년이며 기간 연장·잔액 환불이 되지 않는다.",
+      "tier_limits": [],
+      "exclusions": [],
+      "_source": {
+        "option_group_code": "신한카드 The BEST-XO 고객님께 매년 1회 아래 Option 중 선택하신 한 가지의 기프트를 제공해 드립니다.",
+        "option_key": "Option 2. 플래티넘 호텔 외식 통합 23만원 이용권",
+        "yearly_count_limit": "* 연간 기프트 옵션은 연회비 청구 주기 내 1회 제공됩니다.",
+        "benefit_value": "Option 2. 플래티넘 호텔 외식 통합 23만원 이용권"
+      },
+      "_needs_review": [
+        "require_performance"
+      ]
+    },
+    {
+      "benefit_name": "Gift Option 3 - 마이리얼트립 23만원 이용권",
+      "benefit_kind": "GIFT",
+      "calc_method": "FIXED",
+      "benefit_value": 230000,
+      "step_count": null,
+      "apply_timing": null,
+      "target_type": "ALL",
+      "target_category_code": null,
+      "target_merchant_name": null,
+      "require_performance": "N",
+      "performance_period": "MONTH",
+      "require_payment_type": null,
+      "min_txn_amount": null,
+      "max_eligible_amount": null,
+      "max_benefit_per_txn": null,
+      "monthly_limit": null,
+      "limit_group_code": null,
+      "monthly_count_limit": null,
+      "daily_count_limit": null,
+      "daily_limit": null,
+      "yearly_count_limit": 1,
+      "count_group_code": null,
+      "use_shared_limit": "N",
+      "exclude_from_performance": "N",
+      "option_group_code": "GIFT_OPTION",
+      "option_key": "MYREALTRIP_VOUCHER",
+      "description": "연 1회 Gift Option 6가지 중 택 1(option_group_code=GIFT_OPTION). 연회비 납부 및 100만원 이상(일시불+할부) 이용 시 제공되며, 신청 시점에 지급되고 결제 트랜잭션이 없다. 실적 조건의 판정 기간이 달력 월이 아니라 연회비 청구 주기라 require_performance로 표현하지 못했다. 마이리얼트립 홈페이지·앱 결제 시 사용한다. 거래 건당 1장만 쓸 수 있고, 총 결제금액이 이용권 금액보다 낮으면 잔액은 환불·재사용되지 않는다.",
+      "tier_limits": [],
+      "exclusions": [],
+      "_source": {
+        "option_group_code": "신한카드 The BEST-XO 고객님께 매년 1회 아래 Option 중 선택하신 한 가지의 기프트를 제공해 드립니다.",
+        "option_key": "Option 3. 마이리얼트립 23만원 이용권",
+        "yearly_count_limit": "* 연간 기프트 옵션은 연회비 청구 주기 내 1회 제공됩니다.",
+        "benefit_value": "Option 3. 마이리얼트립 23만원 이용권"
+      },
+      "_needs_review": [
+        "require_performance"
+      ]
+    },
+    {
+      "benefit_name": "Gift Option 4 - 마이신한포인트 20만점 적립",
+      "benefit_kind": "GIFT",
+      "calc_method": "FIXED",
+      "benefit_value": 200000,
+      "step_count": null,
+      "apply_timing": null,
+      "target_type": "ALL",
+      "target_category_code": null,
+      "target_merchant_name": null,
+      "require_performance": "N",
+      "performance_period": "MONTH",
+      "require_payment_type": null,
+      "min_txn_amount": null,
+      "max_eligible_amount": null,
+      "max_benefit_per_txn": null,
+      "monthly_limit": null,
+      "limit_group_code": null,
+      "monthly_count_limit": null,
+      "daily_count_limit": null,
+      "daily_limit": null,
+      "yearly_count_limit": 1,
+      "count_group_code": null,
+      "use_shared_limit": "N",
+      "exclude_from_performance": "N",
+      "option_group_code": "GIFT_OPTION",
+      "option_key": "MYSHINHAN_POINT_200K",
+      "description": "연 1회 Gift Option 6가지 중 택 1(option_group_code=GIFT_OPTION). 연회비 납부 및 100만원 이상(일시불+할부) 이용 시 제공되며, 신청 시점에 지급되고 결제 트랜잭션이 없다. 실적 조건의 판정 기간이 달력 월이 아니라 연회비 청구 주기라 require_performance로 표현하지 못했다. 신청 즉시 적립된다. 결제와 무관하게 지급되는 기프트라 적립형 혜택(POINT)이 아니라 GIFT로 넣었다. POINT로 넣으면 target_type이 ALL이라 모든 결제에 20만점이 적립된다.",
+      "tier_limits": [],
+      "exclusions": [],
+      "_source": {
+        "option_group_code": "신한카드 The BEST-XO 고객님께 매년 1회 아래 Option 중 선택하신 한 가지의 기프트를 제공해 드립니다.",
+        "option_key": "Option 4. 마이신한포인트 20만점 적립",
+        "yearly_count_limit": "* 연간 기프트 옵션은 연회비 청구 주기 내 1회 제공됩니다.",
+        "benefit_value": "Option 4. 마이신한포인트 20만점 적립"
+      },
+      "_needs_review": [
+        "require_performance"
+      ]
+    },
+    {
+      "benefit_name": "Gift Option 5 - 에어프레미아 항공 25만원 이용권",
+      "benefit_kind": "GIFT",
+      "calc_method": "FIXED",
+      "benefit_value": 250000,
+      "step_count": null,
+      "apply_timing": null,
+      "target_type": "ALL",
+      "target_category_code": null,
+      "target_merchant_name": null,
+      "require_performance": "N",
+      "performance_period": "MONTH",
+      "require_payment_type": null,
+      "min_txn_amount": null,
+      "max_eligible_amount": null,
+      "max_benefit_per_txn": null,
+      "monthly_limit": null,
+      "limit_group_code": null,
+      "monthly_count_limit": null,
+      "daily_count_limit": null,
+      "daily_limit": null,
+      "yearly_count_limit": 1,
+      "count_group_code": null,
+      "use_shared_limit": "N",
+      "exclude_from_performance": "N",
+      "option_group_code": "GIFT_OPTION",
+      "option_key": "AIRPREMIA_VOUCHER",
+      "description": "연 1회 Gift Option 6가지 중 택 1(option_group_code=GIFT_OPTION). 연회비 납부 및 100만원 이상(일시불+할부) 이용 시 제공되며, 신청 시점에 지급되고 결제 트랜잭션이 없다. 실적 조건의 판정 기간이 달력 월이 아니라 연회비 청구 주기라 require_performance로 표현하지 못했다. The BEST-XO 마이신한포인트형을 이용할 경우에만 선택할 수 있다. 에어프레미아 미주노선(LAX/SFO/EWR) 전용이다.",
+      "tier_limits": [],
+      "exclusions": [],
+      "_source": {
+        "option_group_code": "신한카드 The BEST-XO 고객님께 매년 1회 아래 Option 중 선택하신 한 가지의 기프트를 제공해 드립니다.",
+        "option_key": "Option 5. 에어프레미아 항공 25만원 이용권(The BEST-XO 마이신한포인트형만 제공)",
+        "yearly_count_limit": "* 연간 기프트 옵션은 연회비 청구 주기 내 1회 제공됩니다.",
+        "benefit_value": "Option 5. 에어프레미아 항공 25만원 이용권(The BEST-XO 마이신한포인트형만 제공)"
+      },
+      "_needs_review": [
+        "require_performance"
+      ]
+    },
+    {
+      "benefit_name": "Gift Option 6 - 대한항공 마일리지 1만 마일리지 적립",
+      "benefit_kind": "GIFT",
+      "calc_method": "FIXED",
+      "benefit_value": null,
+      "step_count": null,
+      "apply_timing": null,
+      "target_type": "ALL",
+      "target_category_code": null,
+      "target_merchant_name": null,
+      "require_performance": "N",
+      "performance_period": "MONTH",
+      "require_payment_type": null,
+      "min_txn_amount": null,
+      "max_eligible_amount": null,
+      "max_benefit_per_txn": null,
+      "monthly_limit": null,
+      "limit_group_code": null,
+      "monthly_count_limit": null,
+      "daily_count_limit": null,
+      "daily_limit": null,
+      "yearly_count_limit": 1,
+      "count_group_code": null,
+      "use_shared_limit": "N",
+      "exclude_from_performance": "N",
+      "option_group_code": "GIFT_OPTION",
+      "option_key": "KOREANAIR_MILE_10K",
+      "description": "연 1회 Gift Option 6가지 중 택 1(option_group_code=GIFT_OPTION). 연회비 납부 및 100만원 이상(일시불+할부) 이용 시 제공되며, 신청 시점에 지급되고 결제 트랜잭션이 없다. 실적 조건의 판정 기간이 달력 월이 아니라 연회비 청구 주기라 require_performance로 표현하지 못했다. The BEST-XO 스카이패스형을 이용할 경우에만 신청할 수 있다. 지급 단위가 원이 아니라 마일이라 benefit_value를 채우지 못했다.",
+      "tier_limits": [],
+      "exclusions": [],
+      "_source": {
+        "option_group_code": "신한카드 The BEST-XO 고객님께 매년 1회 아래 Option 중 선택하신 한 가지의 기프트를 제공해 드립니다.",
+        "option_key": "Option 6. 대한항공 마일리지 1만 마일리지 적립(The BEST-XO 스카이패스형만 제공)",
+        "yearly_count_limit": "* 연간 기프트 옵션은 연회비 청구 주기 내 1회 제공됩니다."
+      },
+      "_needs_review": [
+        "require_performance",
+        "benefit_value"
+      ]
+    },
+    {
+      "benefit_name": "Bonus Gift 연 누적 3천만원 캐시백",
+      "benefit_kind": "RETROACTIVE",
+      "calc_method": "FIXED",
+      "benefit_value": 70000,
+      "step_count": null,
+      "apply_timing": null,
+      "target_type": "ALL",
+      "target_category_code": null,
+      "target_merchant_name": null,
+      "require_performance": "N",
+      "performance_period": "MONTH",
+      "require_payment_type": null,
+      "min_txn_amount": null,
+      "max_eligible_amount": null,
+      "max_benefit_per_txn": null,
+      "monthly_limit": null,
+      "limit_group_code": null,
+      "monthly_count_limit": null,
+      "daily_count_limit": null,
+      "daily_limit": null,
+      "yearly_count_limit": 1,
+      "count_group_code": null,
+      "use_shared_limit": "N",
+      "exclude_from_performance": "N",
+      "option_group_code": null,
+      "option_key": null,
+      "description": "연간(1월~12월) 일시불/할부 누적 이용금액에 따라 지급되는 사후정산 캐시백이라 결제 단위 계산 흐름에 들어오지 않는다. 판정 기준이 전월 실적이 아니라 연간 누적 금액이어서 require_performance로 표현하지 못했다. 이용금액을 달성한 달의 다다음달 20일에 지급된다.",
+      "tier_limits": [],
+      "exclusions": [],
+      "_source": {
+        "benefit_value": "연간 일시불/할부 누적 3천만원 이상 이용 시 캐시백 7만원 제공",
+        "yearly_count_limit": "신한카드 The BEST-XO 연간(1월~12월) 일시불/할부 이용금액 따라 최대 17만원 캐시백 추가 제공"
+      },
+      "_needs_review": [
+        "require_performance"
+      ]
+    },
+    {
+      "benefit_name": "Bonus Gift 연 누적 6천만원 추가 캐시백",
+      "benefit_kind": "RETROACTIVE",
+      "calc_method": "FIXED",
+      "benefit_value": 100000,
+      "step_count": null,
+      "apply_timing": null,
+      "target_type": "ALL",
+      "target_category_code": null,
+      "target_merchant_name": null,
+      "require_performance": "N",
+      "performance_period": "MONTH",
+      "require_payment_type": null,
+      "min_txn_amount": null,
+      "max_eligible_amount": null,
+      "max_benefit_per_txn": null,
+      "monthly_limit": null,
+      "limit_group_code": null,
+      "monthly_count_limit": null,
+      "daily_count_limit": null,
+      "daily_limit": null,
+      "yearly_count_limit": 1,
+      "count_group_code": null,
+      "use_shared_limit": "N",
+      "exclude_from_performance": "N",
+      "option_group_code": null,
+      "option_key": null,
+      "description": "연간(1월~12월) 일시불/할부 누적 이용금액에 따라 지급되는 사후정산 캐시백이라 결제 단위 계산 흐름에 들어오지 않는다. 판정 기준이 전월 실적이 아니라 연간 누적 금액이어서 require_performance로 표현하지 못했다. 이용금액을 달성한 달의 다다음달 20일에 지급된다.",
+      "tier_limits": [],
+      "exclusions": [],
+      "_source": {
+        "benefit_value": "누적 6천만원 이상 이용 시 캐시백 10만원 추가 제공",
+        "yearly_count_limit": "신한카드 The BEST-XO 연간(1월~12월) 일시불/할부 이용금액 따라 최대 17만원 캐시백 추가 제공"
+      },
+      "_needs_review": [
+        "require_performance"
+      ]
+    },
+    {
+      "benefit_name": "기본 리워드 마이신한포인트 적립",
+      "benefit_kind": "POINT",
+      "calc_method": "RATE",
+      "benefit_value": 1,
+      "step_count": null,
+      "apply_timing": null,
+      "target_type": "ALL",
+      "target_category_code": null,
+      "target_merchant_name": null,
+      "require_performance": "Y",
+      "performance_period": "MONTH",
+      "require_payment_type": null,
+      "min_txn_amount": null,
+      "max_eligible_amount": null,
+      "max_benefit_per_txn": null,
+      "monthly_limit": null,
+      "limit_group_code": null,
+      "monthly_count_limit": null,
+      "daily_count_limit": null,
+      "daily_limit": null,
+      "yearly_count_limit": null,
+      "count_group_code": null,
+      "use_shared_limit": "N",
+      "exclude_from_performance": "N",
+      "option_group_code": null,
+      "option_key": null,
+      "description": "The BEST-XO 마이신한포인트형에만 제공된다. 일시불/할부 이용금액 1% 마이신한포인트 적립이고, 전월 일시불/할부 300만원 이상 이용 시 0.5%가 더해져 1.5%가 된다. 마이신한포인트는 신용카드 이용대금 결제일에 적립된다.",
+      "tier_limits": [
+        {
+          "min_performance_amount": 500000,
+          "monthly_limit": null,
+          "benefit_value": 1,
+          "_source": "일시불/할부 이용금액 1% 마이신한포인트 적립"
+        },
+        {
+          "min_performance_amount": 3000000,
+          "monthly_limit": null,
+          "benefit_value": 1.5,
+          "_source": "전월 일시불/할부 300만원 이상 이용 시 일시불/할부 이용금액 0.5% 마이신한포인트 추가 적립"
+        }
+      ],
+      "exclusions": [],
+      "_source": {
+        "benefit_value": "일시불/할부 이용금액 1% 마이신한포인트 적립",
+        "require_performance": "전월 이용금액이 50만원 이상인 경우에 한하여, 당월 이용금액에 대하여 기본 리워드 및 특별 리워드 서비스가 제공됩니다."
+      },
+      "_needs_review": []
+    },
+    {
+      "benefit_name": "특별 리워드 간편결제 적립 - SOL Pay",
+      "benefit_kind": "POINT",
+      "calc_method": "RATE",
+      "benefit_value": 1.5,
+      "step_count": null,
+      "apply_timing": null,
+      "target_type": "ALL",
+      "target_category_code": null,
+      "target_merchant_name": null,
+      "require_performance": "Y",
+      "performance_period": "MONTH",
+      "require_payment_type": "SOL_PAY",
+      "min_txn_amount": null,
+      "max_eligible_amount": null,
+      "max_benefit_per_txn": null,
+      "monthly_limit": 30000,
+      "limit_group_code": "SIMPLE_PAY_30000",
+      "monthly_count_limit": null,
+      "daily_count_limit": null,
+      "daily_limit": null,
+      "yearly_count_limit": null,
+      "count_group_code": null,
+      "use_shared_limit": "N",
+      "exclude_from_performance": "N",
+      "option_group_code": null,
+      "option_key": null,
+      "description": "기본 1% + 추가 0.5% = 합산 1.5%를 적었다. 전월 300만원 이상 구간은 기본 1.5% + 추가 0.5% = 2%다. 한 결제에 카드당 혜택 하나만 고르므로 추가분 0.5%만 적으면 기본 리워드 1%에 밀려 실제보다 낮게 계산된다. 국내 일시불/할부 이용금액에만 적용되고, 월 최대 3만 마이신한포인트까지 적립된다(SOL Pay·네이버페이·쿠페이 합산). 마이신한포인트형과 스카이패스형 모두 제공된다. 다만 이 3만포인트 한도는 원문상 추가분 0.5%에만 걸리는 값인데 합산값 행에 붙어 있어 한도가 실제보다 빨리 소진된다.",
+      "tier_limits": [
+        {
+          "min_performance_amount": 500000,
+          "monthly_limit": 30000,
+          "benefit_value": 1.5,
+          "_source": "일시불/할부 이용금액 1% 마이신한포인트 적립 + 특별 리워드 - SOL Pay, 네이버페이, 쿠페이 국내 일시불/할부 이용금액 0.5% 마이신한포인트 추가 적립(월 최대 3만포인트까지 적립)"
+        },
+        {
+          "min_performance_amount": 3000000,
+          "monthly_limit": 30000,
+          "benefit_value": 2,
+          "_source": "전월 일시불/할부 300만원 이상 이용 시 일시불/할부 이용금액 0.5% 마이신한포인트 추가 적립 + 특별 리워드 - SOL Pay, 네이버페이, 쿠페이 국내 일시불/할부 이용금액 0.5% 마이신한포인트 추가 적립(월 최대 3만포인트까지 적립)"
+        }
+      ],
+      "exclusions": [
+        {
+          "exclusion_type": "TRANSACTION_ATTR",
+          "exclusion_value": "OVERSEAS",
+          "_source": "SOL Pay, 네이버페이, 쿠페이 국내 일시불/할부 이용금액 0.5% 마이신한포인트 추가 적립"
+        }
+      ],
+      "_source": {
+        "benefit_value": "기본 리워드 마이신한포인트형 - 일시불/할부 이용금액 1% 마이신한포인트 적립 / - 전월 일시불/할부 300만원 이상 이용 시 일시불/할부 이용금액 0.5% 마이신한포인트 추가 적립 / 특별 리워드 - SOL Pay, 네이버페이, 쿠페이 국내 일시불/할부 이용금액 0.5% 마이신한포인트 추가 적립(월 최대 3만포인트까지 적립)",
+        "monthly_limit": "(월 최대 3만포인트까지 적립)",
+        "require_payment_type": "SOL Pay, 네이버페이, 쿠페이 국내 일시불/할부 이용금액",
+        "require_performance": "전월 이용금액이 50만원 이상인 경우에 한하여, 당월 이용금액에 대하여 기본 리워드 및 특별 리워드 서비스가 제공됩니다."
+      },
+      "_needs_review": []
+    },
+    {
+      "benefit_name": "특별 리워드 간편결제 적립 - 네이버페이",
+      "benefit_kind": "POINT",
+      "calc_method": "RATE",
+      "benefit_value": 1.5,
+      "step_count": null,
+      "apply_timing": null,
+      "target_type": "ALL",
+      "target_category_code": null,
+      "target_merchant_name": null,
+      "require_performance": "Y",
+      "performance_period": "MONTH",
+      "require_payment_type": "NAVER_PAY",
+      "min_txn_amount": null,
+      "max_eligible_amount": null,
+      "max_benefit_per_txn": null,
+      "monthly_limit": 30000,
+      "limit_group_code": "SIMPLE_PAY_30000",
+      "monthly_count_limit": null,
+      "daily_count_limit": null,
+      "daily_limit": null,
+      "yearly_count_limit": null,
+      "count_group_code": null,
+      "use_shared_limit": "N",
+      "exclude_from_performance": "N",
+      "option_group_code": null,
+      "option_key": null,
+      "description": "기본 1% + 추가 0.5% = 합산 1.5%를 적었다. 전월 300만원 이상 구간은 기본 1.5% + 추가 0.5% = 2%다. 한 결제에 카드당 혜택 하나만 고르므로 추가분 0.5%만 적으면 기본 리워드 1%에 밀려 실제보다 낮게 계산된다. 국내 일시불/할부 이용금액에만 적용되고, 월 최대 3만 마이신한포인트까지 적립된다(SOL Pay·네이버페이·쿠페이 합산). 마이신한포인트형과 스카이패스형 모두 제공된다. 다만 이 3만포인트 한도는 원문상 추가분 0.5%에만 걸리는 값인데 합산값 행에 붙어 있어 한도가 실제보다 빨리 소진된다.",
+      "tier_limits": [
+        {
+          "min_performance_amount": 500000,
+          "monthly_limit": 30000,
+          "benefit_value": 1.5,
+          "_source": "일시불/할부 이용금액 1% 마이신한포인트 적립 + 특별 리워드 - SOL Pay, 네이버페이, 쿠페이 국내 일시불/할부 이용금액 0.5% 마이신한포인트 추가 적립(월 최대 3만포인트까지 적립)"
+        },
+        {
+          "min_performance_amount": 3000000,
+          "monthly_limit": 30000,
+          "benefit_value": 2,
+          "_source": "전월 일시불/할부 300만원 이상 이용 시 일시불/할부 이용금액 0.5% 마이신한포인트 추가 적립 + 특별 리워드 - SOL Pay, 네이버페이, 쿠페이 국내 일시불/할부 이용금액 0.5% 마이신한포인트 추가 적립(월 최대 3만포인트까지 적립)"
+        }
+      ],
+      "exclusions": [
+        {
+          "exclusion_type": "TRANSACTION_ATTR",
+          "exclusion_value": "OVERSEAS",
+          "_source": "SOL Pay, 네이버페이, 쿠페이 국내 일시불/할부 이용금액 0.5% 마이신한포인트 추가 적립"
+        }
+      ],
+      "_source": {
+        "benefit_value": "기본 리워드 마이신한포인트형 - 일시불/할부 이용금액 1% 마이신한포인트 적립 / - 전월 일시불/할부 300만원 이상 이용 시 일시불/할부 이용금액 0.5% 마이신한포인트 추가 적립 / 특별 리워드 - SOL Pay, 네이버페이, 쿠페이 국내 일시불/할부 이용금액 0.5% 마이신한포인트 추가 적립(월 최대 3만포인트까지 적립)",
+        "monthly_limit": "(월 최대 3만포인트까지 적립)",
+        "require_payment_type": "SOL Pay, 네이버페이, 쿠페이 국내 일시불/할부 이용금액",
+        "require_performance": "전월 이용금액이 50만원 이상인 경우에 한하여, 당월 이용금액에 대하여 기본 리워드 및 특별 리워드 서비스가 제공됩니다."
+      },
+      "_needs_review": []
+    },
+    {
+      "benefit_name": "특별 리워드 간편결제 적립 - 쿠페이",
+      "benefit_kind": "POINT",
+      "calc_method": "RATE",
+      "benefit_value": 1.5,
+      "step_count": null,
+      "apply_timing": null,
+      "target_type": "ALL",
+      "target_category_code": null,
+      "target_merchant_name": null,
+      "require_performance": "Y",
+      "performance_period": "MONTH",
+      "require_payment_type": "COUPAY",
+      "min_txn_amount": null,
+      "max_eligible_amount": null,
+      "max_benefit_per_txn": null,
+      "monthly_limit": 30000,
+      "limit_group_code": "SIMPLE_PAY_30000",
+      "monthly_count_limit": null,
+      "daily_count_limit": null,
+      "daily_limit": null,
+      "yearly_count_limit": null,
+      "count_group_code": null,
+      "use_shared_limit": "N",
+      "exclude_from_performance": "N",
+      "option_group_code": null,
+      "option_key": null,
+      "description": "기본 1% + 추가 0.5% = 합산 1.5%를 적었다. 전월 300만원 이상 구간은 기본 1.5% + 추가 0.5% = 2%다. 한 결제에 카드당 혜택 하나만 고르므로 추가분 0.5%만 적으면 기본 리워드 1%에 밀려 실제보다 낮게 계산된다. 국내 일시불/할부 이용금액에만 적용되고, 월 최대 3만 마이신한포인트까지 적립된다(SOL Pay·네이버페이·쿠페이 합산). 마이신한포인트형과 스카이패스형 모두 제공된다. 다만 이 3만포인트 한도는 원문상 추가분 0.5%에만 걸리는 값인데 합산값 행에 붙어 있어 한도가 실제보다 빨리 소진된다.",
+      "tier_limits": [
+        {
+          "min_performance_amount": 500000,
+          "monthly_limit": 30000,
+          "benefit_value": 1.5,
+          "_source": "일시불/할부 이용금액 1% 마이신한포인트 적립 + 특별 리워드 - SOL Pay, 네이버페이, 쿠페이 국내 일시불/할부 이용금액 0.5% 마이신한포인트 추가 적립(월 최대 3만포인트까지 적립)"
+        },
+        {
+          "min_performance_amount": 3000000,
+          "monthly_limit": 30000,
+          "benefit_value": 2,
+          "_source": "전월 일시불/할부 300만원 이상 이용 시 일시불/할부 이용금액 0.5% 마이신한포인트 추가 적립 + 특별 리워드 - SOL Pay, 네이버페이, 쿠페이 국내 일시불/할부 이용금액 0.5% 마이신한포인트 추가 적립(월 최대 3만포인트까지 적립)"
+        }
+      ],
+      "exclusions": [
+        {
+          "exclusion_type": "TRANSACTION_ATTR",
+          "exclusion_value": "OVERSEAS",
+          "_source": "SOL Pay, 네이버페이, 쿠페이 국내 일시불/할부 이용금액 0.5% 마이신한포인트 추가 적립"
+        }
+      ],
+      "_source": {
+        "benefit_value": "기본 리워드 마이신한포인트형 - 일시불/할부 이용금액 1% 마이신한포인트 적립 / - 전월 일시불/할부 300만원 이상 이용 시 일시불/할부 이용금액 0.5% 마이신한포인트 추가 적립 / 특별 리워드 - SOL Pay, 네이버페이, 쿠페이 국내 일시불/할부 이용금액 0.5% 마이신한포인트 추가 적립(월 최대 3만포인트까지 적립)",
+        "monthly_limit": "(월 최대 3만포인트까지 적립)",
+        "require_payment_type": "SOL Pay, 네이버페이, 쿠페이 국내 일시불/할부 이용금액",
+        "require_performance": "전월 이용금액이 50만원 이상인 경우에 한하여, 당월 이용금액에 대하여 기본 리워드 및 특별 리워드 서비스가 제공됩니다."
+      },
+      "_needs_review": []
+    },
+    {
+      "benefit_name": "특별 리워드 주유소 적립",
+      "benefit_kind": "POINT",
+      "calc_method": "RATE",
+      "benefit_value": 4,
+      "step_count": null,
+      "apply_timing": null,
+      "target_type": "CATEGORY",
+      "target_category_code": "FUEL",
+      "target_merchant_name": null,
+      "require_performance": "Y",
+      "performance_period": "MONTH",
+      "require_payment_type": null,
+      "min_txn_amount": null,
+      "max_eligible_amount": null,
+      "max_benefit_per_txn": null,
+      "monthly_limit": 20000,
+      "limit_group_code": null,
+      "monthly_count_limit": null,
+      "daily_count_limit": null,
+      "daily_limit": null,
+      "yearly_count_limit": null,
+      "count_group_code": null,
+      "use_shared_limit": "N",
+      "exclude_from_performance": "N",
+      "option_group_code": null,
+      "option_key": null,
+      "description": "기본 1% + 추가 3% = 합산 4%를 적었다. 전월 300만원 이상 구간은 기본 1.5% + 추가 3% = 4.5%다. 한 결제에 카드당 혜택 하나만 고르므로 추가분 3%만 적으면 기본 리워드 1%에 밀려 실제보다 낮게 계산된다. 월 최대 2만 마이신한포인트까지 적립되며, 이 한도는 원문상 추가분 3%에만 걸리는 값이라 합산값 행에 붙으면 한도가 실제보다 빨리 소진된다. 휘발유·경유·등유만 적립 대상이고 LPG는 제외된다. 가맹점 업종은 신한카드 가맹점 업종 기준을 따른다. 마이신한포인트형과 스카이패스형 모두 제공된다.",
+      "tier_limits": [
+        {
+          "min_performance_amount": 500000,
+          "monthly_limit": 20000,
+          "benefit_value": 4,
+          "_source": "일시불/할부 이용금액 1% 마이신한포인트 적립 + 특별 리워드 - 모든 주유소 이용금액 3% 마이신한포인트 추가 적립 (월 최대 2만포인트까지 적립)"
+        },
+        {
+          "min_performance_amount": 3000000,
+          "monthly_limit": 20000,
+          "benefit_value": 4.5,
+          "_source": "전월 일시불/할부 300만원 이상 이용 시 일시불/할부 이용금액 0.5% 마이신한포인트 추가 적립 + 특별 리워드 - 모든 주유소 이용금액 3% 마이신한포인트 추가 적립 (월 최대 2만포인트까지 적립)"
+        }
+      ],
+      "exclusions": [],
+      "_source": {
+        "benefit_value": "기본 리워드 마이신한포인트형 - 일시불/할부 이용금액 1% 마이신한포인트 적립 / - 전월 일시불/할부 300만원 이상 이용 시 일시불/할부 이용금액 0.5% 마이신한포인트 추가 적립 / 특별 리워드 - 모든 주유소 이용금액 3% 마이신한포인트 추가 적립 (월 최대 2만포인트까지 적립)",
+        "monthly_limit": "(월 최대 2만포인트까지 적립)",
+        "target_category_code": "모든 주유소 이용금액 3% 마이신한포인트 추가 적립",
+        "require_performance": "전월 이용금액이 50만원 이상인 경우에 한하여, 당월 이용금액에 대하여 기본 리워드 및 특별 리워드 서비스가 제공됩니다."
+      },
+      "_needs_review": []
+    },
+    {
+      "benefit_name": "커피전문점 2천원 결제일 할인 - 스타벅스",
+      "benefit_kind": "DISCOUNT",
+      "calc_method": "FIXED",
+      "benefit_value": 2000,
+      "step_count": null,
+      "apply_timing": "BILLED",
+      "target_type": "MERCHANT",
+      "target_category_code": null,
+      "target_merchant_name": "스타벅스",
+      "require_performance": "Y",
+      "performance_period": "MONTH",
+      "require_payment_type": null,
+      "min_txn_amount": 4000,
+      "max_eligible_amount": null,
+      "max_benefit_per_txn": null,
+      "monthly_limit": null,
+      "limit_group_code": "COFFEE_2000",
+      "monthly_count_limit": 5,
+      "daily_count_limit": 1,
+      "daily_limit": null,
+      "yearly_count_limit": null,
+      "count_group_code": null,
+      "use_shared_limit": "N",
+      "exclude_from_performance": "N",
+      "option_group_code": null,
+      "option_key": null,
+      "description": "4천원 이상 결제 시 건당 2천원 결제일 할인. 일 1회, 월 5회까지 할인되며 횟수는 스타벅스·커피빈·투썸플레이스 합산이다(금액 한도가 따로 없어 count_group_code 없이 limit_group_code로만 묶었다). 사이렌 오더, 스마트 오더 이용금액도 할인된다. 백화점, 할인점, 면세점, 공항 등 입점 매장 이용금액은 할인되지 않는다.",
+      "tier_limits": [],
+      "exclusions": [],
+      "_source": {
+        "benefit_value": "- 4천원 이상 결제 시 건당 2천원 결제일 할인",
+        "min_txn_amount": "- 4천원 이상 결제 시 건당 2천원 결제일 할인",
+        "monthly_count_limit": "- 일 1회, 월 5회까지 할인",
+        "daily_count_limit": "- 일 1회, 월 5회까지 할인",
+        "target_merchant_name": "- 커피전문점 : 스타벅스, 커피빈, 투썸플레이스",
+        "apply_timing": "커피전문점 2천원 결제일 할인",
+        "require_performance": "※ 신한카드 The BEST-XO 카드로 전월 일시불 및 할부 50만원 이상 이용 시 제공됩니다."
+      },
+      "_needs_review": []
+    },
+    {
+      "benefit_name": "커피전문점 2천원 결제일 할인 - 커피빈",
+      "benefit_kind": "DISCOUNT",
+      "calc_method": "FIXED",
+      "benefit_value": 2000,
+      "step_count": null,
+      "apply_timing": "BILLED",
+      "target_type": "MERCHANT",
+      "target_category_code": null,
+      "target_merchant_name": "커피빈",
+      "require_performance": "Y",
+      "performance_period": "MONTH",
+      "require_payment_type": null,
+      "min_txn_amount": 4000,
+      "max_eligible_amount": null,
+      "max_benefit_per_txn": null,
+      "monthly_limit": null,
+      "limit_group_code": "COFFEE_2000",
+      "monthly_count_limit": 5,
+      "daily_count_limit": 1,
+      "daily_limit": null,
+      "yearly_count_limit": null,
+      "count_group_code": null,
+      "use_shared_limit": "N",
+      "exclude_from_performance": "N",
+      "option_group_code": null,
+      "option_key": null,
+      "description": "4천원 이상 결제 시 건당 2천원 결제일 할인. 일 1회, 월 5회까지 할인되며 횟수는 스타벅스·커피빈·투썸플레이스 합산이다(금액 한도가 따로 없어 count_group_code 없이 limit_group_code로만 묶었다). 사이렌 오더, 스마트 오더 이용금액도 할인된다. 백화점, 할인점, 면세점, 공항 등 입점 매장 이용금액은 할인되지 않는다.",
+      "tier_limits": [],
+      "exclusions": [],
+      "_source": {
+        "benefit_value": "- 4천원 이상 결제 시 건당 2천원 결제일 할인",
+        "min_txn_amount": "- 4천원 이상 결제 시 건당 2천원 결제일 할인",
+        "monthly_count_limit": "- 일 1회, 월 5회까지 할인",
+        "daily_count_limit": "- 일 1회, 월 5회까지 할인",
+        "target_merchant_name": "- 커피전문점 : 스타벅스, 커피빈, 투썸플레이스",
+        "apply_timing": "커피전문점 2천원 결제일 할인",
+        "require_performance": "※ 신한카드 The BEST-XO 카드로 전월 일시불 및 할부 50만원 이상 이용 시 제공됩니다."
+      },
+      "_needs_review": []
+    },
+    {
+      "benefit_name": "커피전문점 2천원 결제일 할인 - 투썸플레이스",
+      "benefit_kind": "DISCOUNT",
+      "calc_method": "FIXED",
+      "benefit_value": 2000,
+      "step_count": null,
+      "apply_timing": "BILLED",
+      "target_type": "MERCHANT",
+      "target_category_code": null,
+      "target_merchant_name": "투썸플레이스",
+      "require_performance": "Y",
+      "performance_period": "MONTH",
+      "require_payment_type": null,
+      "min_txn_amount": 4000,
+      "max_eligible_amount": null,
+      "max_benefit_per_txn": null,
+      "monthly_limit": null,
+      "limit_group_code": "COFFEE_2000",
+      "monthly_count_limit": 5,
+      "daily_count_limit": 1,
+      "daily_limit": null,
+      "yearly_count_limit": null,
+      "count_group_code": null,
+      "use_shared_limit": "N",
+      "exclude_from_performance": "N",
+      "option_group_code": null,
+      "option_key": null,
+      "description": "4천원 이상 결제 시 건당 2천원 결제일 할인. 일 1회, 월 5회까지 할인되며 횟수는 스타벅스·커피빈·투썸플레이스 합산이다(금액 한도가 따로 없어 count_group_code 없이 limit_group_code로만 묶었다). 사이렌 오더, 스마트 오더 이용금액도 할인된다. 백화점, 할인점, 면세점, 공항 등 입점 매장 이용금액은 할인되지 않는다.",
+      "tier_limits": [],
+      "exclusions": [],
+      "_source": {
+        "benefit_value": "- 4천원 이상 결제 시 건당 2천원 결제일 할인",
+        "min_txn_amount": "- 4천원 이상 결제 시 건당 2천원 결제일 할인",
+        "monthly_count_limit": "- 일 1회, 월 5회까지 할인",
+        "daily_count_limit": "- 일 1회, 월 5회까지 할인",
+        "target_merchant_name": "- 커피전문점 : 스타벅스, 커피빈, 투썸플레이스",
+        "apply_timing": "커피전문점 2천원 결제일 할인",
+        "require_performance": "※ 신한카드 The BEST-XO 카드로 전월 일시불 및 할부 50만원 이상 이용 시 제공됩니다."
+      },
+      "_needs_review": []
+    },
+    {
+      "benefit_name": "택시 이용금액 7% 결제일 할인 - 택시 업종",
+      "benefit_kind": "DISCOUNT",
+      "calc_method": "RATE",
+      "benefit_value": 7,
+      "step_count": null,
+      "apply_timing": "BILLED",
+      "target_type": "CATEGORY",
+      "target_category_code": "TAXI",
+      "target_merchant_name": null,
+      "require_performance": "Y",
+      "performance_period": "MONTH",
+      "require_payment_type": null,
+      "min_txn_amount": null,
+      "max_eligible_amount": null,
+      "max_benefit_per_txn": null,
+      "monthly_limit": 20000,
+      "limit_group_code": "TAXI_20000",
+      "monthly_count_limit": null,
+      "daily_count_limit": null,
+      "daily_limit": null,
+      "yearly_count_limit": null,
+      "count_group_code": null,
+      "use_shared_limit": "N",
+      "exclude_from_performance": "N",
+      "option_group_code": null,
+      "option_key": null,
+      "description": "택시 업종·카카오T·우티·온다 합산 월 할인금액 2만원까지 제공. 가맹점 업종은 신한카드에 등록된 가맹점 업종 기준을 따른다.",
+      "tier_limits": [],
+      "exclusions": [],
+      "_source": {
+        "benefit_value": "택시 이용금액 7% 결제일 할인",
+        "monthly_limit": "- 월 할인금액 2만원까지 제공",
+        "apply_timing": "택시 이용금액 7% 결제일 할인",
+        "require_performance": "※ 신한카드 The BEST-XO 카드로 전월 일시불 및 할부 50만원 이상 이용 시 제공됩니다.",
+        "target_category_code": "- 택시 : 택시 업종, 카카오T, 우티, 온다"
+      },
+      "_needs_review": []
+    },
+    {
+      "benefit_name": "택시 이용금액 7% 결제일 할인 - 카카오T",
+      "benefit_kind": "DISCOUNT",
+      "calc_method": "RATE",
+      "benefit_value": 7,
+      "step_count": null,
+      "apply_timing": "BILLED",
+      "target_type": "MERCHANT",
+      "target_category_code": null,
+      "target_merchant_name": "카카오T",
+      "require_performance": "Y",
+      "performance_period": "MONTH",
+      "require_payment_type": null,
+      "min_txn_amount": null,
+      "max_eligible_amount": null,
+      "max_benefit_per_txn": null,
+      "monthly_limit": 20000,
+      "limit_group_code": "TAXI_20000",
+      "monthly_count_limit": null,
+      "daily_count_limit": null,
+      "daily_limit": null,
+      "yearly_count_limit": null,
+      "count_group_code": null,
+      "use_shared_limit": "N",
+      "exclude_from_performance": "N",
+      "option_group_code": null,
+      "option_key": null,
+      "description": "택시 업종·카카오T·우티·온다 합산 월 할인금액 2만원까지 제공.",
+      "tier_limits": [],
+      "exclusions": [],
+      "_source": {
+        "benefit_value": "택시 이용금액 7% 결제일 할인",
+        "monthly_limit": "- 월 할인금액 2만원까지 제공",
+        "apply_timing": "택시 이용금액 7% 결제일 할인",
+        "require_performance": "※ 신한카드 The BEST-XO 카드로 전월 일시불 및 할부 50만원 이상 이용 시 제공됩니다.",
+        "target_merchant_name": "- 택시 : 택시 업종, 카카오T, 우티, 온다"
+      },
+      "_needs_review": []
+    },
+    {
+      "benefit_name": "택시 이용금액 7% 결제일 할인 - 우티",
+      "benefit_kind": "DISCOUNT",
+      "calc_method": "RATE",
+      "benefit_value": 7,
+      "step_count": null,
+      "apply_timing": "BILLED",
+      "target_type": "MERCHANT",
+      "target_category_code": null,
+      "target_merchant_name": "우티",
+      "require_performance": "Y",
+      "performance_period": "MONTH",
+      "require_payment_type": null,
+      "min_txn_amount": null,
+      "max_eligible_amount": null,
+      "max_benefit_per_txn": null,
+      "monthly_limit": 20000,
+      "limit_group_code": "TAXI_20000",
+      "monthly_count_limit": null,
+      "daily_count_limit": null,
+      "daily_limit": null,
+      "yearly_count_limit": null,
+      "count_group_code": null,
+      "use_shared_limit": "N",
+      "exclude_from_performance": "N",
+      "option_group_code": null,
+      "option_key": null,
+      "description": "택시 업종·카카오T·우티·온다 합산 월 할인금액 2만원까지 제공.",
+      "tier_limits": [],
+      "exclusions": [],
+      "_source": {
+        "benefit_value": "택시 이용금액 7% 결제일 할인",
+        "monthly_limit": "- 월 할인금액 2만원까지 제공",
+        "apply_timing": "택시 이용금액 7% 결제일 할인",
+        "require_performance": "※ 신한카드 The BEST-XO 카드로 전월 일시불 및 할부 50만원 이상 이용 시 제공됩니다.",
+        "target_merchant_name": "- 택시 : 택시 업종, 카카오T, 우티, 온다"
+      },
+      "_needs_review": []
+    },
+    {
+      "benefit_name": "택시 이용금액 7% 결제일 할인 - 온다",
+      "benefit_kind": "DISCOUNT",
+      "calc_method": "RATE",
+      "benefit_value": 7,
+      "step_count": null,
+      "apply_timing": "BILLED",
+      "target_type": "MERCHANT",
+      "target_category_code": null,
+      "target_merchant_name": "온다",
+      "require_performance": "Y",
+      "performance_period": "MONTH",
+      "require_payment_type": null,
+      "min_txn_amount": null,
+      "max_eligible_amount": null,
+      "max_benefit_per_txn": null,
+      "monthly_limit": 20000,
+      "limit_group_code": "TAXI_20000",
+      "monthly_count_limit": null,
+      "daily_count_limit": null,
+      "daily_limit": null,
+      "yearly_count_limit": null,
+      "count_group_code": null,
+      "use_shared_limit": "N",
+      "exclude_from_performance": "N",
+      "option_group_code": null,
+      "option_key": null,
+      "description": "택시 업종·카카오T·우티·온다 합산 월 할인금액 2만원까지 제공.",
+      "tier_limits": [],
+      "exclusions": [],
+      "_source": {
+        "benefit_value": "택시 이용금액 7% 결제일 할인",
+        "monthly_limit": "- 월 할인금액 2만원까지 제공",
+        "apply_timing": "택시 이용금액 7% 결제일 할인",
+        "require_performance": "※ 신한카드 The BEST-XO 카드로 전월 일시불 및 할부 50만원 이상 이용 시 제공됩니다.",
+        "target_merchant_name": "- 택시 : 택시 업종, 카카오T, 우티, 온다"
+      },
+      "_needs_review": []
+    },
+    {
+      "benefit_name": "THE LOUNGE 전세계 공항 라운지 무료 이용",
+      "benefit_kind": "GIFT",
+      "calc_method": "FIXED",
+      "benefit_value": null,
+      "step_count": null,
+      "apply_timing": null,
+      "target_type": "ALL",
+      "target_category_code": null,
+      "target_merchant_name": null,
+      "require_performance": "Y",
+      "performance_period": "MONTH",
+      "require_payment_type": null,
+      "min_txn_amount": null,
+      "max_eligible_amount": null,
+      "max_benefit_per_txn": null,
+      "monthly_limit": null,
+      "limit_group_code": null,
+      "monthly_count_limit": 4,
+      "daily_count_limit": null,
+      "daily_limit": null,
+      "yearly_count_limit": 10,
+      "count_group_code": null,
+      "use_shared_limit": "N",
+      "exclude_from_performance": "N",
+      "option_group_code": null,
+      "option_key": null,
+      "description": "THE LOUNGE 모바일 앱에 카드를 등록하면 이용권이 제공된다. 본인카드 회원에 한해 월 4회, 연 10회이고 연간 10회 기준은 매년 1월~12월이다. 기본 제공 라운지 외 마티나 골드 라운지도 이용할 수 있다. 동반 1인 입장 시 이용 횟수가 2회 차감되고 마티나 골드 라운지는 본인 이용 시에도 2회 차감되는데, 횟수 컬럼은 1건=1회 차감만 표현하므로 담지 못했다. 결제 트랜잭션이 없어 금액으로 환산할 수 없다.",
+      "tier_limits": [],
+      "exclusions": [],
+      "_source": {
+        "monthly_count_limit": "본인카드 회원에 한하여 월 4회, 연 10회 제공됩니다.",
+        "yearly_count_limit": "본인카드 회원에 한하여 월 4회, 연 10회 제공됩니다. / 연간 10회 이용 기준은 매년 1월~12월로 산정됩니다.",
+        "require_performance": "공항 라운지 무료 이용 서비스는 「신한카드 The BEST-XO」의 본인 및 가족카드로 전월(1일~말일) 거래시점 이용금액(일시불+할부) 기준 50만원 이상 이용 시 사용 가능합니다."
+      },
+      "_needs_review": [
+        "benefit_value"
+      ]
+    }
+  ],
+  "unmapped": [
+    {
+      "text": "특별 리워드 - 해외 일시불 이용금액 1% 마이신한포인트 추가 적립 / 해외 이용 적립은 해외겸용(Mastercard) 카드 발급 후 이용 시 적립됩니다. / 해외 일시불 이용금액은 최종 원화 청구 금액을 기준으로 적립됩니다.",
+      "why": "해외 결제 혜택은 추천 계산 범위 밖이다. 해외 가맹점 데이터가 없어 매칭할 대상이 없다."
+    },
+    {
+      "text": "본인카드 회원 단독 이용 외 동반 1인까지 무료 입장 가능하며, 이 경우 이용 횟수는 2회 차감됩니다. / 마티나 골드 라운지는 본인카드 회원만 제공되며, 동반인 입장이 불가합니다.(본인 이용 시 이용횟수 2회 차감됩니다)",
+      "why": "한 번 이용에 횟수가 2회 차감되는 규칙이다. 횟수 컬럼은 1건=1회 차감만 표현한다."
+    },
+    {
+      "text": "주유소의 경우 휘발유, 경유, 등유에 대해서만 적립 가능하며, LPG는 제외됩니다.",
+      "why": "가맹점 안에서 무엇을 샀는지(유종)에 걸리는 상품 단위 조건이다. 대상은 가맹점까지만 내려간다."
+    },
+    {
+      "text": "온라인 결제가 제공되는 서비스는 해당 업체 사이트(앱)에 직접 접속하여 이용하는 경우에만 할인됩니다. / 키오스크, 간편결제(Pay)로 결제 시 가맹점명이 해당 업체가 아닌 PG업체명, 간편결제명(네이버페이, 스마일페이 등)으로 나오는 경우는 할인되지 않습니다.",
+      "why": "결제 채널 조건이다. 채널 조건은 지금 스키마가 담지 않는다."
+    },
+    {
+      "text": "- 교통카드 이용금액은 전전월 이용금액이 전월 이용금액에 반영됩니다.(단, 모바일 후불 교통카드 이용금액은 전월 이용금액이 반영됨)",
+      "why": "전전월 실적은 범위 밖이다."
+    },
+    {
+      "text": "- 해외 이용금액은 매입일자를 기준으로 반영됩니다. / 거래 후 취소금액은 국내 거래의 경우 최초 승인된 달의 이용금액에서, 해외 거래의 경우 취소 전표가 매입된 달의 이용금액에서 차감됩니다.",
+      "why": "해외 거래의 매입 시차 반영 규칙이다. 해외 거래 데이터 자체가 범위 밖이다."
+    },
+    {
+      "text": "본인카드와 가족카드의 전월 이용금액, 월별 적립한도는 합산하여 제공됩니다. / 전월 이용실적은 본인카드와 가족카드 각각 산정하며, 월별 할인 횟수 및 할인 한도도 각각 제공됩니다.",
+      "why": "가족카드 합산은 범위 밖이다. 게다가 서비스별로 합산 여부가 갈려 하나의 규칙으로 담기지도 않는다."
+    },
+    {
+      "text": "리워드 서비스가 적용된 거래가 해당월에 취소된 경우 서비스 한도가 복원됩니다. / 할인 서비스가 적용된 거래가 해당월에 취소된 경우 할인 서비스 횟수 및 한도가 복원됩니다.",
+      "why": "취소 시 한도·횟수 복원은 혜택 규칙이 아니라 정산 처리 규칙이라 benefit 컬럼으로 담기지 않는다."
+    },
+    {
+      "text": "할인 서비스는 서비스 영역별 이용하신 거래 순서대로 결제일 할인이 적용됩니다.",
+      "why": "혜택 적용 순서 규칙이라 benefit 컬럼으로 담기지 않는다."
+    },
+    {
+      "text": "마이신한포인트는 신용카드 이용대금 결제일(결제일이 은행 휴무일인 경우 다음 영업일)에 적립됩니다. / 마일리지는 적립 대상이 되는 거래의 청구금액을 마일리지 적립 단위금액(1,500원 또는 3,000원)으로 나눈 후 소수점 첫째 자리에서 반올림하여 결제일+2일에 적립됩니다.",
+      "why": "적립 시점 정보다. apply_timing은 benefit_kind가 DISCOUNT일 때만 쓰는 컬럼이라 적립형 혜택의 지급 시점을 담을 자리가 없다."
+    },
+    {
+      "text": "본인 회원에 한해 메탈 플레이트와 플라스틱 플레이트 중 선택하여 발급이 가능합니다. - 메탈 플레이트의 경우 발급 수수료 12만원이 별도 부과됩니다.(재발급 신청 및 갱신 시 동일 적용) - 메탈 플레이트의 경우 해외겸용(Mastercard) 브랜드의 후불 교통 기능이 있는 카드로만 신청 가능합니다.",
+      "why": "연회비가 아닌 별도 발급 수수료이고, 메탈은 annual_fees의 issue_type(PLASTIC/MOBILE)에도 없는 값이다."
+    },
+    {
+      "text": "가족카드 연회비는 7만원입니다.",
+      "why": "가족카드는 범위 밖이다."
+    },
+    {
+      "text": "※ 카드이용 시 제공되는 포인트 및 할인혜택 등의 부가서비스는 카드 신규출시(2025년 01월 17일) 이후 3년 이상 축소, 폐지없이 유지됩니다.",
+      "why": "혜택 유효기간은 범위 밖이다. is_active 토글로만 대체한다."
+    }
+  ],
+  "_schema_gap": [
+    {
+      "text": "마이신한포인트형 국내전용 Local 총연회비 29만7천원 / 마이신한포인트형 해외겸용 Mastercard World 30만원 / 스카이패스형 국내전용 Local 31만7천원 / 스카이패스형 해외겸용 Mastercard World 32만원. 본인카드와 가족카드는 반드시 동일 종류(마이신한포인트형, 스카이패스형 중 택 1) 및 동일 브랜드(Local, Mastercard 중 택 1)로만 발급 가능합니다. The BEST-XO 카드는 중복 발급이 불가합니다.(마이신한포인트형, 스카이패스형 중복 소지 불가)",
+      "missing": "card에 발급 유형(리워드 종류) 축, 또는 유형별로 카드 행을 나누는 규칙",
+      "why": "카드명은 하나인데 발급 시 고른 유형에 따라 연회비와 기본 리워드가 갈린다. annual_fees는 브랜드와 발급 형태만 구분하고, option_group_code·option_key는 회원이 그때그때 고르는 혜택용이라 발급 시점에 고정되어 카드 전체를 가르는 이 축을 담지 못한다."
+    },
+    {
+      "text": "스카이패스형 - 일시불/할부 이용금액 1,500원당 대한항공 마일리지 1마일 적립",
+      "missing": "단위당 계산 방식(calc_method의 PER_UNIT과 단위금액 컬럼)",
+      "why": "calc_method는 RATE(퍼센트)·FIXED(정액)·COUNT_STEP(N회마다 정액)뿐이라 '1,500원당 1마일'을 표현할 수 없다. COUNT_STEP은 이용 횟수 기준이라 금액 기준 단위당 계산과 축이 다르다. 결과 단위도 원이 아니다."
+    },
+    {
+      "text": "스카이패스형 - 전월 일시불/할부 300만원 이상 이용 시 일시불/할부 이용금액 3,000원당 1마일 추가 적립 (추가 적립은 월 최대 5천 마일리지까지 제공)",
+      "missing": "단위당 계산 방식과 원이 아닌 단위(마일)의 한도",
+      "why": "monthly_limit은 원 단위 금액 한도라 '월 최대 5천 마일리지'를 담을 수 없다."
+    },
+    {
+      "text": "특별 리워드 - SOL Pay, 네이버페이, 쿠페이 국내 일시불/할부 이용금액 0.5% 마이신한포인트 추가 적립(월 최대 3만포인트까지 적립) / - 모든 주유소 이용금액 3% 마이신한포인트 추가 적립 (월 최대 2만포인트까지 적립)",
+      "missing": "합산값 행에서 추가분에만 걸리는 한도를 구분할 컬럼",
+      "why": "추가 적립 행에 합산값(기본 1% + 추가분)을 적으면 benefit_value는 맞지만 monthly_limit이 어긋난다. 3만포인트·2만포인트는 추가분에만 걸리는 한도인데 합산값으로 계산한 적립액이 같은 monthly_limit을 깎으므로 한도가 실제보다 빨리 찬다. 주유는 합산 4% 기준 월 50만원에서 한도가 차지만, 원문(추가 3%)대로면 약 67만원까지 적립된다."
+    },
+    {
+      "text": "신한카드 The BEST-XO 연간(1월~12월) 일시불/할부 이용금액 따라 최대 17만원 캐시백 추가 제공 / 연간 일시불/할부 누적 3천만원 이상 이용 시 캐시백 7만원 제공 / 누적 6천만원 이상 이용 시 캐시백 10만원 추가 제공 / 보너스 기프트는 이용금액 달성한 달의 다다음달 20일에 지급되나, 지급일이 공휴일인 경우 다음 영업일에 제공됩니다.",
+      "missing": "연 단위 누적 실적 구간(performance_tiers의 period_type에 YEAR)",
+      "why": "period_type은 MONTH·QUARTER만 쓴다. 연간 누적 금액을 기준으로 특정 시점에 한 번 지급되는 캐시백은 결제 단위 계산 흐름에도 들어오지 않아 RETROACTIVE 행으로만 남겼다."
+    },
+    {
+      "text": "기프트 옵션 서비스는 「신한카드 The BEST-XO」 연회비 납부 및 100만원 이상(일시불+할부) 카드를 사용한 경우 서비스가 제공됩니다. / 기프트 옵션 서비스는 연회비 청구 주기* 기준으로 1년간 기프트 옵션 중 택 1하여 사용 가능하며, 신청기간이 경과한 미 사용건에 대해서는 소급 신청을 할 수 없습니다. * 연회비 청구주기 : 연회비 결제일 해당월 1일부터 익년도 연회비 결제일 해당월의 전월 말일까지",
+      "missing": "연회비 청구 주기를 기준으로 한 1년 단위 실적 조건",
+      "why": "실적 판정 기간이 달력 월이 아니라 회원별 연회비 결제일에 따라 달라진다. period_type의 MONTH·QUARTER 어느 쪽도 아니어서 Gift Option 행의 require_performance를 채우지 못했다."
+    },
+    {
+      "text": "신한카드 The BEST-XO 고객님께 매년 1회 아래 Option 중 선택하신 한 가지의 기프트를 제공해 드립니다. / THE LOUNGE 모바일 앱을 통한 전세계 공항 라운지 무료 이용",
+      "missing": "결제와 무관한 혜택을 가리키는 target_type 값(예: NONE)",
+      "why": "Gift Option과 라운지는 결제 트랜잭션이 없는데 target_type이 CATEGORY·MERCHANT·ALL뿐이라 ALL을 넣었다. 계산에서 GIFT를 제외하는 규칙에 기대고 있을 뿐, 값 자체로는 '모든 결제에 적용'과 구분되지 않는다."
+    },
+    {
+      "text": "※ 커피할인은 백화점, 할인점, 면세점, 공항 등 입점 매장 이용금액, 상품권 및 선불카드 구입 · 충전금액은 할인되지 않습니다.",
+      "missing": "가맹점이 어디에 입점해 있는지를 나타내는 조건",
+      "why": "exclusion_value가 CATEGORY나 MERCHANT라 '백화점 안에 있는 스타벅스'를 가리킬 수 없다. DEPARTMENT_STORE로 넣으면 백화점 결제 전체가 빠진다."
+    },
+    {
+      "text": "- 의약품전용몰(도매)/제약업종 구매금액 (전월 이용금액 제외 대상) / - 의약품 전용몰(도매몰), 제약업종/약국 구매금액 (기프트 옵션 서비스 이용금액 산정 제외 대상)",
+      "missing": "의약품 도매몰·제약업종에 해당하는 카테고리 코드",
+      "why": "카테고리 표준에 PHARMACY(약국)는 있으나 의약품 전용몰(도매)·제약업종은 없다. PHARMACY로 넣으면 약국만 빠지고 도매몰 거래는 그대로 실적에 들어간다."
+    },
+    {
+      "text": "- 해외일시불 거래의 할부 전환 거래 (전월 이용금액 제외 대상)",
+      "missing": "TRANSACTION_ATTR 표준값 또는 할부 전환 여부 플래그",
+      "why": "OVERSEAS와 할부 전환이 겹친 조건인데 표준값 목록에 대응하는 값이 없다."
+    },
+    {
+      "text": "신한카드 The BEST-XO의 최초 신규 발급 회원*은 카드 사용 등록한 월의 다음달(등록월+1개월)까지 전월 이용금액 50만원 이상 300만원 미만 구간의 서비스가 적용됩니다. 단, 해당 기간에 월 300만원 이상 이용할 경우 그에 맞는 서비스가 다음달에 적용됩니다. * 신한카드 The BEST-XO 유효기간 만기 또는 해지 후 재발급 시 최초 신규발급 회원에서 제외됨.",
+      "missing": "카드 사용 등록일 정보와 발급 초기 실적 간주 규칙",
+      "why": "등록일이 없어 면제 기간인지 판정할 수 없다. 게다가 실적 면제가 아니라 '특정 구간으로 간주'라서 어느 구간으로 볼지 지정할 값도 필요하다."
+    }
   ]
- },
- "card_exclusions": [
-  {
-   "exclusion_type": "TRANSACTION_ATTR",
-   "exclusion_value": "CASH_ADVANCE",
-   "_source": "리워드 서비스 제외 대상은 아래와 같습니다. - 단기카드대출(현금서비스), 장기카드대출(카드론)"
-  },
-  {
-   "exclusion_type": "TRANSACTION_ATTR",
-   "exclusion_value": "CARD_LOAN",
-   "_source": "리워드 서비스 제외 대상은 아래와 같습니다. - 단기카드대출(현금서비스), 장기카드대출(카드론)"
-  },
-  {
-   "exclusion_type": "TRANSACTION_ATTR",
-   "exclusion_value": "ANNUAL_FEE",
-   "_source": "리워드 서비스 제외 대상 - 연회비, 각종 수수료/이자(할부수수료, 연체이자 등)"
-  },
-  {
-   "exclusion_type": "TRANSACTION_ATTR",
-   "exclusion_value": "FEE_INTEREST",
-   "_source": "리워드 서비스 제외 대상 - 연회비, 각종 수수료/이자(할부수수료, 연체이자 등) / 할인 서비스 제외 대상 - 각종 수수료/이자(할부수수료, 연체이자 등)"
-  },
-  {
-   "exclusion_type": "TRANSACTION_ATTR",
-   "exclusion_value": "GIFT_CARD",
-   "_source": "리워드·할인 서비스 제외 대상 - 기프트카드/선불카드 구매 · 충전금액 / - 상품권/선불전자지급수단 구매 · 충전금액 / - 포인트/캐시/사이버머니/예치금 등 전자지급(결제)수단 구매 · 충전금액"
-  },
-  {
-   "exclusion_type": "TRANSACTION_ATTR",
-   "exclusion_value": "POINT_USED",
-   "_source": "리워드·할인 서비스 제외 대상 - 포인트 사용거래 중 포인트 금액"
-  },
-  {
-   "exclusion_type": "TRANSACTION_ATTR",
-   "exclusion_value": "INTEREST_FREE",
-   "_source": "리워드·할인 서비스 제외 대상 - 무이자할부(슬림할부 등 부분 무이자 포함) 이용거래"
-  },
-  {
-   "exclusion_type": "TRANSACTION_ATTR",
-   "exclusion_value": "TAX",
-   "_source": "리워드 서비스 제외 대상 - 지방세, 국세, 지방세외수입, 환경개선부담금"
-  },
-  {
-   "exclusion_type": "TRANSACTION_ATTR",
-   "exclusion_value": "LEVY",
-   "_source": "리워드 서비스 제외 대상 - 지방세, 국세, 지방세외수입, 환경개선부담금 (환경개선부담금)"
-  },
-  {
-   "exclusion_type": "TRANSACTION_ATTR",
-   "exclusion_value": "SOCIAL_INSURANCE",
-   "_source": "리워드 서비스 제외 대상 - 4대보험(국민연금, 고용보험, 건강보험, 산재보험)"
-  },
-  {
-   "exclusion_type": "TRANSACTION_ATTR",
-   "exclusion_value": "DISCOUNTED",
-   "_source": "리워드·할인 서비스 제외 대상 - 신한카드 The BEST-XO로 할인서비스(이벤트 포함)를 적용받은 모든 거래(해당 거래금액 전체)"
-  },
-  {
-   "exclusion_type": "TRANSACTION_ATTR",
-   "exclusion_value": "CANCELED",
-   "_source": "리워드·할인 서비스 제외 대상 - 거래 취소금액"
-  },
-  {
-   "exclusion_type": "CATEGORY",
-   "exclusion_value": "TUITION",
-   "_source": "리워드 서비스 제외 대상 - 유치원/초중고 납입금(스쿨뱅킹), 대학(원)등록금"
-  },
-  {
-   "exclusion_type": "CATEGORY",
-   "exclusion_value": "APARTMENT_FEE",
-   "_source": "리워드 서비스 제외 대상 - 아파트관리비, 도시가스, 전기요금, TV수신료, 수도요금"
-  },
-  {
-   "exclusion_type": "CATEGORY",
-   "exclusion_value": "UTILITY",
-   "_source": "리워드 서비스 제외 대상 - 아파트관리비, 도시가스, 전기요금, TV수신료, 수도요금"
-  }
- ],
- "performance_tiers": [
-  {
-   "period_type": "MONTH",
-   "min_performance_amount": 0,
-   "shared_monthly_limit": null,
-   "_source": "전월 이용금액이 50만원 이상인 경우에 한하여, 당월 이용금액에 대하여 기본 리워드 및 특별 리워드 서비스가 제공됩니다. (50만원 미만은 서비스 미제공 구간). 카드 통합 할인한도 개념이 없어 shared_monthly_limit은 null."
-  },
-  {
-   "period_type": "MONTH",
-   "min_performance_amount": 500000,
-   "shared_monthly_limit": null,
-   "_source": "전월 이용금액이 50만원 이상인 경우에 한하여, 당월 이용금액에 대하여 기본 리워드 및 특별 리워드 서비스가 제공됩니다. / ※ 신한카드 The BEST-XO 카드로 전월 일시불 및 할부 50만원 이상 이용 시 제공됩니다."
-  },
-  {
-   "period_type": "MONTH",
-   "min_performance_amount": 3000000,
-   "shared_monthly_limit": null,
-   "_source": "전월 일시불/할부 300만원 이상 이용 시 일시불/할부 이용금액 0.5% 마이신한포인트 추가 적립"
-  }
- ],
- "performance_exclusions": [
-  {
-   "exclusion_type": "TRANSACTION_ATTR",
-   "exclusion_value": "CASH_ADVANCE",
-   "_source": "전월 이용금액 제외 대상 - 단기카드대출(현금서비스), 장기카드대출(카드론)"
-  },
-  {
-   "exclusion_type": "TRANSACTION_ATTR",
-   "exclusion_value": "CARD_LOAN",
-   "_source": "전월 이용금액 제외 대상 - 단기카드대출(현금서비스), 장기카드대출(카드론)"
-  },
-  {
-   "exclusion_type": "TRANSACTION_ATTR",
-   "exclusion_value": "ANNUAL_FEE",
-   "_source": "전월 이용금액 제외 대상 - 연회비, 각종 수수료/이자(할부수수료, 연체이자 등)"
-  },
-  {
-   "exclusion_type": "TRANSACTION_ATTR",
-   "exclusion_value": "FEE_INTEREST",
-   "_source": "전월 이용금액 제외 대상 - 연회비, 각종 수수료/이자(할부수수료, 연체이자 등)"
-  },
-  {
-   "exclusion_type": "TRANSACTION_ATTR",
-   "exclusion_value": "GIFT_CARD",
-   "_source": "전월 이용금액 제외 대상 - 기프트카드/선불카드 구매 · 충전금액 / - 상품권/선불전자지급수단 구매 · 충전금액 / - 포인트/캐시/사이버머니/예치금 등 전자지급(결제)수단 구매 · 충전금액"
-  },
-  {
-   "exclusion_type": "TRANSACTION_ATTR",
-   "exclusion_value": "TAX",
-   "_source": "전월 이용금액 제외 대상 - 지방세, 국세, 지방세외수입, 환경개선부담금"
-  },
-  {
-   "exclusion_type": "TRANSACTION_ATTR",
-   "exclusion_value": "LEVY",
-   "_source": "전월 이용금액 제외 대상 - 지방세, 국세, 지방세외수입, 환경개선부담금 (환경개선부담금)"
-  },
-  {
-   "exclusion_type": "TRANSACTION_ATTR",
-   "exclusion_value": "SOCIAL_INSURANCE",
-   "_source": "전월 이용금액 제외 대상 - 4대보험(국민연금, 고용보험, 건강보험, 산재보험)"
-  },
-  {
-   "exclusion_type": "TRANSACTION_ATTR",
-   "exclusion_value": "DISCOUNTED",
-   "_source": "전월 이용금액 제외 대상 - 신한카드 The BEST-XO로 할인서비스(이벤트 포함)를 적용받은 모든 거래(해당 거래금액 전체)"
-  },
-  {
-   "exclusion_type": "TRANSACTION_ATTR",
-   "exclusion_value": "CANCELED",
-   "_source": "전월 이용금액 제외 대상 - 거래 취소금액"
-  },
-  {
-   "exclusion_type": "CATEGORY",
-   "exclusion_value": "TUITION",
-   "_source": "전월 이용금액 제외 대상 - 유치원/초중고 납입금(스쿨뱅킹), 대학(원)등록금"
-  },
-  {
-   "exclusion_type": "CATEGORY",
-   "exclusion_value": "APARTMENT_FEE",
-   "_source": "전월 이용금액 제외 대상 - 아파트관리비, 도시가스, 전기요금, TV수신료, 수도요금"
-  },
-  {
-   "exclusion_type": "CATEGORY",
-   "exclusion_value": "UTILITY",
-   "_source": "전월 이용금액 제외 대상 - 아파트관리비, 도시가스, 전기요금, TV수신료, 수도요금"
-  }
- ],
- "benefits": [
-  {
-   "benefit_name": "Gift Option 1 - 신세계상품권 20만원 모바일 교환권",
-   "benefit_kind": "GIFT",
-   "calc_method": "FIXED",
-   "benefit_value": 200000,
-   "step_count": null,
-   "apply_timing": null,
-   "target_type": "ALL",
-   "target_category_code": null,
-   "target_merchant_name": null,
-   "require_performance": "N",
-   "performance_period": "MONTH",
-   "require_payment_type": null,
-   "min_txn_amount": null,
-   "max_eligible_amount": null,
-   "max_benefit_per_txn": null,
-   "monthly_limit": null,
-   "limit_group_code": null,
-   "monthly_count_limit": null,
-   "daily_count_limit": null,
-   "daily_limit": null,
-   "yearly_count_limit": 1,
-   "count_group_code": null,
-   "use_shared_limit": "N",
-   "exclude_from_performance": "N",
-   "option_group_code": "GIFT_OPTION",
-   "option_key": "SHINSEGAE_VOUCHER",
-   "description": "연 1회 Gift Option 6가지 중 택 1(option_group_code=GIFT_OPTION). 연회비 납부 및 100만원 이상(일시불+할부) 이용 시 제공되며, 신청 시점에 지급되고 결제 트랜잭션이 없다. 실적 조건의 판정 기간이 달력 월이 아니라 연회비 청구 주기라 require_performance로 표현하지 못했다. 전국 이마트 매장 내 설치된 상품권 교환 키오스크에서 신세계 상품권으로 교환 후 사용한다(신세계 백화점 제외). 모바일 교환권 교환기간은 발송일로부터 12개월이다.",
-   "tier_limits": [],
-   "exclusions": [],
-   "_source": {
-    "option_group_code": "신한카드 The BEST-XO 고객님께 매년 1회 아래 Option 중 선택하신 한 가지의 기프트를 제공해 드립니다.",
-    "option_key": "Option 1. 신세계상품권 20만원 모바일 교환권",
-    "yearly_count_limit": "* 연간 기프트 옵션은 연회비 청구 주기 내 1회 제공됩니다.",
-    "benefit_value": "Option 1. 신세계상품권 20만원 모바일 교환권"
-   },
-   "_needs_review": [
-    "require_performance"
-   ]
-  },
-  {
-   "benefit_name": "Gift Option 2 - 플래티넘 호텔 외식 통합 23만원 이용권",
-   "benefit_kind": "GIFT",
-   "calc_method": "FIXED",
-   "benefit_value": 230000,
-   "step_count": null,
-   "apply_timing": null,
-   "target_type": "ALL",
-   "target_category_code": null,
-   "target_merchant_name": null,
-   "require_performance": "N",
-   "performance_period": "MONTH",
-   "require_payment_type": null,
-   "min_txn_amount": null,
-   "max_eligible_amount": null,
-   "max_benefit_per_txn": null,
-   "monthly_limit": null,
-   "limit_group_code": null,
-   "monthly_count_limit": null,
-   "daily_count_limit": null,
-   "daily_limit": null,
-   "yearly_count_limit": 1,
-   "count_group_code": null,
-   "use_shared_limit": "N",
-   "exclude_from_performance": "N",
-   "option_group_code": "GIFT_OPTION",
-   "option_key": "PLATINUM_HOTEL_DINING",
-   "description": "연 1회 Gift Option 6가지 중 택 1(option_group_code=GIFT_OPTION). 연회비 납부 및 100만원 이상(일시불+할부) 이용 시 제공되며, 신청 시점에 지급되고 결제 트랜잭션이 없다. 실적 조건의 판정 기간이 달력 월이 아니라 연회비 청구 주기라 require_performance로 표현하지 못했다. 제휴 매장 현황은 별도 사이트에서 확인한다. 이용권 유효기간은 발행일로부터 1년이며 기간 연장·잔액 환불이 되지 않는다.",
-   "tier_limits": [],
-   "exclusions": [],
-   "_source": {
-    "option_group_code": "신한카드 The BEST-XO 고객님께 매년 1회 아래 Option 중 선택하신 한 가지의 기프트를 제공해 드립니다.",
-    "option_key": "Option 2. 플래티넘 호텔 외식 통합 23만원 이용권",
-    "yearly_count_limit": "* 연간 기프트 옵션은 연회비 청구 주기 내 1회 제공됩니다.",
-    "benefit_value": "Option 2. 플래티넘 호텔 외식 통합 23만원 이용권"
-   },
-   "_needs_review": [
-    "require_performance"
-   ]
-  },
-  {
-   "benefit_name": "Gift Option 3 - 마이리얼트립 23만원 이용권",
-   "benefit_kind": "GIFT",
-   "calc_method": "FIXED",
-   "benefit_value": 230000,
-   "step_count": null,
-   "apply_timing": null,
-   "target_type": "ALL",
-   "target_category_code": null,
-   "target_merchant_name": null,
-   "require_performance": "N",
-   "performance_period": "MONTH",
-   "require_payment_type": null,
-   "min_txn_amount": null,
-   "max_eligible_amount": null,
-   "max_benefit_per_txn": null,
-   "monthly_limit": null,
-   "limit_group_code": null,
-   "monthly_count_limit": null,
-   "daily_count_limit": null,
-   "daily_limit": null,
-   "yearly_count_limit": 1,
-   "count_group_code": null,
-   "use_shared_limit": "N",
-   "exclude_from_performance": "N",
-   "option_group_code": "GIFT_OPTION",
-   "option_key": "MYREALTRIP_VOUCHER",
-   "description": "연 1회 Gift Option 6가지 중 택 1(option_group_code=GIFT_OPTION). 연회비 납부 및 100만원 이상(일시불+할부) 이용 시 제공되며, 신청 시점에 지급되고 결제 트랜잭션이 없다. 실적 조건의 판정 기간이 달력 월이 아니라 연회비 청구 주기라 require_performance로 표현하지 못했다. 마이리얼트립 홈페이지·앱 결제 시 사용한다. 거래 건당 1장만 쓸 수 있고, 총 결제금액이 이용권 금액보다 낮으면 잔액은 환불·재사용되지 않는다.",
-   "tier_limits": [],
-   "exclusions": [],
-   "_source": {
-    "option_group_code": "신한카드 The BEST-XO 고객님께 매년 1회 아래 Option 중 선택하신 한 가지의 기프트를 제공해 드립니다.",
-    "option_key": "Option 3. 마이리얼트립 23만원 이용권",
-    "yearly_count_limit": "* 연간 기프트 옵션은 연회비 청구 주기 내 1회 제공됩니다.",
-    "benefit_value": "Option 3. 마이리얼트립 23만원 이용권"
-   },
-   "_needs_review": [
-    "require_performance"
-   ]
-  },
-  {
-   "benefit_name": "Gift Option 4 - 마이신한포인트 20만점 적립",
-   "benefit_kind": "GIFT",
-   "calc_method": "FIXED",
-   "benefit_value": 200000,
-   "step_count": null,
-   "apply_timing": null,
-   "target_type": "ALL",
-   "target_category_code": null,
-   "target_merchant_name": null,
-   "require_performance": "N",
-   "performance_period": "MONTH",
-   "require_payment_type": null,
-   "min_txn_amount": null,
-   "max_eligible_amount": null,
-   "max_benefit_per_txn": null,
-   "monthly_limit": null,
-   "limit_group_code": null,
-   "monthly_count_limit": null,
-   "daily_count_limit": null,
-   "daily_limit": null,
-   "yearly_count_limit": 1,
-   "count_group_code": null,
-   "use_shared_limit": "N",
-   "exclude_from_performance": "N",
-   "option_group_code": "GIFT_OPTION",
-   "option_key": "MYSHINHAN_POINT_200K",
-   "description": "연 1회 Gift Option 6가지 중 택 1(option_group_code=GIFT_OPTION). 연회비 납부 및 100만원 이상(일시불+할부) 이용 시 제공되며, 신청 시점에 지급되고 결제 트랜잭션이 없다. 실적 조건의 판정 기간이 달력 월이 아니라 연회비 청구 주기라 require_performance로 표현하지 못했다. 신청 즉시 적립된다. 결제와 무관하게 지급되는 기프트라 적립형 혜택(POINT)이 아니라 GIFT로 넣었다. POINT로 넣으면 target_type이 ALL이라 모든 결제에 20만점이 적립된다.",
-   "tier_limits": [],
-   "exclusions": [],
-   "_source": {
-    "option_group_code": "신한카드 The BEST-XO 고객님께 매년 1회 아래 Option 중 선택하신 한 가지의 기프트를 제공해 드립니다.",
-    "option_key": "Option 4. 마이신한포인트 20만점 적립",
-    "yearly_count_limit": "* 연간 기프트 옵션은 연회비 청구 주기 내 1회 제공됩니다.",
-    "benefit_value": "Option 4. 마이신한포인트 20만점 적립"
-   },
-   "_needs_review": [
-    "require_performance"
-   ]
-  },
-  {
-   "benefit_name": "Gift Option 5 - 에어프레미아 항공 25만원 이용권",
-   "benefit_kind": "GIFT",
-   "calc_method": "FIXED",
-   "benefit_value": 250000,
-   "step_count": null,
-   "apply_timing": null,
-   "target_type": "ALL",
-   "target_category_code": null,
-   "target_merchant_name": null,
-   "require_performance": "N",
-   "performance_period": "MONTH",
-   "require_payment_type": null,
-   "min_txn_amount": null,
-   "max_eligible_amount": null,
-   "max_benefit_per_txn": null,
-   "monthly_limit": null,
-   "limit_group_code": null,
-   "monthly_count_limit": null,
-   "daily_count_limit": null,
-   "daily_limit": null,
-   "yearly_count_limit": 1,
-   "count_group_code": null,
-   "use_shared_limit": "N",
-   "exclude_from_performance": "N",
-   "option_group_code": "GIFT_OPTION",
-   "option_key": "AIRPREMIA_VOUCHER",
-   "description": "연 1회 Gift Option 6가지 중 택 1(option_group_code=GIFT_OPTION). 연회비 납부 및 100만원 이상(일시불+할부) 이용 시 제공되며, 신청 시점에 지급되고 결제 트랜잭션이 없다. 실적 조건의 판정 기간이 달력 월이 아니라 연회비 청구 주기라 require_performance로 표현하지 못했다. The BEST-XO 마이신한포인트형을 이용할 경우에만 선택할 수 있다. 에어프레미아 미주노선(LAX/SFO/EWR) 전용이다.",
-   "tier_limits": [],
-   "exclusions": [],
-   "_source": {
-    "option_group_code": "신한카드 The BEST-XO 고객님께 매년 1회 아래 Option 중 선택하신 한 가지의 기프트를 제공해 드립니다.",
-    "option_key": "Option 5. 에어프레미아 항공 25만원 이용권(The BEST-XO 마이신한포인트형만 제공)",
-    "yearly_count_limit": "* 연간 기프트 옵션은 연회비 청구 주기 내 1회 제공됩니다.",
-    "benefit_value": "Option 5. 에어프레미아 항공 25만원 이용권(The BEST-XO 마이신한포인트형만 제공)"
-   },
-   "_needs_review": [
-    "require_performance"
-   ]
-  },
-  {
-   "benefit_name": "Gift Option 6 - 대한항공 마일리지 1만 마일리지 적립",
-   "benefit_kind": "GIFT",
-   "calc_method": "FIXED",
-   "benefit_value": null,
-   "step_count": null,
-   "apply_timing": null,
-   "target_type": "ALL",
-   "target_category_code": null,
-   "target_merchant_name": null,
-   "require_performance": "N",
-   "performance_period": "MONTH",
-   "require_payment_type": null,
-   "min_txn_amount": null,
-   "max_eligible_amount": null,
-   "max_benefit_per_txn": null,
-   "monthly_limit": null,
-   "limit_group_code": null,
-   "monthly_count_limit": null,
-   "daily_count_limit": null,
-   "daily_limit": null,
-   "yearly_count_limit": 1,
-   "count_group_code": null,
-   "use_shared_limit": "N",
-   "exclude_from_performance": "N",
-   "option_group_code": "GIFT_OPTION",
-   "option_key": "KOREANAIR_MILE_10K",
-   "description": "연 1회 Gift Option 6가지 중 택 1(option_group_code=GIFT_OPTION). 연회비 납부 및 100만원 이상(일시불+할부) 이용 시 제공되며, 신청 시점에 지급되고 결제 트랜잭션이 없다. 실적 조건의 판정 기간이 달력 월이 아니라 연회비 청구 주기라 require_performance로 표현하지 못했다. The BEST-XO 스카이패스형을 이용할 경우에만 신청할 수 있다. 지급 단위가 원이 아니라 마일이라 benefit_value를 채우지 못했다.",
-   "tier_limits": [],
-   "exclusions": [],
-   "_source": {
-    "option_group_code": "신한카드 The BEST-XO 고객님께 매년 1회 아래 Option 중 선택하신 한 가지의 기프트를 제공해 드립니다.",
-    "option_key": "Option 6. 대한항공 마일리지 1만 마일리지 적립(The BEST-XO 스카이패스형만 제공)",
-    "yearly_count_limit": "* 연간 기프트 옵션은 연회비 청구 주기 내 1회 제공됩니다."
-   },
-   "_needs_review": [
-    "require_performance",
-    "benefit_value"
-   ]
-  },
-  {
-   "benefit_name": "Bonus Gift 연 누적 3천만원 캐시백",
-   "benefit_kind": "RETROACTIVE",
-   "calc_method": "FIXED",
-   "benefit_value": 70000,
-   "step_count": null,
-   "apply_timing": null,
-   "target_type": "ALL",
-   "target_category_code": null,
-   "target_merchant_name": null,
-   "require_performance": "N",
-   "performance_period": "MONTH",
-   "require_payment_type": null,
-   "min_txn_amount": null,
-   "max_eligible_amount": null,
-   "max_benefit_per_txn": null,
-   "monthly_limit": null,
-   "limit_group_code": null,
-   "monthly_count_limit": null,
-   "daily_count_limit": null,
-   "daily_limit": null,
-   "yearly_count_limit": 1,
-   "count_group_code": null,
-   "use_shared_limit": "N",
-   "exclude_from_performance": "N",
-   "option_group_code": null,
-   "option_key": null,
-   "description": "연간(1월~12월) 일시불/할부 누적 이용금액에 따라 지급되는 사후정산 캐시백이라 결제 단위 계산 흐름에 들어오지 않는다. 판정 기준이 전월 실적이 아니라 연간 누적 금액이어서 require_performance로 표현하지 못했다. 이용금액을 달성한 달의 다다음달 20일에 지급된다.",
-   "tier_limits": [],
-   "exclusions": [],
-   "_source": {
-    "benefit_value": "연간 일시불/할부 누적 3천만원 이상 이용 시 캐시백 7만원 제공",
-    "yearly_count_limit": "신한카드 The BEST-XO 연간(1월~12월) 일시불/할부 이용금액 따라 최대 17만원 캐시백 추가 제공"
-   },
-   "_needs_review": [
-    "require_performance"
-   ]
-  },
-  {
-   "benefit_name": "Bonus Gift 연 누적 6천만원 추가 캐시백",
-   "benefit_kind": "RETROACTIVE",
-   "calc_method": "FIXED",
-   "benefit_value": 100000,
-   "step_count": null,
-   "apply_timing": null,
-   "target_type": "ALL",
-   "target_category_code": null,
-   "target_merchant_name": null,
-   "require_performance": "N",
-   "performance_period": "MONTH",
-   "require_payment_type": null,
-   "min_txn_amount": null,
-   "max_eligible_amount": null,
-   "max_benefit_per_txn": null,
-   "monthly_limit": null,
-   "limit_group_code": null,
-   "monthly_count_limit": null,
-   "daily_count_limit": null,
-   "daily_limit": null,
-   "yearly_count_limit": 1,
-   "count_group_code": null,
-   "use_shared_limit": "N",
-   "exclude_from_performance": "N",
-   "option_group_code": null,
-   "option_key": null,
-   "description": "연간(1월~12월) 일시불/할부 누적 이용금액에 따라 지급되는 사후정산 캐시백이라 결제 단위 계산 흐름에 들어오지 않는다. 판정 기준이 전월 실적이 아니라 연간 누적 금액이어서 require_performance로 표현하지 못했다. 이용금액을 달성한 달의 다다음달 20일에 지급된다.",
-   "tier_limits": [],
-   "exclusions": [],
-   "_source": {
-    "benefit_value": "누적 6천만원 이상 이용 시 캐시백 10만원 추가 제공",
-    "yearly_count_limit": "신한카드 The BEST-XO 연간(1월~12월) 일시불/할부 이용금액 따라 최대 17만원 캐시백 추가 제공"
-   },
-   "_needs_review": [
-    "require_performance"
-   ]
-  },
-  {
-   "benefit_name": "기본 리워드 마이신한포인트 적립",
-   "benefit_kind": "POINT",
-   "calc_method": "RATE",
-   "benefit_value": 1,
-   "step_count": null,
-   "apply_timing": null,
-   "target_type": "ALL",
-   "target_category_code": null,
-   "target_merchant_name": null,
-   "require_performance": "Y",
-   "performance_period": "MONTH",
-   "require_payment_type": null,
-   "min_txn_amount": null,
-   "max_eligible_amount": null,
-   "max_benefit_per_txn": null,
-   "monthly_limit": null,
-   "limit_group_code": null,
-   "monthly_count_limit": null,
-   "daily_count_limit": null,
-   "daily_limit": null,
-   "yearly_count_limit": null,
-   "count_group_code": null,
-   "use_shared_limit": "N",
-   "exclude_from_performance": "N",
-   "option_group_code": null,
-   "option_key": null,
-   "description": "The BEST-XO 마이신한포인트형에만 제공된다. 일시불/할부 이용금액 1% 마이신한포인트 적립이고, 전월 일시불/할부 300만원 이상 이용 시 0.5%가 더해져 1.5%가 된다. 마이신한포인트는 신용카드 이용대금 결제일에 적립된다.",
-   "tier_limits": [
-    {
-     "min_performance_amount": 500000,
-     "monthly_limit": null,
-     "benefit_value": 1,
-     "_source": "일시불/할부 이용금액 1% 마이신한포인트 적립"
-    },
-    {
-     "min_performance_amount": 3000000,
-     "monthly_limit": null,
-     "benefit_value": 1.5,
-     "_source": "전월 일시불/할부 300만원 이상 이용 시 일시불/할부 이용금액 0.5% 마이신한포인트 추가 적립"
-    }
-   ],
-   "exclusions": [],
-   "_source": {
-    "benefit_value": "일시불/할부 이용금액 1% 마이신한포인트 적립",
-    "require_performance": "전월 이용금액이 50만원 이상인 경우에 한하여, 당월 이용금액에 대하여 기본 리워드 및 특별 리워드 서비스가 제공됩니다."
-   },
-   "_needs_review": []
-  },
-  {
-   "benefit_name": "특별 리워드 간편결제 적립 - SOL Pay",
-   "benefit_kind": "POINT",
-   "calc_method": "RATE",
-   "benefit_value": 1.5,
-   "step_count": null,
-   "apply_timing": null,
-   "target_type": "ALL",
-   "target_category_code": null,
-   "target_merchant_name": null,
-   "require_performance": "Y",
-   "performance_period": "MONTH",
-   "require_payment_type": "SOL_PAY",
-   "min_txn_amount": null,
-   "max_eligible_amount": null,
-   "max_benefit_per_txn": null,
-   "monthly_limit": 30000,
-   "limit_group_code": "SIMPLE_PAY_30000",
-   "monthly_count_limit": null,
-   "daily_count_limit": null,
-   "daily_limit": null,
-   "yearly_count_limit": null,
-   "count_group_code": null,
-   "use_shared_limit": "N",
-   "exclude_from_performance": "N",
-   "option_group_code": null,
-   "option_key": null,
-   "description": "기본 1% + 추가 0.5% = 합산 1.5%를 적었다. 전월 300만원 이상 구간은 기본 1.5% + 추가 0.5% = 2%다. 한 결제에 카드당 혜택 하나만 고르므로 추가분 0.5%만 적으면 기본 리워드 1%에 밀려 실제보다 낮게 계산된다. 국내 일시불/할부 이용금액에만 적용되고, 월 최대 3만 마이신한포인트까지 적립된다(SOL Pay·네이버페이·쿠페이 합산). 마이신한포인트형과 스카이패스형 모두 제공된다. 다만 이 3만포인트 한도는 원문상 추가분 0.5%에만 걸리는 값인데 합산값 행에 붙어 있어 한도가 실제보다 빨리 소진된다.",
-   "tier_limits": [
-    {
-     "min_performance_amount": 500000,
-     "monthly_limit": 30000,
-     "benefit_value": 1.5,
-     "_source": "일시불/할부 이용금액 1% 마이신한포인트 적립 + 특별 리워드 - SOL Pay, 네이버페이, 쿠페이 국내 일시불/할부 이용금액 0.5% 마이신한포인트 추가 적립(월 최대 3만포인트까지 적립)"
-    },
-    {
-     "min_performance_amount": 3000000,
-     "monthly_limit": 30000,
-     "benefit_value": 2,
-     "_source": "전월 일시불/할부 300만원 이상 이용 시 일시불/할부 이용금액 0.5% 마이신한포인트 추가 적립 + 특별 리워드 - SOL Pay, 네이버페이, 쿠페이 국내 일시불/할부 이용금액 0.5% 마이신한포인트 추가 적립(월 최대 3만포인트까지 적립)"
-    }
-   ],
-   "exclusions": [
-    {
-     "exclusion_type": "TRANSACTION_ATTR",
-     "exclusion_value": "OVERSEAS",
-     "_source": "SOL Pay, 네이버페이, 쿠페이 국내 일시불/할부 이용금액 0.5% 마이신한포인트 추가 적립"
-    }
-   ],
-   "_source": {
-    "benefit_value": "기본 리워드 마이신한포인트형 - 일시불/할부 이용금액 1% 마이신한포인트 적립 / - 전월 일시불/할부 300만원 이상 이용 시 일시불/할부 이용금액 0.5% 마이신한포인트 추가 적립 / 특별 리워드 - SOL Pay, 네이버페이, 쿠페이 국내 일시불/할부 이용금액 0.5% 마이신한포인트 추가 적립(월 최대 3만포인트까지 적립)",
-    "monthly_limit": "(월 최대 3만포인트까지 적립)",
-    "require_payment_type": "SOL Pay, 네이버페이, 쿠페이 국내 일시불/할부 이용금액",
-    "require_performance": "전월 이용금액이 50만원 이상인 경우에 한하여, 당월 이용금액에 대하여 기본 리워드 및 특별 리워드 서비스가 제공됩니다."
-   },
-   "_needs_review": []
-  },
-  {
-   "benefit_name": "특별 리워드 간편결제 적립 - 네이버페이",
-   "benefit_kind": "POINT",
-   "calc_method": "RATE",
-   "benefit_value": 1.5,
-   "step_count": null,
-   "apply_timing": null,
-   "target_type": "ALL",
-   "target_category_code": null,
-   "target_merchant_name": null,
-   "require_performance": "Y",
-   "performance_period": "MONTH",
-   "require_payment_type": "NAVER_PAY",
-   "min_txn_amount": null,
-   "max_eligible_amount": null,
-   "max_benefit_per_txn": null,
-   "monthly_limit": 30000,
-   "limit_group_code": "SIMPLE_PAY_30000",
-   "monthly_count_limit": null,
-   "daily_count_limit": null,
-   "daily_limit": null,
-   "yearly_count_limit": null,
-   "count_group_code": null,
-   "use_shared_limit": "N",
-   "exclude_from_performance": "N",
-   "option_group_code": null,
-   "option_key": null,
-   "description": "기본 1% + 추가 0.5% = 합산 1.5%를 적었다. 전월 300만원 이상 구간은 기본 1.5% + 추가 0.5% = 2%다. 한 결제에 카드당 혜택 하나만 고르므로 추가분 0.5%만 적으면 기본 리워드 1%에 밀려 실제보다 낮게 계산된다. 국내 일시불/할부 이용금액에만 적용되고, 월 최대 3만 마이신한포인트까지 적립된다(SOL Pay·네이버페이·쿠페이 합산). 마이신한포인트형과 스카이패스형 모두 제공된다. 다만 이 3만포인트 한도는 원문상 추가분 0.5%에만 걸리는 값인데 합산값 행에 붙어 있어 한도가 실제보다 빨리 소진된다.",
-   "tier_limits": [
-    {
-     "min_performance_amount": 500000,
-     "monthly_limit": 30000,
-     "benefit_value": 1.5,
-     "_source": "일시불/할부 이용금액 1% 마이신한포인트 적립 + 특별 리워드 - SOL Pay, 네이버페이, 쿠페이 국내 일시불/할부 이용금액 0.5% 마이신한포인트 추가 적립(월 최대 3만포인트까지 적립)"
-    },
-    {
-     "min_performance_amount": 3000000,
-     "monthly_limit": 30000,
-     "benefit_value": 2,
-     "_source": "전월 일시불/할부 300만원 이상 이용 시 일시불/할부 이용금액 0.5% 마이신한포인트 추가 적립 + 특별 리워드 - SOL Pay, 네이버페이, 쿠페이 국내 일시불/할부 이용금액 0.5% 마이신한포인트 추가 적립(월 최대 3만포인트까지 적립)"
-    }
-   ],
-   "exclusions": [
-    {
-     "exclusion_type": "TRANSACTION_ATTR",
-     "exclusion_value": "OVERSEAS",
-     "_source": "SOL Pay, 네이버페이, 쿠페이 국내 일시불/할부 이용금액 0.5% 마이신한포인트 추가 적립"
-    }
-   ],
-   "_source": {
-    "benefit_value": "기본 리워드 마이신한포인트형 - 일시불/할부 이용금액 1% 마이신한포인트 적립 / - 전월 일시불/할부 300만원 이상 이용 시 일시불/할부 이용금액 0.5% 마이신한포인트 추가 적립 / 특별 리워드 - SOL Pay, 네이버페이, 쿠페이 국내 일시불/할부 이용금액 0.5% 마이신한포인트 추가 적립(월 최대 3만포인트까지 적립)",
-    "monthly_limit": "(월 최대 3만포인트까지 적립)",
-    "require_payment_type": "SOL Pay, 네이버페이, 쿠페이 국내 일시불/할부 이용금액",
-    "require_performance": "전월 이용금액이 50만원 이상인 경우에 한하여, 당월 이용금액에 대하여 기본 리워드 및 특별 리워드 서비스가 제공됩니다."
-   },
-   "_needs_review": []
-  },
-  {
-   "benefit_name": "특별 리워드 간편결제 적립 - 쿠페이",
-   "benefit_kind": "POINT",
-   "calc_method": "RATE",
-   "benefit_value": 1.5,
-   "step_count": null,
-   "apply_timing": null,
-   "target_type": "ALL",
-   "target_category_code": null,
-   "target_merchant_name": null,
-   "require_performance": "Y",
-   "performance_period": "MONTH",
-   "require_payment_type": "COUPAY",
-   "min_txn_amount": null,
-   "max_eligible_amount": null,
-   "max_benefit_per_txn": null,
-   "monthly_limit": 30000,
-   "limit_group_code": "SIMPLE_PAY_30000",
-   "monthly_count_limit": null,
-   "daily_count_limit": null,
-   "daily_limit": null,
-   "yearly_count_limit": null,
-   "count_group_code": null,
-   "use_shared_limit": "N",
-   "exclude_from_performance": "N",
-   "option_group_code": null,
-   "option_key": null,
-   "description": "기본 1% + 추가 0.5% = 합산 1.5%를 적었다. 전월 300만원 이상 구간은 기본 1.5% + 추가 0.5% = 2%다. 한 결제에 카드당 혜택 하나만 고르므로 추가분 0.5%만 적으면 기본 리워드 1%에 밀려 실제보다 낮게 계산된다. 국내 일시불/할부 이용금액에만 적용되고, 월 최대 3만 마이신한포인트까지 적립된다(SOL Pay·네이버페이·쿠페이 합산). 마이신한포인트형과 스카이패스형 모두 제공된다. 다만 이 3만포인트 한도는 원문상 추가분 0.5%에만 걸리는 값인데 합산값 행에 붙어 있어 한도가 실제보다 빨리 소진된다.",
-   "tier_limits": [
-    {
-     "min_performance_amount": 500000,
-     "monthly_limit": 30000,
-     "benefit_value": 1.5,
-     "_source": "일시불/할부 이용금액 1% 마이신한포인트 적립 + 특별 리워드 - SOL Pay, 네이버페이, 쿠페이 국내 일시불/할부 이용금액 0.5% 마이신한포인트 추가 적립(월 최대 3만포인트까지 적립)"
-    },
-    {
-     "min_performance_amount": 3000000,
-     "monthly_limit": 30000,
-     "benefit_value": 2,
-     "_source": "전월 일시불/할부 300만원 이상 이용 시 일시불/할부 이용금액 0.5% 마이신한포인트 추가 적립 + 특별 리워드 - SOL Pay, 네이버페이, 쿠페이 국내 일시불/할부 이용금액 0.5% 마이신한포인트 추가 적립(월 최대 3만포인트까지 적립)"
-    }
-   ],
-   "exclusions": [
-    {
-     "exclusion_type": "TRANSACTION_ATTR",
-     "exclusion_value": "OVERSEAS",
-     "_source": "SOL Pay, 네이버페이, 쿠페이 국내 일시불/할부 이용금액 0.5% 마이신한포인트 추가 적립"
-    }
-   ],
-   "_source": {
-    "benefit_value": "기본 리워드 마이신한포인트형 - 일시불/할부 이용금액 1% 마이신한포인트 적립 / - 전월 일시불/할부 300만원 이상 이용 시 일시불/할부 이용금액 0.5% 마이신한포인트 추가 적립 / 특별 리워드 - SOL Pay, 네이버페이, 쿠페이 국내 일시불/할부 이용금액 0.5% 마이신한포인트 추가 적립(월 최대 3만포인트까지 적립)",
-    "monthly_limit": "(월 최대 3만포인트까지 적립)",
-    "require_payment_type": "SOL Pay, 네이버페이, 쿠페이 국내 일시불/할부 이용금액",
-    "require_performance": "전월 이용금액이 50만원 이상인 경우에 한하여, 당월 이용금액에 대하여 기본 리워드 및 특별 리워드 서비스가 제공됩니다."
-   },
-   "_needs_review": []
-  },
-  {
-   "benefit_name": "특별 리워드 주유소 적립",
-   "benefit_kind": "POINT",
-   "calc_method": "RATE",
-   "benefit_value": 4,
-   "step_count": null,
-   "apply_timing": null,
-   "target_type": "CATEGORY",
-   "target_category_code": "FUEL",
-   "target_merchant_name": null,
-   "require_performance": "Y",
-   "performance_period": "MONTH",
-   "require_payment_type": null,
-   "min_txn_amount": null,
-   "max_eligible_amount": null,
-   "max_benefit_per_txn": null,
-   "monthly_limit": 20000,
-   "limit_group_code": null,
-   "monthly_count_limit": null,
-   "daily_count_limit": null,
-   "daily_limit": null,
-   "yearly_count_limit": null,
-   "count_group_code": null,
-   "use_shared_limit": "N",
-   "exclude_from_performance": "N",
-   "option_group_code": null,
-   "option_key": null,
-   "description": "기본 1% + 추가 3% = 합산 4%를 적었다. 전월 300만원 이상 구간은 기본 1.5% + 추가 3% = 4.5%다. 한 결제에 카드당 혜택 하나만 고르므로 추가분 3%만 적으면 기본 리워드 1%에 밀려 실제보다 낮게 계산된다. 월 최대 2만 마이신한포인트까지 적립되며, 이 한도는 원문상 추가분 3%에만 걸리는 값이라 합산값 행에 붙으면 한도가 실제보다 빨리 소진된다. 휘발유·경유·등유만 적립 대상이고 LPG는 제외된다. 가맹점 업종은 신한카드 가맹점 업종 기준을 따른다. 마이신한포인트형과 스카이패스형 모두 제공된다.",
-   "tier_limits": [
-    {
-     "min_performance_amount": 500000,
-     "monthly_limit": 20000,
-     "benefit_value": 4,
-     "_source": "일시불/할부 이용금액 1% 마이신한포인트 적립 + 특별 리워드 - 모든 주유소 이용금액 3% 마이신한포인트 추가 적립 (월 최대 2만포인트까지 적립)"
-    },
-    {
-     "min_performance_amount": 3000000,
-     "monthly_limit": 20000,
-     "benefit_value": 4.5,
-     "_source": "전월 일시불/할부 300만원 이상 이용 시 일시불/할부 이용금액 0.5% 마이신한포인트 추가 적립 + 특별 리워드 - 모든 주유소 이용금액 3% 마이신한포인트 추가 적립 (월 최대 2만포인트까지 적립)"
-    }
-   ],
-   "exclusions": [],
-   "_source": {
-    "benefit_value": "기본 리워드 마이신한포인트형 - 일시불/할부 이용금액 1% 마이신한포인트 적립 / - 전월 일시불/할부 300만원 이상 이용 시 일시불/할부 이용금액 0.5% 마이신한포인트 추가 적립 / 특별 리워드 - 모든 주유소 이용금액 3% 마이신한포인트 추가 적립 (월 최대 2만포인트까지 적립)",
-    "monthly_limit": "(월 최대 2만포인트까지 적립)",
-    "target_category_code": "모든 주유소 이용금액 3% 마이신한포인트 추가 적립",
-    "require_performance": "전월 이용금액이 50만원 이상인 경우에 한하여, 당월 이용금액에 대하여 기본 리워드 및 특별 리워드 서비스가 제공됩니다."
-   },
-   "_needs_review": []
-  },
-  {
-   "benefit_name": "커피전문점 2천원 결제일 할인 - 스타벅스",
-   "benefit_kind": "DISCOUNT",
-   "calc_method": "FIXED",
-   "benefit_value": 2000,
-   "step_count": null,
-   "apply_timing": "BILLED",
-   "target_type": "MERCHANT",
-   "target_category_code": null,
-   "target_merchant_name": "스타벅스",
-   "require_performance": "Y",
-   "performance_period": "MONTH",
-   "require_payment_type": null,
-   "min_txn_amount": 4000,
-   "max_eligible_amount": null,
-   "max_benefit_per_txn": null,
-   "monthly_limit": null,
-   "limit_group_code": "COFFEE_2000",
-   "monthly_count_limit": 5,
-   "daily_count_limit": 1,
-   "daily_limit": null,
-   "yearly_count_limit": null,
-   "count_group_code": null,
-   "use_shared_limit": "N",
-   "exclude_from_performance": "N",
-   "option_group_code": null,
-   "option_key": null,
-   "description": "4천원 이상 결제 시 건당 2천원 결제일 할인. 일 1회, 월 5회까지 할인되며 횟수는 스타벅스·커피빈·투썸플레이스 합산이다(금액 한도가 따로 없어 count_group_code 없이 limit_group_code로만 묶었다). 사이렌 오더, 스마트 오더 이용금액도 할인된다. 백화점, 할인점, 면세점, 공항 등 입점 매장 이용금액은 할인되지 않는다.",
-   "tier_limits": [],
-   "exclusions": [],
-   "_source": {
-    "benefit_value": "- 4천원 이상 결제 시 건당 2천원 결제일 할인",
-    "min_txn_amount": "- 4천원 이상 결제 시 건당 2천원 결제일 할인",
-    "monthly_count_limit": "- 일 1회, 월 5회까지 할인",
-    "daily_count_limit": "- 일 1회, 월 5회까지 할인",
-    "target_merchant_name": "- 커피전문점 : 스타벅스, 커피빈, 투썸플레이스",
-    "apply_timing": "커피전문점 2천원 결제일 할인",
-    "require_performance": "※ 신한카드 The BEST-XO 카드로 전월 일시불 및 할부 50만원 이상 이용 시 제공됩니다."
-   },
-   "_needs_review": []
-  },
-  {
-   "benefit_name": "커피전문점 2천원 결제일 할인 - 커피빈",
-   "benefit_kind": "DISCOUNT",
-   "calc_method": "FIXED",
-   "benefit_value": 2000,
-   "step_count": null,
-   "apply_timing": "BILLED",
-   "target_type": "MERCHANT",
-   "target_category_code": null,
-   "target_merchant_name": "커피빈",
-   "require_performance": "Y",
-   "performance_period": "MONTH",
-   "require_payment_type": null,
-   "min_txn_amount": 4000,
-   "max_eligible_amount": null,
-   "max_benefit_per_txn": null,
-   "monthly_limit": null,
-   "limit_group_code": "COFFEE_2000",
-   "monthly_count_limit": 5,
-   "daily_count_limit": 1,
-   "daily_limit": null,
-   "yearly_count_limit": null,
-   "count_group_code": null,
-   "use_shared_limit": "N",
-   "exclude_from_performance": "N",
-   "option_group_code": null,
-   "option_key": null,
-   "description": "4천원 이상 결제 시 건당 2천원 결제일 할인. 일 1회, 월 5회까지 할인되며 횟수는 스타벅스·커피빈·투썸플레이스 합산이다(금액 한도가 따로 없어 count_group_code 없이 limit_group_code로만 묶었다). 사이렌 오더, 스마트 오더 이용금액도 할인된다. 백화점, 할인점, 면세점, 공항 등 입점 매장 이용금액은 할인되지 않는다.",
-   "tier_limits": [],
-   "exclusions": [],
-   "_source": {
-    "benefit_value": "- 4천원 이상 결제 시 건당 2천원 결제일 할인",
-    "min_txn_amount": "- 4천원 이상 결제 시 건당 2천원 결제일 할인",
-    "monthly_count_limit": "- 일 1회, 월 5회까지 할인",
-    "daily_count_limit": "- 일 1회, 월 5회까지 할인",
-    "target_merchant_name": "- 커피전문점 : 스타벅스, 커피빈, 투썸플레이스",
-    "apply_timing": "커피전문점 2천원 결제일 할인",
-    "require_performance": "※ 신한카드 The BEST-XO 카드로 전월 일시불 및 할부 50만원 이상 이용 시 제공됩니다."
-   },
-   "_needs_review": []
-  },
-  {
-   "benefit_name": "커피전문점 2천원 결제일 할인 - 투썸플레이스",
-   "benefit_kind": "DISCOUNT",
-   "calc_method": "FIXED",
-   "benefit_value": 2000,
-   "step_count": null,
-   "apply_timing": "BILLED",
-   "target_type": "MERCHANT",
-   "target_category_code": null,
-   "target_merchant_name": "투썸플레이스",
-   "require_performance": "Y",
-   "performance_period": "MONTH",
-   "require_payment_type": null,
-   "min_txn_amount": 4000,
-   "max_eligible_amount": null,
-   "max_benefit_per_txn": null,
-   "monthly_limit": null,
-   "limit_group_code": "COFFEE_2000",
-   "monthly_count_limit": 5,
-   "daily_count_limit": 1,
-   "daily_limit": null,
-   "yearly_count_limit": null,
-   "count_group_code": null,
-   "use_shared_limit": "N",
-   "exclude_from_performance": "N",
-   "option_group_code": null,
-   "option_key": null,
-   "description": "4천원 이상 결제 시 건당 2천원 결제일 할인. 일 1회, 월 5회까지 할인되며 횟수는 스타벅스·커피빈·투썸플레이스 합산이다(금액 한도가 따로 없어 count_group_code 없이 limit_group_code로만 묶었다). 사이렌 오더, 스마트 오더 이용금액도 할인된다. 백화점, 할인점, 면세점, 공항 등 입점 매장 이용금액은 할인되지 않는다.",
-   "tier_limits": [],
-   "exclusions": [],
-   "_source": {
-    "benefit_value": "- 4천원 이상 결제 시 건당 2천원 결제일 할인",
-    "min_txn_amount": "- 4천원 이상 결제 시 건당 2천원 결제일 할인",
-    "monthly_count_limit": "- 일 1회, 월 5회까지 할인",
-    "daily_count_limit": "- 일 1회, 월 5회까지 할인",
-    "target_merchant_name": "- 커피전문점 : 스타벅스, 커피빈, 투썸플레이스",
-    "apply_timing": "커피전문점 2천원 결제일 할인",
-    "require_performance": "※ 신한카드 The BEST-XO 카드로 전월 일시불 및 할부 50만원 이상 이용 시 제공됩니다."
-   },
-   "_needs_review": []
-  },
-  {
-   "benefit_name": "택시 이용금액 7% 결제일 할인 - 택시 업종",
-   "benefit_kind": "DISCOUNT",
-   "calc_method": "RATE",
-   "benefit_value": 7,
-   "step_count": null,
-   "apply_timing": "BILLED",
-   "target_type": "CATEGORY",
-   "target_category_code": "TAXI",
-   "target_merchant_name": null,
-   "require_performance": "Y",
-   "performance_period": "MONTH",
-   "require_payment_type": null,
-   "min_txn_amount": null,
-   "max_eligible_amount": null,
-   "max_benefit_per_txn": null,
-   "monthly_limit": 20000,
-   "limit_group_code": "TAXI_20000",
-   "monthly_count_limit": null,
-   "daily_count_limit": null,
-   "daily_limit": null,
-   "yearly_count_limit": null,
-   "count_group_code": null,
-   "use_shared_limit": "N",
-   "exclude_from_performance": "N",
-   "option_group_code": null,
-   "option_key": null,
-   "description": "택시 업종·카카오T·우티·온다 합산 월 할인금액 2만원까지 제공. 가맹점 업종은 신한카드에 등록된 가맹점 업종 기준을 따른다.",
-   "tier_limits": [],
-   "exclusions": [],
-   "_source": {
-    "benefit_value": "택시 이용금액 7% 결제일 할인",
-    "monthly_limit": "- 월 할인금액 2만원까지 제공",
-    "apply_timing": "택시 이용금액 7% 결제일 할인",
-    "require_performance": "※ 신한카드 The BEST-XO 카드로 전월 일시불 및 할부 50만원 이상 이용 시 제공됩니다.",
-    "target_category_code": "- 택시 : 택시 업종, 카카오T, 우티, 온다"
-   },
-   "_needs_review": []
-  },
-  {
-   "benefit_name": "택시 이용금액 7% 결제일 할인 - 카카오T",
-   "benefit_kind": "DISCOUNT",
-   "calc_method": "RATE",
-   "benefit_value": 7,
-   "step_count": null,
-   "apply_timing": "BILLED",
-   "target_type": "MERCHANT",
-   "target_category_code": null,
-   "target_merchant_name": "카카오T",
-   "require_performance": "Y",
-   "performance_period": "MONTH",
-   "require_payment_type": null,
-   "min_txn_amount": null,
-   "max_eligible_amount": null,
-   "max_benefit_per_txn": null,
-   "monthly_limit": 20000,
-   "limit_group_code": "TAXI_20000",
-   "monthly_count_limit": null,
-   "daily_count_limit": null,
-   "daily_limit": null,
-   "yearly_count_limit": null,
-   "count_group_code": null,
-   "use_shared_limit": "N",
-   "exclude_from_performance": "N",
-   "option_group_code": null,
-   "option_key": null,
-   "description": "택시 업종·카카오T·우티·온다 합산 월 할인금액 2만원까지 제공.",
-   "tier_limits": [],
-   "exclusions": [],
-   "_source": {
-    "benefit_value": "택시 이용금액 7% 결제일 할인",
-    "monthly_limit": "- 월 할인금액 2만원까지 제공",
-    "apply_timing": "택시 이용금액 7% 결제일 할인",
-    "require_performance": "※ 신한카드 The BEST-XO 카드로 전월 일시불 및 할부 50만원 이상 이용 시 제공됩니다.",
-    "target_merchant_name": "- 택시 : 택시 업종, 카카오T, 우티, 온다"
-   },
-   "_needs_review": []
-  },
-  {
-   "benefit_name": "택시 이용금액 7% 결제일 할인 - 우티",
-   "benefit_kind": "DISCOUNT",
-   "calc_method": "RATE",
-   "benefit_value": 7,
-   "step_count": null,
-   "apply_timing": "BILLED",
-   "target_type": "MERCHANT",
-   "target_category_code": null,
-   "target_merchant_name": "우티",
-   "require_performance": "Y",
-   "performance_period": "MONTH",
-   "require_payment_type": null,
-   "min_txn_amount": null,
-   "max_eligible_amount": null,
-   "max_benefit_per_txn": null,
-   "monthly_limit": 20000,
-   "limit_group_code": "TAXI_20000",
-   "monthly_count_limit": null,
-   "daily_count_limit": null,
-   "daily_limit": null,
-   "yearly_count_limit": null,
-   "count_group_code": null,
-   "use_shared_limit": "N",
-   "exclude_from_performance": "N",
-   "option_group_code": null,
-   "option_key": null,
-   "description": "택시 업종·카카오T·우티·온다 합산 월 할인금액 2만원까지 제공.",
-   "tier_limits": [],
-   "exclusions": [],
-   "_source": {
-    "benefit_value": "택시 이용금액 7% 결제일 할인",
-    "monthly_limit": "- 월 할인금액 2만원까지 제공",
-    "apply_timing": "택시 이용금액 7% 결제일 할인",
-    "require_performance": "※ 신한카드 The BEST-XO 카드로 전월 일시불 및 할부 50만원 이상 이용 시 제공됩니다.",
-    "target_merchant_name": "- 택시 : 택시 업종, 카카오T, 우티, 온다"
-   },
-   "_needs_review": []
-  },
-  {
-   "benefit_name": "택시 이용금액 7% 결제일 할인 - 온다",
-   "benefit_kind": "DISCOUNT",
-   "calc_method": "RATE",
-   "benefit_value": 7,
-   "step_count": null,
-   "apply_timing": "BILLED",
-   "target_type": "MERCHANT",
-   "target_category_code": null,
-   "target_merchant_name": "온다",
-   "require_performance": "Y",
-   "performance_period": "MONTH",
-   "require_payment_type": null,
-   "min_txn_amount": null,
-   "max_eligible_amount": null,
-   "max_benefit_per_txn": null,
-   "monthly_limit": 20000,
-   "limit_group_code": "TAXI_20000",
-   "monthly_count_limit": null,
-   "daily_count_limit": null,
-   "daily_limit": null,
-   "yearly_count_limit": null,
-   "count_group_code": null,
-   "use_shared_limit": "N",
-   "exclude_from_performance": "N",
-   "option_group_code": null,
-   "option_key": null,
-   "description": "택시 업종·카카오T·우티·온다 합산 월 할인금액 2만원까지 제공.",
-   "tier_limits": [],
-   "exclusions": [],
-   "_source": {
-    "benefit_value": "택시 이용금액 7% 결제일 할인",
-    "monthly_limit": "- 월 할인금액 2만원까지 제공",
-    "apply_timing": "택시 이용금액 7% 결제일 할인",
-    "require_performance": "※ 신한카드 The BEST-XO 카드로 전월 일시불 및 할부 50만원 이상 이용 시 제공됩니다.",
-    "target_merchant_name": "- 택시 : 택시 업종, 카카오T, 우티, 온다"
-   },
-   "_needs_review": []
-  },
-  {
-   "benefit_name": "THE LOUNGE 전세계 공항 라운지 무료 이용",
-   "benefit_kind": "GIFT",
-   "calc_method": "FIXED",
-   "benefit_value": null,
-   "step_count": null,
-   "apply_timing": null,
-   "target_type": "ALL",
-   "target_category_code": null,
-   "target_merchant_name": null,
-   "require_performance": "Y",
-   "performance_period": "MONTH",
-   "require_payment_type": null,
-   "min_txn_amount": null,
-   "max_eligible_amount": null,
-   "max_benefit_per_txn": null,
-   "monthly_limit": null,
-   "limit_group_code": null,
-   "monthly_count_limit": 4,
-   "daily_count_limit": null,
-   "daily_limit": null,
-   "yearly_count_limit": 10,
-   "count_group_code": null,
-   "use_shared_limit": "N",
-   "exclude_from_performance": "N",
-   "option_group_code": null,
-   "option_key": null,
-   "description": "THE LOUNGE 모바일 앱에 카드를 등록하면 이용권이 제공된다. 본인카드 회원에 한해 월 4회, 연 10회이고 연간 10회 기준은 매년 1월~12월이다. 기본 제공 라운지 외 마티나 골드 라운지도 이용할 수 있다. 동반 1인 입장 시 이용 횟수가 2회 차감되고 마티나 골드 라운지는 본인 이용 시에도 2회 차감되는데, 횟수 컬럼은 1건=1회 차감만 표현하므로 담지 못했다. 결제 트랜잭션이 없어 금액으로 환산할 수 없다.",
-   "tier_limits": [],
-   "exclusions": [],
-   "_source": {
-    "monthly_count_limit": "본인카드 회원에 한하여 월 4회, 연 10회 제공됩니다.",
-    "yearly_count_limit": "본인카드 회원에 한하여 월 4회, 연 10회 제공됩니다. / 연간 10회 이용 기준은 매년 1월~12월로 산정됩니다.",
-    "require_performance": "공항 라운지 무료 이용 서비스는 「신한카드 The BEST-XO」의 본인 및 가족카드로 전월(1일~말일) 거래시점 이용금액(일시불+할부) 기준 50만원 이상 이용 시 사용 가능합니다."
-   },
-   "_needs_review": [
-    "benefit_value"
-   ]
-  }
- ],
- "unmapped": [
-  {
-   "text": "특별 리워드 - 해외 일시불 이용금액 1% 마이신한포인트 추가 적립 / 해외 이용 적립은 해외겸용(Mastercard) 카드 발급 후 이용 시 적립됩니다. / 해외 일시불 이용금액은 최종 원화 청구 금액을 기준으로 적립됩니다.",
-   "why": "해외 결제 혜택은 추천 계산 범위 밖이다. 해외 가맹점 데이터가 없어 매칭할 대상이 없다."
-  },
-  {
-   "text": "본인카드 회원 단독 이용 외 동반 1인까지 무료 입장 가능하며, 이 경우 이용 횟수는 2회 차감됩니다. / 마티나 골드 라운지는 본인카드 회원만 제공되며, 동반인 입장이 불가합니다.(본인 이용 시 이용횟수 2회 차감됩니다)",
-   "why": "한 번 이용에 횟수가 2회 차감되는 규칙이다. 횟수 컬럼은 1건=1회 차감만 표현한다."
-  },
-  {
-   "text": "주유소의 경우 휘발유, 경유, 등유에 대해서만 적립 가능하며, LPG는 제외됩니다.",
-   "why": "가맹점 안에서 무엇을 샀는지(유종)에 걸리는 상품 단위 조건이다. 대상은 가맹점까지만 내려간다."
-  },
-  {
-   "text": "온라인 결제가 제공되는 서비스는 해당 업체 사이트(앱)에 직접 접속하여 이용하는 경우에만 할인됩니다. / 키오스크, 간편결제(Pay)로 결제 시 가맹점명이 해당 업체가 아닌 PG업체명, 간편결제명(네이버페이, 스마일페이 등)으로 나오는 경우는 할인되지 않습니다.",
-   "why": "결제 채널 조건이다. 채널 조건은 지금 스키마가 담지 않는다."
-  },
-  {
-   "text": "- 교통카드 이용금액은 전전월 이용금액이 전월 이용금액에 반영됩니다.(단, 모바일 후불 교통카드 이용금액은 전월 이용금액이 반영됨)",
-   "why": "전전월 실적은 범위 밖이다."
-  },
-  {
-   "text": "- 해외 이용금액은 매입일자를 기준으로 반영됩니다. / 거래 후 취소금액은 국내 거래의 경우 최초 승인된 달의 이용금액에서, 해외 거래의 경우 취소 전표가 매입된 달의 이용금액에서 차감됩니다.",
-   "why": "해외 거래의 매입 시차 반영 규칙이다. 해외 거래 데이터 자체가 범위 밖이다."
-  },
-  {
-   "text": "본인카드와 가족카드의 전월 이용금액, 월별 적립한도는 합산하여 제공됩니다. / 전월 이용실적은 본인카드와 가족카드 각각 산정하며, 월별 할인 횟수 및 할인 한도도 각각 제공됩니다.",
-   "why": "가족카드 합산은 범위 밖이다. 게다가 서비스별로 합산 여부가 갈려 하나의 규칙으로 담기지도 않는다."
-  },
-  {
-   "text": "리워드 서비스가 적용된 거래가 해당월에 취소된 경우 서비스 한도가 복원됩니다. / 할인 서비스가 적용된 거래가 해당월에 취소된 경우 할인 서비스 횟수 및 한도가 복원됩니다.",
-   "why": "취소 시 한도·횟수 복원은 혜택 규칙이 아니라 정산 처리 규칙이라 benefit 컬럼으로 담기지 않는다."
-  },
-  {
-   "text": "할인 서비스는 서비스 영역별 이용하신 거래 순서대로 결제일 할인이 적용됩니다.",
-   "why": "혜택 적용 순서 규칙이라 benefit 컬럼으로 담기지 않는다."
-  },
-  {
-   "text": "마이신한포인트는 신용카드 이용대금 결제일(결제일이 은행 휴무일인 경우 다음 영업일)에 적립됩니다. / 마일리지는 적립 대상이 되는 거래의 청구금액을 마일리지 적립 단위금액(1,500원 또는 3,000원)으로 나눈 후 소수점 첫째 자리에서 반올림하여 결제일+2일에 적립됩니다.",
-   "why": "적립 시점 정보다. apply_timing은 benefit_kind가 DISCOUNT일 때만 쓰는 컬럼이라 적립형 혜택의 지급 시점을 담을 자리가 없다."
-  },
-  {
-   "text": "본인 회원에 한해 메탈 플레이트와 플라스틱 플레이트 중 선택하여 발급이 가능합니다. - 메탈 플레이트의 경우 발급 수수료 12만원이 별도 부과됩니다.(재발급 신청 및 갱신 시 동일 적용) - 메탈 플레이트의 경우 해외겸용(Mastercard) 브랜드의 후불 교통 기능이 있는 카드로만 신청 가능합니다.",
-   "why": "연회비가 아닌 별도 발급 수수료이고, 메탈은 annual_fees의 issue_type(PLASTIC/MOBILE)에도 없는 값이다."
-  },
-  {
-   "text": "가족카드 연회비는 7만원입니다.",
-   "why": "가족카드는 범위 밖이다."
-  },
-  {
-   "text": "※ 카드이용 시 제공되는 포인트 및 할인혜택 등의 부가서비스는 카드 신규출시(2025년 01월 17일) 이후 3년 이상 축소, 폐지없이 유지됩니다.",
-   "why": "혜택 유효기간은 범위 밖이다. is_active 토글로만 대체한다."
-  }
- ],
- "_schema_gap": [
-  {
-   "text": "마이신한포인트형 국내전용 Local 총연회비 29만7천원 / 마이신한포인트형 해외겸용 Mastercard World 30만원 / 스카이패스형 국내전용 Local 31만7천원 / 스카이패스형 해외겸용 Mastercard World 32만원. 본인카드와 가족카드는 반드시 동일 종류(마이신한포인트형, 스카이패스형 중 택 1) 및 동일 브랜드(Local, Mastercard 중 택 1)로만 발급 가능합니다. The BEST-XO 카드는 중복 발급이 불가합니다.(마이신한포인트형, 스카이패스형 중복 소지 불가)",
-   "missing": "card에 발급 유형(리워드 종류) 축, 또는 유형별로 카드 행을 나누는 규칙",
-   "why": "카드명은 하나인데 발급 시 고른 유형에 따라 연회비와 기본 리워드가 갈린다. annual_fees는 브랜드와 발급 형태만 구분하고, option_group_code·option_key는 회원이 그때그때 고르는 혜택용이라 발급 시점에 고정되어 카드 전체를 가르는 이 축을 담지 못한다."
-  },
-  {
-   "text": "스카이패스형 - 일시불/할부 이용금액 1,500원당 대한항공 마일리지 1마일 적립",
-   "missing": "단위당 계산 방식(calc_method의 PER_UNIT과 단위금액 컬럼)",
-   "why": "calc_method는 RATE(퍼센트)·FIXED(정액)·COUNT_STEP(N회마다 정액)뿐이라 '1,500원당 1마일'을 표현할 수 없다. COUNT_STEP은 이용 횟수 기준이라 금액 기준 단위당 계산과 축이 다르다. 결과 단위도 원이 아니다."
-  },
-  {
-   "text": "스카이패스형 - 전월 일시불/할부 300만원 이상 이용 시 일시불/할부 이용금액 3,000원당 1마일 추가 적립 (추가 적립은 월 최대 5천 마일리지까지 제공)",
-   "missing": "단위당 계산 방식과 원이 아닌 단위(마일)의 한도",
-   "why": "monthly_limit은 원 단위 금액 한도라 '월 최대 5천 마일리지'를 담을 수 없다."
-  },
-  {
-   "text": "특별 리워드 - SOL Pay, 네이버페이, 쿠페이 국내 일시불/할부 이용금액 0.5% 마이신한포인트 추가 적립(월 최대 3만포인트까지 적립) / - 모든 주유소 이용금액 3% 마이신한포인트 추가 적립 (월 최대 2만포인트까지 적립)",
-   "missing": "합산값 행에서 추가분에만 걸리는 한도를 구분할 컬럼",
-   "why": "추가 적립 행에 합산값(기본 1% + 추가분)을 적으면 benefit_value는 맞지만 monthly_limit이 어긋난다. 3만포인트·2만포인트는 추가분에만 걸리는 한도인데 합산값으로 계산한 적립액이 같은 monthly_limit을 깎으므로 한도가 실제보다 빨리 찬다. 주유는 합산 4% 기준 월 50만원에서 한도가 차지만, 원문(추가 3%)대로면 약 67만원까지 적립된다."
-  },
-  {
-   "text": "신한카드 The BEST-XO 연간(1월~12월) 일시불/할부 이용금액 따라 최대 17만원 캐시백 추가 제공 / 연간 일시불/할부 누적 3천만원 이상 이용 시 캐시백 7만원 제공 / 누적 6천만원 이상 이용 시 캐시백 10만원 추가 제공 / 보너스 기프트는 이용금액 달성한 달의 다다음달 20일에 지급되나, 지급일이 공휴일인 경우 다음 영업일에 제공됩니다.",
-   "missing": "연 단위 누적 실적 구간(performance_tiers의 period_type에 YEAR)",
-   "why": "period_type은 MONTH·QUARTER만 쓴다. 연간 누적 금액을 기준으로 특정 시점에 한 번 지급되는 캐시백은 결제 단위 계산 흐름에도 들어오지 않아 RETROACTIVE 행으로만 남겼다."
-  },
-  {
-   "text": "기프트 옵션 서비스는 「신한카드 The BEST-XO」 연회비 납부 및 100만원 이상(일시불+할부) 카드를 사용한 경우 서비스가 제공됩니다. / 기프트 옵션 서비스는 연회비 청구 주기* 기준으로 1년간 기프트 옵션 중 택 1하여 사용 가능하며, 신청기간이 경과한 미 사용건에 대해서는 소급 신청을 할 수 없습니다. * 연회비 청구주기 : 연회비 결제일 해당월 1일부터 익년도 연회비 결제일 해당월의 전월 말일까지",
-   "missing": "연회비 청구 주기를 기준으로 한 1년 단위 실적 조건",
-   "why": "실적 판정 기간이 달력 월이 아니라 회원별 연회비 결제일에 따라 달라진다. period_type의 MONTH·QUARTER 어느 쪽도 아니어서 Gift Option 행의 require_performance를 채우지 못했다."
-  },
-  {
-   "text": "신한카드 The BEST-XO 고객님께 매년 1회 아래 Option 중 선택하신 한 가지의 기프트를 제공해 드립니다. / THE LOUNGE 모바일 앱을 통한 전세계 공항 라운지 무료 이용",
-   "missing": "결제와 무관한 혜택을 가리키는 target_type 값(예: NONE)",
-   "why": "Gift Option과 라운지는 결제 트랜잭션이 없는데 target_type이 CATEGORY·MERCHANT·ALL뿐이라 ALL을 넣었다. 계산에서 GIFT를 제외하는 규칙에 기대고 있을 뿐, 값 자체로는 '모든 결제에 적용'과 구분되지 않는다."
-  },
-  {
-   "text": "※ 커피할인은 백화점, 할인점, 면세점, 공항 등 입점 매장 이용금액, 상품권 및 선불카드 구입 · 충전금액은 할인되지 않습니다.",
-   "missing": "가맹점이 어디에 입점해 있는지를 나타내는 조건",
-   "why": "exclusion_value가 CATEGORY나 MERCHANT라 '백화점 안에 있는 스타벅스'를 가리킬 수 없다. DEPARTMENT_STORE로 넣으면 백화점 결제 전체가 빠진다."
-  },
-  {
-   "text": "- 의약품전용몰(도매)/제약업종 구매금액 (전월 이용금액 제외 대상) / - 의약품 전용몰(도매몰), 제약업종/약국 구매금액 (기프트 옵션 서비스 이용금액 산정 제외 대상)",
-   "missing": "의약품 도매몰·제약업종에 해당하는 카테고리 코드",
-   "why": "카테고리 표준에 PHARMACY(약국)는 있으나 의약품 전용몰(도매)·제약업종은 없다. PHARMACY로 넣으면 약국만 빠지고 도매몰 거래는 그대로 실적에 들어간다."
-  },
-  {
-   "text": "- 해외일시불 거래의 할부 전환 거래 (전월 이용금액 제외 대상)",
-   "missing": "TRANSACTION_ATTR 표준값 또는 할부 전환 여부 플래그",
-   "why": "OVERSEAS와 할부 전환이 겹친 조건인데 표준값 목록에 대응하는 값이 없다."
-  },
-  {
-   "text": "신한카드 The BEST-XO의 최초 신규 발급 회원*은 카드 사용 등록한 월의 다음달(등록월+1개월)까지 전월 이용금액 50만원 이상 300만원 미만 구간의 서비스가 적용됩니다. 단, 해당 기간에 월 300만원 이상 이용할 경우 그에 맞는 서비스가 다음달에 적용됩니다. * 신한카드 The BEST-XO 유효기간 만기 또는 해지 후 재발급 시 최초 신규발급 회원에서 제외됨.",
-   "missing": "카드 사용 등록일 정보와 발급 초기 실적 간주 규칙",
-   "why": "등록일이 없어 면제 기간인지 판정할 수 없다. 게다가 실적 면제가 아니라 '특정 구간으로 간주'라서 어느 구간으로 볼지 지정할 값도 필요하다."
-  }
- ]
 }

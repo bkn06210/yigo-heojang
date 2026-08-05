@@ -40,6 +40,11 @@ public class ExpenseRow {
     private LocalDateTime paymentDate;
     /** 적용 혜택의 통합한도 사용 여부 'Y'/'N' (benefit 조인). 적용 혜택이 없으면 NULL */
     private String useSharedLimit;
+    /**
+     * 적용 혜택이 실적 제외 대상인지 'Y'/'N' (benefit 조인). 적용 혜택이 없으면 NULL.
+     * 가산 때 이 거래를 실적에 안 넣었다면 취소 때도 빼지 않아야 양쪽이 어긋나지 않는다.
+     */
+    private String excludeFromPerformance;
 
     public long getExpenseId() {
         return expenseId;
@@ -175,5 +180,13 @@ public class ExpenseRow {
 
     public void setUseSharedLimit(String useSharedLimit) {
         this.useSharedLimit = useSharedLimit;
+    }
+
+    public String getExcludeFromPerformance() {
+        return excludeFromPerformance;
+    }
+
+    public void setExcludeFromPerformance(String excludeFromPerformance) {
+        this.excludeFromPerformance = excludeFromPerformance;
     }
 }

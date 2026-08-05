@@ -77,6 +77,8 @@ public class BenefitCandidateAssembler {
                 .benefitKind(BenefitKind.valueOf(row.getBenefitKind()))
                 .calcMethod(CalcMethod.valueOf(row.getCalcMethod()))
                 .benefitValue(row.getBenefitValue())
+                // COUNT_STEP은 이 값이 없으면 규칙을 만들 수 없다(몇 회마다 지급인지 모른다)
+                .stepCount(row.getStepCount())
                 .requirePerformance("Y".equals(row.getRequirePerformance()))
                 .requirePaymentType(row.getRequirePaymentType())
                 .minTxnAmount(row.getMinTxnAmount())

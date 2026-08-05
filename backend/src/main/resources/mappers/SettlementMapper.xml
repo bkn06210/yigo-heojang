@@ -29,7 +29,8 @@
                e.is_interest_free,
                e.payment_status,
                e.payment_date,
-               b.use_shared_limit
+               b.use_shared_limit,
+               b.exclude_from_performance
         FROM expense e
         JOIN user_card uc     ON uc.user_card_id = e.user_card_id
         JOIN category c       ON c.category_id = e.category_id

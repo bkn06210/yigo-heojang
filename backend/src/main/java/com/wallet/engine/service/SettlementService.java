@@ -142,7 +142,8 @@ public class SettlementService {
         // 상태 가산 — 실적은 이 거래의 인정분, 통합한도는 적용 혜택이 통합한도를 쓸 때만
         long performanceContribution = performanceContribution(
                 command.cardId(), command.amount(), target.getCategoryCode(), target.getParentCategoryCode(),
-                command.paymentType(), command.interestFree(), discount);
+                command.paymentType(), command.interestFree(), discount,
+                excludesFromPerformance(benefitRows, appliedBenefitId));
         long sharedLimitContribution = usesSharedLimit(benefitRows, appliedBenefitId) ? discount : 0L;
         settlementMapper.upsertMonthlyStateAdd(command.userCardId(), baseYearMonth,
                 prevPerformanceAmount, performanceContribution, sharedLimitContribution);
@@ -297,7 +298,8 @@ public class SettlementService {
                 expense.getCardId(), expense.getAmount(),
                 expense.getCategoryCode(), expense.getParentCategoryCode(),
                 expense.getPaymentType(), "Y".equals(expense.getIsInterestFree()),
-                expense.getDiscountAmount());
+                expense.getDiscountAmount(),
+                "Y".equals(expense.getExcludeFromPerformance()));
     }
 
     /**
@@ -311,7 +313,8 @@ public class SettlementService {
      */
     private long performanceContribution(long cardId, long amount, String categoryCode,
                                          String parentCategoryCode, String paymentType,
-                                         boolean interestFree, long discountAmount) {
+                                         boolean interestFree, long discountAmount,
+                                         boolean benefitExcludedFromPerformance) {
         PerformanceTransaction transaction = PerformanceTransaction.builder()
                 .amount(amount)
                 .canceled(false)
@@ -320,6 +323,7 @@ public class SettlementService {
                 .paymentType(paymentType)
                 .interestFree(interestFree)
                 .discountAmount(discountAmount)
+                .benefitExcludedFromPerformance(benefitExcludedFromPerformance)
                 .build();
         List<PerformanceExclusion> exclusions = performanceInputAssembler.toExclusions(
                 performanceMapper.findExclusions(cardId));
@@ -402,6 +406,21 @@ public class SettlementService {
                 .parentCategoryId(row.getParentCategoryId())
                 .parentCategoryCode(row.getParentCategoryCode())
                 .build();
+    }
+
+    /**
+     * 적용된 혜택이 "이 혜택을 받은 거래는 실적에서 뺀다"고 지정돼 있는지.
+     *
+     * 재합산 경로(전월실적)는 이 값을 조인해 읽으므로, 가산에서 빼먹으면 같은 거래가
+     * 당월 누적에는 잡히고 재합산에는 안 잡혀 두 값이 어긋난다.
+     */
+    private boolean excludesFromPerformance(List<BenefitRow> benefitRows, Long benefitId) {
+        if (benefitId == null) {
+            return false;
+        }
+        return benefitRows.stream()
+                .filter(row -> row.getBenefitId() == benefitId)
+                .anyMatch(row -> "Y".equals(row.getExcludeFromPerformance()));
     }
 
     /** 적용된 혜택이 통합할인한도를 쓰는지 — 그 경우에만 통합한도 소진을 가산한다. */

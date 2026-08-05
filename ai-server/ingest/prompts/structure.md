@@ -24,6 +24,7 @@ JSON 하나. 주석이나 설명 문장을 덧붙이지 말고 JSON만 출력한
     "annual_fees": [
       { "brand": "LOCAL | VISA | MASTERCARD | AMEX | UNIONPAY | K_WORLD | ANY",
         "issue_type": "PLASTIC | MOBILE | ANY",
+        "variant": "리워드 종류로 갈릴 때만. 안 갈리면 ANY",
         "total_fee": 20000, "base_fee": 7000, "partner_fee": 13000, "_source": "..." }
     ],
     "_source": { "annual_fee": "근거가 된 약관 문장" },
@@ -291,6 +292,10 @@ IN_SHOPPING_MALL     쇼핑몰 임대매장    IN_TRANSIT_HUB  기차역·지하
 - 표의 금액 칸이 여러 브랜드에 걸쳐 병합돼 있어 브랜드를 구분하지 않으면 `brand: "ANY"`로 한 행만 적는다.
   브랜드마다 행을 복제하면 약관에 없는 구분을 만드는 셈이다.
 - 표의 칸이 아예 비어 있으면 그 조합은 행을 만들지 않는다. 다른 행 값을 복사하지 마라.
+- **같은 카드가 리워드 종류로 갈리면 `variant`에 적는다.** 약관 예) The BEST-XO는
+  마이신한포인트형과 스카이패스형의 연회비가 다르다. 이건 브랜드·발급형태와 별개 축이라
+  그 두 칸에 넣으면 의미가 어긋나고, 비우면 같은 (카드, 브랜드)에 금액이 둘이 되어 적재가 실패한다.
+  갈리지 않는 카드는 `"ANY"`로 둔다.
 
 `annual_fee`(단일 값)는 목록 화면용 대표값이다. 가장 흔한 조합의 `total_fee`를 넣고,
 고를 근거가 없으면 `null`로 두고 `_needs_review`에 적는다.

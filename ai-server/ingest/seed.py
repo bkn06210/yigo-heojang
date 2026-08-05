@@ -22,6 +22,12 @@ _OUTPUT_PATH = (
     Path(__file__).resolve().parent.parent.parent / "backend" / "db" / "91_seed_card_benefit.sql"
 )
 
+# 엔진이 판정할 수 없는 제외 유형은 시드에 넣지 않는다.
+# MERCHANT_LOCATION("백화점 입점 매장 제외")은 가맹점이 브랜드 단위라 지점을 구분하지 못한다.
+# 넣으면 엔진이 모르는 값이라 혜택 조회가 통째로 실패한다 — 값 하나가 API를 죽인다.
+# 표준값 정의는 스키마에 남아 있고, 마이데이터로 지점명이 들어오면 그때 판정 경로가 생긴다.
+_UNJUDGEABLE_EXCLUSION_TYPES = {"MERCHANT_LOCATION"}
+
 
 def sql_value(value) -> str:
     """SQL 리터럴. 문자열의 작은따옴표와 역슬래시를 이스케이프한다."""
@@ -171,14 +177,19 @@ def build() -> str:
                     warnings.append(f"연회비 금액 없음: {card['card_name']} {fee.get('brand')}")
                     continue
                 total = base + (partner or 0)
+            # variant는 리워드 종류로 연회비가 갈리는 카드에만 값이 있다.
+            # 브랜드·발급형태와 다른 축이라 비우면 같은 (카드, 브랜드)에 금액이 둘이 되어
+            # UNIQUE 제약에 걸린다 — 적재가 통째로 실패한다.
             rows.append(
                 f"    ({card_id}, {sql_value(fee.get('brand') or 'ANY')}, "
-                f"{sql_value(fee.get('issue_type') or 'ANY')}, {total}, "
+                f"{sql_value(fee.get('issue_type') or 'ANY')}, "
+                f"{sql_value(fee.get('variant') or 'ANY')}, {total}, "
                 f"{sql_value(fee.get('base_fee'))}, {sql_value(fee.get('partner_fee'))})"
             )
     if rows:
         lines.append(
-            "INSERT INTO card_annual_fee (card_id, brand, issue_type, total_fee, base_fee, partner_fee) VALUES"
+            "INSERT INTO card_annual_fee "
+            "(card_id, brand, issue_type, variant, total_fee, base_fee, partner_fee) VALUES"
         )
         lines.append(",\n".join(rows) + ";")
         lines.append("")
@@ -242,6 +253,9 @@ def build() -> str:
         for exclusion in (card["data"].get("card_exclusions") or []):
             key = (card_id, exclusion.get("exclusion_type"), exclusion.get("exclusion_value"))
             if None in key or key in seen:
+                continue
+            if key[1] in _UNJUDGEABLE_EXCLUSION_TYPES:
+                warnings.append(f"판정 불가 제외 제거: {card['card_name']} / {key[1]} {key[2]}")
                 continue
             seen.add(key)
             rows.append(f"    ({card_id}, {sql_value(key[1])}, {sql_value(key[2])})")
@@ -358,6 +372,11 @@ def build() -> str:
             for exclusion in (benefit.get("exclusions") or []):
                 key = (exclusion.get("exclusion_type"), exclusion.get("exclusion_value"))
                 if None in key or key in seen:
+                    continue
+                if key[0] in _UNJUDGEABLE_EXCLUSION_TYPES:
+                    warnings.append(
+                        f"판정 불가 제외 제거: {card['card_name']} / {benefit.get('benefit_name')}"
+                        f" / {key[0]} {key[1]}")
                     continue
                 seen.add(key)
                 exclusion_rows.append(
