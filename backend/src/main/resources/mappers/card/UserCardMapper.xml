@@ -103,6 +103,13 @@
             LIMIT 1
     </select>
 
+    <!--
+    보유 카드 목록은 사용자가 실제로 등록한 카드 기준으로 조회한다.
+
+    card.is_active는 카드 상품의 신규 노출/발급 가능 여부에 가까우므로,
+    단종되었지만 기존 사용자가 유효기간까지 사용할 수 있는 카드가
+    목록에서 사라지지 않도록 조건에서 제외한다.
+    -->
     <select id="findActiveUserCardsByMemberId"
             resultMap="userCardListResultMap">
         SELECT
@@ -120,8 +127,6 @@
         INNER JOIN card_company cc ON cc.card_company_id = c.card_company_id
         WHERE uc.member_id = #{memberId}
           AND uc.card_status = 'ACTIVE'
-          AND c.is_active = 'Y'
-          AND cc.is_active = 'Y'
         ORDER BY
             uc.registered_at DESC,
             uc.user_card_id DESC
