@@ -319,6 +319,13 @@ public enum ErrorCode {
         "보유 카드 등록 처리에 실패했습니다."
     ),
 
+    /** 대표 카드는 회원당 최대 3개까지만 설정할 수 있다. */
+    REPRESENTATIVE_CARD_LIMIT_EXCEEDED(
+        HttpStatus.CONFLICT,
+        "REPRESENTATIVE_CARD_LIMIT_EXCEEDED",
+        "대표 카드는 최대 3개까지 설정할 수 있습니다."
+    ),
+
     /** 로그인 회원이 삭제할 수 있는 활성 보유 카드를 찾지 못한 경우 */
     USER_CARD_NOT_FOUND(
         HttpStatus.NOT_FOUND,
