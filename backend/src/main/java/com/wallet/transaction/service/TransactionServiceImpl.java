@@ -96,7 +96,7 @@ public class TransactionServiceImpl implements TransactionService {
                 transactionMapper.selectTransactionDetail(userId, expenseId);
 
         if (detail == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "?뚮퉬?댁뿭??李얠쓣 ???놁뒿?덈떎.");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "소비내역을 찾을 수 없습니다.");
         }
 
         return detail;
@@ -111,9 +111,9 @@ public class TransactionServiceImpl implements TransactionService {
     public TransactionSyncResponse syncTransactions(Long userId) {
 
         /*
-         * 吏湲덉? ?ㅼ젣 留덉씠?곗씠??API媛 ?놁쑝誘濡??꾩떆 援ы쁽?낅땲??
-         * ?섏쨷???ㅼ젣/Mock 嫄곕옒 ?섏쭛 濡쒖쭅???앷린硫??ш린?먯꽌
-         * TBL_EXPENSE INSERT, 痍⑥냼 諛섏쁺 UPDATE, ?쒗깮 ?붿쭊 ?몄텧???곌껐?섎㈃ ?⑸땲??
+         * 현재 실제 마이데이터 API가 없으므로 임시 구현이다.
+         * 추후 실제 또는 Mock 거래 수집 로직이 생기면 여기에서
+         * expense INSERT, 취소 반영 UPDATE, 혜택 엔진 호출을 연결한다.
          */
 
         String now = LocalDateTime.now()

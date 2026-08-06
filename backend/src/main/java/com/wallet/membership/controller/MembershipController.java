@@ -36,7 +36,7 @@ public class MembershipController {
         Map<String, Object> response = new LinkedHashMap<>();
         response.put("success", true);
         response.put("code", "SUCCESS");
-        response.put("message", "??硫ㅻ쾭??紐⑸줉 議고쉶???깃났?덉뒿?덈떎.");
+        response.put("message", "내 멤버십 목록 조회에 성공했습니다.");
         response.put("data", data);
 
         return response;
@@ -51,7 +51,7 @@ public class MembershipController {
         Map<String, Object> response = new LinkedHashMap<>();
         response.put("success", true);
         response.put("code", "SUCCESS");
-        response.put("message", "硫ㅻ쾭???깅줉 媛??紐⑸줉 議고쉶???깃났?덉뒿?덈떎.");
+        response.put("message", "멤버십 등록 가능 목록 조회에 성공했습니다.");
         response.put("data", data);
 
         return response;
@@ -70,7 +70,7 @@ public class MembershipController {
         Map<String, Object> response = new LinkedHashMap<>();
         response.put("success", true);
         response.put("code", "SUCCESS");
-        response.put("message", "硫ㅻ쾭???깅줉???깃났?덉뒿?덈떎.");
+        response.put("message", "멤버십 등록에 성공했습니다.");
         response.put("data", data);
 
         return response;
@@ -89,7 +89,7 @@ public class MembershipController {
         Map<String, Object> response = new LinkedHashMap<>();
         response.put("success", true);
         response.put("code", "SUCCESS");
-        response.put("message", "硫ㅻ쾭???깅줉 ?댁젣???깃났?덉뒿?덈떎.");
+        response.put("message", "멤버십 등록 해제에 성공했습니다.");
         response.put("data", data);
 
         return response;
@@ -108,7 +108,7 @@ public class MembershipController {
         Map<String, Object> response = new LinkedHashMap<>();
         response.put("success", true);
         response.put("code", "SUCCESS");
-        response.put("message", "硫ㅻ쾭???곸꽭 議고쉶???깃났?덉뒿?덈떎.");
+        response.put("message", "멤버십 상세 조회에 성공했습니다.");
         response.put("data", data);
 
         return response;

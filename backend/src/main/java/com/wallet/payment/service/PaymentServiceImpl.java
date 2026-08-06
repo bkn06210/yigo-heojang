@@ -30,12 +30,12 @@ public class PaymentServiceImpl implements PaymentService {
 
         int cardCount = paymentMapper.countUserCardByUserId(userId, request.getUserCardId());
         if (cardCount == 0) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "蹂몄씤 移대뱶媛 ?꾨떃?덈떎.");
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "본인 카드가 아닙니다.");
         }
 
         int categoryCount = paymentMapper.countCategoryById(request.getCategoryId());
         if (categoryCount == 0) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "移댄뀒怨좊━瑜?李얠쓣 ???놁뒿?덈떎.");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "카테고리를 찾을 수 없습니다.");
         }
 
         PaymentCommand command = new PaymentCommand();
@@ -52,11 +52,11 @@ public class PaymentServiceImpl implements PaymentService {
         command.setInterestFreeYn(defaultValue(request.getInterestFreeYn(), "N"));
 
         /*
-         * 1. 寃곗젣 ?깃났 ???뚮퉬?댁뿭 ?앹꽦
-         * 2. 寃곗젣 ?대젰 ???
-         * 3. ?ъ씤???꾩떆 ?곷┰
+         * 1. 결제 성공 시 소비내역 생성
+         * 2. 결제 이력 저장
+         * 3. 포인트 임시 적립
          *
-         * ?쒗깮 ?붿쭊 ?곕룞 ?꾩씠誘濡?appliedBenefitId, discountAmount???꾩쭅 0/null 泥섎━.
+         * 혜택 엔진 연동 전이므로 appliedBenefitId와 discountAmount는 0/null로 처리한다.
          */
         paymentMapper.insertExpense(command);
         paymentMapper.insertPayment(command);
@@ -69,7 +69,7 @@ public class PaymentServiceImpl implements PaymentService {
         if (wallet != null && savedPoint > 0) {
             paymentMapper.updatePointWallet(wallet.getPointWalletId(), savedPoint);
 
-            String content = command.getMerchantName() + " 寃곗젣濡??ъ씤???곷┰";
+            String content = command.getMerchantName() + " 결제로 포인트 적립";
             paymentMapper.insertPointHistory(
                     userId,
                     wallet.getPointWalletId(),
@@ -114,7 +114,7 @@ public class PaymentServiceImpl implements PaymentService {
                 paymentMapper.selectPaymentResult(userId, paymentId);
 
         if (result == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "寃곗젣 ?뺣낫瑜?李얠쓣 ???놁뒿?덈떎.");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "결제 정보를 찾을 수 없습니다.");
         }
 
         return result;
@@ -122,35 +122,35 @@ public class PaymentServiceImpl implements PaymentService {
 
     private void validateRequest(PaymentRequest request) {
         if (request == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "?붿껌 蹂몃Ц???꾩슂?⑸땲??");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "요청 본문이 필요합니다.");
         }
 
         if (request.getUserCardId() == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "userCardId???꾩닔?낅땲??");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "userCardId는 필수입니다.");
         }
 
         if (request.getCategoryId() == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "categoryId???꾩닔?낅땲??");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "categoryId는 필수입니다.");
         }
 
         if (request.getPaymentAmount() == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "paymentAmount???꾩닔?낅땲??");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "paymentAmount는 필수입니다.");
         }
 
         if (request.getPaymentAmount() < 1) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "寃곗젣湲덉븸? 1???댁긽?댁뼱???⑸땲??");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "결제금액은 1원 이상이어야 합니다.");
         }
 
         if (request.getMerchantName() == null || request.getMerchantName().trim().isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "merchantName? ?꾩닔?낅땲??");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "merchantName은 필수입니다.");
         }
     }
 
     private Long calculateSavedPoint(Long paymentAmount) {
         /*
-         * ?꾩떆 ?뺤콉:
-         * ?쒗깮/?ъ씤???붿쭊 ?곌껐 ?꾧퉴吏 寃곗젣湲덉븸??1%瑜??곷┰ 泥섎━.
-         * ?? 10,000??寃곗젣 ??100?ъ씤??
+         * 임시 정책:
+         * 혜택/포인트 엔진 연결 전까지 결제금액의 1%를 적립 처리한다.
+         * 예: 10,000원 결제 시 100포인트
          */
         return paymentAmount / 100;
     }

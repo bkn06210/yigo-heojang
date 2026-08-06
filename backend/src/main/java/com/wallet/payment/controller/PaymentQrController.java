@@ -32,14 +32,14 @@ public class PaymentQrController {
             Object data = paymentQrService.createPaymentQr(memberId, request);
 
             return success(
-                    "寃곗젣 QR ?앹꽦???깃났?덉뒿?덈떎.",
+                    "결제 QR 생성에 성공했습니다.",
                     data
             );
         } catch (IllegalArgumentException e) {
             return fail("BAD_REQUEST", e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
-            return fail("ERROR", "寃곗젣 QR ?앹꽦 以??ㅻ쪟媛 諛쒖깮?덉뒿?덈떎.");
+            return fail("ERROR", "결제 QR 생성 중 오류가 발생했습니다.");
         }
     }
 
@@ -59,12 +59,12 @@ public class PaymentQrController {
                     .format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
             data.put("paymentId", qr.getPaymentId());
 
-            return success("寃곗젣 QR 議고쉶???깃났?덉뒿?덈떎.", data);
+            return success("결제 QR 조회에 성공했습니다.", data);
         } catch (IllegalArgumentException e) {
             return fail("BAD_REQUEST", e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
-            return fail("ERROR", "寃곗젣 QR 議고쉶 以??ㅻ쪟媛 諛쒖깮?덉뒿?덈떎.");
+            return fail("ERROR", "결제 QR 조회 중 오류가 발생했습니다.");
         }
     }
 
@@ -77,14 +77,14 @@ public class PaymentQrController {
             Object data = paymentQrService.payWithQr(qrToken, request);
 
             return success(
-                    "QR 寃곗젣???깃났?덉뒿?덈떎.",
+                    "QR 결제에 성공했습니다.",
                     data
             );
         } catch (IllegalArgumentException e) {
             return fail("BAD_REQUEST", e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
-            return fail("ERROR", "QR 寃곗젣 以??ㅻ쪟媛 諛쒖깮?덉뒿?덈떎.");
+            return fail("ERROR", "QR 결제 중 오류가 발생했습니다.");
         }
     }
 

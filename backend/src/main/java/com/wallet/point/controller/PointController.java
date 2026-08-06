@@ -26,7 +26,7 @@ public class PointController {
     @GetMapping("/api/points")
     public Map<String, Object> getPointList(HttpServletRequest request) {
 
-        // TODO: 濡쒓렇??遺숈쑝硫?Access Token?먯꽌 memberId 爰쇰궡湲?
+        // JWT 인증 필터가 요청 속성에 설정한 회원 ID를 사용한다.
         Long memberId = (Long) request.getAttribute(AUTHENTICATED_MEMBER_ID);
 
         PointListResponse data = pointService.getPointList(memberId);
@@ -34,7 +34,7 @@ public class PointController {
         Map<String, Object> response = new LinkedHashMap<>();
         response.put("success", true);
         response.put("code", "SUCCESS");
-        response.put("message", "?ъ씤??紐⑸줉 議고쉶???깃났?덉뒿?덈떎.");
+        response.put("message", "포인트 목록 조회에 성공했습니다.");
         response.put("data", data);
 
         return response;
@@ -47,7 +47,7 @@ public class PointController {
             HttpServletRequest request,
             @RequestParam(value = "yearMonth", required = false) String yearMonth
     ) {
-        // TODO: 濡쒓렇??遺숈쑝硫?Access Token?먯꽌 memberId 爰쇰궡湲?
+        // JWT 인증 필터가 요청 속성에 설정한 회원 ID를 사용한다.
         Long memberId = (Long) request.getAttribute(AUTHENTICATED_MEMBER_ID);
 
         PointHistoryListResponse data =
@@ -56,7 +56,7 @@ public class PointController {
         Map<String, Object> response = new LinkedHashMap<>();
         response.put("success", true);
         response.put("code", "SUCCESS");
-        response.put("message", "?ъ씤???댁뿭 議고쉶???깃났?덉뒿?덈떎.");
+        response.put("message", "포인트 내역 조회에 성공했습니다.");
         response.put("data", data);
 
         return response;
@@ -73,7 +73,7 @@ public class PointController {
         Map<String, Object> response = new LinkedHashMap<>();
         response.put("success", true);
         response.put("code", "SUCCESS");
-        response.put("message", "?ъ씤???ъ슜泥?議고쉶???깃났?덉뒿?덈떎.");
+        response.put("message", "포인트 사용처 조회에 성공했습니다.");
         response.put("data", data);
 
         return response;

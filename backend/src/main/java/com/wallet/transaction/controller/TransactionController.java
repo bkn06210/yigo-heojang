@@ -64,7 +64,7 @@ public class TransactionController {
         Map<String, Object> response = new LinkedHashMap<>();
         response.put("success", true);
         response.put("code", "SUCCESS");
-        response.put("message", "?뚮퉬?댁뿭 紐⑸줉 議고쉶???깃났?덉뒿?덈떎.");
+        response.put("message", "소비내역 목록 조회에 성공했습니다.");
         response.put("data", data);
 
         return response;
@@ -83,7 +83,7 @@ public class TransactionController {
         Map<String, Object> response = new LinkedHashMap<>();
         response.put("success", true);
         response.put("code", "SUCCESS");
-        response.put("message", "?뚮퉬?댁뿭 ?곸꽭 議고쉶???깃났?덉뒿?덈떎.");
+        response.put("message", "소비내역 상세 조회에 성공했습니다.");
         response.put("data", data);
 
         return response;
@@ -99,7 +99,7 @@ public class TransactionController {
         Map<String, Object> response = new LinkedHashMap<>();
         response.put("success", true);
         response.put("code", "SUCCESS");
-        response.put("message", "嫄곕옒 ?숆린?붽? ?꾨즺?섏뿀?듬땲??");
+        response.put("message", "거래 동기화가 완료되었습니다.");
         response.put("data", data);
 
         return response;
@@ -113,7 +113,7 @@ public class TransactionController {
         Map<String, Object> response = new LinkedHashMap<>();
         response.put("success", true);
         response.put("code", "SUCCESS");
-        response.put("message", "?뚮퉬移댄뀒怨좊━ 紐⑸줉 議고쉶???깃났?덉뒿?덈떎.");
+        response.put("message", "소비 카테고리 목록 조회에 성공했습니다.");
         response.put("data", data);
 
         return response;
@@ -126,7 +126,7 @@ public class TransactionController {
                 transactionService.getTransactionsByMemberId(memberId);
 
         return ApiResponse.success(
-                "?ъ슜???뚮퉬?댁뿭 紐⑸줉 議고쉶???깃났?덉뒿?덈떎.",
+                "사용자 소비내역 목록 조회에 성공했습니다.",
                 transactions
         );
     }

@@ -48,7 +48,7 @@ public class MembershipServiceImpl implements MembershipService {
             MembershipRegisterRequest request
     ) {
         if (request == null || request.getPointProviderId() == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "pointProviderId媛 ?꾩슂?⑸땲??");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "pointProviderId가 필요합니다.");
         }
 
         Long pointProviderId = request.getPointProviderId();
@@ -57,22 +57,22 @@ public class MembershipServiceImpl implements MembershipService {
                 membershipMapper.selectProviderForRegister(pointProviderId);
 
         if (provider == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "議댁옱?섏? ?딅뒗 ?ъ씤?몄궗?낅땲??");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "존재하지 않는 포인트사입니다.");
         }
 
         if (!"MEMBERSHIP".equals(provider.getProviderType())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "硫ㅻ쾭???ъ씤?몄궗媛 ?꾨떃?덈떎.");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "멤버십 포인트사가 아닙니다.");
         }
 
         if (!"Y".equals(provider.getUseYn())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "?ъ슜 媛?ν븳 ?ъ씤?몄궗媛 ?꾨떃?덈떎.");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "사용 가능한 포인트사가 아닙니다.");
         }
 
         MembershipRegisterResponse alreadyRegistered =
                 membershipMapper.selectRegisteredMembership(memberId, pointProviderId);
 
         if (alreadyRegistered != null) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "?대? ?깅줉??硫ㅻ쾭??엯?덈떎.");
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "이미 등록된 멤버십입니다.");
         }
 
         MembershipRegisterCommand command = new MembershipRegisterCommand();
@@ -108,11 +108,11 @@ public class MembershipServiceImpl implements MembershipService {
                 membershipMapper.selectMembershipStatusById(memberId, membershipRegisterId);
 
         if (membership == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "硫ㅻ쾭???깅줉 ?뺣낫瑜?李얠쓣 ???놁뒿?덈떎.");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "멤버십 등록 정보를 찾을 수 없습니다.");
         }
 
         if ("CANCELED".equals(membership.getRegisterStatus())) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "?대? ?댁젣??硫ㅻ쾭??엯?덈떎.");
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "이미 해지된 멤버십입니다.");
         }
 
         membershipMapper.cancelMembership(memberId, membershipRegisterId);
@@ -129,7 +129,7 @@ public class MembershipServiceImpl implements MembershipService {
                 membershipMapper.selectMembershipDetail(memberId, membershipRegisterId);
 
         if (detail == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "硫ㅻ쾭???곸꽭 ?뺣낫瑜?李얠쓣 ???놁뒿?덈떎.");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "멤버십 상세 정보를 찾을 수 없습니다.");
         }
 
         List<MembershipUsagePlaceResponse> usagePlaces =

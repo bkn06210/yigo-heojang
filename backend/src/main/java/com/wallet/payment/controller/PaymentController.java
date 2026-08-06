@@ -39,7 +39,7 @@ public class PaymentController {
         Map<String, Object> response = new LinkedHashMap<>();
         response.put("success", true);
         response.put("code", "SUCCESS");
-        response.put("message", "寃곗젣媛 ?꾨즺?섏뿀?듬땲??");
+        response.put("message", "결제가 완료되었습니다.");
         response.put("data", data);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
@@ -58,7 +58,7 @@ public class PaymentController {
         Map<String, Object> response = new LinkedHashMap<>();
         response.put("success", true);
         response.put("code", "SUCCESS");
-        response.put("message", "寃곗젣 寃곌낵 議고쉶???깃났?덉뒿?덈떎.");
+        response.put("message", "결제 결과 조회에 성공했습니다.");
         response.put("data", data);
 
         return response;

@@ -29,7 +29,7 @@ public class PaymentQrService {
             PaymentQrCreateRequest request
     ) {
         if (request.getUserCardId() == null) {
-            throw new IllegalArgumentException("userCardId???꾩닔?낅땲??");
+            throw new IllegalArgumentException("userCardId는 필수입니다.");
         }
 
         int cardCount = paymentQrMapper.countActiveUserCard(
@@ -38,7 +38,7 @@ public class PaymentQrService {
         );
 
         if (cardCount == 0) {
-            throw new IllegalArgumentException("?ъ슜 媛?ν븳 移대뱶媛 ?꾨떃?덈떎.");
+            throw new IllegalArgumentException("사용 가능한 카드가 아닙니다.");
         }
 
         String qrToken = "QR_" + UUID.randomUUID()
@@ -71,7 +71,7 @@ public class PaymentQrService {
         PaymentQrRecord qr = paymentQrMapper.selectPaymentQrByToken(qrToken);
 
         if (qr == null) {
-            throw new IllegalArgumentException("議댁옱?섏? ?딅뒗 QR?낅땲??");
+            throw new IllegalArgumentException("존재하지 않는 QR입니다.");
         }
 
         if ("READY".equals(qr.getStatus()) && isExpired(qr)) {
@@ -97,7 +97,7 @@ public class PaymentQrService {
                         null,
                         null,
                         "FAILED",
-                        "議댁옱?섏? ?딅뒗 QR?낅땲??"
+                        "존재하지 않는 QR입니다."
                 );
             }
 
@@ -106,7 +106,7 @@ public class PaymentQrService {
                         null,
                         null,
                         "FAILED",
-                        "?대? ?ъ슜?섏뿀嫄곕굹 ?ъ슜?????녿뒗 QR?낅땲??"
+                        "이미 사용했거나 사용할 수 없는 QR입니다."
                 );
             }
 
@@ -117,7 +117,7 @@ public class PaymentQrService {
                         null,
                         null,
                         "FAILED",
-                        "留뚮즺??QR?낅땲??"
+                        "만료된 QR입니다."
                 );
             }
 
@@ -138,7 +138,7 @@ public class PaymentQrService {
                     payParam.getPaymentId(),
                     payParam.getExpenseId(),
                     "SUCCESS",
-                    "寃곗젣媛 ?꾨즺?섏뿀?듬땲??"
+                    "결제가 완료되었습니다."
             );
         } catch (IllegalArgumentException e) {
             paymentQrMapper.markQrFailed(qrToken, e.getMessage());
@@ -154,15 +154,15 @@ public class PaymentQrService {
 
     private void validatePayRequest(PaymentQrPayRequest request) {
         if (request.getMerchantName() == null || request.getMerchantName().trim().isEmpty()) {
-            throw new IllegalArgumentException("merchantName? ?꾩닔?낅땲??");
+            throw new IllegalArgumentException("merchantName은 필수입니다.");
         }
 
         if (request.getCategoryId() == null) {
-            throw new IllegalArgumentException("categoryId???꾩닔?낅땲??");
+            throw new IllegalArgumentException("categoryId는 필수입니다.");
         }
 
         if (request.getPaymentAmount() == null || request.getPaymentAmount() <= 0) {
-            throw new IllegalArgumentException("paymentAmount??0蹂대떎 而ㅼ빞 ?⑸땲??");
+            throw new IllegalArgumentException("paymentAmount는 0보다 커야 합니다.");
         }
     }
 
