@@ -132,6 +132,40 @@
             uc.user_card_id DESC
     </select>
 
+    <!--
+   로그인 회원의 활성 대표 카드 목록만 조회한다.
+
+   전체 보유 카드 목록 조회와 같은 ResultMap을 사용한다.
+   화면에 필요한 카드 기본 정보 구조가 동일하고,
+   차이는 is_representative = 1 조건이 추가되는 것뿐이기 때문이다.
+
+   정렬 기준은 기존 보유 카드 목록 조회와 맞춘다.
+   별도의 대표 카드 순서 컬럼을 두지 않기로 했으므로,
+   현재는 등록일시와 보유 카드 ID 기준으로 정렬한다.
+   -->
+    <select id="findActiveRepresentativeUserCardsByMemberId"
+            resultMap="userCardListResultMap">
+        SELECT
+            uc.user_card_id AS userCardId,
+            uc.card_id AS cardId,
+            c.card_name AS cardName,
+            cc.company_name AS issuerName,
+            c.card_type AS cardType,
+            uc.masked_card_number AS maskedCardNumber,
+            c.image_url AS imageUrl,
+            uc.is_representative AS representative,
+            uc.registered_at AS registeredAt
+        FROM user_card uc
+        INNER JOIN card c ON c.card_id = uc.card_id
+        INNER JOIN card_company cc ON cc.card_company_id = c.card_company_id
+        WHERE uc.member_id = #{memberId}
+          AND uc.card_status = 'ACTIVE'
+          AND uc.is_representative = 1
+        ORDER BY
+            uc.registered_at DESC,
+            uc.user_card_id DESC
+    </select>
+
     <select id="findActiveDetailByIdAndMemberId"
             resultType="com.wallet.card.domain.UserCardDetailResult">
         SELECT
