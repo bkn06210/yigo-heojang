@@ -283,7 +283,9 @@ def test_결제할_곳을_모르면_지어내지_않고_되묻는다(fake_engine
     body = _ask("5000원 결제할건데 어느 카드가 좋아?")
 
     assert body["intent"] == IntentName.RECOMMEND_CARD
-    assert body["followUpQuestion"] is not None
+    # 말한 적 없는 것을 "못 찾았다"고 하면 안 된다.
+    assert body["followUpQuestion"] == "어디에서 결제하실 예정인가요?"
+    assert "None" not in body["followUpQuestion"]
 
 
 @needs_db

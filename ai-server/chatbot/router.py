@@ -213,6 +213,9 @@ def _recommend(intent: Intent, conn, engine: EngineClient) -> RouteResult:
     place, kind = _resolve_place(intent, conn)
     if not place.found:
         text = intent.merchant_text or intent.category_text
+        if not text:
+            # 장소를 아예 말하지 않은 경우다. 못 찾았다고 하면 말한 적 없는 것을 되묻는 꼴이 된다.
+            return RouteResult(follow_up="어디에서 결제하실 예정인가요?")
         return RouteResult(follow_up=_ask_again(kind, text, place))
 
     ids = {"merchant_id" if kind == "가맹점" else "category_id": place.match.target_id}

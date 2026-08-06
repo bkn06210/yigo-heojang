@@ -2408,6 +2408,81 @@ GET /api/benefits/report
 
 `INPUT_INVALID(400)` — `yearMonth` 형식 오류
 
+### 31-C. 챗봇 질의
+
+```
+POST /api/chat
+```
+
+• 사용 목적: 카드·혜택에 대한 자연어 질문에 답한다. 프론트는 이 엔드포인트만 호출하고, 챗봇 서버(Python)는 외부에 노출되지 않는다.
+• 주의사항:
+◦ **응답이 수 초 걸린다.** 답변 생성에 LLM 호출이 두 번(질문 분류 + 문장 작성) 들어간다. 다른 API보다 느린 것이 정상이므로 프론트는 로딩 상태를 둔다.
+◦ **회원 id는 요청 본문으로 받지 않는다.** 인증 정보에서 꺼낸다.
+◦ **`answer`의 숫자는 계산 엔진이 낸 값이다.** 챗봇은 그 값을 문장으로 옮길 뿐이고 금액을 계산하지 않는다. 화면 표기는 "AI 추천/AI 브리핑" 대신 "추천 결과/추천 근거".
+◦ **대상을 특정하지 못하면 답 대신 되묻는다.** 이때 `followUpQuestion`이 채워지고 `pendingContext`가 함께 내려온다. **프론트는 그 값을 다음 요청에 그대로 실어 보낸다** — 그래야 "스벅에서 어느 카드가 좋아?" → "어디에서 결제하실 예정인가요?" → "스벅" 같은 대화가 이어진다. 내용을 해석하거나 수정하지 않는다.
+◦ 서버가 대화 상태를 보관하지 않는 것은 의도다. 보관하면 서버 재시작 때 대화가 끊기고 서버가 여러 대가 되면 요청마다 다른 곳으로 가 맥락을 잃는다.
+◦ `intent`는 프론트가 답변 표시 방식을 나눌 때 쓴다: `CARD_STATUS`(실적·한도) / `RECOMMEND_CARD`(카드 추천) / `BENEFIT_SUM`(받은 혜택) / `TERM_QA`(약관) / `UNKNOWN`.
+◦ `sources`는 답변의 숫자가 어디서 나왔는지다. 근거로 화면에 표시할 수 있다.
+
+**화면** 챗봇 · **권한** USER · **담당** 현준 고 · **상태 코드** 200 OK
+
+**Request**
+
+```json
+{
+  "question": "스벅에서 어느 카드가 좋아?",
+  "pendingContext": null
+}
+```
+
+`pendingContext`는 직전 응답이 내려준 값을 그대로 넣는다. 첫 질문이면 생략하거나 `null`.
+
+**Response**
+
+```json
+{
+  "success": true,
+  "code": "SUCCESS",
+  "data": {
+    "answer": "스타벅스에서는 신한카드 핏(Fit)이 가장 좋은 선택입니다. 커피 5회마다 2,000원 적립이 가능하며, 건당 5,000원 이상 결제해야 합니다. 나머지 카드들은 전월 실적 미달로 혜택이 적용되지 않습니다.",
+    "intent": "RECOMMEND_CARD",
+    "sources": ["가맹점별 카드 혜택 조회"],
+    "followUpQuestion": null,
+    "pendingContext": null
+  },
+  "message": null
+}
+```
+
+되묻는 경우:
+
+```json
+{
+  "success": true,
+  "code": "SUCCESS",
+  "data": {
+    "answer": "어디에서 결제하실 예정인가요?",
+    "intent": "RECOMMEND_CARD",
+    "sources": [],
+    "followUpQuestion": "어디에서 결제하실 예정인가요?",
+    "pendingContext": {
+      "intent": "RECOMMEND_CARD",
+      "merchantText": null,
+      "categoryText": null,
+      "cardText": null,
+      "periodText": null,
+      "amount": 5000
+    }
+  },
+  "message": null
+}
+```
+
+**고유 에러**
+
+`INPUT_INVALID(400)` — 빈 질문·500자 초과
+`CHATBOT_UNAVAILABLE(503)` — 챗봇 서버 연결 실패·응답 지연
+
 ### 32. 결제 취소 상태 갱신
 
 ```
