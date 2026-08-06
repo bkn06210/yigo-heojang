@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Component;
 
 import com.wallet.card.domain.UserCard;
+import com.wallet.card.domain.UserCardDetailResult;
 import com.wallet.card.domain.UserCardListResult;
 import com.wallet.card.domain.UserCardRegistrationResult;
 
@@ -70,6 +71,18 @@ public interface UserCardMapper {
     List<UserCardListResult> findActiveUserCardsByMemberId(
         @Param("memberId") Long memberId
     );
+
+    /**
+     * 로그인한 회원이 보유한 활성 카드의 상세 기본 정보를 조회한다.
+     * <p>
+     * userCardId뿐 아니라 memberId도 함께 조건으로 사용하여
+     * 다른 회원의 보유 카드에 접근할 수 없도록 제한한다.
+     */
+    UserCardDetailResult findActiveDetailByIdAndMemberId(
+        @Param("memberId") Long memberId,
+        @Param("userCardId") Long userCardId
+    );
+
 
     /**
      * 로그인 회원이 소유한 활성 보유 카드를 삭제 상태로 변경한다.

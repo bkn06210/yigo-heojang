@@ -17,10 +17,12 @@ import org.springframework.dao.DuplicateKeyException;
 
 import com.wallet.card.domain.Card;
 import com.wallet.card.domain.CardBin;
-import com.wallet.card.domain.UserCardStatus;
 import com.wallet.card.domain.UserCard;
+import com.wallet.card.domain.UserCardDetailResult;
 import com.wallet.card.domain.UserCardListResult;
 import com.wallet.card.domain.UserCardRegistrationResult;
+import com.wallet.card.domain.UserCardStatus;
+import com.wallet.card.dto.UserCardDetailResponse;
 import com.wallet.card.dto.UserCardListItemResponse;
 import com.wallet.card.dto.UserCardListResponse;
 import com.wallet.card.dto.UserCardRegisterRequest;
@@ -694,6 +696,77 @@ class UserCardServiceTest {
         // then
         verify(userCardMapper)
             .findActiveUserCardsByMemberId(authenticatedMemberId);
+    }
+
+    @Test
+    @DisplayName("보유 카드 상세 조회에 성공한다")
+    void getUserCardDetail_success() {
+        // given
+        Long memberId = 1L;
+        Long userCardId = 15L;
+
+        LocalDateTime registeredAt = LocalDateTime.of(2026, 8, 5, 14, 30);
+
+        UserCardDetailResult detailResult = new UserCardDetailResult(
+            userCardId,
+            10L,
+            "신한카드 Mr.Life",
+            "신한카드",
+            "CREDIT",
+            "****-****-****-1234",
+            "https://example.com/cards/mr-life.png",
+            false,
+            registeredAt
+        );
+
+        when(userCardMapper.findActiveDetailByIdAndMemberId(memberId, userCardId))
+            .thenReturn(detailResult);
+
+        // when
+        UserCardDetailResponse response =
+            userCardService.getUserCardDetail(memberId, userCardId);
+
+        // then
+        assertThat(response.userCardId()).isEqualTo(userCardId);
+        assertThat(response.cardId()).isEqualTo(10L);
+        assertThat(response.cardName()).isEqualTo("신한카드 Mr.Life");
+        assertThat(response.issuerName()).isEqualTo("신한카드");
+        assertThat(response.cardType()).isEqualTo("CREDIT");
+        assertThat(response.maskedCardNumber()).isEqualTo("****-****-****-1234");
+        assertThat(response.imageUrl()).isEqualTo("https://example.com/cards/mr-life.png");
+        assertThat(response.representative()).isFalse();
+        assertThat(response.registeredAt()).isEqualTo(registeredAt);
+
+        verify(userCardMapper).findActiveDetailByIdAndMemberId(memberId, userCardId);
+    }
+
+    @Test
+    @DisplayName("보유 카드 상세 조회 시 조회 대상이 없으면 예외가 발생한다")
+    void getUserCardDetail_notFound() {
+        // given
+        Long memberId = 1L;
+        Long userCardId = 999L;
+
+        /*
+         * Mapper에서 null이 반환되는 경우는 다음을 모두 포함한다.
+         * - 존재하지 않는 보유 카드
+         * - 다른 회원의 보유 카드
+         * - DELETED 상태의 보유 카드
+         */
+        when(userCardMapper.findActiveDetailByIdAndMemberId(memberId, userCardId))
+            .thenReturn(null);
+
+        // when
+        BusinessException exception = assertThrows(
+            BusinessException.class,
+            () -> userCardService.getUserCardDetail(memberId, userCardId)
+        );
+
+        // then
+        assertThat(exception.getErrorCode())
+            .isEqualTo(ErrorCode.USER_CARD_NOT_FOUND);
+
+        verify(userCardMapper).findActiveDetailByIdAndMemberId(memberId, userCardId);
     }
 
     @Test

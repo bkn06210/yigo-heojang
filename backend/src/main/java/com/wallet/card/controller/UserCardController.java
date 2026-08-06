@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.wallet.card.dto.UserCardDetailResponse;
 import com.wallet.card.dto.UserCardListResponse;
 import com.wallet.card.dto.UserCardRegisterRequest;
 import com.wallet.card.dto.UserCardRegisterResponse;
@@ -74,6 +75,25 @@ public class UserCardController {
 
         return ResponseEntity.ok(
             ApiResponse.success("보유 카드 목록 조회에 성공했습니다.", response));
+    }
+
+    /**
+     * 로그인한 회원이 보유한 특정 카드의 상세 기본 정보를 조회한다.
+     * <p>
+     * memberId는 클라이언트가 직접 보내는 값이 아니라,
+     * JWT 인증 필터가 검증 후 request attribute에 저장한 값을 사용한다.
+     * 따라서 사용자는 자신의 보유 카드만 조회할 수 있다.
+     */
+    @GetMapping("/{userCardId}")
+    public ResponseEntity<ApiResponse<UserCardDetailResponse>> getUserCardDetail(
+        @RequestAttribute(RequestAttributeNames.AUTHENTICATED_MEMBER_ID) Long memberId,
+        @PathVariable Long userCardId
+    ) {
+        UserCardDetailResponse response =
+            userCardService.getUserCardDetail(memberId, userCardId);
+
+        return ResponseEntity.ok(
+            ApiResponse.success("보유 카드 상세 조회에 성공했습니다.", response));
     }
 
     /**
