@@ -62,7 +62,8 @@ class FakeEngine:
             ]
         }
 
-    def recommend(self, merchant_id, expected_amount):
+    def recommend(self, expected_amount, merchant_id=None, category_id=None):
+        self.last_call = {"merchantId": merchant_id, "categoryId": category_id}
         return {
             "recommendations": [
                 {
@@ -158,11 +159,22 @@ def test_금액을_안_말하면_계산하지_않고_되묻는다(fake_engine):
 
 
 @needs_db
-def test_모르는_가맹점은_지어내지_않고_되묻는다(fake_engine):
-    body = _ask("메가커피에서 5000원 결제할건데 어느 카드가 좋아?")
+def test_결제할_곳을_모르면_지어내지_않고_되묻는다(fake_engine):
+    body = _ask("5000원 결제할건데 어느 카드가 좋아?")
 
-    # stub 은 등록된 표현만 뽑으므로 가맹점 표현 자체가 비어 되묻는다.
+    assert body["intent"] == IntentName.RECOMMEND_CARD
     assert body["followUpQuestion"] is not None
+
+
+@needs_db
+def test_업종만_말해도_추천한다(fake_engine):
+    # 브랜드 없이 업종만 말하는 경우가 흔하다("커피 마시려는데"). 엔진은 가맹점 없이
+    # 업종만으로도 계산할 수 있으므로 되묻지 않는다.
+    body = _ask("커피 마시려는데 5000원으로 어느 카드가 좋아?")
+
+    assert body["intent"] == IntentName.RECOMMEND_CARD
+    assert "카페" in body["answer"]
+    assert body["followUpQuestion"] is None
 
 
 @needs_db

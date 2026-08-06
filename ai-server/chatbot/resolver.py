@@ -116,8 +116,31 @@ _CARD_PARTIAL = f"""
 """
 
 
+# 업종은 팀이 합의한 고정 목록(대분류 7 · 중분류 33)이라 별칭 표가 필요 없다.
+# 목록이 프롬프트에 들어가 있어 분류 단계에서 이미 표준 이름으로 정해져 온다.
+# 가맹점·카드와 다른 취급을 하는 근거가 이것이다 — 그쪽은 수가 계속 늘어 목록을 줄 수 없다.
+_CATEGORY_BY_NAME = """
+    SELECT c.category_id AS target_id, c.category_name AS name, p.category_name AS detail
+    FROM category c
+    LEFT JOIN category p ON p.category_id = c.parent_category_id
+    WHERE c.category_name = %s
+"""
+
+
 def resolve_merchant(conn, text: Optional[str]) -> Resolution:
     return _resolve(conn, text, _MERCHANT_BY_NAME, _MERCHANT_BY_ALIAS, _MERCHANT_PARTIAL)
+
+
+def resolve_category(conn, text: Optional[str]) -> Resolution:
+    """업종 이름 → category_id. 표준 이름이 아니면 못 찾은 것으로 둔다."""
+    keyword = (text or "").strip()
+    if not keyword:
+        return Resolution()
+
+    rows = _query(conn, _CATEGORY_BY_NAME, (keyword,))
+    if len(rows) == 1:
+        return Resolution(match=_to_match(rows[0], MATCH_NAME))
+    return Resolution(candidates=_names(rows))
 
 
 def resolve_card(conn, text: Optional[str]) -> Resolution:

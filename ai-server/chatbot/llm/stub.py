@@ -11,7 +11,7 @@ API 를 한 번도 부르지 않고 챗봇 전체 흐름을 돌리기 위한 것
 """
 
 import re
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, Optional, Tuple
 
 from .base import Answer, Intent, IntentName, LlmClient
 
@@ -29,7 +29,19 @@ _INTENT_RULES: Tuple[Tuple[str, str], ...] = (
 # LLM 이라면 문맥으로 뽑아낼 표현들. 가짜라서 목록으로 대신한다.
 # 여기 없는 말은 UNKNOWN 이 되고, 서버가 되묻는다.
 _MERCHANT_WORDS: Tuple[str, ...] = ("스벅", "스타벅스", "GS25", "CU", "이마트", "쿠팡", "배민")
-_CATEGORY_WORDS: Tuple[str, ...] = ("편의점", "카페", "커피", "마트", "주유", "대중교통", "배달")
+
+# 업종은 표준 이름으로 바꿔서 넘긴다. 실제 모델도 프롬프트의 목록에서 골라 오므로
+# 뒤쪽(해석·조회)이 두 경로에서 같은 값을 받는다.
+_CATEGORY_WORDS: Dict[str, str] = {
+    "편의점": "편의점",
+    "카페": "카페",
+    "커피": "카페",
+    "마트": "대형마트",
+    "주유": "주유",
+    "대중교통": "대중교통",
+    "지하철": "대중교통",
+    "배달": "배달앱",
+}
 _PERIOD_WORDS: Tuple[str, ...] = ("이번 달", "이번달", "지난달", "저번 달", "이번 주", "오늘", "어제")
 
 _AMOUNT_PATTERN = re.compile(r"(\d[\d,]*)\s*(만원|원)")
@@ -43,7 +55,7 @@ class StubLlmClient(LlmClient):
         return Intent(
             name=name,
             merchant_text=_first_hit(question, _MERCHANT_WORDS),
-            category_text=_first_hit(question, _CATEGORY_WORDS),
+            category_text=_first_category(question),
             period_text=_first_hit(question, _PERIOD_WORDS),
             amount=_parse_amount(question),
             raw={"matchedBy": "stub-rule"},
@@ -65,6 +77,13 @@ def _first_hit(question: str, words: Tuple[str, ...]) -> Optional[str]:
     for word in words:
         if word in question:
             return word
+    return None
+
+
+def _first_category(question: str) -> Optional[str]:
+    for word, standard_name in _CATEGORY_WORDS.items():
+        if word in question:
+            return standard_name
     return None
 
 

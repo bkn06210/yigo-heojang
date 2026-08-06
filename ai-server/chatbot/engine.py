@@ -39,9 +39,18 @@ class EngineClient:
         params = {"yearMonth": year_month} if year_month else None
         return self._request("GET", "/api/cards/monthly-status", params=params)
 
-    def recommend(self, merchant_id: int, expected_amount: int) -> Dict[str, Any]:
-        """결제 직전 최적 카드. 보유 카드 전부를 이득 순으로 돌려준다."""
-        payload = {"merchantId": merchant_id, "expectedAmount": expected_amount}
+    def recommend(self, expected_amount: int, merchant_id: Optional[int] = None,
+                  category_id: Optional[int] = None) -> Dict[str, Any]:
+        """결제 직전 최적 카드. 보유 카드 전부를 이득 순으로 돌려준다.
+
+        가맹점을 특정하면 그 가맹점 혜택까지 보고, 업종만 알면 업종 혜택까지만 본다.
+        입력이 구체적일수록 계산 범위가 넓어지는 것은 엔진 쪽 규칙이다.
+        """
+        payload: Dict[str, Any] = {"expectedAmount": expected_amount}
+        if merchant_id is not None:
+            payload["merchantId"] = merchant_id
+        if category_id is not None:
+            payload["categoryId"] = category_id
         return self._request("POST", "/api/recommendations", json=payload)
 
     def _request(self, method: str, path: str, **kwargs) -> Dict[str, Any]:

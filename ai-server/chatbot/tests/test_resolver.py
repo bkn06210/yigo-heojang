@@ -7,7 +7,14 @@ DB 없이 검증하면 정작 확인하려는 것을 못 본다. DB 가 없으�
 import pytest
 
 from chatbot.db import connection
-from chatbot.resolver import MATCH_ALIAS, MATCH_NAME, MATCH_PARTIAL, resolve_card, resolve_merchant
+from chatbot.resolver import (
+    MATCH_ALIAS,
+    MATCH_NAME,
+    MATCH_PARTIAL,
+    resolve_card,
+    resolve_category,
+    resolve_merchant,
+)
 
 
 @pytest.fixture(scope="module")
@@ -85,6 +92,17 @@ def test_카드도_같은_규칙으로_찾는다(conn):
     assert resolve_card(conn, "신한 핏").match.detail == "신한카드"
     # 마이핏은 적립형·할인형 두 장이라 별칭을 등록하지 않았다.
     assert not resolve_card(conn, "마이핏").found
+
+
+def test_업종은_표준_이름으로만_찾는다(conn):
+    # 업종은 고정 목록이라 별칭 표를 두지 않는다. 대신 목록을 분류 프롬프트에 넣어
+    # "커피" 같은 표현이 표준 이름('카페')으로 정해져 들어온다.
+    result = resolve_category(conn, "카페")
+
+    assert result.match.name == "카페"
+    assert result.match.detail == "외식"  # 상위 분류
+    assert not resolve_category(conn, "커피").found
+    assert not resolve_category(conn, None).found
 
 
 def test_별칭은_대소문자를_구분하지_않는다(conn):

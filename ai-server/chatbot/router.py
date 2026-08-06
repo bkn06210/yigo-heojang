@@ -9,11 +9,11 @@ LLM 에게 계산은 물론 자릿수 맞추기도 시키지 않는다 — 화�
 
 from dataclasses import dataclass, field
 from datetime import date
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
 from .engine import EngineClient, EngineError
 from .llm import Intent, IntentName
-from .resolver import Resolution, resolve_card, resolve_merchant
+from .resolver import Resolution, resolve_card, resolve_category, resolve_merchant
 
 
 @dataclass(frozen=True)
@@ -127,18 +127,18 @@ def _benefit_text(benefit: Dict[str, Any]) -> str:
 
 
 def _recommend(intent: Intent, conn, engine: EngineClient) -> RouteResult:
-    merchant = resolve_merchant(conn, intent.merchant_text or intent.category_text)
-    if not merchant.found:
-        return RouteResult(
-            follow_up=_ask_again("가맹점", intent.merchant_text or intent.category_text, merchant)
-        )
+    # 브랜드를 말했으면 그쪽이 우선이다. 업종만 말했으면("커피 마시려는데") 업종으로 계산한다 —
+    # 엔진은 가맹점 없이 업종만으로도 계산할 수 있고, 그때는 업종·전체 혜택까지만 본다.
+    place, kind = _resolve_place(intent, conn)
+    if not place.found:
+        text = intent.merchant_text or intent.category_text
+        return RouteResult(follow_up=_ask_again(kind, text, place))
     if not intent.amount:
-        return RouteResult(
-            follow_up=f"{merchant.match.name}에서 얼마를 결제하실 예정인가요?"
-        )
+        return RouteResult(follow_up=f"{place.match.name}에서 얼마를 결제하실 예정인가요?")
 
+    ids = {"merchant_id" if kind == "가맹점" else "category_id": place.match.target_id}
     try:
-        data = engine.recommend(merchant.match.target_id, intent.amount)
+        data = engine.recommend(intent.amount, **ids)
     except EngineError as error:
         return RouteResult(follow_up=_engine_failed(error))
 
@@ -146,10 +146,13 @@ def _recommend(intent: Intent, conn, engine: EngineClient) -> RouteResult:
     if not recommendations:
         return RouteResult(context="[추천 결과]\n계산할 보유 카드가 없습니다.")
 
-    # 어느 가맹점으로 봤는지 반드시 남긴다. 이마트(대형마트)와 이마트24(편의점)처럼
+    # 어디로 봤는지 반드시 남긴다. 이마트(대형마트)와 이마트24(편의점)처럼
     # 이름이 비슷하고 혜택이 전혀 다른 곳이 있어, 잘못 잡혔으면 사용자가 바로 알아야 한다.
+    where = place.match.name
+    if place.match.detail:
+        where += f" ({place.match.detail})"
     lines = [
-        f"[결제 예정] {merchant.match.name} ({merchant.match.detail}) {_won(intent.amount)}",
+        f"[결제 예정] {where} {_won(intent.amount)}",
         "[카드별 예상 혜택] 한 결제에 적용되는 혜택은 카드당 1개입니다.",
     ]
     lines.extend(_recommendation_line(row) for row in recommendations)
@@ -159,6 +162,13 @@ def _recommend(intent: Intent, conn, engine: EngineClient) -> RouteResult:
         lines.append(f"[보유 포인트] {point_guide['message']}")
 
     return RouteResult(context="\n".join(lines), sources=["결제 직전 카드 추천"])
+
+
+def _resolve_place(intent: Intent, conn) -> Tuple[Resolution, str]:
+    """결제할 곳. 브랜드가 먼저이고, 없으면 업종으로 본다."""
+    if intent.merchant_text:
+        return resolve_merchant(conn, intent.merchant_text), "가맹점"
+    return resolve_category(conn, intent.category_text), "업종"
 
 
 def _recommendation_line(row: Dict[str, Any]) -> str:
