@@ -22,7 +22,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  *
  * 확인하는 것은 다음 넷이다.
  *   ① 혜택을 받은 거래만 담는다 (취소·혜택 0원 제외)
- *   ② 중분류 거래가 대분류로 묶인다
+ *   ② 거래에 기록된 카테고리 단위로 묶이고 상위 분류가 함께 담긴다
  *   ③ 부문이 혜택 금액 내림차순으로 정렬되고 1위가 최대 부문이 된다
  *   ④ 총액이 부문 합계와 일치한다
  */
@@ -40,10 +40,8 @@ class BenefitReportServiceIntegrationTest {
 
     private long memberId;
     private long userCardId;
-    private long cafeCategoryId;      // 중분류 — 상위는 외식
-    private long diningCategoryId;    // 대분류 외식
-    private long cvsCategoryId;       // 중분류 — 상위는 쇼핑
-    private long shoppingCategoryId;  // 대분류 쇼핑
+    private long cafeCategoryId;      // 중분류 카페 — 상위는 외식
+    private long cvsCategoryId;       // 중분류 편의점 — 상위는 쇼핑
 
     @BeforeEach
     void setUp(@Autowired DataSource dataSource) {
@@ -52,15 +50,16 @@ class BenefitReportServiceIntegrationTest {
     }
 
     @Test
-    @DisplayName("중분류 거래를 대분류로 묶어 부문별 혜택을 합산한다")
-    void 중분류를_대분류로_묶는다() {
+    @DisplayName("거래에 기록된 카테고리 단위로 합산하고 상위 분류를 함께 담는다")
+    void 중분류_단위로_묶는다() {
         BenefitReport report = benefitReportService.getReport(memberId, BASE_MONTH);
 
-        // 카페(중분류) 두 건이 외식(대분류) 하나로 묶인다.
-        BenefitReportCategory dining = categoryOf(report, diningCategoryId);
-        assertThat(dining.getCategoryName()).isEqualTo("외식");
-        assertThat(dining.getBenefitAmount()).isEqualTo(3_000L);
-        assertThat(dining.getDetails()).hasSize(2);
+        // 카페 두 건이 '카페'로 묶인다. '외식'으로 올려 묶으면 어디서 아꼈는지가 사라진다.
+        BenefitReportCategory cafe = categoryOf(report, cafeCategoryId);
+        assertThat(cafe.getCategoryName()).isEqualTo("카페");
+        assertThat(cafe.getParentCategoryName()).isEqualTo("외식");
+        assertThat(cafe.getBenefitAmount()).isEqualTo(3_000L);
+        assertThat(cafe.getDetails()).hasSize(2);
     }
 
     @Test
@@ -69,9 +68,9 @@ class BenefitReportServiceIntegrationTest {
         BenefitReport report = benefitReportService.getReport(memberId, BASE_MONTH);
 
         assertThat(report.getCategories()).extracting(BenefitReportCategory::getCategoryName)
-                .containsExactly("외식", "쇼핑");
-        assertThat(report.getTopCategoryId()).isEqualTo(diningCategoryId);
-        assertThat(report.getTopCategoryName()).isEqualTo("외식");
+                .containsExactly("카페", "편의점");
+        assertThat(report.getTopCategoryId()).isEqualTo(cafeCategoryId);
+        assertThat(report.getTopCategoryName()).isEqualTo("카페");
         assertThat(report.getTopCategoryBenefitAmount()).isEqualTo(3_000L);
     }
 
@@ -116,9 +115,7 @@ class BenefitReportServiceIntegrationTest {
 
     private void insertFixture() {
         cafeCategoryId = categoryId("CAFE");
-        diningCategoryId = categoryId("DINING");
         cvsCategoryId = categoryId("CONVENIENCE_STORE");
-        shoppingCategoryId = categoryId("SHOPPING");
 
         jdbc.update("INSERT INTO member (email, password_hash, name, nickname, member_status)"
                 + " VALUES ('benefit-report-it@example.com', 'x', '리포트IT', '리포트IT', 'ACTIVE')");
@@ -134,16 +131,14 @@ class BenefitReportServiceIntegrationTest {
                 + " VALUES (?, ?, '1234-****-****-5678', 'ACTIVE')", memberId, cardId);
         userCardId = jdbc.queryForObject("SELECT LAST_INSERT_ID()", Long.class);
 
-        // 외식(대분류) = 카페 2건 3,000원
+        // 카페 2건 3,000원
         insertExpense(cafeCategoryId, "리포트IT_카페A", 10_000L, 2_000L, "APPROVED");
         insertExpense(cafeCategoryId, "리포트IT_카페B", 5_000L, 1_000L, "APPROVED");
-        // 쇼핑(대분류) = 편의점 1건 500원
+        // 편의점 1건 500원
         insertExpense(cvsCategoryId, "리포트IT_편의점", 3_000L, 500L, "APPROVED");
         // 담기면 안 되는 것들
         insertExpense(cafeCategoryId, "리포트IT_취소건", 20_000L, 2_000L, "CANCELED");
         insertExpense(cvsCategoryId, "리포트IT_혜택없음", 1_000L, 0L, "APPROVED");
-
-        assertThat(shoppingCategoryId).isPositive();
     }
 
     private long categoryId(String code) {

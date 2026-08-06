@@ -16,9 +16,12 @@ public class BenefitReportRow {
     private LocalDateTime paymentDate;
     private String merchantName;
 
-    /** 묶음 단위 카테고리. 중분류면 그 상위 대분류, 대분류면 자기 자신이다. */
+    /** 묶음 단위 카테고리. 거래에 기록된 값 그대로다(대개 중분류). */
     private long groupCategoryId;
     private String groupCategoryName;
+
+    /** 상위 분류명. 화면이 "외식 > 카페"로 보여줄 수 있게 함께 내려준다. 대분류 거래면 null. */
+    private String parentCategoryName;
 
     private String benefitName;
     private String cardName;
@@ -77,6 +80,14 @@ public class BenefitReportRow {
 
     public void setGroupCategoryName(String groupCategoryName) {
         this.groupCategoryName = groupCategoryName;
+    }
+
+    public String getParentCategoryName() {
+        return parentCategoryName;
+    }
+
+    public void setParentCategoryName(String parentCategoryName) {
+        this.parentCategoryName = parentCategoryName;
     }
 
     public String getBenefitName() {

@@ -52,6 +52,7 @@ public class BenefitReportService {
             categories.add(new BenefitReportCategory(
                     group.get(0).getGroupCategoryId(),
                     group.get(0).getGroupCategoryName(),
+                    group.get(0).getParentCategoryName(),
                     amount,
                     group.stream().map(BenefitReportService::toDetail).toList()));
         }

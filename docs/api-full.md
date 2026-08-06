@@ -2355,7 +2355,7 @@ GET /api/benefits/report
 • 주의사항:
 ◦ **계산이 아니라 집계다.** 혜택액은 결제 시점에 엔진이 확정해 `expense.discount_amount`에 적어 둔 값을 합산한다. 다시 계산하지 않는다 — 그 시점의 한도 소진 상태를 재현할 수 없어 실제와 달라진다.
 ◦ **요약·목록·상세를 한 응답에 담는다.** 화면이 단계적으로 파고들지만 조회를 나누면 그 사이 결제가 일어났을 때 합계와 상세가 어긋난다. 담기는 거래는 실제로 혜택을 받은 건뿐이라 한 달치라도 목록이 길지 않다.
-◦ **부문은 대분류로 묶는다.** 중분류는 33개라 목록이 길고 금액이 잘게 쪼개져 "가장 많이 받은 부문"이 의미를 잃는다. 구체적인 내용은 상세의 거래로 확인한다.
+◦ **부문은 거래에 기록된 카테고리 그대로다**(대개 중분류). 대분류로 올려 묶으면 "카페에서 3,000원 받았다"가 "외식에서 3,000원"이 되어 다음에 무엇을 할지 판단할 근거가 사라진다. 혜택을 받은 부문만 담기므로 목록이 길어지지 않는다. `parentCategoryName`을 함께 내려주므로 화면은 "외식 > 카페"로 보여줄 수 있다(대분류 거래는 null).
 ◦ **혜택을 받지 않은 거래는 담지 않는다.** 취소된 거래(`payment_status='CANCELED'`)와 혜택액 0원 거래를 뺀다. 담기면 총액이 부풀고 목록에 받지도 않은 거래가 섞인다.
 ◦ 부문은 혜택 금액 내림차순, 동점이면 `categoryId` 오름차순. `topCategory*`는 1위와 같은 값이다.
 ◦ 받은 혜택이 없으면 에러가 아니라 `totalBenefitAmount: 0`, `categories: []`, `topCategory*: null`.
@@ -2377,13 +2377,14 @@ GET /api/benefits/report
   "data": {
     "yearMonth": "2026-08",
     "totalBenefitAmount": 12500,
-    "topCategoryId": 5,
-    "topCategoryName": "문화여가",
+    "topCategoryId": 502,
+    "topCategoryName": "구독스트리밍",
     "topCategoryBenefitAmount": 5000,
     "categories": [
       {
-        "categoryId": 5,
-        "categoryName": "문화여가",
+        "categoryId": 502,
+        "categoryName": "구독스트리밍",
+        "parentCategoryName": "문화여가",
         "benefitAmount": 5000,
         "details": [
           {
