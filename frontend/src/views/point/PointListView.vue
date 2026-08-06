@@ -308,7 +308,7 @@ const showMoreMembership = () => {
   padding: var(--space-md);
   padding-bottom: calc(var(--space-xl) + var(--space-2xl) + var(--space-xl));
   box-sizing: border-box;
-  overflow: hidden visible;
+  overflow: visible;
   display: flex;
   flex-direction: column;
   min-height: 100vh;
@@ -330,7 +330,7 @@ main.login-required {
 .content {
   display: flex;
   flex-direction: column;
-  gap: var(--space-2xl);
+  gap: var(--space-lg);
 }
 
 /* 섹션 공통 */
@@ -352,7 +352,12 @@ h2 {
 /* 혜택 리포트 */
 
 .benefit-report-section {
+  margin-top: -5px;
   margin-bottom: 0;
+}
+
+.benefit-report-section h2 {
+  transform: translateY(-8px);
 }
 
 /* BenefitReportCard 내부 카드 느낌 */

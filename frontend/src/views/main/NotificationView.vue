@@ -407,7 +407,7 @@ const deleteNotification = (id) => {
 
 
 .notification-list {
-
+  margin-top: var(--space-md);
   display:flex;
 
   flex-direction:column;

@@ -28,21 +28,18 @@ const CAROUSEL_CONFIG = {
   MODAL_SHOW_DELAY: 400,
 };
 
-const staticCards = [
-  { id: 1, name: 'KB My WE:SH', image: 'https://via.placeholder.com/280x177?text=KB' },
-  { id: 2, name: '신한 SOL Pay', image: 'https://via.placeholder.com/280x177?text=Shinhan' },
-  { id: 3, name: '삼성 카드', image: 'https://via.placeholder.com/280x177?text=Samsung' },
-  { id: 4, name: '현대 카드', image: 'https://via.placeholder.com/280x177?text=Hyundai' },
-  { id: 5, name: 'NH농협 카드', image: 'https://via.placeholder.com/280x177?text=NH' },
-];
+const cards = computed(() => storeCards.value);
 
-const cards = ref(staticCards);
+const selectedIndex = ref(0);
 
+// 카드 개수에 따라 selectedIndex 초기화
 watch(() => storeCards.value.length, (newLen) => {
-  cards.value = staticCards.slice(0, newLen);
-});
-
-const selectedIndex = ref(2);
+  if (newLen <= 2) {
+    selectedIndex.value = 0;
+  } else {
+    selectedIndex.value = Math.floor(newLen / 2);
+  }
+}, { immediate: true });
 const flipProgress = ref(0); // 0 ~ 1
 const flippingIndex = ref(null);
 const showPasswordModal = ref(false);
@@ -62,6 +59,7 @@ let swipeDirection = null;
 // 부채꼴 배치 (카드 수에 따라 자동 각도 분배)
 const getCardStyle = (index) => {
   const centerIndex = selectedIndex.value;
+  const cardCount = cards.value.length;
 
   // 플립 중인 카드: 올라가면서 점점 뒤집어짐
   if (index === flippingIndex.value && flipProgress.value > 0) {
@@ -73,40 +71,47 @@ const getCardStyle = (index) => {
     };
   }
 
+  const offset = index - centerIndex;
+
+  // 카드 개수별 레이아웃 결정
+  let angle = 0;
+  let spread = 0;
+  let yLift = 0;
+
+  if (cardCount === 1) {
+    // 1장: 중앙 고정
+    angle = 0;
+    spread = 0;
+    yLift = 80;
+  } else if (cardCount === 2) {
+    // 2장: 좌우 균형 배치
+    angle = offset * 25; // -25도, 25도
+    spread = 80;
+    yLift = 40;
+  } else {
+    // 3장 이상: 부채꼴 배치
+    const maxOffset = Math.floor(cardCount / 2);
+    const angleStep = 90 / maxOffset;
+    angle = offset * angleStep;
+    spread = 100;
+    yLift = index === centerIndex ? 80 : 0;
+  }
+
+  const x = offset * spread;
+  const yCorrection = Math.abs(angle) * 0.3;
+
   // 플립 중일 때 다른 카드들은 고정 (cardUpOffset 무시)
   if (flipProgress.value > 0 && index !== flippingIndex.value) {
-    const offset = index - centerIndex;
-    const maxOffset = Math.floor(cards.value.length / 2);
-    const angleStep = 90 / maxOffset;
-    const angle = offset * angleStep;
-    const spread = 100;
-    const x = offset * spread;
-    const yCorrection = Math.abs(angle) * 0.3;
-    const yLift = index === centerIndex ? 80 : 0;
-
     return {
       transform: `translate(-50%, -100%) translate(${x}px, -${yCorrection + yLift}px) rotate(${angle}deg) scale(${index === centerIndex ? 1 : 0.9})`,
       opacity: index === centerIndex ? 1 : 0.7,
       zIndex: 10 - Math.abs(offset),
     };
   }
-  const offset = index - centerIndex;
 
-  const maxOffset = Math.floor(cards.value.length / 2);
-  const angleStep = 90 / maxOffset; // 끝은 ±90도, 가운데는 0도
-  const angle = offset * angleStep;
-
-  const spread = 100; // 좌우 간격(px)
-  const x = offset * spread;
-
-   // 각도에 따라 Y축 보정 (내려간 만큼 위로 올리기)
-  const yCorrection = Math.abs(angle) * 0.3; // 각도 90도 → 약 27px 보정
-  const yLift = index === centerIndex ? 80 : 0; // 중앙 카드만 40px 위로
-  const upOffset = index === centerIndex ? cardUpOffset.value : 0; // 드래그할 때 위로 이동
-
+  const upOffset = index === centerIndex ? cardUpOffset.value : 0;
   const scale = index === centerIndex ? 1 : 0.9;
   const opacity = index === centerIndex ? 1 : 0.7;
-
   const zIndex = 10 - Math.abs(offset);
 
   return {
@@ -692,6 +697,7 @@ main {
 }
 
 .recommend-section {
+  margin-top: var(--space-md);
   padding: var(--space-md) var(--space-md) 0;
   text-align: center;
 }

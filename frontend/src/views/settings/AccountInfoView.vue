@@ -6,6 +6,7 @@ import { storeToRefs } from 'pinia';
 import { useAuthStore } from '@/stores/authStore';
 import PageHeader from '@/components/common/PageHeader.vue';
 import AuthVerifyModal from '@/components/auth/AuthVerifyModal.vue';
+import PinChangeModal from '@/components/auth/PinChangeModal.vue';
 
 const authStore = useAuthStore();
 
@@ -14,10 +15,33 @@ const { user } = storeToRefs(authStore);
 const router = useRouter();
 
 const showPasswordVerify = ref(false);
+const showPinVerify = ref(false);
+const showPinChangeModal = ref(false);
 
 const goPasswordChange = () => {
   showPasswordVerify.value = false;
   router.push('/auth/password-change');
+};
+
+const openPinVerify = () => {
+  showPinVerify.value = true;
+};
+
+const closePinVerify = () => {
+  showPinVerify.value = false;
+};
+
+const handlePinVerifySuccess = () => {
+  showPinVerify.value = false;
+  showPinChangeModal.value = true;
+};
+
+const closePinChangeModal = () => {
+  showPinChangeModal.value = false;
+};
+
+const handlePinChangeSuccess = () => {
+  showPinChangeModal.value = false;
 };
 
 const joinedDate = '2026.07.16';
@@ -51,10 +75,6 @@ watch([appLock, autoLogin], ([newAppLock, newAutoLogin]) => {
 });
 
 
-// 간편비밀번호 변경 이동
-const goPinChange = () => {
-  router.push('/settings/pin-change');
-};
 
 // 이름 마스킹
 const maskName = (name) => {
@@ -247,7 +267,7 @@ const navigateTo = (path) => {
     <!-- 간편비밀번호 -->
     <div
       class="menu-item"
-      @click="goPinChange"
+      @click="openPinVerify"
     >
 
       <span class="menu-label">
@@ -309,15 +329,24 @@ const navigateTo = (path) => {
 
     <!-- 비밀번호 인증 모달 -->
     <AuthVerifyModal
-
       v-if="showPasswordVerify"
-
       @close="showPasswordVerify = false"
-
       @verify-success="goPasswordChange"
-
     />
 
+    <!-- 간편비밀번호 인증 모달 -->
+    <AuthVerifyModal
+      v-if="showPinVerify"
+      @close="closePinVerify"
+      @verify-success="handlePinVerifySuccess"
+    />
+
+    <!-- 간편비밀번호 변경 모달 -->
+    <PinChangeModal
+      v-if="showPinChangeModal"
+      @close="closePinChangeModal"
+      @success="handlePinChangeSuccess"
+    />
 
   </div>
 </template>

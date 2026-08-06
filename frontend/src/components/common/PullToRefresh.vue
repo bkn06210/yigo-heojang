@@ -127,7 +127,7 @@ const handleTouchEnd = async () => {
 
 .refresh-container {
 
-  overflow: hidden;
+  overflow: visible;
 
   width: 100%;
 

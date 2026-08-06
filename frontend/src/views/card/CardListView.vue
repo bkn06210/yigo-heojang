@@ -420,7 +420,9 @@ const closeRecommendedCard = () => {
 
 .pinned-section {
 
-  margin-bottom: var(--space-sm);
+  margin-top: -25px;
+
+  margin-bottom: var(--space-lg);
 
   display: flex;
 

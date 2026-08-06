@@ -81,17 +81,9 @@ export default defineComponent({
       }
       if (fullCode === '123456') {
         stopTimer()
-        toastType.value = 'success'
-        toastMessage.value = '인증이 완료되었습니다!'
-        showToast.value = true
-        setTimeout(() => {
-          emit('success')
-        }, 1000)
+        emit('success')
       } else {
-        toastType.value = 'error'
-        toastMessage.value = '인증번호가 일치하지 않습니다'
-        showToast.value = true
-        error.value = '인증 실패. 인증번호를 다시 확인해주세요'
+        error.value = '인증번호가 일치하지 않습니다. 다시 확인해주세요.'
       }
     }
 
