@@ -611,7 +611,7 @@ const close = () => {
 <div class="header">
 
 <h2>
-사용내역 상세
+상세 이용내역
 </h2>
 
 
@@ -635,7 +635,7 @@ const close = () => {
 <span>결제 금액</span>
 
 <strong class="amount">
--{{ props.transaction.amount.toLocaleString() }}원
+{{ props.transaction.amount.toLocaleString() }}원
 </strong>
 
 </div>
@@ -644,46 +644,7 @@ const close = () => {
 <div class="row">
 
 <span>
-결제 카드
-</span>
-
-<strong>
-{{ props.transaction.cardName }}
-</strong>
-
-</div>
-
-
-<div class="row">
-
-<span>
-카테고리
-</span>
-
-<strong>
-{{ props.transaction.category }}
-</strong>
-
-</div>
-
-
-<div class="row">
-
-<span>
-가맹점
-</span>
-
-<strong>
-{{ props.transaction.merchant }}
-</strong>
-
-</div>
-
-
-<div class="row">
-
-<span>
-결제 일시
+거래일
 </span>
 
 <strong>
@@ -696,11 +657,63 @@ const close = () => {
 <div class="row">
 
 <span>
-결제 상태
+거래구분
+</span>
+
+<strong>
+{{ props.transaction.installment }}
+</strong>
+
+</div>
+
+
+<div class="row">
+
+<span>
+승인번호
+</span>
+
+<strong>
+{{ props.transaction.approvalNumber }}
+</strong>
+
+</div>
+
+
+<div class="row">
+
+<span>
+거래상태
 </span>
 
 <strong>
 {{ props.transaction.status }}
+</strong>
+
+</div>
+
+
+<div class="row">
+
+<span>
+이용카드
+</span>
+
+<strong>
+본인 123*{{ props.transaction.cardLastDigits.slice(0, 2) }}* | {{ props.transaction.cardName }}
+</strong>
+
+</div>
+
+
+<div class="row">
+
+<span>
+가맹점명
+</span>
+
+<strong>
+{{ props.transaction.merchant }}
 </strong>
 
 </div>
