@@ -686,9 +686,10 @@ const close = () => {
 이용카드
 </span>
 
-<strong>
-본인 123*{{ props.transaction.cardLastDigits.slice(0, 2) }}* | {{ props.transaction.cardName }}
-</strong>
+<div class="card-info">
+<strong>{{ props.transaction.cardName }}</strong>
+<span class="card-number">본인 {{ props.transaction.cardLastDigits.slice(0, 3) }}*</span>
+</div>
 
 </div>
 
@@ -777,13 +778,19 @@ z-index:1300;
 
 .sheet {
 
-width:100%;
+width: 100%;
 
-background:var(--color-surface);
+height: 80vh;
 
-border-radius:24px 24px 0 0;
+display: flex;
 
-padding:20px;
+flex-direction: column;
+
+background: var(--color-surface);
+
+border-radius: 24px 24px 0 0;
+
+padding: 20px;
 
 }
 
@@ -833,7 +840,13 @@ color:var(--color-text-primary);
 
 .content {
 
-margin-top:24px;
+margin-top: 24px;
+
+flex: 1;
+
+overflow-y: auto;
+
+padding-right: 8px;
 
 }
 
@@ -897,6 +910,23 @@ border-bottom:1px solid var(--color-border);
 
 color:var(--color-text-secondary);
 
+}
+
+.card-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  text-align: right;
+}
+
+.card-info strong {
+  font-weight: bold;
+  color: var(--color-text-primary);
+}
+
+.card-info .card-number {
+  font-size: var(--font-sm);
+  color: var(--color-text-secondary);
 }
 
 

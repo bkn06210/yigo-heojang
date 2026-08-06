@@ -269,7 +269,7 @@ const closeDetail = () => {
     <div class="transaction-info">
       <span class="info-text">{{ transaction.date }}</span>
       <span class="info-dot">|</span>
-      <span class="info-text">본인 123*{{ transaction.cardLastDigits.slice(0, 2) }}*</span>
+      <span class="info-text">본인 {{ transaction.cardLastDigits.slice(0, 3) }}*</span>
       <span class="info-dot">|</span>
       <span class="info-text">{{ transaction.category }}</span>
       <span class="info-dot">|</span>
