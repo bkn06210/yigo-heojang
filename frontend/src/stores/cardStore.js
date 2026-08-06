@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
-import { getCardMonthlyStatuses, getUserCards } from '@/api/walletApi';
+import { deleteUserCard, getCardMonthlyStatuses, getUserCards } from '@/api/walletApi';
 
 
 export const useCardStore = defineStore(
@@ -130,13 +130,12 @@ export const useCardStore = defineStore(
 
 
 
-    // 카드 삭제
-    const removeCard = (id) => {
-
+    // PR #34 연동: 서버의 소프트 삭제가 성공한 뒤에만 로컬 카드 목록에서도 제거한다.
+    const removeCard = async (id) => {
+      await deleteUserCard(id);
       cards.value = cards.value.filter(
-        card => card.id !== id
+        card => Number(card.id) !== Number(id)
       );
-
     };
 
     

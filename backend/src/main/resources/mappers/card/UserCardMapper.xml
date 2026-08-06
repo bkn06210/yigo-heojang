@@ -132,4 +132,15 @@
             uc.user_card_id DESC
     </select>
 
+    <!-- 본인 소유이면서 ACTIVE 상태인 카드만 이력 보존을 위해 소프트 삭제한다. -->
+    <update id="softDeleteByIdAndMemberId">
+        UPDATE user_card
+        SET
+            card_status = 'DELETED',
+            is_representative = 0
+        WHERE user_card_id = #{userCardId}
+          AND member_id = #{memberId}
+          AND card_status = 'ACTIVE'
+    </update>
+
 </mapper>

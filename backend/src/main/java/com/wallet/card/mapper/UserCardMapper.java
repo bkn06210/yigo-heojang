@@ -70,4 +70,10 @@ public interface UserCardMapper {
     List<UserCardListResult> findActiveUserCardsByMemberId(
         @Param("memberId") Long memberId
     );
+
+    /** 로그인 회원이 소유한 활성 카드 한 장을 삭제 상태로 변경한다. */
+    int softDeleteByIdAndMemberId(
+        @Param("userCardId") Long userCardId,
+        @Param("memberId") Long memberId
+    );
 }

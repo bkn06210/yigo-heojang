@@ -220,7 +220,7 @@
             mr.point_provider_id AS pointProviderId,
             pp.point_provider_name AS providerName,
             pp.logo_image_url AS logoImage,
-            pp.official_site_url AS officialSiteUrl,
+            NULL AS officialSiteUrl,
             mr.register_status AS registerStatus,
             COALESCE(pw.total_point, 0) AS totalPoint,
             DATE_FORMAT(mr.registered_at, '%Y-%m-%dT%H:%i:%s') AS registeredAt
@@ -261,7 +261,7 @@
             mr.membership_register_id AS membershipRegisterId,
             pp.point_provider_id AS pointProviderId,
             pp.point_provider_name AS providerName,
-            pp.official_site_url AS officialSiteUrl,
+            NULL AS officialSiteUrl,
             pp.point_provider_type AS providerType,
             pp.logo_image_url AS logoImageUrl,
             COALESCE(pw.total_point, 0) AS totalPoint,

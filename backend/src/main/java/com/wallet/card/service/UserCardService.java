@@ -82,6 +82,17 @@ public class UserCardService {
         return UserCardListResponse.from(userCards);
     }
 
+    /** 본인 소유의 ACTIVE 카드만 DELETED 상태로 변경한다. */
+    @Transactional
+    public void deleteUserCard(Long memberId, Long userCardId) {
+        int updatedCount =
+            userCardMapper.softDeleteByIdAndMemberId(userCardId, memberId);
+
+        if (updatedCount != 1) {
+            throw new BusinessException(ErrorCode.USER_CARD_NOT_FOUND);
+        }
+    }
+
     private Card findSelectedCard(Long cardId) {
         Card card = cardMapper.findActiveById(cardId);
 

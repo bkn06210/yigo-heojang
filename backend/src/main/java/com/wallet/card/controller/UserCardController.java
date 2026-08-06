@@ -9,7 +9,9 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -72,5 +74,15 @@ public class UserCardController {
 
         return ResponseEntity.ok(
             ApiResponse.success("보유 카드 목록 조회에 성공했습니다.", response));
+    }
+
+    /** 로그인 회원이 소유한 활성 보유카드를 소프트 삭제한다. */
+    @DeleteMapping("/{userCardId}")
+    public ResponseEntity<Void> deleteUserCard(
+        @RequestAttribute(AUTHENTICATED_MEMBER_ID) Long memberId,
+        @PathVariable Long userCardId
+    ) {
+        userCardService.deleteUserCard(memberId, userCardId);
+        return ResponseEntity.noContent().build();
     }
 }

@@ -181,19 +181,23 @@ const closePointSheet = () => {
 
 
 
-// 새로고침
-// TODO: API 연결 시 실제 데이터 재조회
-
+// 07_25 연동 수정: 포인트·멤버십 중 한 API가 실패해도 성공한 목록은 화면에 유지한다.
 const refreshPoint = async () => {
   errorMessage.value = '';
   if (!isLogin.value) return;
-  try {
-    const [pointData, membershipData, historyData] = await Promise.all([
-      getPoints(),
-      getMemberships(),
-      getPointHistory(),
-    ]);
-    const histories = historyData?.histories || [];
+
+  const [pointResult, membershipResult, historyResult] = await Promise.allSettled([
+    getPoints(),
+    getMemberships(),
+    getPointHistory(),
+  ]);
+
+  // 07_25 연동 수정: 정상 응답만 반영하고 실패한 영역은 기존 목록을 유지한다.
+  if (pointResult.status === 'fulfilled') {
+    const pointData = pointResult.value;
+    const histories = historyResult.status === 'fulfilled'
+      ? historyResult.value?.histories || []
+      : [];
     financialPointList.value = (pointData?.points || [])
       .filter((point) => point.providerType !== 'MEMBERSHIP')
       .map((point) => ({
@@ -206,6 +210,11 @@ const refreshPoint = async () => {
           Number(history.pointWalletId) === Number(point.pointWalletId)
         ),
       }));
+    cardList.value = financialPointList.value.length ? [{}] : [];
+  }
+
+  if (membershipResult.status === 'fulfilled') {
+    const membershipData = membershipResult.value;
     membershipList.value = (membershipData?.memberships || []).map((membership) => ({
       id: Number(membership.membershipRegisterId),
       providerId: membership.pointProviderId,
@@ -213,9 +222,15 @@ const refreshPoint = async () => {
       point: Number(membership.totalPoint || 0),
       logo: getPartnerLogo(membership.providerName, membership.logoImageUrl),
     }));
-    cardList.value = financialPointList.value.length ? [{}] : [];
-  } catch (error) {
-    errorMessage.value = error?.response?.data?.message || error?.message || '혜택 정보를 불러오지 못했습니다.';
+  }
+
+  const failedResults = [pointResult, membershipResult, historyResult]
+    .filter((result) => result.status === 'rejected');
+  if (failedResults.length > 0) {
+    const error = failedResults[0].reason;
+    errorMessage.value = error?.response?.data?.message
+      || error?.message
+      || '일부 혜택 정보를 불러오지 못했습니다.';
   }
 };
 

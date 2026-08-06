@@ -695,4 +695,39 @@ class UserCardServiceTest {
         verify(userCardMapper)
             .findActiveUserCardsByMemberId(authenticatedMemberId);
     }
+
+    @Test
+    @DisplayName("보유 카드 삭제 성공 - 본인이 소유한 활성 카드를 삭제한다")
+    void deleteUserCard_success() {
+        Long memberId = 1L;
+        Long userCardId = 50L;
+
+        when(userCardMapper.softDeleteByIdAndMemberId(userCardId, memberId))
+            .thenReturn(1);
+
+        userCardService.deleteUserCard(memberId, userCardId);
+
+        verify(userCardMapper)
+            .softDeleteByIdAndMemberId(userCardId, memberId);
+    }
+
+    @Test
+    @DisplayName("보유 카드 삭제 실패 - 삭제할 활성 카드를 찾지 못하면 예외가 발생한다")
+    void deleteUserCard_fail_userCardNotFound() {
+        Long memberId = 1L;
+        Long userCardId = 50L;
+
+        when(userCardMapper.softDeleteByIdAndMemberId(userCardId, memberId))
+            .thenReturn(0);
+
+        BusinessException exception = assertThrows(
+            BusinessException.class,
+            () -> userCardService.deleteUserCard(memberId, userCardId)
+        );
+
+        assertThat(exception.getErrorCode())
+            .isEqualTo(ErrorCode.USER_CARD_NOT_FOUND);
+        verify(userCardMapper)
+            .softDeleteByIdAndMemberId(userCardId, memberId);
+    }
 }

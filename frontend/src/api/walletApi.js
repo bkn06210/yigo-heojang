@@ -50,6 +50,10 @@ export const registerUserCard = (cardId, cardNumber) =>
 export const getUserCards = () =>
   api.get('/api/user-cards').then(data)
 
+// PR #34 연동: 204 응답 본문을 파싱하지 않고 HTTP 성공 여부로 보유카드 삭제를 확정한다.
+export const deleteUserCard = (userCardId) =>
+  api.delete(`/api/user-cards/${userCardId}`).then(() => undefined)
+
 export const createPayment = (payload) => api.post('/api/payments', payload).then(data)
 export const getPayment = (id) => api.get(`/api/payments/${id}`).then(data)
 // 07_25 연동 추가: 카드·포인트·멤버십·소비내역 API를 화면에서 공통으로 사용한다.

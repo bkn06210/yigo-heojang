@@ -24,6 +24,9 @@ const showEditModal = ref(false);
 // 삭제 확인 모달
 const showDeleteModal = ref(false);
 
+// PR #34 연동: 중복 삭제 요청을 막고 처리 중 상태를 버튼에 표시한다.
+const deleteLoading = ref(false);
+
 // 수정 대상
 const editType = ref('');
 
@@ -91,29 +94,20 @@ const closeDelete = () => {
   showDeleteModal.value = false;
 };
 
-// 삭제 확인
-  /*
-    실제 API
-
-    DELETE /cards/{cardId}
-
-  */
-const confirmDelete = () => {
-
+// PR #34 연동: DELETE /api/user-cards/{userCardId}가 204를 반환한 뒤 목록으로 이동한다.
+const confirmDelete = async () => {
   const cardId = Number(route.params.id);
-
-
-  cardStore.removeCard(cardId);
-
-
-  showDeleteModal.value = false;
-
-
-  alert('카드가 삭제되었습니다');
-
-
-  router.push('/cards');
-
+  deleteLoading.value = true;
+  try {
+    await cardStore.removeCard(cardId);
+    showDeleteModal.value = false;
+    alert('카드가 삭제되었습니다.');
+    router.push('/cards');
+  } catch (error) {
+    alert(error?.response?.data?.message || error?.message || '카드를 삭제하지 못했습니다.');
+  } finally {
+    deleteLoading.value = false;
+  }
 };
 
 // 임시 데이터
@@ -434,7 +428,10 @@ const toggleMemo = () => {
         <div class="modal-buttons">
           <button @click="closeDelete">취소</button>
 
-          <button class="delete-confirm" @click="confirmDelete">삭제</button>
+          <!-- PR #34 연동: 삭제 API 처리 중에는 재클릭을 차단한다. -->
+          <button class="delete-confirm" :disabled="deleteLoading" @click="confirmDelete">
+            {{ deleteLoading ? '삭제 중...' : '삭제' }}
+          </button>
         </div>
       </div>
     </div>
