@@ -36,7 +36,6 @@ const cardNumber = ref('');
 const expiryDate = ref('');
 const cvc = ref('');
 const password = ref('');
-const residentNumber = ref('');
 
 
 // 카드 인식 방법 선택
@@ -56,14 +55,6 @@ const openUpload = () => {
   registerType.value = 'upload';
 
   showUpload.value = true;
-
-};
-
-
-// 직접 입력 선택
-const selectManual = () => {
-
-  registerType.value = 'manual';
 
 };
 
@@ -152,17 +143,6 @@ const formatPassword = () => {
 
 };
 
-
-// 주민번호 앞자리
-
-const formatResidentNumber = () => {
-
-  residentNumber.value =
-    residentNumber.value
-      .replace(/[^0-9]/g, '')
-      .slice(0, 6);
-
-};
 
 // 카드 등록
 const registerCard = () => {
@@ -307,25 +287,6 @@ const goCardList = () => {
 
 </button>
 
-
-<button
-  class="type-card"
-  :class="{ active: registerType === 'manual' }"
-  @click="selectManual"
->
-
-<Icon name="edit" size="lg" />
-
-<span>
-직접 입력
-</span>
-
-<p>
-카드 정보를 직접 입력합니다
-</p>
-
-</button>
-
 </div>
 
 </section>
@@ -426,23 +387,6 @@ maxlength="2"
 inputmode="numeric"
 placeholder="앞 2자리"
 @input="formatPassword"
-/>
-
-</div>
-
-<!-- 주민번호 -->
-
-<div class="input-box">
-
-<label>
-주민등록번호
-</label>
-
-<input
-  v-model="residentNumber"
-  maxlength="6"
-  placeholder="생년월일 6자리"
-  @input="formatResidentNumber"
 />
 
 </div>

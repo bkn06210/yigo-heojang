@@ -1,4 +1,5 @@
 <script setup>
+import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { maskCardNumber } from '@/utils/card'
 import BaseCard from '@/components/common/BaseCard.vue'
@@ -14,19 +15,57 @@ const props = defineProps({
 const emit = defineEmits(['toggle-pin'])
 const router = useRouter()
 
+let touchStartX = 0
+let touchStartY = 0
+let isMoving = false
+
+const handleTouchStart = (e) => {
+  touchStartX = e.touches[0].clientX
+  touchStartY = e.touches[0].clientY
+  isMoving = false
+}
+
+const handleTouchMove = (e) => {
+  const deltaX = touchStartX - e.touches[0].clientX
+  if (Math.abs(deltaX) > 10) {
+    isMoving = true
+  }
+}
+
+const handleTouchEnd = (e) => {
+  if (!isMoving) return
+
+  const touchEndX = e.changedTouches[0].clientX
+  const touchEndY = e.changedTouches[0].clientY
+
+  const deltaX = touchStartX - touchEndX
+  const deltaY = Math.abs(touchStartY - touchEndY)
+
+  // 오른쪽에서 왼쪽으로 스와이프 감지 (최소 40px, 수직 이동은 무시)
+  console.log('Swipe detected:', { deltaX, deltaY })
+  if (deltaX > 40 && deltaY < 80) {
+    console.log('Toggling pin for card:', props.card.id)
+    e.stopPropagation()
+    e.preventDefault()
+    emit('toggle-pin', props.card.id)
+  }
+}
+
 const goDetail = () => {
   router.push(`/cards/${props.card.id}`)
 }
 
-const handlePinClick = (e) => {
-  e.stopPropagation()
-  emit('toggle-pin', props.card.id)
-}
+const maskedCardNumber = computed(() => {
+  if (!props.card.cardNumber) return ''
+  const last4 = props.card.cardNumber.slice(-4)
+  return `${last4.slice(0, 3)}*`
+})
 </script>
 
 <template>
-  <BaseCard clickable class="card-item" @click="goDetail">
-    <div class="card-container">
+  <div class="card-item" @click="goDetail" @touchstart="handleTouchStart" @touchmove="handleTouchMove" @touchend="handleTouchEnd" style="cursor: pointer;">
+    <BaseCard>
+      <div class="card-container">
       <!-- 카드 이미지 -->
       <template v-if="card.image">
         <img
@@ -42,8 +81,8 @@ const handlePinClick = (e) => {
       <!-- 카드 정보 -->
       <div class="card-info">
         <div class="card-name">{{ card.name }}</div>
-        <div class="card-company">
-          {{ card.company }}
+        <div class="card-details">
+          <div class="card-company">{{ card.company }} 본인 {{ maskedCardNumber }}</div>
         </div>
         <!-- 달성도 프로그래스 바 -->
         <div class="progress-wrapper" v-if="card.achievementRate !== undefined">
@@ -59,21 +98,26 @@ const handlePinClick = (e) => {
         <span>›</span>
       </div>
     </div>
-  </BaseCard>
+    </BaseCard>
+  </div>
 </template>
 
 <style scoped>
+.card-item {
+  touch-action: pan-y;
+}
+
 .card-container {
   display: flex;
   flex-direction: row;
-  gap: var(--space-md);
+  gap: var(--space-sm);
   width: 100%;
   align-items: center;
 }
 
 .card-image {
-  width: 60px;
-  height: 95px;
+  width: 48px;
+  height: 76px;
   border-radius: var(--radius-md);
   object-fit: contain;
   background: var(--color-bg);
@@ -93,7 +137,7 @@ const handlePinClick = (e) => {
 .card-info {
   display: flex;
   flex-direction: column;
-  gap: var(--space-xs);
+  gap: 2px;
   flex: 1;
   min-width: 0;
 }
@@ -106,7 +150,19 @@ const handlePinClick = (e) => {
   line-height: 1.3;
 }
 
+.card-details {
+  display: flex;
+  gap: var(--space-sm);
+  align-items: center;
+}
+
 .card-company {
+  font-size: var(--font-xs);
+  color: var(--color-text-tertiary);
+  font-weight: var(--font-medium);
+}
+
+.card-number {
   font-size: var(--font-xs);
   color: var(--color-text-tertiary);
   font-weight: var(--font-medium);

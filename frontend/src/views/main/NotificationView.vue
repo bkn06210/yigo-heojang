@@ -1,16 +1,22 @@
 <script setup>
 import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
+import { storeToRefs } from 'pinia';
+import { useAuthStore } from '@/stores/authStore';
 
 import NotificationModal from '@/components/notification/NotificationModal.vue';
-  
+
 // 뒤로가기용
 const router = useRouter();
 
+// 로그인 상태 확인
+const authStore = useAuthStore();
+const { user } = storeToRefs(authStore);
 
 // 알림 데이터
 // TODO: GET /notifications API 연결 예정
-const notifications = ref([
+// 비로그인 상태일 때는 빈 배열로 처리
+const notificationsData = [
 
   {
     id: 1,
@@ -80,8 +86,15 @@ const notifications = ref([
 
   },
 
-]);
+];
+
+const notifications = ref(notificationsData);
 const selectedNotification = ref(null);
+
+// 비로그인 상태에서는 알림 없음 처리
+const displayNotifications = computed(() => {
+  return user.value ? notifications.value : [];
+});
 
 const openNotification = (item) => {
   selectedNotification.value = item;
@@ -93,7 +106,7 @@ const openNotification = (item) => {
 // 읽지 않은 알림 개수
 const unreadCount = computed(() => {
 
-  return notifications.value.filter(
+  return displayNotifications.value.filter(
     item => !item.isRead
   ).length;
 
@@ -203,7 +216,7 @@ const deleteNotification = (id) => {
 
 
     <div
-      v-if="notifications.length === 0"
+      v-if="displayNotifications.length === 0"
       class="empty"
     >
       새로운 알림이 없습니다.
@@ -212,7 +225,7 @@ const deleteNotification = (id) => {
 
 
     <article
-      v-for="item in notifications"
+      v-for="item in displayNotifications"
       :key="item.id"
       class="notification-item"
       :class="{

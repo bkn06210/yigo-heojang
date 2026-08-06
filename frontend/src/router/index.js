@@ -107,6 +107,9 @@ const routes = [
 const router = createRouter({
   history: createWebHistory(),
   routes,
+  scrollBehavior() {
+    return { top: 0 }
+  }
 })
 
 // 하단 네비게이션 탭의 루트 경로 — 탭 간 이동은 슬라이드 대신 페이드로 처리
