@@ -39,6 +39,20 @@ class EngineClient:
         params = {"yearMonth": year_month} if year_month else None
         return self._request("GET", "/api/cards/monthly-status", params=params)
 
+    def applicable_benefits(self, merchant_id: Optional[int] = None,
+                            category_id: Optional[int] = None) -> Dict[str, Any]:
+        """이 가맹점·업종에 걸린 혜택과 그 조건. 금액이 없어도 답할 수 있다.
+
+        추천과 답하는 질문이 다르다. 추천은 "지금 8,000원이면 어느 카드가 유리한가"이고
+        이쪽은 "여기서 뭐가 좋아?"다. 뒤쪽은 금액이 없는 것이 정상이라 되물을 일이 아니다.
+        """
+        params: Dict[str, Any] = {}
+        if merchant_id is not None:
+            params["merchantId"] = merchant_id
+        if category_id is not None:
+            params["categoryId"] = category_id
+        return self._request("GET", "/api/cards/applicable-benefits", params=params)
+
     def recommend(self, expected_amount: int, merchant_id: Optional[int] = None,
                   category_id: Optional[int] = None) -> Dict[str, Any]:
         """결제 직전 최적 카드. 보유 카드 전부를 이득 순으로 돌려준다.

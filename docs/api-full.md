@@ -2272,6 +2272,79 @@ GET /api/cards/{userCardId}/monthly-status
 
 `NOT_FOUND(404)` — 없는 카드와 타인 소유 카드를 구분 없이 404 (존재 비노출)
 
+### 31-A. 가맹점·업종별 카드 혜택 조회
+
+```
+GET /api/cards/applicable-benefits
+```
+
+• 사용 목적: 특정 가맹점·업종에서 보유 카드가 갖는 혜택과 그 조건을 반환한다. 챗봇의 "스타벅스 가면 어느 카드가 좋아?" 같은 질문에 쓴다.
+• 주의사항:
+◦ **29번(결제 직전 추천)과 답하는 질문이 다르다.** 29번은 "지금 8,000원 결제하면 어느 카드가 얼마 유리한가"이고 이 API는 "이 가맹점에 걸린 혜택이 무엇이고 어떤 조건인가"다. 앞은 금액이 있어야 성립하지만 뒤는 금액 없이 답할 수 있다. 금액을 정해 묻는 사용자는 결제 화면에서 29번을 쓴다.
+◦ **혜택액을 계산하지 않는다.** 금액이 정해지지 않았으므로 조건(적립률·실적조건·건당 최소금액·월 한도)만 내려준다.
+◦ **지금 못 받는 혜택도 목록에서 빼지 않는다.** `available: false` + `unavailableReason`으로 표시한다. "혜택이 없다"보다 "실적을 채우면 받을 수 있다"가 쓸모 있는 정보다.
+◦ **혜택이 하나도 없는 카드도 목록에 담는다.** "이 카드는 여기서 혜택이 없다"도 사용자가 알아야 하는 답이다.
+◦ `merchantId`를 주면 그 가맹점 혜택과 소속 업종 혜택을 함께 본다. `categoryId`만 주면 업종·전체(ALL) 혜택까지만 본다 — 어느 가맹점인지 모르면 가맹점 전용 혜택을 받는다고 말할 수 없다. 둘 다 없으면 전 가맹점(ALL) 혜택만 나온다.
+◦ `benefitValue`는 판정된 실적구간의 값이다(`benefit_tier_limit` 반영). `calcMethod`가 `RATE`면 퍼센트, `FIXED`·`COUNT_STEP`이면 원.
+◦ `monthlyLimit`은 `int|null`. **null = 한도 제약 없음**, 0 = 혜택 없음. 둘을 뭉개면 안 된다.
+◦ `requiredPerformanceAmount`가 null이면 실적 조건이 없는 카드다(0원 구간 하나뿐).
+◦ 한도 소진은 담지 않는다. 30·31번이 이미 내려주고, 여기서 또 계산하면 같은 값이 두 경로로 나가 어긋날 여지가 생긴다.
+
+**권한** USER · **담당** 현준 고 · **상태 코드** 200 OK
+
+**Request**
+
+쿼리 파라미터 `merchantId`(선택), `categoryId`(선택). `merchantId`가 있으면 `categoryId`는 무시된다.
+
+**Response**
+
+```json
+{
+  "success": true,
+  "code": "SUCCESS",
+  "data": {
+    "cards": [
+      {
+        "userCardId": 12,
+        "cardName": "ALL point 카드",
+        "prevPerformanceAmount": 36600,
+        "requiredPerformanceAmount": 300000,
+        "performanceMet": false,
+        "benefits": [
+          {
+            "benefitId": 10,
+            "benefitName": "커피전문점 포인트리 적립",
+            "benefitKind": "POINT",
+            "calcMethod": "RATE",
+            "benefitValue": 1.20,
+            "requirePerformance": true,
+            "available": false,
+            "unavailableReason": "전월 실적 미달",
+            "minTxnAmount": null,
+            "monthlyLimit": null,
+            "stepCount": null,
+            "optionGroupCode": null
+          }
+        ]
+      },
+      {
+        "userCardId": 13,
+        "cardName": "YOU Wish 카드",
+        "prevPerformanceAmount": 0,
+        "requiredPerformanceAmount": null,
+        "performanceMet": false,
+        "benefits": []
+      }
+    ]
+  },
+  "message": null
+}
+```
+
+**고유 에러**
+
+`NOT_FOUND(404)` — 없는 `merchantId`·`categoryId`
+
 ### 32. 결제 취소 상태 갱신
 
 ```

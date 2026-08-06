@@ -62,6 +62,44 @@ class FakeEngine:
             ]
         }
 
+    def applicable_benefits(self, merchant_id=None, category_id=None):
+        return {
+            "cards": [
+                {
+                    "userCardId": 1,
+                    "cardName": "ALL point 카드",
+                    "prevPerformanceAmount": 36600,
+                    "requiredPerformanceAmount": 300000,
+                    "performanceMet": False,
+                    "benefits": [{
+                        "benefitId": 10, "benefitName": "커피전문점 포인트리 적립",
+                        "benefitKind": "POINT", "calcMethod": "RATE", "benefitValue": "1.20",
+                        "requirePerformance": True, "available": False,
+                        "unavailableReason": "전월 실적 미달",
+                        "minTxnAmount": None, "monthlyLimit": None, "stepCount": None,
+                    }],
+                },
+                {
+                    "userCardId": 2,
+                    "cardName": "신한카드 핏(Fit)",
+                    "prevPerformanceAmount": 537200,
+                    "requiredPerformanceAmount": 400000,
+                    "performanceMet": True,
+                    "benefits": [{
+                        "benefitId": 20, "benefitName": "커피 Stamp 적립 (스타벅스)",
+                        "benefitKind": "POINT", "calcMethod": "COUNT_STEP", "benefitValue": "2000",
+                        "requirePerformance": True, "available": True, "unavailableReason": None,
+                        "minTxnAmount": 5000, "monthlyLimit": None, "stepCount": 5,
+                    }],
+                },
+                {
+                    "userCardId": 3, "cardName": "YOU Wish 카드",
+                    "prevPerformanceAmount": 0, "requiredPerformanceAmount": None,
+                    "performanceMet": False, "benefits": [],
+                },
+            ]
+        }
+
     def recommend(self, expected_amount, merchant_id=None, category_id=None):
         self.last_call = {"merchantId": merchant_id, "categoryId": category_id}
         return {
@@ -151,39 +189,55 @@ def test_추천은_어느_가맹점으로_봤는지_밝힌다(fake_engine):
 
 
 @needs_db
-def test_금액을_안_말하면_가정하고_답한_뒤_되묻는다(fake_engine):
-    # 되묻기만 하고 끝내면 사용자는 아무것도 못 얻는다. 가정값으로 계산해 대략이라도
-    # 답하고, 무엇을 가정했는지 밝힌 뒤 정확한 금액을 묻는다.
+def test_금액이_없으면_혜택_구조를_알려준다(fake_engine):
+    # "여기서 뭐가 좋아?"는 금액이 없는 것이 정상인 질문이다. 금액을 정해 묻는 사람은
+    # 결제 화면에서 추천을 받는다. 되묻지 말고 혜택의 조건으로 답한다.
     body = _ask("스벅에서 어느 카드가 좋아?")
 
-    assert "10,000원" in body["answer"]
-    assert body["followUpQuestion"] is not None
-    assert body["pendingContext"]["intent"] == IntentName.RECOMMEND_CARD
-    assert body["pendingContext"]["merchantText"] == "스벅"
-    # 가정값을 맥락에 남기면 다음 턴에서 "8000원"이라고 답해도 1만원이 이긴다.
-    assert body["pendingContext"]["amount"] is None
+    assert "스타벅스 (카페)" in body["answer"]
+    assert "1.2% 적립" in body["answer"]
+    assert "5회마다 2,000원 적립" in body["answer"]
+    assert body["followUpQuestion"] is None
+
+
+@needs_db
+def test_실적_미달로_못_받는_혜택도_사유와_함께_알려준다(fake_engine):
+    body = _ask("스벅에서 어느 카드가 좋아?")
+
+    # "혜택이 없다"가 아니라 "채우면 받을 수 있다"로 답할 수 있어야 한다.
+    assert "전월실적 36,600원 / 300,000원 필요 (미충족)" in body["answer"]
+    assert "전월 실적 미달로 지금은 적용 안 됨" in body["answer"]
+
+
+@needs_db
+def test_혜택_없는_카드는_묶어서_알려준다(fake_engine):
+    body = _ask("스벅에서 어느 카드가 좋아?")
+
+    assert "[혜택 없는 카드] YOU Wish 카드" in body["answer"]
 
 
 @needs_db
 def test_되묻고_받은_답으로_대화가_이어진다(fake_engine):
-    first = _ask("스벅에서 어느 카드가 좋아?")
+    # 장소를 모르면 되묻고, 그 답을 직전 맥락과 합쳐 처리한다.
+    first = _ask("5000원 결제할건데 어느 카드가 좋아?")
+    assert first["pendingContext"]["intent"] == IntentName.RECOMMEND_CARD
 
     second = client.post("/chat", json={
         "memberId": 1,
-        "question": "8000원",
+        "question": "스벅",
         "pendingContext": first["pendingContext"],
     }).json()
 
-    # "8000원"만으로는 무엇을 묻는지 알 수 없다. 직전 의도와 가맹점을 이어받아야 한다.
+    # "스벅"만으로는 무엇을 묻는지 알 수 없다. 직전 의도와 금액을 이어받아야 한다.
     assert second["intent"] == IntentName.RECOMMEND_CARD
     assert "스타벅스" in second["answer"]
-    assert "8,000원" in second["answer"]
+    assert "5,000원" in second["answer"]
     assert second["followUpQuestion"] is None
 
 
 @needs_db
 def test_주제가_바뀌면_직전_맥락을_버린다(fake_engine):
-    first = _ask("스벅에서 어느 카드가 좋아?")
+    first = _ask("5000원 결제할건데 어느 카드가 좋아?")
 
     second = client.post("/chat", json={
         "memberId": 1,

@@ -9,6 +9,7 @@ LLM 에게 계산은 물론 자릿수 맞추기도 시키지 않는다 — 화�
 
 from dataclasses import dataclass, field
 from datetime import date
+from decimal import Decimal
 from typing import Any, Dict, List, Optional, Tuple
 
 from .engine import EngineClient, EngineError
@@ -25,17 +26,12 @@ class RouteResult:
     sources: List[str] = field(default_factory=list)
 
 
-# 금액을 말하지 않았을 때 대신 쓰는 결제 금액.
-#
-# 되묻기만 하고 끝내면 사용자는 아무것도 못 얻는다. 대략이라도 답을 주고 정확한 금액을
-# 물어보는 편이 낫다. 계산은 실제로 엔진이 하고, 가정했다는 사실을 답변에 밝힌다.
-#
-# 카테고리별 대표값(카페 5천·마트 5만)이 더 그럴듯하지만 쓰지 않는다. 근거 없는 숫자가
-# 카테고리 수만큼 늘어난다. 하나면 "1만원 기준"이라고 정직하게 말할 수 있다.
-#
-# 금액이 순위를 바꾸는 혜택이 실제로 있다(계단식 정액할인, 건당 최소금액, 한도).
-# 그래서 가정값으로 낸 결과는 반드시 가정과 함께 내보낸다.
-_ASSUMED_AMOUNT = 10_000
+# 혜택 종류·계산방식을 사람 말로.
+_KIND_LABELS = {
+    "DISCOUNT": "할인",
+    "POINT": "적립",
+    "SPECIAL_PRICE": "특가",
+}
 
 # 현황 답변에 나열할 혜택 수. 넘으면 "외 N건"으로 줄인다.
 #
@@ -146,13 +142,16 @@ def _recommend(intent: Intent, conn, engine: EngineClient) -> RouteResult:
         text = intent.merchant_text or intent.category_text
         return RouteResult(follow_up=_ask_again(kind, text, place))
 
-    # 금액을 안 말했으면 되묻고 끝내는 대신 가정값으로 계산해 대략이라도 답한다.
-    amount = intent.amount or _ASSUMED_AMOUNT
-    assumed = intent.amount is None
-
     ids = {"merchant_id" if kind == "가맹점" else "category_id": place.match.target_id}
+
+    # 금액이 없으면 되묻지 않는다. "여기서 뭐가 좋아?"는 금액이 없는 것이 정상인 질문이고,
+    # 금액을 정해 묻는 사람은 결제 화면에서 추천을 받는다. 챗봇에 오는 질문은 대개 앞쪽이라
+    # 답도 순위가 아니라 혜택의 조건이어야 한다.
+    if not intent.amount:
+        return _benefit_lookup(place, engine, ids)
+
     try:
-        data = engine.recommend(amount, **ids)
+        data = engine.recommend(intent.amount, **ids)
     except EngineError as error:
         return RouteResult(follow_up=_engine_failed(error))
 
@@ -162,29 +161,98 @@ def _recommend(intent: Intent, conn, engine: EngineClient) -> RouteResult:
 
     # 어디로 봤는지 반드시 남긴다. 이마트(대형마트)와 이마트24(편의점)처럼
     # 이름이 비슷하고 혜택이 전혀 다른 곳이 있어, 잘못 잡혔으면 사용자가 바로 알아야 한다.
-    where = place.match.name
-    if place.match.detail:
-        where += f" ({place.match.detail})"
-    lines = [f"[결제 예정] {where} {_won(amount)}"]
-    if assumed:
-        lines.append(f"[가정] 결제 금액을 말하지 않아 {_won(amount)} 기준으로 계산했습니다.")
-    lines.append("[카드별 예상 혜택] 한 결제에 적용되는 혜택은 카드당 1개입니다.")
+    lines = [
+        f"[결제 예정] {_where(place)} {_won(intent.amount)}",
+        "[카드별 예상 혜택] 한 결제에 적용되는 혜택은 카드당 1개입니다.",
+    ]
     lines.extend(_recommendation_line(row) for row in recommendations)
 
     point_guide = data.get("pointGuide")
     if point_guide and point_guide.get("message"):
         lines.append(f"[보유 포인트] {point_guide['message']}")
 
-    follow_up = None
-    if assumed:
-        follow_up = "정확한 금액을 알려주시면 다시 계산해 드릴게요."
-        lines.append(f"[되물을 것] {follow_up}")
+    return RouteResult(context="\n".join(lines), sources=["결제 직전 카드 추천"])
 
-    return RouteResult(
-        context="\n".join(lines),
-        follow_up=follow_up,
-        sources=["결제 직전 카드 추천"],
-    )
+
+# ── 혜택 구조 안내 (금액 없는 질문) ────────────────────────
+
+
+def _benefit_lookup(place: Resolution, engine: EngineClient, ids: Dict[str, int]) -> RouteResult:
+    try:
+        data = engine.applicable_benefits(**ids)
+    except EngineError as error:
+        return RouteResult(follow_up=_engine_failed(error))
+
+    cards = data.get("cards") or []
+    if not cards:
+        return RouteResult(context="[혜택 조회]\n보유한 카드가 없습니다.")
+
+    with_benefit = [card for card in cards if card.get("benefits")]
+    without_benefit = [card.get("cardName") for card in cards if not card.get("benefits")]
+
+    lines = [f"[결제 대상] {_where(place)}"]
+    if with_benefit:
+        lines.append("[보유 카드별 혜택]")
+        for card in with_benefit:
+            lines.append(_benefit_card_block(card))
+    else:
+        lines.append("[보유 카드별 혜택] 이 대상에 걸린 혜택이 있는 카드가 없습니다.")
+    if without_benefit:
+        lines.append("[혜택 없는 카드] " + ", ".join(without_benefit))
+
+    return RouteResult(context="\n".join(lines), sources=["가맹점별 카드 혜택 조회"])
+
+
+def _benefit_card_block(card: Dict[str, Any]) -> str:
+    lines = [f"- {card.get('cardName')}: {_performance_text(card)}"]
+    lines.extend(f"  · {_benefit_detail(benefit)}" for benefit in card.get("benefits") or [])
+    return "\n".join(lines)
+
+
+def _performance_text(card: Dict[str, Any]) -> str:
+    required = card.get("requiredPerformanceAmount")
+    if required is None:
+        return "실적 조건 없는 카드"
+    current = _won(card.get("prevPerformanceAmount"))
+    met = "충족" if card.get("performanceMet") else "미충족"
+    return f"전월실적 {current} / {_won(required)} 필요 ({met})"
+
+
+def _benefit_detail(benefit: Dict[str, Any]) -> str:
+    kind = _KIND_LABELS.get(benefit.get("benefitKind"), benefit.get("benefitKind"))
+    value = benefit.get("benefitValue")
+    calc_method = benefit.get("calcMethod")
+
+    if calc_method == "RATE":
+        amount_text = f"{_trim(value)}% {kind}"
+    elif calc_method == "COUNT_STEP":
+        amount_text = f"{benefit.get('stepCount')}회마다 {_won(value)} {kind}"
+    else:
+        amount_text = f"{_won(value)} {kind}"
+
+    conditions = []
+    if benefit.get("minTxnAmount"):
+        conditions.append(f"건당 {_won(benefit['minTxnAmount'])} 이상")
+    monthly_limit = benefit.get("monthlyLimit")
+    if monthly_limit is not None:
+        # null 은 "한도 제약 없음"이라 조건에 적지 않는다. 0 은 혜택 없음이라 뜻이 다르다.
+        conditions.append(f"월 {_won(monthly_limit)} 한도")
+    if not benefit.get("available"):
+        conditions.append(f"{benefit.get('unavailableReason')}로 지금은 적용 안 됨")
+
+    detail = f"{benefit.get('benefitName')} — {amount_text}"
+    return detail + (f" ({', '.join(conditions)})" if conditions else "")
+
+
+def _trim(value) -> str:
+    """10.00 을 10 으로. 소수점 자리가 의미 없을 때 붙어 있으면 읽기 나쁘다."""
+    text = str(value)
+    return text.rstrip("0").rstrip(".") if "." in text else text
+
+
+def _where(place: Resolution) -> str:
+    name = place.match.name
+    return f"{name} ({place.match.detail})" if place.match.detail else name
 
 
 def _resolve_place(intent: Intent, conn) -> Tuple[Resolution, str]:
@@ -229,8 +297,12 @@ def _to_year_month(period_text: Optional[str]) -> Optional[str]:
     return None
 
 
-def _won(amount: Optional[int]) -> str:
-    """금액 문자열. LLM 에게 자릿수 맞추기를 시키지 않으려고 여기서 완성한다."""
+def _won(amount) -> str:
+    """금액 문자열. LLM 에게 자릿수 맞추기를 시키지 않으려고 여기서 완성한다.
+
+    혜택값은 소수 자리를 가진 값이라 JSON 에서 문자열로 올 수 있다("2000.00").
+    원 단위로 끊어 쓴다 — 카드 혜택은 원 미만을 버리고 지급한다.
+    """
     if amount is None:
         return "0원"
-    return f"{amount:,}원"
+    return f"{int(Decimal(str(amount))):,}원"
