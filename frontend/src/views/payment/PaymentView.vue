@@ -32,6 +32,14 @@ const cards = computed(() => storeCards.value);
 
 const selectedIndex = ref(0);
 
+// 현재 선택된 카드
+const currentCard = computed(() => cards.value[selectedIndex.value] || null);
+
+// 현재 카드의 혜택 3개
+const currentBenefits = computed(() => {
+  return currentCard.value?.benefits?.slice(0, 3) || [];
+});
+
 // 카드 개수에 따라 selectedIndex 초기화
 watch(() => storeCards.value.length, (newLen) => {
   if (newLen <= 2) {
@@ -307,11 +315,12 @@ const closeModal = () => {
   <div class="payment-page">
     <PageHeader title="결제" :show-back="false" />
 
-    <div v-if="hasCards" class="recommend-section">
-      <button class="recommend-btn" @click="$router.push('/payment/recommend')">카드 추천 받기</button>
+    <div v-if="hasCards" class="recommend-section" style="display: flex; flex-direction: column; align-items: flex-end; margin-top: -55px; margin-bottom: 0; padding-right: var(--space-md); padding-top: 0;">
+      <p style="margin: 0 0 2px 0; font-size: var(--font-sm); color: var(--color-text-secondary);">더 좋은 혜택을 찾기 원하시나요?</p>
+      <button class="recommend-btn" @click="$router.push('/payment/recommend')" style="font-size: var(--font-sm); padding: 6px 12px; background: var(--color-primary); color: var(--color-btn-primary-text); border: none; border-radius: var(--radius-md); cursor: pointer; text-decoration: none; font-weight: 500;">카드 추천 받기</button>
     </div>
 
-    <main style="flex: 1">
+    <main style="flex: 1; display: flex; flex-direction: column;">
       <!-- 카드 없을 때 -->
       <div v-if="!hasCards" style="flex: 1; display: flex; align-items: center; justify-content: center;">
         <div style="text-align: center; display: flex; flex-direction: column; gap: 16px; width: 100%; padding: 0 var(--space-md); box-sizing: border-box;">
@@ -321,8 +330,16 @@ const closeModal = () => {
         </div>
       </div>
 
+      <!-- 현재 카드의 혜택 표시 -->
+      <div v-if="hasCards && currentBenefits.length > 0" class="benefits-section" style="margin-bottom: var(--space-md); margin-top: 65px;">
+        <h3 style="margin: 0 0 var(--space-xs) 0; font-size: var(--font-sm); font-weight: var(--font-bold); color: var(--color-text-primary);">{{ currentCard?.name }} 주요 혜택</h3>
+        <ul style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: var(--space-xs);">
+          <li v-for="(benefit, idx) in currentBenefits" :key="idx" style="font-size: var(--font-xs); color: var(--color-text-secondary);">• {{ benefit }}</li>
+        </ul>
+      </div>
+
       <!-- 부채꼴 캐러셀 -->
-      <div v-else ref="cardsContainerRef" class="cards-carousel"
+      <div v-if="hasCards" ref="cardsContainerRef" class="cards-carousel"
            @touchstart="handleTouchStart"
            @touchmove="handleTouchMove"
            @touchend="handleTouchEnd">
@@ -529,6 +546,21 @@ main {
   z-index: 50;
 }
 
+.recommend-btn {
+  background: var(--color-primary);
+  color: var(--color-btn-primary-text);
+  border: none;
+  border-radius: var(--radius-md);
+  padding: var(--space-sm) var(--space-md);
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.recommend-btn:hover {
+  opacity: 0.9;
+}
+
 .payment-btn {
    position: absolute;
   bottom: 60px;   /* 네비게이션 높이에 맞춰 조정 */
@@ -697,9 +729,7 @@ main {
 }
 
 .recommend-section {
-  margin-top: var(--space-md);
-  padding: var(--space-md) var(--space-md) 0;
-  text-align: center;
+  width: 100%;
 }
 
 .recommend-btn {
