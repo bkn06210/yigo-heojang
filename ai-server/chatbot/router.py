@@ -25,6 +25,18 @@ class RouteResult:
     sources: List[str] = field(default_factory=list)
 
 
+# 금액을 말하지 않았을 때 대신 쓰는 결제 금액.
+#
+# 되묻기만 하고 끝내면 사용자는 아무것도 못 얻는다. 대략이라도 답을 주고 정확한 금액을
+# 물어보는 편이 낫다. 계산은 실제로 엔진이 하고, 가정했다는 사실을 답변에 밝힌다.
+#
+# 카테고리별 대표값(카페 5천·마트 5만)이 더 그럴듯하지만 쓰지 않는다. 근거 없는 숫자가
+# 카테고리 수만큼 늘어난다. 하나면 "1만원 기준"이라고 정직하게 말할 수 있다.
+#
+# 금액이 순위를 바꾸는 혜택이 실제로 있다(계단식 정액할인, 건당 최소금액, 한도).
+# 그래서 가정값으로 낸 결과는 반드시 가정과 함께 내보낸다.
+_ASSUMED_AMOUNT = 10_000
+
 # 현황 답변에 나열할 혜택 수. 넘으면 "외 N건"으로 줄인다.
 #
 # 스탬프 혜택은 브랜드마다 행이 따로라(편의점 4사·커피 6사) 카드 한 장에 열댓 개가 나온다.
@@ -133,12 +145,14 @@ def _recommend(intent: Intent, conn, engine: EngineClient) -> RouteResult:
     if not place.found:
         text = intent.merchant_text or intent.category_text
         return RouteResult(follow_up=_ask_again(kind, text, place))
-    if not intent.amount:
-        return RouteResult(follow_up=f"{place.match.name}에서 얼마를 결제하실 예정인가요?")
+
+    # 금액을 안 말했으면 되묻고 끝내는 대신 가정값으로 계산해 대략이라도 답한다.
+    amount = intent.amount or _ASSUMED_AMOUNT
+    assumed = intent.amount is None
 
     ids = {"merchant_id" if kind == "가맹점" else "category_id": place.match.target_id}
     try:
-        data = engine.recommend(intent.amount, **ids)
+        data = engine.recommend(amount, **ids)
     except EngineError as error:
         return RouteResult(follow_up=_engine_failed(error))
 
@@ -151,17 +165,26 @@ def _recommend(intent: Intent, conn, engine: EngineClient) -> RouteResult:
     where = place.match.name
     if place.match.detail:
         where += f" ({place.match.detail})"
-    lines = [
-        f"[결제 예정] {where} {_won(intent.amount)}",
-        "[카드별 예상 혜택] 한 결제에 적용되는 혜택은 카드당 1개입니다.",
-    ]
+    lines = [f"[결제 예정] {where} {_won(amount)}"]
+    if assumed:
+        lines.append(f"[가정] 결제 금액을 말하지 않아 {_won(amount)} 기준으로 계산했습니다.")
+    lines.append("[카드별 예상 혜택] 한 결제에 적용되는 혜택은 카드당 1개입니다.")
     lines.extend(_recommendation_line(row) for row in recommendations)
 
     point_guide = data.get("pointGuide")
     if point_guide and point_guide.get("message"):
         lines.append(f"[보유 포인트] {point_guide['message']}")
 
-    return RouteResult(context="\n".join(lines), sources=["결제 직전 카드 추천"])
+    follow_up = None
+    if assumed:
+        follow_up = "정확한 금액을 알려주시면 다시 계산해 드릴게요."
+        lines.append(f"[되물을 것] {follow_up}")
+
+    return RouteResult(
+        context="\n".join(lines),
+        follow_up=follow_up,
+        sources=["결제 직전 카드 추천"],
+    )
 
 
 def _resolve_place(intent: Intent, conn) -> Tuple[Resolution, str]:

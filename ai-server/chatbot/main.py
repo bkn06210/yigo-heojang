@@ -6,7 +6,8 @@ memberId 만 바꿔 남의 소비내역을 물어볼 수 있다.
 
 한 질문이 지나가는 길은 이렇다.
 
-    질문 → classify(LLM) → 표현 해석(DB) → 값 조회(엔진 API) → compose(LLM) → 답변
+    질문 → classify(LLM) → 직전 맥락과 병합 → 표현 해석(DB) → 값 조회(엔진 API)
+         → compose(LLM) → 답변
 
 판단과 계산은 그 사이 어디에도 없다. LLM 은 말을 알아듣고 문장을 쓰는 두 자리에만 있다.
 
@@ -21,9 +22,9 @@ from fastapi import FastAPI, Header
 from .config import get_settings
 from .db import connection
 from .engine import EngineClient
-from .llm import IntentName, LlmClient, create_llm_client
+from .llm import Intent, IntentName, LlmClient, create_llm_client
 from .router import route
-from .schema import ChatRequest, ChatResponse, HealthResponse
+from .schema import ChatRequest, ChatResponse, HealthResponse, PendingContext
 
 app = FastAPI(title="카드 혜택 챗봇", docs_url="/docs")
 
@@ -51,7 +52,7 @@ def chat(
     # Spring 이 원래 요청의 헤더를 그대로 넘겨준다. 챗봇은 열어보지 않고 엔진 호출에 다시 쓴다.
     authorization: Optional[str] = Header(default=None),
 ) -> ChatResponse:
-    intent = _llm.classify(request.question)
+    intent = _merge(_llm.classify(request.question), request.pending_context)
 
     if intent.name == IntentName.UNKNOWN:
         return ChatResponse(
@@ -64,14 +65,60 @@ def chat(
     with connection() as conn:
         result = route(intent, conn, engine)
 
+    pending = _to_pending(intent) if result.follow_up else None
+
     if result.context is None:
         # 조회할 값을 못 모은 경우다. 지어내지 않고 되묻는다.
         message = result.follow_up or _UNKNOWN_FOLLOW_UP
-        return ChatResponse(answer=message, intent=intent.name, follow_up_question=message)
+        return ChatResponse(
+            answer=message,
+            intent=intent.name,
+            follow_up_question=message,
+            pending_context=pending,
+        )
 
     answer = _llm.compose(request.question, result.context)
     return ChatResponse(
         answer=answer.text,
         intent=intent.name,
         sources=result.sources + answer.sources,
+        follow_up_question=result.follow_up,
+        pending_context=pending,
+    )
+
+
+def _merge(fresh: Intent, pending: Optional[PendingContext]) -> Intent:
+    """직전에 되물은 맥락과 이번 분류를 합친다.
+
+    "스벅에서 어느 카드가 좋아?" → "얼마를 결제하실 예정인가요?" → "8000원"
+    마지막 답만 보면 무엇을 묻는지 알 수 없다. 직전 의도와 가맹점을 이어받아야 한다.
+
+    맥락을 이어받는 경우를 둘로 제한한다 — 이번 분류가 UNKNOWN 이거나(답만 말한 경우),
+    직전과 같은 의도일 때(같은 주제를 이어가는 경우)다. 주제가 바뀌면 통째로 버린다.
+    안 그러면 "스벅"이 다음 질문까지 따라붙는다.
+    """
+    if pending is None:
+        return fresh
+    if fresh.name != IntentName.UNKNOWN and fresh.name != pending.intent:
+        return fresh
+
+    return Intent(
+        name=pending.intent,
+        merchant_text=fresh.merchant_text or pending.merchant_text,
+        category_text=fresh.category_text or pending.category_text,
+        card_text=fresh.card_text or pending.card_text,
+        period_text=fresh.period_text or pending.period_text,
+        amount=fresh.amount or pending.amount,
+        raw=fresh.raw,
+    )
+
+
+def _to_pending(intent: Intent) -> PendingContext:
+    return PendingContext(
+        intent=intent.name,
+        merchant_text=intent.merchant_text,
+        category_text=intent.category_text,
+        card_text=intent.card_text,
+        period_text=intent.period_text,
+        amount=intent.amount,
     )

@@ -1,5 +1,6 @@
 package com.wallet.chat.service;
 
+import com.wallet.chat.dto.ChatRequest;
 import com.wallet.chat.dto.ChatResponse;
 import com.wallet.common.ErrorCode;
 import com.wallet.common.exception.BusinessException;
@@ -47,7 +48,7 @@ public class ChatService {
         this.chatbotBaseUrl = chatbotBaseUrl;
     }
 
-    public ChatResponse ask(Long memberId, String question, String authorization) {
+    public ChatResponse ask(Long memberId, ChatRequest request, String authorization) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         if (authorization != null) {
@@ -56,7 +57,8 @@ public class ChatService {
 
         Map<String, Object> body = new HashMap<>();
         body.put("memberId", memberId);
-        body.put("question", question);
+        body.put("question", request.getQuestion());
+        body.put("pendingContext", request.getPendingContext());
 
         try {
             ChatResponse response = restTemplate.exchange(

@@ -1,6 +1,7 @@
 package com.wallet.chat.controller;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -12,6 +13,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.util.List;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.wallet.chat.dto.ChatRequest;
 import com.wallet.chat.dto.ChatResponse;
 import com.wallet.chat.service.ChatService;
 import com.wallet.common.ErrorCode;
@@ -60,7 +62,7 @@ class ChatControllerTest {
     @Test
     @DisplayName("질문을 넘기면 챗봇 답변을 응답 봉투에 담아 반환한다")
     void 질문하면_답변을_반환한다() throws Exception {
-        when(chatService.ask(eq(1L), eq("실적 채웠어?"), any())).thenReturn(answer());
+        when(chatService.ask(eq(1L), any(ChatRequest.class), any())).thenReturn(answer());
 
         mockMvc.perform(post("/api/chat")
                         .requestAttr(AUTHENTICATED_MEMBER_ID, 1L)
@@ -85,7 +87,9 @@ class ChatControllerTest {
                         .content("{\"question\":\"실적 채웠어?\"}"))
                 .andExpect(status().isOk());
 
-        verify(chatService).ask(1L, "실적 채웠어?", "Bearer test-token");
+        verify(chatService).ask(eq(1L),
+                argThat(sent -> "실적 채웠어?".equals(sent.getQuestion())),
+                eq("Bearer test-token"));
     }
 
     @Test

@@ -151,11 +151,50 @@ def test_추천은_어느_가맹점으로_봤는지_밝힌다(fake_engine):
 
 
 @needs_db
-def test_금액을_안_말하면_계산하지_않고_되묻는다(fake_engine):
+def test_금액을_안_말하면_가정하고_답한_뒤_되묻는다(fake_engine):
+    # 되묻기만 하고 끝내면 사용자는 아무것도 못 얻는다. 가정값으로 계산해 대략이라도
+    # 답하고, 무엇을 가정했는지 밝힌 뒤 정확한 금액을 묻는다.
     body = _ask("스벅에서 어느 카드가 좋아?")
 
+    assert "10,000원" in body["answer"]
     assert body["followUpQuestion"] is not None
-    assert "얼마" in body["followUpQuestion"]
+    assert body["pendingContext"]["intent"] == IntentName.RECOMMEND_CARD
+    assert body["pendingContext"]["merchantText"] == "스벅"
+    # 가정값을 맥락에 남기면 다음 턴에서 "8000원"이라고 답해도 1만원이 이긴다.
+    assert body["pendingContext"]["amount"] is None
+
+
+@needs_db
+def test_되묻고_받은_답으로_대화가_이어진다(fake_engine):
+    first = _ask("스벅에서 어느 카드가 좋아?")
+
+    second = client.post("/chat", json={
+        "memberId": 1,
+        "question": "8000원",
+        "pendingContext": first["pendingContext"],
+    }).json()
+
+    # "8000원"만으로는 무엇을 묻는지 알 수 없다. 직전 의도와 가맹점을 이어받아야 한다.
+    assert second["intent"] == IntentName.RECOMMEND_CARD
+    assert "스타벅스" in second["answer"]
+    assert "8,000원" in second["answer"]
+    assert second["followUpQuestion"] is None
+
+
+@needs_db
+def test_주제가_바뀌면_직전_맥락을_버린다(fake_engine):
+    first = _ask("스벅에서 어느 카드가 좋아?")
+
+    second = client.post("/chat", json={
+        "memberId": 1,
+        "question": "실적 채웠어?",
+        "pendingContext": first["pendingContext"],
+    }).json()
+
+    # 앞의 '스벅'이 따라붙어 추천으로 새면 안 된다.
+    assert second["intent"] == IntentName.CARD_STATUS
+    assert "결제 예정" not in second["answer"]
+    assert "보유 카드 현황" in second["answer"]
 
 
 @needs_db

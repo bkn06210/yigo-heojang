@@ -48,7 +48,7 @@ public class ChatController {
             @RequestHeader(value = HttpHeaders.AUTHORIZATION, required = false) String authorization,
             @Valid @RequestBody ChatRequest request) {
 
-        ChatResponse response = chatService.ask(memberId, request.getQuestion(), authorization);
+        ChatResponse response = chatService.ask(memberId, request, authorization);
 
         return ResponseEntity.ok(ApiResponse.success(response));
     }
