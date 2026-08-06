@@ -30,11 +30,11 @@ const cardStore = useCardStore();
 
 const { cards, points } = storeToRefs(cardStore);
 
-// 금융 포인트 - 제일 많은 순서로 2개까지
+// 금융 포인트 - 제일 많은 순서로 3개까지
 const topPoints = computed(() =>
   points.value
     .sort((a, b) => b.balance - a.balance)
-    .slice(0, 2)
+    .slice(0, 3)
 );
 
 // 토스트 알림 상태
@@ -229,7 +229,15 @@ const addMockData = () => {
       company: '신한카드',
       image: '',
       pinned: false,
-      achievementRate: 68
+      achievementRate: 68,
+      benefits: ['카페 10% 할인', '식당 5% 캐시백', '교통비 2배 적립']
+    });
+  } else {
+    // 이미 있는 카드에 benefits 추가
+    cards.value.forEach(card => {
+      if (!card.benefits) {
+        card.benefits = ['카페 10% 할인', '식당 5% 캐시백', '교통비 2배 적립'];
+      }
     });
   }
 };
@@ -462,13 +470,21 @@ onMounted(async () => {
         <section class="home-section membership-section">
           <div class="section-header-row">
             <h2>멤버십</h2>
+            <button
+              v-if="user && hasMembership"
+              type="button"
+              class="section-more-btn"
+              @click="goMembershipRegister"
+            >
+              더보기
+            </button>
           </div>
 
           <MembershipSummaryCard
             v-if="user && hasMembership"
             :memberships="homeData.memberships"
             @click-item="goMembershipDetail"
-            @click-more="goPointList"
+            @click-more="goMembershipRegister"
           />
 
           <EmptyStateCard
