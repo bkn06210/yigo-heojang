@@ -71,7 +71,15 @@ public interface UserCardMapper {
         @Param("memberId") Long memberId
     );
 
-    /** 로그인 회원이 소유한 활성 카드 한 장을 삭제 상태로 변경한다. */
+    /**
+     * 로그인 회원이 소유한 활성 보유 카드를 삭제 상태로 변경한다.
+     * <p>
+     * userCardId와 memberId를 함께 조건으로 사용해서
+     * 다른 회원이 소유한 카드가 변경되지 않도록 제한한다.
+     * <p>
+     * 반환값은 실제로 변경된 행의 개수이다.
+     * 1이면 삭제 성공이고, 0이면 삭제 가능한 카드가 없다는 의미이다.
+     */
     int softDeleteByIdAndMemberId(
         @Param("userCardId") Long userCardId,
         @Param("memberId") Long memberId

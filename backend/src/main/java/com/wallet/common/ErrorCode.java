@@ -319,7 +319,7 @@ public enum ErrorCode {
         "보유 카드 등록 처리에 실패했습니다."
     ),
 
-    /** 로그인 회원이 삭제할 수 있는 활성 보유카드를 찾지 못한 경우 */
+    /** 로그인 회원이 삭제할 수 있는 활성 보유 카드를 찾지 못한 경우 */
     USER_CARD_NOT_FOUND(
         HttpStatus.NOT_FOUND,
         "USER_CARD_NOT_FOUND",
