@@ -262,7 +262,7 @@ onMounted(async () => {
           @click="showNotification('success', '인증이 완료되었습니다')"
           style="
             padding: 8px 12px;
-            background: #3d6b52;
+            background: var(--color-accent-green);
             color: white;
             border: none;
             border-radius: 6px;
@@ -276,7 +276,7 @@ onMounted(async () => {
           @click="showNotification('error', '작업을 완료할 수 없습니다')"
           style="
             padding: 8px 12px;
-            background: #a84e68;
+            background: var(--color-accent-coral);
             color: white;
             border: none;
             border-radius: 6px;
@@ -290,7 +290,7 @@ onMounted(async () => {
           @click="showNotification('info', '새로운 알림 1개가 있습니다')"
           style="
             padding: 8px 12px;
-            background: #3d6b52;
+            background: var(--color-accent-green);
             color: white;
             border: none;
             border-radius: 6px;
@@ -304,8 +304,8 @@ onMounted(async () => {
           @click="showNotification('warning', '이 작업은 되돌릴 수 없습니다')"
           style="
             padding: 8px 12px;
-            background: #e6d94d;
-            color: #24242a;
+            background: var(--color-primary);
+            color: var(--color-text-primary);
             border: none;
             border-radius: 6px;
             cursor: pointer;
@@ -333,7 +333,9 @@ onMounted(async () => {
       <!-- 혜택 리포트 -->
 
       <section class="home-section benefit-section">
-        <h2>혜택 리포트</h2>
+        <div class="section-header-row">
+          <h2>혜택 리포트</h2>
+        </div>
 
         <BenefitReportCard
           v-if="user && hasCard"
@@ -358,32 +360,20 @@ onMounted(async () => {
         />
       </section>
 
-      <!-- 소비내역 -->
+      <!-- 카드 상세 내역 -->
 
       <section class="home-section spending-section">
-        <h2>소비내역</h2>
+        <div class="section-header-row">
+          <h2>카드 상세 내역</h2>
+        </div>
 
         <SpendingSummaryCard
-          v-if="user && hasCard"
           :count="spendingSummary.count"
           :total-amount="spendingSummary.totalAmount"
+          :has-card="hasCard"
+          :is-logged-in="!!user"
           @open="goSpending"
-        />
-
-        <EmptyStateCard
-          v-else-if="user && !hasCard"
-          title="등록된 카드가 없어요"
-          description="카드를 등록하면 소비내역을 확인할 수 있습니다."
-          buttonText="카드 등록"
-          @click="goCardList"
-        />
-
-        <EmptyStateCard
-          v-else
-          title="로그인 후 이용할 수 있어요"
-          description="로그인하면 소비내역을 확인할 수 있습니다."
-          buttonText="로그인"
-          @click="goLogin"
+          @go-card-list="goCardList"
         />
       </section>
 
@@ -443,13 +433,22 @@ onMounted(async () => {
         <!-- 금융 포인트 -->
 
         <section class="home-section point-section">
-          <h2>금융 포인트</h2>
+          <div class="section-header-row">
+            <h2>금융 포인트</h2>
+            <button
+              v-if="user && hasCard"
+              type="button"
+              class="section-more-btn"
+              @click="goPointList"
+            >
+              더보기
+            </button>
+          </div>
 
           <PointSummaryCard
             v-if="user && hasCard"
             :is-login="true"
             :points="homeData.financialPoints"
-            @click-more="goPointList"
             @click-item="goPointDetail"
           />
 
@@ -463,7 +462,9 @@ onMounted(async () => {
         <!-- 멤버십 -->
 
         <section class="home-section membership-section">
-          <h2>멤버십</h2>
+          <div class="section-header-row">
+            <h2>멤버십</h2>
+          </div>
 
           <MembershipSummaryCard
             v-if="user && hasMembership"
@@ -536,6 +537,10 @@ onMounted(async () => {
   width: 100%;
 
   box-sizing: border-box;
+
+  display: flex;
+
+  flex-direction: column;
 }
 
 /* 섹션 제목 */
@@ -556,11 +561,10 @@ onMounted(async () => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: var(--space-md);
 }
 
 .section-header-row h2 {
-  margin: 0;
+  margin: 0 0 var(--space-md);
 }
 
 .section-more-btn {
@@ -616,6 +620,8 @@ onMounted(async () => {
   flex-direction: column;
 
   justify-content: flex-start;
+
+  min-height: 200px;
 }
 
 :deep(.empty-card button:first-child) {

@@ -170,10 +170,10 @@ const close = () => {
 
 };
 
-</script>
+</script> -->
 
 
-<template>
+<!-- <template>
 
 <div
   class="overlay"
@@ -324,11 +324,11 @@ class="apply-button"
 
 </div>
 
-</template>
+</template> -->
 
 
 
-<style scoped>
+<!-- <style scoped>
 
 .overlay {
 
@@ -352,7 +352,7 @@ z-index:1200;
 
 width:100%;
 
-background:white;
+background:var(--color-surface);
 
 border-radius:24px 24px 0 0;
 
@@ -398,6 +398,8 @@ background:none;
 
 font-size:20px;
 
+color:var(--color-text-primary);
+
 }
 
 
@@ -440,6 +442,8 @@ display:block;
 
 margin-top:6px;
 
+color:var(--color-text-primary);
+
 }
 
 
@@ -467,6 +471,8 @@ border:none;
 background:none;
 
 font-size:25px;
+
+color:var(--color-text-primary);
 
 }
 
@@ -503,9 +509,11 @@ height:40px;
 
 border-radius:50%;
 
-border:1px solid #eee;
+border:1px solid var(--color-border);
 
-background:white;
+background:var(--color-surface);
+
+color:var(--color-text-primary);
 
 }
 
@@ -791,6 +799,8 @@ background:none;
 
 font-size:20px;
 
+color:var(--color-text-primary);
+
 }
 
 
@@ -899,4 +909,4 @@ color:var(--color-btn-primary-text);
 }
 
 
-</style>
+</style> -->

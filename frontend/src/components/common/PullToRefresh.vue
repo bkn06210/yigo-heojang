@@ -129,6 +129,14 @@ const handleTouchEnd = async () => {
 
   overflow: hidden;
 
+  width: 100%;
+
+  height: 100%;
+
+  display: flex;
+
+  flex-direction: column;
+
 }
 
 
@@ -153,6 +161,12 @@ const handleTouchEnd = async () => {
 .content {
 
   transition: transform var(--transition-fast);
+
+  flex: 1;
+
+  display: flex;
+
+  flex-direction: column;
 
 }
 

@@ -12,17 +12,11 @@ const props = defineProps({
   },
 })
 
-const emit = defineEmits(['click-more', 'click-item'])
+const emit = defineEmits(['click-item'])
 </script>
 
 <template>
   <BaseCard class="point-summary">
-    <div class="point-header">
-      <button type="button" class="more-btn" @click="emit('click-more')">
-        더보기
-      </button>
-    </div>
-
     <div v-if="!props.isLogin" class="empty">
       <p>
         로그인하면
@@ -61,27 +55,6 @@ const emit = defineEmits(['click-more', 'click-item'])
   justify-content: flex-start;
 }
 
-.point-header {
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  margin-bottom: var(--space-sm);
-}
-
-.more-btn {
-  border: none;
-  background: none;
-  cursor: pointer;
-  color: var(--color-text-secondary);
-  font-size: var(--font-xs);
-  font-weight: var(--font-medium);
-  transition: var(--transition-fast);
-}
-
-.more-btn:hover {
-  color: var(--color-text-primary);
-}
-
 .empty {
   display: flex;
   justify-content: center;
@@ -89,7 +62,7 @@ const emit = defineEmits(['click-more', 'click-item'])
   text-align: center;
   color: var(--color-text-secondary);
   font-size: var(--font-xs);
-  min-height: 80px;
+  flex: 1;
 }
 
 .empty p {
@@ -102,6 +75,7 @@ const emit = defineEmits(['click-more', 'click-item'])
   flex-direction: column;
   gap: var(--space-xs);
   width: 100%;
+  justify-content: flex-start;
 }
 
 .point-item {

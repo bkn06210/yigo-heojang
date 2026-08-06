@@ -176,24 +176,26 @@ const showMoreMembership = () => {
   <div class="point-page">
     <PageHeader title="혜택" :show-back="false" @back="router.back()" />
 
-    <PullToRefresh @refresh="refreshPoint">
-      <main class="content">
+    <!-- 비로그인 -->
+    <main v-if="!isLogin" style="flex: 1; display: flex; align-items: center; justify-content: center;">
+      <div style="text-align: center; display: flex; flex-direction: column; gap: 16px;">
+        <h2 style="margin: 0; font-size: 18px; font-weight: 700; color: var(--color-text-primary);">로그인이 필요합니다</h2>
+        <p style="margin: 0; font-size: 14px; color: var(--color-text-secondary);">혜택을 받으려면 로그인해주세요.</p>
+        <button @click="goLogin" style="padding: 12px 20px; background: var(--color-primary); color: var(--color-btn-primary-text); border: none; border-radius: var(--radius-full); font-weight: 600; cursor: pointer;">로그인</button>
+      </div>
+    </main>
+
+    <!-- 로그인 -->
+    <div v-else class="pull-container">
+      <PullToRefresh @refresh="refreshPoint">
+        <main class="content">
         <!-- 혜택 리포트 -->
         <section class="benefit-report-section">
           <h2>혜택 리포트</h2>
 
-          <!-- 비로그인 -->
+          <!-- 카드 없음 -->
           <EmptyStateCard
-            v-if="!isLogin"
-            title="로그인 후 이용할 수 있어요"
-            description="로그인하면 카드 혜택 분석과 리포트를 확인할 수 있습니다."
-            buttonText="로그인"
-            @click="goLogin"
-          />
-
-          <!-- 로그인 + 카드 없음 -->
-          <EmptyStateCard
-            v-else-if="cardList.length === 0"
+            v-if="cardList.length === 0"
             title="등록된 카드가 없어요"
             description="카드를 등록하면 혜택 리포트를 확인할 수 있습니다."
             buttonText="카드 등록"
@@ -212,18 +214,9 @@ const showMoreMembership = () => {
         <section class="point-section">
           <h2>금융 포인트</h2>
 
-          <!-- 비로그인 -->
+          <!-- 카드 없음 -->
           <EmptyStateCard
-            v-if="!isLogin"
-            title="로그인 후 이용할 수 있어요"
-            description="로그인하면 금융 포인트를 확인할 수 있습니다."
-            buttonText="로그인"
-            @click="goLogin"
-          />
-
-          <!-- 로그인 + 카드 없음 -->
-          <EmptyStateCard
-            v-else-if="cardList.length === 0"
+            v-if="cardList.length === 0"
             title="카드를 등록해 주세요"
             description="카드 등록 후 금융 포인트를 확인할 수 있습니다."
             buttonText="카드 등록"
@@ -240,7 +233,7 @@ const showMoreMembership = () => {
             <h2>멤버십</h2>
 
             <button
-              v-if="isLogin && membershipList.length > 0"
+              v-if="membershipList.length > 0"
               class="add-button"
               @click="goMembershipRegister"
             >
@@ -248,20 +241,11 @@ const showMoreMembership = () => {
             </button>
           </div>
 
-          <!-- 비로그인 -->
+          <!-- 멤버십 없음 -->
           <EmptyStateCard
-            v-if="!isLogin"
-            title="로그인 후 이용할 수 있어요"
-            description="로그인하면 멤버십을 등록하고 관리할 수 있습니다."
-            buttonText="로그인"
-            @click="goLogin"
-          />
-
-          <!-- 로그인 + 멤버십 없음 -->
-          <EmptyStateCard
-            v-else-if="membershipList.length === 0"
+            v-if="membershipList.length === 0"
             title="등록된 멤버십이 없어요"
-            description="멤버십을 등록하면 포인트와 혜택을 관리할 수 있습니다."
+            description="멤버십을 등록하면 포인트와 혜택을 확인할 수 있습니다."
             buttonText="멤버십 등록"
             @click="goMembershipRegister"
           />
@@ -287,8 +271,9 @@ const showMoreMembership = () => {
             ※ 멤버십 상세 페이지에서 사용처 및 이용 정보를 확인할 수 있습니다.
           </p>
         </section>
-      </main>
-    </PullToRefresh>
+        </main>
+      </PullToRefresh>
+    </div>
 
     <BottomNav />
 
@@ -316,6 +301,22 @@ const showMoreMembership = () => {
   padding-bottom: calc(var(--space-xl) + var(--space-2xl) + var(--space-xl));
   box-sizing: border-box;
   overflow: hidden visible;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.pull-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+main.login-required {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .content {

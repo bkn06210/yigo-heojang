@@ -749,7 +749,13 @@ h2 {
   font-size: var(--font-sm);
   color: var(--color-text-primary);
 
+  background: var(--color-surface);
+
   box-sizing: border-box;
+}
+
+.edit-modal input::placeholder {
+  color: var(--color-text-tertiary);
 }
 
 .input-info {

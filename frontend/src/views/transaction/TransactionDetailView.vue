@@ -1,10 +1,13 @@
 <script setup>
 import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 
 import PageHeader from '@/components/common/PageHeader.vue';
 import TransactionFilterBottomSheet from '@/components/transaction/TransactionFilterBottomSheet.vue';
 import TransactionDetailBottomSheet from '@/components/transaction/TransactionDetailBottomSheet.vue';
 import Icon from '@/components/common/Icon.vue';
+
+const router = useRouter();
 
 
 // 조회조건 표시 여부
@@ -88,18 +91,17 @@ const closeDetail = () => {
 <template>
 
 <div class="transaction-detail-page">
-<h1>테스트 화면</h1>
 
   <div class="header">
 
-    <PageHeader title="카드 사용내역" @back="router.back()" />
+    <PageHeader title="카드 이용내역" @back="router.back()" />
 
 
     <button
       class="filter-button"
       @click="openFilter"
     >
-      <Icon name="filter" size="sm" />
+      <Icon name="filter" size="sm" :color="'var(--color-text-primary)'" />
     </button>
 
 
@@ -220,6 +222,8 @@ const closeDetail = () => {
   font-size: var(--font-lg);
 
   cursor:pointer;
+
+  color:var(--color-text-primary);
 
 }
 

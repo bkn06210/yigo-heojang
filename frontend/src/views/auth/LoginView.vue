@@ -315,7 +315,7 @@ const verifyPasswordFind = () => {
   background:
     radial-gradient(circle at 15% 15%, rgba(var(--color-primary-dark-rgb), 0.2) 0%, transparent 45%),
     radial-gradient(circle at 85% 85%, rgba(var(--color-primary-dark-rgb), 0.15) 0%, transparent 45%),
-    linear-gradient(135deg, #F8F4E8 0%, #F7F8FA 100%);
+    var(--color-bg);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -326,10 +326,10 @@ const verifyPasswordFind = () => {
 .login-container {
   width: 100%;
   max-width: 480px;
-  background: rgba(255, 255, 255, 0.9);
+  background: var(--color-surface);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.6);
+  border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
   padding: var(--space-xl);
   box-sizing: border-box;

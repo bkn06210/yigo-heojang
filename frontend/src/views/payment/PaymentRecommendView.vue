@@ -498,20 +498,12 @@ const refreshPayment = async () => {
 
 
   <!-- 비로그인 상태 -->
-  <main v-if="!isLogin">
-
-    <EmptyStateCard
-
-      title="로그인 후 이용할 수 있어요"
-
-      description="로그인하면 결제 혜택 추천 서비스를 이용할 수 있습니다."
-
-      buttonText="로그인"
-
-      @click="goLogin"
-
-    />
-
+  <main v-if="!isLogin" style="flex: 1; display: flex; align-items: center; justify-content: center;">
+    <div style="text-align: center; display: flex; flex-direction: column; gap: 16px;">
+      <h2 style="margin: 0; font-size: 18px; font-weight: 700; color: var(--color-text-primary);">로그인이 필요합니다</h2>
+      <p style="margin: 0; font-size: 14px; color: var(--color-text-secondary);">혜택을 받으려면 로그인해주세요.</p>
+      <button @click="goLogin" style="padding: 12px 20px; background: var(--color-primary); color: var(--color-btn-primary-text); border: none; border-radius: var(--radius-full); font-weight: 600; cursor: pointer;">로그인</button>
+    </div>
   </main>
 
 
@@ -967,6 +959,10 @@ const refreshPayment = async () => {
   box-sizing: border-box;
 
   overflow: hidden visible;
+
+  display: flex;
+
+  flex-direction: column;
 
 }
 

@@ -204,6 +204,8 @@ defineProps({
 
   cursor:pointer;
 
+  color:var(--color-text-primary);
+
 }
 
 

@@ -808,7 +808,13 @@ align-items:center;
 
 }
 
+.title-area h2 {
 
+color:var(--color-text-primary);
+
+margin:0;
+
+}
 
 .title-area button {
 
@@ -817,6 +823,8 @@ border:none;
 background:none;
 
 font-size:20px;
+
+color:var(--color-text-primary);
 
 }
 
@@ -837,6 +845,8 @@ font-size: var(--font-md);
 font-weight: var(--font-semibold);
 
 margin-bottom:12px;
+
+color:var(--color-text-primary);
 
 }
 
@@ -869,6 +879,8 @@ border-radius:12px;
 border:1px solid var(--color-border);
 
 background:var(--color-surface);
+
+color:var(--color-text-primary);
 
 }
 
@@ -906,6 +918,8 @@ border-radius:12px;
 
 background:var(--color-surface);
 
+color:var(--color-text-primary);
+
 }
 
 
@@ -941,6 +955,8 @@ background:var(--color-surface);
 border:none;
 
 border-bottom:1px solid var(--color-border);
+
+color:var(--color-text-primary);
 
 }
 
@@ -984,6 +1000,8 @@ border-radius:12px;
 
 text-align:center;
 
+color:var(--color-text-primary);
+
 }
 
 
@@ -1017,6 +1035,8 @@ flex:1;
 border:1px solid var(--color-border);
 
 background:var(--color-surface);
+
+color:var(--color-text-primary);
 
 }
 

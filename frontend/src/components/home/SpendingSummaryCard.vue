@@ -2,7 +2,7 @@
 import BaseCard from '@/components/common/BaseCard.vue'
 import Icon from '@/components/common/Icon.vue'
 
-defineProps({
+const props = defineProps({
   count: {
     type: Number,
     default: 0
@@ -10,13 +10,25 @@ defineProps({
   totalAmount: {
     type: Number,
     default: 0
+  },
+  hasCard: {
+    type: Boolean,
+    default: true
+  },
+  isLoggedIn: {
+    type: Boolean,
+    default: true
   }
 })
 
-const emit = defineEmits(['open'])
+const emit = defineEmits(['open', 'go-card-list'])
 
 const openList = () => {
-  emit('open')
+  if (props.hasCard) {
+    emit('open')
+  } else {
+    emit('go-card-list')
+  }
 }
 </script>
 
@@ -27,10 +39,16 @@ const openList = () => {
     </div>
 
     <div class="spending-info">
-      <p class="spending-label">이번 달 소비내역</p>
-      <p class="spending-value">
+      <p class="spending-label">이번 달 카드 상세 내역</p>
+      <p v-if="!isLoggedIn" class="spending-value empty-state">
+        <strong>이용 내역 없음</strong>
+      </p>
+      <p v-else-if="hasCard" class="spending-value">
         <strong>{{ totalAmount.toLocaleString() }}원</strong>
         <span> · {{ count }}건</span>
+      </p>
+      <p v-else class="spending-value empty-state">
+        <strong>등록된 카드가 없어요</strong>
       </p>
     </div>
 
@@ -87,5 +105,13 @@ const openList = () => {
   flex-shrink: 0;
   color: var(--color-text-tertiary);
   font-size: var(--font-md);
+}
+
+.empty-state {
+  color: var(--color-text-secondary) !important;
+}
+
+.empty-state strong {
+  color: var(--color-text-secondary) !important;
 }
 </style>

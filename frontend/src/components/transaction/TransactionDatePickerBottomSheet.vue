@@ -409,9 +409,9 @@ const close = () => {
 
 <div v-if="showMonthPicker" class="month-picker">
 
-<div style="display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin:20px 0;">
+<div class="month-grid">
 
-<button v-for="month in 12" :key="month" @click="selectMonth(month-1)" style="padding:10px; border:1px solid #ccc; border-radius:8px; cursor:pointer;">
+<button v-for="month in 12" :key="month" @click="selectMonth(month-1)" class="month-btn">
 
 {{month}}월
 
@@ -419,7 +419,7 @@ const close = () => {
 
 </div>
 
-<button @click="showMonthPicker = false" style="width:100%; padding:10px; border:none; background:#ccc; border-radius:8px; cursor:pointer;">
+<button class="month-close-btn" @click="showMonthPicker = false">
 
 닫기
 
@@ -530,6 +530,7 @@ border:none;
 background:none;
 cursor:pointer;
 font-size:20px;
+color:var(--color-text-primary);
 }
 
 .month-nav {
@@ -548,6 +549,7 @@ border-radius:8px;
 background:var(--color-surface);
 cursor:pointer;
 font-size:16px;
+color:var(--color-text-primary);
 }
 
 .month-nav button:nth-child(2) {
@@ -556,6 +558,7 @@ border:none;
 background:none;
 font-weight:var(--font-semibold);
 cursor:pointer;
+color:var(--color-text-primary);
 }
 
 .selected {
@@ -581,6 +584,7 @@ margin:0;
 .selected strong {
 font-size:16px;
 margin:4px 0 0 0;
+color:var(--color-text-primary);
 }
 
 .weekdays {
@@ -617,6 +621,7 @@ border-radius:0;
 padding:0;
 box-sizing:border-box;
 font-size:14px;
+color:var(--color-text-primary);
 }
 
 .calendar button:disabled {
@@ -643,6 +648,10 @@ top:50%;
 left:50%;
 transform:translate(-50%, -50%);
 z-index:0;
+}
+
+.calendar button span {
+color:var(--color-text-primary);
 }
 
 .calendar button.active span {
@@ -674,6 +683,32 @@ border-radius:0 8px 8px 0;
 padding:20px 0;
 border-top:1px solid var(--color-border);
 border-bottom:1px solid var(--color-border);
+}
+
+.month-grid {
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:8px;
+margin:20px 0;
+}
+
+.month-btn {
+padding:10px;
+border:1px solid var(--color-border);
+border-radius:8px;
+cursor:pointer;
+background:var(--color-surface);
+color:var(--color-text-primary);
+}
+
+.month-close-btn {
+width:100%;
+padding:10px;
+border:none;
+background:var(--color-border);
+color:var(--color-text-primary);
+border-radius:8px;
+cursor:pointer;
 }
 
 .apply {

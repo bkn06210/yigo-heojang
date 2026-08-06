@@ -193,20 +193,13 @@ const closeRecommendedCard = () => {
   <PageHeader title="카드 목록" :show-back="false" @back="router.back()" />
 
   <!-- 비로그인 -->
-
-  <EmptyStateCard
-
-    v-if="!isLogin"
-
-    title="로그인 후 이용할 수 있어요"
-
-    description="로그인하면 내 카드를 등록하고 관리할 수 있습니다."
-
-    buttonText="로그인"
-
-    @click="goLogin"
-
-  />
+  <main v-if="!isLogin" style="flex: 1; display: flex; align-items: center; justify-content: center;">
+    <div style="text-align: center; display: flex; flex-direction: column; gap: 16px;">
+      <h2 style="margin: 0; font-size: 18px; font-weight: 700; color: var(--color-text-primary);">로그인이 필요합니다</h2>
+      <p style="margin: 0; font-size: 14px; color: var(--color-text-secondary);">카드를 등록하고 관리하려면 로그인해주세요.</p>
+      <button @click="goLogin" style="padding: 12px 20px; background: var(--color-primary); color: var(--color-btn-primary-text); border: none; border-radius: var(--radius-full); font-weight: 600; cursor: pointer;">로그인</button>
+    </div>
+  </main>
 
 
 
@@ -372,6 +365,10 @@ const closeRecommendedCard = () => {
   box-sizing: border-box;
 
   overflow: hidden visible;
+
+  display: flex;
+
+  flex-direction: column;
 
 }
 

@@ -423,6 +423,8 @@ const close = () => {
 
   margin:20px 0;
 
+  color:var(--color-text-primary);
+
 }
 
 
@@ -433,6 +435,8 @@ const close = () => {
   background:none;
 
   font-size:20px;
+
+  color:var(--color-text-primary);
 
 }
 
@@ -453,9 +457,26 @@ const close = () => {
 }
 
 
+.month-header button {
+
+  border:none;
+
+  background:none;
+
+  font-size:20px;
+
+  color:var(--color-text-primary);
+
+  cursor:pointer;
+
+}
+
+
 .month {
 
   font-weight:bold;
+
+  color:var(--color-text-primary);
 
 }
 
@@ -470,6 +491,22 @@ const close = () => {
   gap:10px;
 
   margin-bottom:20px;
+
+}
+
+.month-picker button {
+
+  color:var(--color-text-primary);
+
+  border:1px solid var(--color-border);
+
+  background:var(--color-surface);
+
+  padding:8px;
+
+  border-radius:8px;
+
+  cursor:pointer;
 
 }
 
@@ -504,6 +541,10 @@ const close = () => {
   border:none;
 
   background:var(--color-surface);
+
+  color:var(--color-text-primary);
+
+  cursor:pointer;
 
 }
 
@@ -542,6 +583,8 @@ const close = () => {
   gap:12px;
 
   margin:20px 0;
+
+  color:var(--color-text-primary);
 
 }
 

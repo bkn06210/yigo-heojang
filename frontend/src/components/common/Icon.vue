@@ -53,10 +53,9 @@ const icons = {
   <svg
     :width="sizeMap[size]"
     :height="sizeMap[size]"
-    :style="{ color }"
     viewBox="0 0 24 24"
-    fill="currentColor"
     xmlns="http://www.w3.org/2000/svg"
+    :style="{ color: color === 'currentColor' ? 'inherit' : color }"
   >
     <g v-html="icons[name]"></g>
   </svg>

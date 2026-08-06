@@ -348,6 +348,8 @@ background:none;
 
 font-size:20px;
 
+color:var(--color-text-primary);
+
 }
 
 

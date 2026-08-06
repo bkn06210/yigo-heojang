@@ -1,7 +1,9 @@
 ﻿<script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
+import { storeToRefs } from 'pinia';
 import { usePaymentStore } from '@/stores/payment';
+import { useAuthStore } from '@/stores/authStore';
 import PageHeader from '@/components/common/PageHeader.vue';
 import BottomNavigation from '@/components/layout/BottomNavigation.vue';
 import ToastNotification from '@/components/common/ToastNotification.vue';
@@ -11,6 +13,10 @@ import PaymentTimeoutModal from '@/components/payment/PaymentTimeoutModal.vue';
 
 const paymentStore = usePaymentStore();
 const router = useRouter();
+const authStore = useAuthStore();
+
+const { user } = storeToRefs(authStore);
+const isLoggedIn = computed(() => !!user.value);
 
 const CAROUSEL_CONFIG = {
   FLIP_THRESHOLD: 100,
@@ -286,11 +292,21 @@ const closeModal = () => {
   <div class="payment-page">
     <PageHeader title="결제" :show-back="false" />
 
-    <div class="recommend-section">
+    <div v-if="isLoggedIn" class="recommend-section">
       <button class="recommend-btn" @click="$router.push('/payment/recommend')">카드 추천 받기</button>
     </div>
 
-    <main style="flex: 1">
+    <!-- 로그인 필요 메시지 (비로그인 상태) -->
+    <main v-if="!isLoggedIn" style="flex: 1; display: flex; align-items: center; justify-content: center;">
+      <div style="text-align: center; display: flex; flex-direction: column; gap: 16px;">
+        <h2 style="margin: 0; font-size: 18px; font-weight: 700; color: var(--color-text-primary);">로그인이 필요합니다</h2>
+        <p style="margin: 0; font-size: 14px; color: var(--color-text-secondary);">결제를 이용하려면 로그인해주세요.</p>
+        <button @click="$router.push('/auth/login')" style="padding: 12px 20px; background: var(--color-primary); color: var(--color-btn-primary-text); border: none; border-radius: var(--radius-full); font-weight: 600; cursor: pointer;">로그인</button>
+      </div>
+    </main>
+
+    <!-- 기존 화면 (로그인 상태) -->
+    <main v-else style="flex: 1">
       <!-- 부채꼴 캐러셀 -->
       <div ref="cardsContainerRef" class="cards-carousel"
            @touchstart="handleTouchStart"

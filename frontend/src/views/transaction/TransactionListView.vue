@@ -209,7 +209,7 @@ const closeDetail = () => {
   <div class="header">
 
     <PageHeader
-      :title="filterCardName ? `${filterCardName} 사용내역` : '카드 사용내역'"
+      :title="filterCardName ? `${filterCardName} 이용내역` : '최근 이용내역'"
       @back="router.back()"
     />
 
@@ -345,6 +345,7 @@ border:none;
 background:none;
 font-size: var(--font-lg);
 cursor: pointer;
+color: var(--color-text-primary);
 
 }
 
