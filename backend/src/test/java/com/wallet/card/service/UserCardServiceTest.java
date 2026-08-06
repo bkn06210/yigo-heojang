@@ -664,6 +664,74 @@ class UserCardServiceTest {
     }
 
     @Test
+    @DisplayName("대표 카드 목록 조회 성공 - 로그인 회원의 활성 대표 카드 목록을 반환한다")
+    void getRepresentativeUserCards_success() {
+        // given
+        Long memberId = 1L;
+
+        List<UserCardListResult> representativeUserCards = List.of(
+            new UserCardListResult(
+                10L,
+                100L,
+                "KB국민 My WE:SH 카드",
+                "KB국민카드",
+                "CREDIT",
+                "****-****-****-1234",
+                "https://example.com/card-image-1.png",
+                true,
+                LocalDateTime.of(2026, 8, 6, 10, 0)
+            ),
+            new UserCardListResult(
+                11L,
+                101L,
+                "신한 Deep Dream 카드",
+                "신한카드",
+                "CREDIT",
+                "****-****-****-5678",
+                "https://example.com/card-image-2.png",
+                true,
+                LocalDateTime.of(2026, 8, 6, 11, 0)
+            )
+        );
+
+        when(userCardMapper.findActiveRepresentativeUserCardsByMemberId(memberId))
+            .thenReturn(representativeUserCards);
+
+        // when
+        UserCardListResponse response =
+            userCardService.getRepresentativeUserCards(memberId);
+
+        // then
+        assertThat(response.userCards()).hasSize(2);
+        assertThat(response.userCards())
+            .extracting(UserCardListItemResponse::representative)
+            .containsOnly(true);
+
+        verify(userCardMapper)
+            .findActiveRepresentativeUserCardsByMemberId(memberId);
+    }
+
+    @Test
+    @DisplayName("대표 카드 목록 조회 성공 - 대표 카드가 없으면 빈 목록을 반환한다")
+    void getRepresentativeUserCards_success_emptyList() {
+        // given
+        Long memberId = 1L;
+
+        when(userCardMapper.findActiveRepresentativeUserCardsByMemberId(memberId))
+            .thenReturn(List.of());
+
+        // when
+        UserCardListResponse response =
+            userCardService.getRepresentativeUserCards(memberId);
+
+        // then
+        assertThat(response.userCards()).isEmpty();
+
+        verify(userCardMapper)
+            .findActiveRepresentativeUserCardsByMemberId(memberId);
+    }
+
+    @Test
     @DisplayName("보유 카드 목록 조회 성공 - 보유 카드가 없으면 빈 목록과 0을 반환한다")
     void getUserCards_success_emptyList() {
         // given
