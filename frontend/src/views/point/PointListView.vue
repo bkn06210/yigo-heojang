@@ -352,12 +352,13 @@ h2 {
 /* 혜택 리포트 */
 
 .benefit-report-section {
-  margin-top: -5px;
+  margin-top: -14px;
   margin-bottom: 0;
 }
 
 .benefit-report-section h2 {
-  transform: translateY(-8px);
+  padding-top: 8px;
+  margin-top: 0;
 }
 
 /* BenefitReportCard 내부 카드 느낌 */
