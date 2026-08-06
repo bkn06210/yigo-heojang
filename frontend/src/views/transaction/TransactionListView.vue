@@ -72,50 +72,70 @@ const transactions = ref([
     cardId: 1,
     date: '2026.08.04 09:30',
     merchant: '스타벅스',
-    cardName: 'KB My WE:SH 카드',
     amount: 8500,
     category: '음식/카페',
     status: '승인',
+    cardName: 'KB My WE:SH 카드',
+    cardLastDigits: '1234',
+    cardType: '신용카드',
+    installment: '일시불',
+    approvalNumber: '12345678',
   },
   {
     id: 2,
     cardId: 1,
     date: '2026.08.03 18:45',
     merchant: 'GS25',
-    cardName: 'KB My WE:SH 카드',
     amount: 12400,
     category: '편의점',
     status: '승인',
+    cardName: 'KB My WE:SH 카드',
+    cardLastDigits: '1234',
+    cardType: '신용카드',
+    installment: '일시불',
+    approvalNumber: '87654321',
   },
   {
     id: 3,
     cardId: 1,
     date: '2026.08.02 14:20',
     merchant: '넥슨 게임샵',
-    cardName: 'KB My WE:SH 카드',
     amount: 29000,
     category: '게임/엔터',
     status: '승인',
+    cardName: 'KB My WE:SH 카드',
+    cardLastDigits: '1234',
+    cardType: '신용카드',
+    installment: '일시불',
+    approvalNumber: '11223344',
   },
   {
     id: 4,
     cardId: 2,
     date: '2026.08.01 16:15',
     merchant: '컬리마켓',
-    cardName: '신한 Deep Dream 카드',
     amount: 45800,
     category: '쇼핑',
     status: '승인',
+    cardName: '신한 Deep Dream 카드',
+    cardLastDigits: '5678',
+    cardType: '체크카드',
+    installment: '일시불',
+    approvalNumber: '55667788',
   },
   {
     id: 5,
     cardId: 2,
     date: '2026.07.31 10:50',
     merchant: '로또판매점',
-    cardName: '신한 Deep Dream 카드',
     amount: 5000,
     category: '기타',
     status: '승인',
+    cardName: '신한 Deep Dream 카드',
+    cardLastDigits: '5678',
+    cardType: '체크카드',
+    installment: '일시불',
+    approvalNumber: '99887766',
   },
 ]);
 
@@ -209,7 +229,7 @@ const closeDetail = () => {
   <div class="header">
 
     <PageHeader
-      :title="filterCardName ? `${filterCardName} 이용내역` : '최근 이용내역'"
+      :title="filterCardName ? `${filterCardName} 이용내역` : '카드이용내역'"
       @back="router.back()"
     />
 
@@ -241,17 +261,21 @@ const closeDetail = () => {
         {{ transaction.merchant }}
       </div>
       <span class="amount">
-        -{{ transaction.amount.toLocaleString() }}원
+        {{ transaction.amount.toLocaleString() }}원
       </span>
     </div>
 
     <!-- 상세 정보 (작음) -->
     <div class="transaction-info">
       <span class="info-text">{{ transaction.date }}</span>
-      <span class="info-dot">·</span>
+      <span class="info-dot">|</span>
+      <span class="info-text">본인 123*{{ transaction.cardLastDigits.slice(0, 2) }}*</span>
+      <span class="info-dot">|</span>
       <span class="info-text">{{ transaction.category }}</span>
-      <span class="info-dot">·</span>
-      <span class="info-text">{{ transaction.cardName }}</span>
+      <span class="info-dot">|</span>
+      <span class="info-text">{{ transaction.installment }}</span>
+      <span class="info-dot">|</span>
+      <span class="info-text">{{ transaction.cardType }}</span>
     </div>
 
 
