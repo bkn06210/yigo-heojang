@@ -34,6 +34,7 @@ const isLogin = computed(() => authStore.isLogin());
 const cardStore = useCardStore();
 
 const cardList = computed(() => cardStore.cards);
+const pointList = computed(() => cardStore.points);
 
 // 카드 등록 이동
 const goCardRegister = () => {
@@ -223,8 +224,15 @@ const showMoreMembership = () => {
             @click="goCardRegister"
           />
 
-          <!-- 카드 있음 -->
-          <FinancialPointCard v-else @click="openPointSheet" />
+          <!-- 포인트 없음 -->
+          <EmptyStateCard
+            v-else-if="pointList.length === 0"
+            title="등록된 포인트가 없어요"
+            description="카드 등록 후 포인트를 확인할 수 있습니다."
+          />
+
+          <!-- 카드 있고 포인트도 있음 -->
+          <FinancialPointCard v-else :points="pointList" @click="openPointSheet" />
         </section>
 
         <!-- 멤버십 -->

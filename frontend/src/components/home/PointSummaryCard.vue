@@ -29,7 +29,7 @@ const emit = defineEmits(['click-item'])
       <p>등록된 금융 포인트가 없습니다.</p>
     </div>
 
-    <div v-else class="point-list">
+    <div v-else class="point-list" :class="{ multiple: props.points.length > 1 }">
       <article
         v-for="point in props.points.slice(0, 2)"
         :key="point.id"
@@ -52,7 +52,7 @@ const emit = defineEmits(['click-item'])
 .point-summary {
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
+  justify-content: center;
 }
 
 .empty {
@@ -76,6 +76,11 @@ const emit = defineEmits(['click-item'])
   gap: var(--space-xs);
   width: 100%;
   justify-content: flex-start;
+  flex: 1;
+}
+
+.point-list.multiple {
+  justify-content: center;
 }
 
 .point-item {

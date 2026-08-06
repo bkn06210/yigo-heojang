@@ -14,19 +14,6 @@ import { Pagination } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/pagination';
 
-// 테스트용 mock 카드
-const addMockCards = () => {
-  if (cards.value.length === 0) {
-    cardStore.addCard({
-      id: 1,
-      name: 'KB My WE:SH 카드',
-      cardNumber: '4111111111111111',
-      company: 'KB국민카드',
-      image: 'https://via.placeholder.com/280x177?text=KB',
-      pinned: false
-    });
-  }
-};
 
 import PageHeader from '@/components/common/PageHeader.vue';
 
@@ -251,10 +238,7 @@ const recommendedCards = ref([
 
 // 초기화
 onMounted(() => {
-
-  // 테스트용 mock 카드 추가
-  addMockCards();
-
+  // mock 데이터는 추가하지 않음
 });
 
 

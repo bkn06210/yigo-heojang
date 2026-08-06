@@ -3,11 +3,6 @@
 import { computed, ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { storeToRefs } from 'pinia';
-import { Swiper, SwiperSlide } from 'swiper/vue';
-import { Pagination } from 'swiper/modules';
-import 'swiper/css';
-import 'swiper/css/pagination';
-
 import { useAuthStore } from '@/stores/authStore';
 import { useCardStore } from '@/stores/cardStore';
 
@@ -52,24 +47,9 @@ const goRegister = () => {
 };
 
 
-// 테스트용 mock 카드 추가
-const addMockCards = () => {
-  if (cards.value.length === 0) {
-    cardStore.addCard({
-      id: 1,
-      name: '테스트 카드',
-      cardNumber: '4111111111111111',
-      company: 'KB국민카드',
-      image: '',
-      pinned: false,
-      achievementRate: 65
-    });
-  }
-};
-
 // 초기화
 onMounted(() => {
-  addMockCards();
+  // mock 데이터는 추가하지 않음
 });
 
 
@@ -192,32 +172,19 @@ const closeRecommendedCard = () => {
   <!-- 페이지 헤더 -->
   <PageHeader title="카드 목록" :show-back="false" @back="router.back()" />
 
-  <!-- 비로그인 -->
-  <main v-if="!isLogin" style="flex: 1; display: flex; align-items: center; justify-content: center;">
+  <!-- 비로그인 또는 카드 없음 -->
+  <main v-if="!isLogin || cards.length === 0" style="flex: 1; display: flex; align-items: center; justify-content: center;">
     <div style="text-align: center; display: flex; flex-direction: column; gap: 16px;">
-      <h2 style="margin: 0; font-size: 18px; font-weight: 700; color: var(--color-text-primary);">로그인이 필요합니다</h2>
-      <p style="margin: 0; font-size: 14px; color: var(--color-text-secondary);">카드를 등록하고 관리하려면 로그인해주세요.</p>
-      <button @click="goLogin" style="padding: 12px 20px; background: var(--color-primary); color: var(--color-btn-primary-text); border: none; border-radius: var(--radius-full); font-weight: 600; cursor: pointer;">로그인</button>
+      <h2 v-if="!isLogin" style="margin: 0; font-size: 18px; font-weight: 700; color: var(--color-text-primary);">로그인이 필요합니다</h2>
+      <h2 v-else style="margin: 0; font-size: 18px; font-weight: 700; color: var(--color-text-primary);">등록된 카드가 없어요</h2>
+
+      <p v-if="!isLogin" style="margin: 0; font-size: 14px; color: var(--color-text-secondary);">카드를 등록하고 관리하려면 로그인해주세요.</p>
+      <p v-else style="margin: 0; font-size: 14px; color: var(--color-text-secondary);">카드를 등록하면 혜택과 소비 관리를 시작할 수 있습니다.</p>
+
+      <button v-if="!isLogin" @click="goLogin" style="padding: 12px 20px; background: var(--color-primary); color: var(--color-btn-primary-text); border: none; border-radius: var(--radius-full); font-weight: 600; cursor: pointer;">로그인</button>
+      <button v-else @click="goRegister" style="padding: 12px 20px; background: var(--color-primary); color: var(--color-btn-primary-text); border: none; border-radius: var(--radius-full); font-weight: 600; cursor: pointer;">카드 등록</button>
     </div>
   </main>
-
-
-
-  <!-- 로그인 + 카드 없음 -->
-
-  <EmptyStateCard
-
-    v-else-if="cards.length === 0"
-
-    title="등록된 카드가 없어요"
-
-    description="카드를 등록하면 혜택과 소비 관리를 시작할 수 있습니다."
-
-    buttonText="카드 등록"
-
-    @click="goRegister"
-
-  />
 
 
 
@@ -229,72 +196,22 @@ const closeRecommendedCard = () => {
 
 
 
-    <!-- 고정 카드 Carousel -->
+    <!-- 고정 카드 목록 -->
 
     <section v-if="pinnedCards.length > 0" class="card-section pinned-section">
-
 
       <h2>
         <Icon name="star-filled" size="sm" /> 고정 카드
       </h2>
 
-
-      <!-- Carousel (1개: 고정카드 + 추천카드, 2개 이상: 고정카드들) -->
-      <Swiper
-        v-if="pinnedCards.length > 0"
-        :modules="[Pagination]"
-        :slides-per-view="1.25"
-        :centered-slides="true"
-        :space-between="16"
-        :pagination="{ clickable: true, el: '.swiper-pagination-custom' }"
-        :grab-cursor="true"
-        class="pinned-carousel"
-      >
-        <!-- 고정 카드들 -->
-        <SwiperSlide v-for="card in pinnedCards" :key="card.id" class="pinned-slide stack-slide">
-          <CardItem
-
-            :card="card"
-
-            @toggle-pin="togglePin"
-
-          />
-        </SwiperSlide>
-
-        <!-- 추천 카드 (1개일 때만) -->
-        <SwiperSlide
-          v-if="pinnedCards.length === 1 && !hideRecommendedCard"
-          class="pinned-slide recommended-slide"
-        >
-          <div class="recommended-card-content">
-            <button class="close-btn" @click="closeRecommendedCard" type="button" title="닫기">
-              <Icon name="close" size="xs" />
-            </button>
-
-            <div class="recommended-header">
-              <span class="icon"><Icon name="lightbulb" size="sm" /></span>
-              <h3>발견</h3>
-            </div>
-
-            <p class="recommended-subtitle">당신을 위한 새로운 카드</p>
-
-            <div class="recommended-preview">
-              <img src="https://via.placeholder.com/280x177?text=New+Card" alt="추천 카드" />
-            </div>
-
-            <div class="recommended-info">
-              <p class="recommended-name">새로운 카드</p>
-              <p class="recommended-benefit">더 많은 혜택을 누려보세요</p>
-            </div>
-
-            <button class="explore-btn">살펴보기</button>
-          </div>
-        </SwiperSlide>
-      </Swiper>
-
-      <!-- 페이지네이션 인디케이터 -->
-      <div class="swiper-pagination-custom"></div>
-
+      <div class="pinned-cards-list">
+        <CardItem
+          v-for="card in pinnedCards"
+          :key="card.id"
+          :card="card"
+          @toggle-pin="togglePin"
+        />
+      </div>
 
     </section>
 
@@ -496,20 +413,18 @@ const closeRecommendedCard = () => {
 
 .card-section {
 
-  margin-bottom: var(--space-2xl);
+  margin-bottom: var(--space-lg);
 
 }
 
 
 .pinned-section {
 
-  margin-bottom: var(--space-md);
+  margin-bottom: var(--space-sm);
 
   display: flex;
 
   flex-direction: column;
-
-  min-height: 420px;
 
 }
 
@@ -520,136 +435,18 @@ const closeRecommendedCard = () => {
 }
 
 
-/* Swiper Carousel 스타일 */
-.pinned-carousel {
-
-  padding: var(--space-lg) var(--space-md);
-
-  overflow: hidden;
-
-  cursor: grab;
-
-  height: 320px;
-
-  box-sizing: border-box;
-
-  width: 100%;
-
-}
-
-.pinned-carousel:active {
-
-  cursor: grabbing;
-
-}
-
-
-:deep(.swiper-wrapper) {
-
-  align-items: center;
-
-}
-
-:deep(.swiper-slide) {
-
-  width: auto;
-
-  height: auto;
-
-  min-width: 280px;
-
-}
-
-
-.pinned-slide {
-
-  display: flex !important;
-
-  justify-content: center;
-
-  align-items: center;
-
-  width: auto;
-
-  height: 100%;
-
-}
-
-
-/* 페이지네이션 커스텀 스타일 */
-.swiper-pagination-custom {
-
+/* 고정 카드 목록 */
+.pinned-cards-list {
   display: flex;
-
-  gap: var(--space-xs);
-
-  justify-content: center;
-
-  margin-top: var(--space-lg);
-
-  min-height: 24px;
-
-}
-
-
-:deep(.swiper-pagination-bullet) {
-
-  width: 8px;
-
-  height: 8px;
-
-  background: var(--color-border);
-
-  opacity: 1;
-
-  transition: var(--transition-fast);
-
-}
-
-
-:deep(.swiper-pagination-bullet-active) {
-
-  width: 24px;
-
-  background: var(--color-primary);
-
-  border-radius: var(--radius-full);
-
-}
-
-:deep(.swiper-scrollbar) {
-
-  background: rgba(0, 0, 0, 0.08);
-
-}
-
-:deep(.swiper-scrollbar-drag) {
-
-  background: var(--color-primary);
-
-  opacity: 0.8;
-
-}
-
-[data-theme="dark"] :deep(.swiper-scrollbar) {
-
-  background: rgba(255, 255, 255, 0.15);
-
-}
-
-[data-theme="dark"] :deep(.swiper-scrollbar-drag) {
-
-  background: var(--color-primary);
-
-  opacity: 1;
-
+  flex-direction: column;
+  gap: var(--space-md);
 }
 
 .card-section h2 {
 
   font-size: var(--font-lg);
 
-  margin-bottom: var(--space-md);
+  margin-bottom: var(--space-sm);
 
   font-weight: var(--font-bold);
 

@@ -139,7 +139,7 @@ const emit = defineEmits([
 
   align-items:center;
 
-  justify-content:flex-start;
+  justify-content:center;
 
   gap:var(--space-sm);
 
@@ -155,7 +155,7 @@ const emit = defineEmits([
 
 .empty-title{
 
-  margin:0;
+  margin:0 0 0 var(--space-xs);
 
   color:var(--color-text-primary);
 
@@ -163,17 +163,21 @@ const emit = defineEmits([
 
   font-weight:var(--font-semibold);
 
+  line-height: 1.4;
+
 }
 
 
 
 .empty-description{
 
-  margin:0;
+  margin:0 0 0 var(--space-xs);
 
   color:var(--color-text-secondary);
 
   font-size:var(--font-sm);
+
+  line-height: 1.5;
 
 }
 
