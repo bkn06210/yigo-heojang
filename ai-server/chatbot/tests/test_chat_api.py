@@ -62,6 +62,33 @@ class FakeEngine:
             ]
         }
 
+    def benefit_report(self, year_month=None):
+        return {
+            "yearMonth": "2026-08",
+            "totalBenefitAmount": 3500,
+            "topCategoryId": 1,
+            "topCategoryName": "외식",
+            "topCategoryBenefitAmount": 3000,
+            "categories": [
+                {
+                    "categoryId": 1, "categoryName": "외식", "benefitAmount": 3000,
+                    "details": [{
+                        "expenseId": 1, "merchantName": "스타벅스", "cardName": "ALL point 카드",
+                        "paymentAmount": 10000, "benefitAmount": 2000,
+                        "benefitName": "커피 10% 할인", "paymentDate": "2026-08-10T12:00:00",
+                    }],
+                },
+                {
+                    "categoryId": 2, "categoryName": "쇼핑", "benefitAmount": 500,
+                    "details": [{
+                        "expenseId": 3, "merchantName": "GS25", "cardName": "ALL point 카드",
+                        "paymentAmount": 3000, "benefitAmount": 500,
+                        "benefitName": "편의점 적립", "paymentDate": "2026-08-11T12:00:00",
+                    }],
+                },
+            ],
+        }
+
     def applicable_benefits(self, merchant_id=None, category_id=None):
         return {
             "cards": [
@@ -271,8 +298,27 @@ def test_업종만_말해도_추천한다(fake_engine):
 
 
 @needs_db
-def test_아직_연결되지_않은_의도는_못_한다고_말한다(fake_engine):
+def test_받은_혜택은_총액과_최대_부문을_알려준다(fake_engine):
     body = _ask("이번 달 얼마 아꼈어?")
 
     assert body["intent"] == IntentName.BENEFIT_SUM
-    assert "소비내역" in body["answer"]
+    assert "총 3,500원" in body["answer"]
+    assert "외식 3,000원" in body["answer"]
+
+
+@needs_db
+def test_가맹점을_짚어_물으면_그_가맹점_거래만_합산한다(fake_engine):
+    body = _ask("스벅에서 얼마 아꼈어?")
+
+    assert body["intent"] == IntentName.BENEFIT_SUM
+    assert "스타벅스 총 2,000원" in body["answer"]
+    # 다른 가맹점 거래가 섞이면 안 된다.
+    assert "GS25" not in body["answer"]
+
+
+@needs_db
+def test_약관_질문은_아직_못_한다고_말한다(fake_engine):
+    body = _ask("카드 잃어버리면 어떻게 해?")
+
+    assert body["intent"] == IntentName.TERM_QA
+    assert "약관 원문" in body["answer"]

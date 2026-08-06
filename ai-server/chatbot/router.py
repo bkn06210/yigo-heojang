@@ -43,9 +43,11 @@ _KIND_LABELS = {
 # 근본 해법은 엔진이 count_group_code 로도 묶어 내려주는 것이다(홈 화면도 같은 문제를 겪는다).
 _MAX_BENEFITS_IN_ANSWER = 5
 
+# 리포트 답변에 나열할 부문 수. 상위 몇 개면 "어디서 많이 받았나"에 답이 된다.
+_MAX_CATEGORIES_IN_ANSWER = 3
+
 # 아직 데이터 경로가 없는 의도. 못 하는 것을 못 한다고 말한다.
 _NOT_READY = {
-    IntentName.BENEFIT_SUM: "받은 혜택 금액은 소비내역 조회가 연결된 뒤에 답할 수 있습니다.",
     IntentName.TERM_QA: "약관 원문이 아직 등록되지 않아 약관 질문에는 답할 수 없습니다.",
 }
 
@@ -55,6 +57,8 @@ def route(intent: Intent, conn, engine: EngineClient) -> RouteResult:
         return _card_status(intent, conn, engine)
     if intent.name == IntentName.RECOMMEND_CARD:
         return _recommend(intent, conn, engine)
+    if intent.name == IntentName.BENEFIT_SUM:
+        return _benefit_sum(intent, conn, engine)
 
     message = _NOT_READY.get(intent.name)
     if message:
@@ -129,6 +133,75 @@ def _benefit_text(benefit: Dict[str, Any]) -> str:
     # null 은 "한도 제약이 없다"는 뜻이지 "다 썼다"가 아니다.
     suffix = "한도 없음" if remaining is None else f"잔여 {_won(remaining)}"
     return f"{benefit.get('benefitName')} ({suffix})"
+
+
+# ── 받은 혜택 (리포트) ─────────────────────────────────────
+
+
+def _benefit_sum(intent: Intent, conn, engine: EngineClient) -> RouteResult:
+    year_month = _to_year_month(intent.period_text)
+    try:
+        data = engine.benefit_report(year_month)
+    except EngineError as error:
+        return RouteResult(follow_up=_engine_failed(error))
+
+    period = data.get("yearMonth") or year_month or "이번 달"
+    categories = data.get("categories") or []
+
+    # 가맹점을 짚어 물었으면("스벅에서 얼마 아꼈어?") 그 가맹점 거래만 추린다.
+    if intent.merchant_text:
+        merchant = resolve_merchant(conn, intent.merchant_text)
+        if not merchant.found:
+            return RouteResult(follow_up=_ask_again("가맹점", intent.merchant_text, merchant))
+        return _merchant_benefit(period, merchant, categories)
+
+    if not categories:
+        return RouteResult(
+            context=f"[받은 혜택] {period}\n받은 혜택이 없습니다.",
+            sources=["혜택 리포트"],
+        )
+
+    lines = [
+        f"[받은 혜택] {period} 총 {_won(data.get('totalBenefitAmount'))}",
+        f"[가장 많이 받은 부문] {data.get('topCategoryName')}"
+        f" {_won(data.get('topCategoryBenefitAmount'))}",
+        "[부문별]",
+    ]
+    shown = categories[:_MAX_CATEGORIES_IN_ANSWER]
+    lines.extend(
+        f"- {category.get('categoryName')} {_won(category.get('benefitAmount'))}"
+        f" ({len(category.get('details') or [])}건)"
+        for category in shown
+    )
+    hidden = len(categories) - len(shown)
+    if hidden > 0:
+        lines.append(f"- 외 {hidden}개 부문")
+
+    return RouteResult(context="\n".join(lines), sources=["혜택 리포트"])
+
+
+def _merchant_benefit(period: str, merchant: Resolution, categories: List[Dict[str, Any]]) -> RouteResult:
+    name = merchant.match.name
+    details = [
+        detail
+        for category in categories
+        for detail in (category.get("details") or [])
+        if detail.get("merchantName") == name
+    ]
+    if not details:
+        return RouteResult(
+            context=f"[받은 혜택] {period} · {name}\n이 가맹점에서 받은 혜택이 없습니다.",
+            sources=["혜택 리포트"],
+        )
+
+    total = sum(detail.get("benefitAmount") or 0 for detail in details)
+    lines = [f"[받은 혜택] {period} · {name} 총 {_won(total)} ({len(details)}건)"]
+    lines.extend(
+        f"- {detail.get('paymentDate', '')[:10]} {_won(detail.get('paymentAmount'))} 결제"
+        f" → {_won(detail.get('benefitAmount'))} ({detail.get('benefitName')}, {detail.get('cardName')})"
+        for detail in details
+    )
+    return RouteResult(context="\n".join(lines), sources=["혜택 리포트"])
 
 
 # ── 결제 직전 추천 ─────────────────────────────────────────

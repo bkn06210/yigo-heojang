@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.wallet.engine.dao.BenefitReportMapper">
+
+    <!--
+        혜택을 받은 거래만 조회한다. 집계는 자바에서 한다 —
+        총액·부문별 합계·거래 목록을 각각 SQL로 두면 세 값이 서로 어긋날 수 있다.
+
+        묶음 단위는 대분류다. 중분류는 33개라 목록이 길고 금액이 잘게 쪼개져
+        "가장 많이 받은 부문"이 의미를 잃는다. 구체적인 내용은 상세에서 거래로 확인한다.
+        parent_category_id가 없는 행은 그 자체가 대분류이므로 자기 자신으로 묶는다.
+
+        merchant_name은 가맹점 마스터를 우선한다. expense의 이름은 미등록 가맹점용
+        폴백이라, 마스터에 있는 가맹점이면 표기가 흔들리지 않게 마스터 값을 쓴다.
+    -->
+    <select id="findBenefitedExpenses" resultType="com.wallet.engine.dao.dto.BenefitReportRow">
+        SELECT e.expense_id                                        AS expenseId,
+               e.amount                                            AS amount,
+               e.discount_amount                                   AS discountAmount,
+               e.payment_date                                      AS paymentDate,
+               COALESCE(m.merchant_name, e.merchant_name)          AS merchantName,
+               COALESCE(p.category_id, c.category_id)              AS groupCategoryId,
+               COALESCE(p.category_name, c.category_name)          AS groupCategoryName,
+               b.benefit_name                                      AS benefitName,
+               cd.card_name                                        AS cardName
+          FROM expense e
+          JOIN category c   ON c.category_id = e.category_id
+          LEFT JOIN category p ON p.category_id = c.parent_category_id
+          LEFT JOIN merchant m ON m.merchant_id = e.merchant_id
+          LEFT JOIN benefit b  ON b.benefit_id = e.applied_benefit_id
+          JOIN user_card uc ON uc.user_card_id = e.user_card_id
+          JOIN card cd      ON cd.card_id = uc.card_id
+         WHERE e.member_id = #{memberId}
+           AND e.payment_status = 'APPROVED'
+           AND e.discount_amount &gt; 0
+           AND DATE_FORMAT(e.payment_date, '%Y-%m') = #{yearMonth}
+         ORDER BY e.payment_date DESC, e.expense_id DESC
+    </select>
+
+</mapper>

@@ -39,6 +39,15 @@ class EngineClient:
         params = {"yearMonth": year_month} if year_month else None
         return self._request("GET", "/api/cards/monthly-status", params=params)
 
+    def benefit_report(self, year_month: Optional[str] = None) -> Dict[str, Any]:
+        """한 달 동안 실제로 받은 혜택. 총액·부문별 합계·거래 목록이 함께 온다.
+
+        혜택액은 결제 시점에 엔진이 확정해 소비내역에 적어 둔 값이라 여기서 다시 구하지 않는다.
+        다시 계산하면 그때의 한도 상태를 재현할 수 없어 실제와 달라진다.
+        """
+        params = {"yearMonth": year_month} if year_month else None
+        return self._request("GET", "/api/benefits/report", params=params)
+
     def applicable_benefits(self, merchant_id: Optional[int] = None,
                             category_id: Optional[int] = None) -> Dict[str, Any]:
         """이 가맹점·업종에 걸린 혜택과 그 조건. 금액이 없어도 답할 수 있다.

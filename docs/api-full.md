@@ -2345,6 +2345,68 @@ GET /api/cards/applicable-benefits
 
 `NOT_FOUND(404)` — 없는 `merchantId`·`categoryId`
 
+### 31-B. 월별 혜택 리포트
+
+```
+GET /api/benefits/report
+```
+
+• 사용 목적: 한 달 동안 실제로 받은 혜택을 총액·부문별 합계·거래 목록으로 반환한다. 홈의 혜택 리포트 카드(총액 + 최대 혜택 부문)와 바텀시트(부문 목록 → 부문 상세)가 이 하나로 그려진다.
+• 주의사항:
+◦ **계산이 아니라 집계다.** 혜택액은 결제 시점에 엔진이 확정해 `expense.discount_amount`에 적어 둔 값을 합산한다. 다시 계산하지 않는다 — 그 시점의 한도 소진 상태를 재현할 수 없어 실제와 달라진다.
+◦ **요약·목록·상세를 한 응답에 담는다.** 화면이 단계적으로 파고들지만 조회를 나누면 그 사이 결제가 일어났을 때 합계와 상세가 어긋난다. 담기는 거래는 실제로 혜택을 받은 건뿐이라 한 달치라도 목록이 길지 않다.
+◦ **부문은 대분류로 묶는다.** 중분류는 33개라 목록이 길고 금액이 잘게 쪼개져 "가장 많이 받은 부문"이 의미를 잃는다. 구체적인 내용은 상세의 거래로 확인한다.
+◦ **혜택을 받지 않은 거래는 담지 않는다.** 취소된 거래(`payment_status='CANCELED'`)와 혜택액 0원 거래를 뺀다. 담기면 총액이 부풀고 목록에 받지도 않은 거래가 섞인다.
+◦ 부문은 혜택 금액 내림차순, 동점이면 `categoryId` 오름차순. `topCategory*`는 1위와 같은 값이다.
+◦ 받은 혜택이 없으면 에러가 아니라 `totalBenefitAmount: 0`, `categories: []`, `topCategory*: null`.
+◦ `merchantName`은 가맹점 마스터를 우선한다. `expense.merchant_name`은 미등록 가맹점용 폴백이다.
+◦ `yearMonth` 형식이 `YYYY-MM`이 아니면 `INPUT_INVALID(400)`.
+
+**화면** 홈 혜택 리포트 카드 · 혜택 리포트 바텀시트 · **권한** USER · **담당** 현준 고 · **상태 코드** 200 OK
+
+**Request**
+
+쿼리 파라미터 `yearMonth`(선택, `YYYY-MM`). 생략하면 이번 달.
+
+**Response**
+
+```json
+{
+  "success": true,
+  "code": "SUCCESS",
+  "data": {
+    "yearMonth": "2026-08",
+    "totalBenefitAmount": 12500,
+    "topCategoryId": 5,
+    "topCategoryName": "문화여가",
+    "topCategoryBenefitAmount": 5000,
+    "categories": [
+      {
+        "categoryId": 5,
+        "categoryName": "문화여가",
+        "benefitAmount": 5000,
+        "details": [
+          {
+            "expenseId": 41,
+            "merchantName": "넷플릭스",
+            "cardName": "ALL point 카드",
+            "paymentAmount": 17000,
+            "benefitAmount": 2000,
+            "benefitName": "OTT 10% 청구할인",
+            "paymentDate": "2026-08-10T12:00:00"
+          }
+        ]
+      }
+    ]
+  },
+  "message": null
+}
+```
+
+**고유 에러**
+
+`INPUT_INVALID(400)` — `yearMonth` 형식 오류
+
 ### 32. 결제 취소 상태 갱신
 
 ```
