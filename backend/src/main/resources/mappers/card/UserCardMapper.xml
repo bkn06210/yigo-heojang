@@ -132,6 +132,29 @@
             uc.user_card_id DESC
     </select>
 
+    <!--
+
+    -->
+    <select id="findActiveDetailByIdAndMemberId"
+            resultType="com.wallet.card.domain.UserCardDetailResult">
+        SELECT
+            uc.user_card_id       AS userCardId,
+            c.card_id             AS cardId,
+            c.card_name           AS cardName,
+            cc.company_name       AS issuerName,
+            c.card_type           AS cardType,
+            uc.masked_card_number AS maskedCardNumber,
+            c.image_url           AS imageUrl,
+            uc.is_representative  AS representative,
+            uc.registered_at      AS registeredAt
+        FROM user_card uc
+        INNER JOIN card c ON c.card_id = uc.card_id
+        INNER JOIN card_company cc ON cc.card_company_id = c.card_company_id
+        WHERE uc.user_card_id = #{userCardId}
+          AND uc.member_id = #{memberId}
+          AND uc.card_status = 'ACTIVE'
+    </select>
+
     <update id="softDeleteByIdAndMemberId">
         UPDATE user_card
         SET

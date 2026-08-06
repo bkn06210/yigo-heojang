@@ -10,10 +10,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.wallet.card.domain.Card;
 import com.wallet.card.domain.CardBin;
-import com.wallet.card.domain.UserCardStatus;
 import com.wallet.card.domain.UserCard;
+import com.wallet.card.domain.UserCardDetailResult;
 import com.wallet.card.domain.UserCardListResult;
 import com.wallet.card.domain.UserCardRegistrationResult;
+import com.wallet.card.domain.UserCardStatus;
+import com.wallet.card.dto.UserCardDetailResponse;
 import com.wallet.card.dto.UserCardListItemResponse;
 import com.wallet.card.dto.UserCardListResponse;
 import com.wallet.card.dto.UserCardRegisterRequest;
@@ -80,6 +82,19 @@ public class UserCardService {
             .toList();
 
         return UserCardListResponse.from(userCards);
+    }
+
+    // 로그인한 회원이 보유한 카드의 상세 기본 정보를 조회한다.
+    @Transactional(readOnly = true)
+    public UserCardDetailResponse getUserCardDetail(Long memberId, Long userCardId) {
+        UserCardDetailResult detailResult =
+            userCardMapper.findActiveDetailByIdAndMemberId(memberId, userCardId);
+
+        if (detailResult == null) {
+            throw new BusinessException(ErrorCode.USER_CARD_NOT_FOUND);
+        }
+
+        return UserCardDetailResponse.from(detailResult);
     }
 
     // 로그인 회원이 소유한 활성 보유 카드를 삭제 상태로 변경한다.
