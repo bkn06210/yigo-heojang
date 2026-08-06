@@ -80,7 +80,7 @@ const emit = defineEmits(['click-item'])
 }
 
 .point-list.multiple {
-  justify-content: center;
+  justify-content: flex-start;
 }
 
 .point-item {
