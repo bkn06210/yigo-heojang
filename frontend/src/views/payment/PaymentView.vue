@@ -331,10 +331,10 @@ const closeModal = () => {
       </div>
 
       <!-- 현재 카드의 혜택 표시 -->
-      <div v-if="hasCards && currentBenefits.length > 0" class="benefits-section" style="margin-bottom: var(--space-md); margin-top: 65px;">
-        <h3 style="margin: 0 0 var(--space-xs) 0; font-size: var(--font-sm); font-weight: var(--font-bold); color: var(--color-text-primary);">{{ currentCard?.name }} 주요 혜택</h3>
-        <ul style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: var(--space-xs);">
-          <li v-for="(benefit, idx) in currentBenefits" :key="idx" style="font-size: var(--font-xs); color: var(--color-text-secondary);">• {{ benefit }}</li>
+      <div v-if="hasCards && currentBenefits.length > 0" class="benefits-section">
+        <h3 class="benefits-title">{{ currentCard?.name }} 주요 혜택</h3>
+        <ul class="benefits-list">
+          <li v-for="(benefit, idx) in currentBenefits" :key="idx" class="benefits-item">• {{ benefit }}</li>
         </ul>
       </div>
 
@@ -544,6 +544,34 @@ main {
   transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
   pointer-events: auto;
   z-index: 50;
+}
+
+.benefits-section {
+  /* 작업 관리자에서는 250px가 낫고(모바일용)/vs code에서는 65 */
+  margin-top: 65px;  
+  margin-bottom: var(--space-md);
+  flex-shrink: 0;
+}
+
+.benefits-title {
+  margin: 0 0 var(--space-xs) 0;
+  font-size: var(--font-sm);
+  font-weight: var(--font-bold);
+  color: var(--color-text-primary);
+}
+
+.benefits-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.benefits-item {
+  font-size: var(--font-xs);
+  color: var(--color-text-secondary);
 }
 
 .recommend-btn {
