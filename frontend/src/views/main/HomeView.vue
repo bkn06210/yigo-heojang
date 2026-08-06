@@ -521,8 +521,6 @@ onMounted(async () => {
 
   flex-direction: column;
 
-  gap: var(--space-xl);
-
   width: 100%;
 
   max-width: 100%;
@@ -539,6 +537,15 @@ onMounted(async () => {
   display: flex;
 
   flex-direction: column;
+
+  margin-bottom: var(--space-lg);
+}
+
+
+/* 혜택 리포트 (더 큰 간격) */
+.benefit-section {
+  margin-top: var(--space-lg);
+  margin-bottom: var(--space-xl);
 }
 
 /* 섹션 제목 */

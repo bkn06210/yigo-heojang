@@ -360,6 +360,10 @@ color: var(--color-text-primary);
   gap: var(--space-xs);
 }
 
+.transaction-item:first-of-type {
+  margin-top: var(--space-md);
+}
+
 .transaction-header {
   display: flex;
   justify-content: space-between;
