@@ -40,7 +40,7 @@ def get_settings() -> Settings:
         llm_provider=os.getenv("LLM_PROVIDER", PROVIDER_STUB),
         openai_api_key=os.getenv("OPENAI_API_KEY", ""),
         openai_model=os.getenv("OPENAI_MODEL", "gpt-4o-mini"),
-        backend_base_url=os.getenv("BACKEND_BASE_URL", "http://localhost:8080/wallet"),
+        backend_base_url=os.getenv("BACKEND_BASE_URL", "http://localhost:8080"),
         host=os.getenv("CHATBOT_HOST", "127.0.0.1"),
         port=int(os.getenv("CHATBOT_PORT", "8000")),
     )

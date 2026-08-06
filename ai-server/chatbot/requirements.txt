@@ -5,6 +5,8 @@ uvicorn[standard]>=0.32
 pydantic>=2.9
 python-dotenv>=1.0
 httpx>=0.27
+# 별칭·가맹점 조회와 약관 원문용. 계산값은 DB 가 아니라 엔진 API 에서 받는다.
+pymysql>=1.1
 # 실제 LLM 을 켤 때만 필요하다. stub 으로 개발하는 동안에는 없어도 서버가 뜬다.
 openai>=1.59
 
