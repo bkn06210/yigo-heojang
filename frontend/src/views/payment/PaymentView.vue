@@ -1,9 +1,10 @@
 ﻿<script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { storeToRefs } from 'pinia';
 import { usePaymentStore } from '@/stores/payment';
 import { useAuthStore } from '@/stores/authStore';
+import { useCardStore } from '@/stores/cardStore';
 import PageHeader from '@/components/common/PageHeader.vue';
 import BottomNavigation from '@/components/layout/BottomNavigation.vue';
 import ToastNotification from '@/components/common/ToastNotification.vue';
@@ -14,9 +15,12 @@ import PaymentTimeoutModal from '@/components/payment/PaymentTimeoutModal.vue';
 const paymentStore = usePaymentStore();
 const router = useRouter();
 const authStore = useAuthStore();
+const cardStore = useCardStore();
 
 const { user } = storeToRefs(authStore);
+const { cards: storeCards } = storeToRefs(cardStore);
 const isLoggedIn = computed(() => !!user.value);
+const hasCards = computed(() => storeCards.value.length > 0);
 
 const CAROUSEL_CONFIG = {
   FLIP_THRESHOLD: 100,
@@ -24,13 +28,19 @@ const CAROUSEL_CONFIG = {
   MODAL_SHOW_DELAY: 400,
 };
 
-const cards = ref([
+const staticCards = [
   { id: 1, name: 'KB My WE:SH', image: 'https://via.placeholder.com/280x177?text=KB' },
   { id: 2, name: '신한 SOL Pay', image: 'https://via.placeholder.com/280x177?text=Shinhan' },
   { id: 3, name: '삼성 카드', image: 'https://via.placeholder.com/280x177?text=Samsung' },
   { id: 4, name: '현대 카드', image: 'https://via.placeholder.com/280x177?text=Hyundai' },
   { id: 5, name: 'NH농협 카드', image: 'https://via.placeholder.com/280x177?text=NH' },
-]);
+];
+
+const cards = ref(staticCards);
+
+watch(() => storeCards.value.length, (newLen) => {
+  cards.value = staticCards.slice(0, newLen);
+});
 
 const selectedIndex = ref(2);
 const flipProgress = ref(0); // 0 ~ 1
@@ -292,23 +302,22 @@ const closeModal = () => {
   <div class="payment-page">
     <PageHeader title="결제" :show-back="false" />
 
-    <div v-if="isLoggedIn" class="recommend-section">
+    <div v-if="hasCards" class="recommend-section">
       <button class="recommend-btn" @click="$router.push('/payment/recommend')">카드 추천 받기</button>
     </div>
 
-    <!-- 로그인 필요 메시지 (비로그인 상태) -->
-    <main v-if="!isLoggedIn" style="flex: 1; display: flex; align-items: center; justify-content: center;">
-      <div style="text-align: center; display: flex; flex-direction: column; gap: 16px;">
-        <h2 style="margin: 0; font-size: 18px; font-weight: 700; color: var(--color-text-primary);">로그인이 필요합니다</h2>
-        <p style="margin: 0; font-size: 14px; color: var(--color-text-secondary);">결제를 이용하려면 로그인해주세요.</p>
-        <button @click="$router.push('/auth/login')" style="padding: 12px 20px; background: var(--color-primary); color: var(--color-btn-primary-text); border: none; border-radius: var(--radius-full); font-weight: 600; cursor: pointer;">로그인</button>
+    <main style="flex: 1">
+      <!-- 카드 없을 때 -->
+      <div v-if="!hasCards" style="flex: 1; display: flex; align-items: center; justify-content: center;">
+        <div style="text-align: center; display: flex; flex-direction: column; gap: 16px; width: 100%; padding: 0 var(--space-md); box-sizing: border-box;">
+          <h2 style="margin: 0; font-size: 18px; font-weight: 700; color: var(--color-text-primary);">등록된 카드가 없어요</h2>
+          <p style="margin: 0; font-size: 14px; color: var(--color-text-secondary);">카드를 등록하면 혜택과 소비 관리를 시작할 수 있습니다.</p>
+          <button @click="$router.push('/cards/register')" style="width: 100%; padding: 12px 20px; background: var(--color-primary); color: var(--color-btn-primary-text); border: none; border-radius: var(--radius-full); font-weight: 600; cursor: pointer; box-sizing: border-box;">카드 등록</button>
+        </div>
       </div>
-    </main>
 
-    <!-- 기존 화면 (로그인 상태) -->
-    <main v-else style="flex: 1">
       <!-- 부채꼴 캐러셀 -->
-      <div ref="cardsContainerRef" class="cards-carousel"
+      <div v-else ref="cardsContainerRef" class="cards-carousel"
            @touchstart="handleTouchStart"
            @touchmove="handleTouchMove"
            @touchend="handleTouchEnd">
@@ -351,7 +360,7 @@ const closeModal = () => {
                          @close="showToast = false" />
 
       <!-- 결제 버튼 -->
-      <button class="payment-btn" @click="payment">결제하기</button>
+      <button v-if="hasCards" class="payment-btn" @click="payment">결제하기</button>
     </main>
 
     <BottomNavigation />
@@ -705,6 +714,51 @@ main {
 
 .recommend-btn:active {
   opacity: 0.5;
+}
+
+/* Empty State */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-lg);
+  text-align: center;
+  width: 100%;
+}
+
+.empty-state h2 {
+  margin: 0;
+  font-size: var(--font-lg);
+  font-weight: var(--font-bold);
+  color: var(--color-text-primary);
+}
+
+.empty-state p {
+  margin: 0;
+  font-size: var(--font-sm);
+  color: var(--color-text-secondary);
+}
+
+.register-card-btn {
+  padding: 12px 20px;
+  background: var(--color-primary);
+  color: var(--color-btn-primary-text);
+  border: none;
+  border-radius: var(--radius-full);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.register-card-btn:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.register-card-btn:active {
+  transform: translateY(0);
+  opacity: 0.8;
 }
 
 </style>

@@ -28,7 +28,14 @@ const { user } = storeToRefs(authStore);
 // 카드 store 연결
 const cardStore = useCardStore();
 
-const { cards } = storeToRefs(cardStore);
+const { cards, points } = storeToRefs(cardStore);
+
+// 금융 포인트 - 제일 많은 순서로 2개까지
+const topPoints = computed(() =>
+  points.value
+    .sort((a, b) => b.balance - a.balance)
+    .slice(0, 2)
+);
 
 // 토스트 알림 상태
 const toastType = ref('success');
@@ -46,6 +53,11 @@ const hasMembership = computed(
 );
 
 const hasCard = computed(() => cards.value.length > 0);
+
+// 알림 상태: 비로그인이면 false, 로그인했을 때만 실제 알림 상태 표시
+const hasUnreadNotification = computed(() => {
+  return user.value ? homeData.value.hasUnreadNotification : false;
+});
 
 // 홈 "내 카드"에는 카드 목록에서 고정(pinned)한 카드만 노출 (최대 3개까지 고정 가능)
 const pinnedCards = computed(() => cards.value.filter((card) => card.pinned));
@@ -84,20 +96,6 @@ const homeData = ref({
 
     achievementRate: 60,
   },
-
-  financialPoints: [
-    {
-      id: 1,
-      name: '마이신한포인트',
-      balance: 2234,
-    },
-
-    {
-      id: 2,
-      name: '포인트리',
-      balance: 4456,
-    },
-  ],
 
   memberships: [],
 });
@@ -168,7 +166,7 @@ const goSpending = () => {
 // 포인트
 
 const goPointList = () => {
-  router.push('/benefits');
+  router.push('/points');
 };
 
 const goPointDetail = (item) => {
@@ -238,7 +236,7 @@ const addMockData = () => {
 
 onMounted(async () => {
   await loadHome();
-  // addMockData();
+  addMockData();
 });
 </script>
 
@@ -317,7 +315,7 @@ onMounted(async () => {
       </div>
 
       <HomeHeader
-        :has-unread-notification="homeData.hasUnreadNotification"
+        :has-unread-notification="hasUnreadNotification"
         :user="user"
         @chat="goChatBot"
         @click-notification="goNotification"
@@ -448,7 +446,7 @@ onMounted(async () => {
           <PointSummaryCard
             v-if="user && hasCard"
             :is-login="true"
-            :points="homeData.financialPoints"
+            :points="topPoints"
             @click-item="goPointDetail"
           />
 
@@ -573,6 +571,10 @@ onMounted(async () => {
   cursor: pointer;
   color: var(--color-text-secondary);
   font-size: var(--font-sm);
+  height: var(--font-lg);
+  display: flex;
+  align-items: center;
+  margin-top: calc(var(--font-lg) * -0.3);
 }
 
 /* Empty 버튼 영역 */
@@ -619,7 +621,7 @@ onMounted(async () => {
 
   flex-direction: column;
 
-  justify-content: flex-start;
+  justify-content: center;
 
   min-height: 200px;
 }
