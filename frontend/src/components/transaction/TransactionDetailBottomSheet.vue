@@ -657,6 +657,45 @@ const close = () => {
 <div class="row">
 
 <span>
+가맹점명
+</span>
+
+<strong>
+{{ props.transaction.merchant }}
+</strong>
+
+</div>
+
+
+<div class="row">
+
+<span>
+카테고리
+</span>
+
+<strong>
+{{ props.transaction.category }}
+</strong>
+
+</div>
+
+
+<div class="row">
+
+<span>
+이용카드
+</span>
+
+<strong>
+본인 123*{{ props.transaction.cardLastDigits.slice(0, 2) }}* | {{ props.transaction.cardName }}
+</strong>
+
+</div>
+
+
+<div class="row">
+
+<span>
 거래구분
 </span>
 
@@ -688,32 +727,6 @@ const close = () => {
 
 <strong>
 {{ props.transaction.status }}
-</strong>
-
-</div>
-
-
-<div class="row">
-
-<span>
-이용카드
-</span>
-
-<strong>
-본인 123*{{ props.transaction.cardLastDigits.slice(0, 2) }}* | {{ props.transaction.cardName }}
-</strong>
-
-</div>
-
-
-<div class="row">
-
-<span>
-가맹점명
-</span>
-
-<strong>
-{{ props.transaction.merchant }}
 </strong>
 
 </div>
