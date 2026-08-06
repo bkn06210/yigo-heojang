@@ -79,6 +79,8 @@ jobs:
           mail.smtp.timeout=1000
           mail.smtp.writetimeout=1000
           mail.debug=false
+
+          chatbot.base-url=http://127.0.0.1:8000
           EOF
 
       # mvnw는 저장소에 실행권한 없이 커밋돼 있어(100644) chmod가 필요하다.
