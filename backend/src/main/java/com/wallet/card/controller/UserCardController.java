@@ -9,7 +9,9 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -72,5 +74,24 @@ public class UserCardController {
 
         return ResponseEntity.ok(
             ApiResponse.success("보유 카드 목록 조회에 성공했습니다.", response));
+    }
+
+    /**
+     * 로그인 회원이 소유한 보유 카드를 삭제 상태로 변경한다.
+     * <p>
+     * userCardId는 삭제할 보유 카드 행을 식별하기 위해 URL 경로에서 받고,
+     * memberId는 JWT 인증 필터가 검증한 값을 사용한다.
+     * 따라서 클라이언트가 다른 회원의 ID를 직접 전달해서 삭제할 수 없다.
+     * <p>
+     * 삭제에 성공하면 응답 본문 없이 HTTP 204 No Content를 반환한다.
+     */
+    @DeleteMapping("/{userCardId}")
+    public ResponseEntity<Void> deleteUserCard(
+        @RequestAttribute(AUTHENTICATED_MEMBER_ID) Long memberId,
+        @PathVariable Long userCardId
+    ) {
+        userCardService.deleteUserCard(memberId, userCardId);
+
+        return ResponseEntity.noContent().build();
     }
 }
