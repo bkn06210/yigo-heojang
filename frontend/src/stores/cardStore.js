@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
-import { deleteUserCard, getCardMonthlyStatuses, getUserCards } from '@/api/walletApi';
+import { deleteUserCard, getCardMonthlyStatuses, getUserCards, getPoints, getMemberships } from '@/api/walletApi';
 
 
 export const useCardStore = defineStore(
@@ -10,6 +10,12 @@ export const useCardStore = defineStore(
 
     // 등록된 카드 목록
     const cards = ref([]);
+
+    // 금융 포인트 목록
+    const points = ref([]);
+
+    // 등록된 멤버십 목록
+    const memberships = ref([]);
 
     // PR #25 연동: 홈과 카드 목록이 공유하는 서버 브리핑 및 조회 상태다.
     const briefing = ref(null);
@@ -110,6 +116,56 @@ export const useCardStore = defineStore(
       }
     };
 
+    // 금융 포인트 조회
+    const loadPoints = async () => {
+      loading.value = true;
+      error.value = '';
+      try {
+        const response = await getPoints();
+        points.value = (response?.points || response?.pointWallets || response || [])
+          .filter((point) => point.providerType === 'FINANCIAL_POINT')
+          .map((point) => ({
+            id: point.pointWalletId,
+            name: point.providerName,
+            point: point.totalPoint,
+          }));
+        return response;
+      } catch (requestError) {
+        error.value = requestError?.response?.data?.message || requestError?.message || '포인트를 불러오지 못했습니다.';
+        throw requestError;
+      } finally {
+        loading.value = false;
+      }
+    };
+
+    // 멤버십 목록 조회
+    const loadMemberships = async () => {
+      loading.value = true;
+      error.value = '';
+      try {
+        const response = await getMemberships();
+        console.log('멤버십 목록 API 응답:', response);
+        const rawMemberships = response?.memberships || response || [];
+        console.log('첫 번째 멤버십 데이터:', rawMemberships[0]);
+        memberships.value = rawMemberships.map((m) => ({
+          id: m.membershipRegisterId,
+          providerId: m.pointProviderId,
+          name: m.providerName,
+          providerName: m.providerName,
+          point: m.totalPoint || 0,
+          logoImageUrl: m.logoImageUrl,
+          usagePlaces: m.usagePlaces || [],
+          partnerWebsiteUrl: m.partnerWebsiteUrl,
+        }));
+        return response;
+      } catch (requestError) {
+        error.value = requestError?.response?.data?.message || requestError?.message || '멤버십을 불러오지 못했습니다.';
+        throw requestError;
+      } finally {
+        loading.value = false;
+      }
+    };
+
 
 
     // 카드 추가
@@ -154,12 +210,16 @@ export const useCardStore = defineStore(
     return {
 
       cards,
+      points,
+      memberships,
 
       // PR #25 연동 상태와 조회 함수를 화면에서 함께 사용한다.
       briefing,
       loading,
       error,
       loadMonthlyStatuses,
+      loadPoints,
+      loadMemberships,
       // PR #32 연동: 카드 목록 화면 전용 기본정보·실적 결합 조회 함수다.
       loadCards,
 

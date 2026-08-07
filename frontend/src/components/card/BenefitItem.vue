@@ -21,9 +21,6 @@ defineProps({
   border: 1px solid var(--color-border);
   border-radius: 12px;
   background: var(--color-surface);
-  border: 1px solid #e5e5e5;
-  border-radius: 12px;
-  background: #fff;
 }
 
 h3 {
@@ -35,10 +32,6 @@ h3 {
 
 p {
   color: var(--color-text-secondary);
-}
-
-p {
-  color: #666;
   font-size: 14px;
   line-height: 1.5;
 }

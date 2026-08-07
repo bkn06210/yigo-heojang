@@ -114,14 +114,6 @@ const emit = defineEmits([
   color: var(--color-text-primary);
   margin: 0;
 
-  background:white;
-
-  border-radius:20px;
-
-  padding:28px;
-
-  text-align:center;
-
 }
 
 .icon{
@@ -129,7 +121,6 @@ const emit = defineEmits([
   font-size:42px;
 
   margin-bottom: var(--space-md);
-  margin-bottom:16px;
 
 }
 
@@ -142,11 +133,6 @@ const emit = defineEmits([
   font-size: var(--font-sm);
 
   color: var(--color-text-secondary);
-  margin:20px 0;
-
-  line-height:1.6;
-
-  font-size:14px;
 
 }
 
@@ -161,12 +147,6 @@ const emit = defineEmits([
 }
 
 .refresh-button{
-  gap:12px;
-
-}
-
-.refresh-button,
-.cancel-button{
 
   height:48px;
 
@@ -218,10 +198,6 @@ const emit = defineEmits([
 
   background: var(--color-surface);
   color: var(--color-text-primary);
-
-  border-radius:12px;
-
-  cursor:pointer;
 
 }
 

@@ -19,11 +19,6 @@ const props = defineProps({
 const emit = defineEmits([
   'success',
   'close'
-
-  'success',
-
-  'close'
-
 ]);
 
 
@@ -95,13 +90,6 @@ const closeModal = () => {
 <template>
   <div class="overlay" @click="closeModal">
     <div class="modal" @click.stop>
-
-  <div
-    v-if="visible"
-    class="overlay"
-  >
-
-    <div class="modal">
 
       <h2>
 
@@ -248,34 +236,6 @@ const closeModal = () => {
   color: var(--color-text-primary);
   margin: 0;
 
-  position:fixed;
-
-  inset:0;
-
-  background:rgba(0,0,0,.45);
-
-  display:flex;
-
-  justify-content:center;
-
-  align-items:center;
-
-  z-index:9999;
-
-}
-
-.modal{
-
-  width:340px;
-
-  padding:28px;
-
-  border-radius:20px;
-
-  background:#fff;
-
-  text-align:center;
-
 }
 
 .description{
@@ -284,7 +244,6 @@ const closeModal = () => {
 
   font-size: var(--font-sm);
   color: var(--color-text-secondary);
-  margin-top:8px;
 
 }
 
@@ -309,14 +268,12 @@ const closeModal = () => {
   border-radius:50%;
 
   background:var(--color-border);
-  background:#ddd;
 
 }
 
 .dots span.active{
 
   background:var(--color-primary);
-  background:#222;
 
 }
 
@@ -339,7 +296,6 @@ const closeModal = () => {
   height:80px;
 
   border:1px solid var(--color-border);
-  border:none;
 
   border-radius:50%;
 

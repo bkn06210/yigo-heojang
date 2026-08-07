@@ -213,7 +213,6 @@ const close = () => {
     @click="close"
   >
     <Icon name="close" size="sm" />
-    ✕
   </button>
 
 </div>
@@ -390,7 +389,6 @@ const close = () => {
   width:100%;
 
   background:var(--color-surface);
-  background:white;
 
   border-radius:24px 24px 0 0;
 
@@ -406,7 +404,6 @@ const close = () => {
   height:5px;
 
   background:var(--color-border);
-  background:#ddd;
 
   border-radius:99px;
 
@@ -532,7 +529,6 @@ const close = () => {
   font-size:13px;
 
   color:var(--color-text-secondary);
-  color:#777;
 
 }
 
@@ -549,7 +545,6 @@ const close = () => {
   color:var(--color-text-primary);
 
   cursor:pointer;
-  background:white;
 
 }
 
@@ -565,9 +560,6 @@ const close = () => {
     );
 
   color:var(--color-btn-primary-text);
-  background:#4F46E5;
-
-  color:white;
 
   border-radius:50%;
 
@@ -577,7 +569,6 @@ const close = () => {
 .calendar .between {
 
   background:var(--color-filter-active-bg);
-  background:#EEF2FF;
 
 }
 
@@ -630,7 +621,6 @@ const close = () => {
   color:var(--color-text-secondary);
 
   font-weight:var(--font-semibold);
-  background:#eee;
 
 }
 
@@ -648,9 +638,6 @@ const close = () => {
   color:var(--color-btn-primary-text);
 
   font-weight:var(--font-semibold);
-  background:#4F46E5;
-
-  color:white;
 
 }
 

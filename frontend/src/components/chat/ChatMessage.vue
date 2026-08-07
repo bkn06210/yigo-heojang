@@ -97,7 +97,6 @@ defineProps({
   background: var(--color-surface);
 
   color: var(--color-text-primary);
-  background:white;
 
 }
 
@@ -108,9 +107,6 @@ defineProps({
   background: var(--color-primary);
 
   color: var(--color-btn-primary-text);
-  background:#4F46E5;
-
-  color:white;
 
 }
 
@@ -121,7 +117,6 @@ span{
   font-size:12px;
 
   color: var(--color-text-tertiary);
-  color:#999;
 
   margin-top:4px;
 

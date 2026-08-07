@@ -75,7 +75,6 @@ padding:20px;
 border-radius:16px;
 
 border: 1px solid var(--color-border);
-border:1px solid #ddd;
 
 }
 

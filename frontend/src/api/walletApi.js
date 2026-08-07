@@ -43,12 +43,19 @@ export const getUserCardCandidates = (cardNumber) =>
   api.post('/api/user-cards/candidates', { cardNumber }).then(data)
 
 // PR #29 연동: 선택한 카드 상품과 카드번호로 로그인 회원의 보유카드를 등록한다.
-export const registerUserCard = (cardId, cardNumber) =>
-  api.post('/api/user-cards', { cardId, cardNumber }).then(data)
+export const registerUserCard = (payload) => {
+  // payload.cardId와 payload.cardNumber만 백엔드로 전송
+  const { cardId, cardNumber } = payload;
+  return api.post('/api/user-cards', { cardId, cardNumber }).then(data);
+}
 
 // PR #32 연동: 로그인 회원의 활성 보유카드 기본 목록을 조회한다.
 export const getUserCards = () =>
   api.get('/api/user-cards').then(data)
+
+// 카드 고정 설정 (representative 업데이트)
+export const updateCardRepresentative = (userCardId, representative) =>
+  api.patch(`/api/user-cards/${userCardId}/representative`, { representative }).then(data)
 
 // PR #34 연동: 204 응답 본문을 파싱하지 않고 HTTP 성공 여부로 보유카드 삭제를 확정한다.
 export const deleteUserCard = (userCardId) =>

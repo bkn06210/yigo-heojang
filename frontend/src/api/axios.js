@@ -1,10 +1,8 @@
-// frontend/src/api/axios.js
-
 import axios from 'axios'
 import { useAuthStore } from '@/stores/authStore'
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL, // 07_25 연동 수정: 배포 환경별 API 주소를 환경변수에서 읽는다.
+  baseURL: 'http://localhost:8080',
   timeout: 5000,
   withCredentials: true,
   headers: {
@@ -31,20 +29,12 @@ api.interceptors.request.use(
 let isRefreshing = false
 let refreshQueue = []
 
-const addRefreshQueue = (resolve, reject, originalRequest) => {
-  refreshQueue.push({ resolve, reject, originalRequest }) // 07_25 연동 수정: 재발급 실패 시 대기 요청도 reject할 수 있게 보관한다.
+const addRefreshQueue = (callback) => {
+  refreshQueue.push(callback)
 }
 
 const runRefreshQueue = (newAccessToken) => {
-  refreshQueue.forEach(({ resolve, originalRequest }) => {
-    originalRequest.headers.Authorization = `Bearer ${newAccessToken}`
-    resolve(api(originalRequest))
-  })
-  refreshQueue = []
-}
-
-const rejectRefreshQueue = (error) => {
-  refreshQueue.forEach(({ reject }) => reject(error)) // 07_25 연동 수정: 토큰 갱신 실패 시 pending 요청을 모두 종료한다.
+  refreshQueue.forEach((callback) => callback(newAccessToken))
   refreshQueue = []
 }
 
@@ -65,7 +55,9 @@ api.interceptors.response.use(
       const isAuthRequest =
           requestUrl.includes('/api/auth/login') ||
           requestUrl.includes('/api/auth/token') ||
-          requestUrl.includes('/api/auth/logout')
+          requestUrl.includes('/api/auth/logout') ||
+          requestUrl.includes('/api/auth/signup') ||
+          requestUrl.includes('/api/terms')
 
       if (status !== 401 || originalRequest._retry || isAuthRequest) {
         return Promise.reject(error)
@@ -74,8 +66,11 @@ api.interceptors.response.use(
       originalRequest._retry = true
 
       if (isRefreshing) {
-        return new Promise((resolve, reject) => {
-          addRefreshQueue(resolve, reject, originalRequest) // 07_25 연동 수정: 성공·실패 콜백을 함께 큐에 등록한다.
+        return new Promise((resolve) => {
+          addRefreshQueue((newAccessToken) => {
+            originalRequest.headers.Authorization = `Bearer ${newAccessToken}`
+            resolve(api(originalRequest))
+          })
         })
       }
 
@@ -99,7 +94,6 @@ api.interceptors.response.use(
 
         return api(originalRequest)
       } catch (refreshError) {
-        rejectRefreshQueue(refreshError) // 07_25 연동 수정: 재발급 실패로 멈춰 있던 API 요청을 모두 해제한다.
         const authStore = useAuthStore()
         authStore.logout()
 
@@ -114,4 +108,3 @@ api.interceptors.response.use(
 )
 
 export default api
-// 07_25 연동 변경: develop 프론트 대비 공통 API 주소·토큰·오류 처리를 보완한 파일이다.

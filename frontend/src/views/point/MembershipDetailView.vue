@@ -3,35 +3,43 @@
 import { onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { deleteMembership as removeMembership, getMembership } from '@/api/walletApi'
-import { getOfficialSiteUrl } from '@/utils/partnerSites'
-import { getPartnerUsagePlaces } from '@/utils/partnerUsagePlaces'
-import { getPartnerLogo } from '@/utils/partnerLogos'
 
 
 // 공통 컴포넌트
 import PageHeader from '@/components/common/PageHeader.vue'
 import BottomNavigation from '@/components/layout/BottomNavigation.vue'
 
-
-// 삭제 팝업 상태
-const showDeleteModal = ref(false)
 const route = useRoute()
 const router = useRouter()
-const membership = ref({ providerName: '', registeredAt: '', totalPoint: 0, usagePlaces: [] })
+
+// 멤버십 데이터
+const membership = ref({})
 const errorMessage = ref('')
 
+// 멤버십 조회
 const loadMembership = async () => {
   try {
     const data = await getMembership(route.params.id)
-    membership.value = {
-      ...data,
-      logo: getPartnerLogo(data.providerName, data.logoImageUrl),
-      usagePlaces: getPartnerUsagePlaces(data.providerName, data.usagePlaces),
-    }
+    console.log('멤버십 상세 API 응답:', data)
+    console.log('전체 필드:', Object.keys(data))
+    console.log('usagePlaces:', data.usagePlaces)
+    console.log('merchants:', data.merchants)
+    console.log('places:', data.places)
+    membership.value = data
   } catch (error) {
-    errorMessage.value = error?.response?.data?.message || error?.message || '멤버십 상세 정보를 불러오지 못했습니다.'
+    errorMessage.value = error?.response?.data?.message || error?.message || '멤버십 정보를 불러오지 못했습니다.'
   }
 }
+
+// 공식 사이트 이동
+const goOfficialWebsite = () => {
+  if (membership.value.partnerWebsiteUrl) {
+    window.open(membership.value.partnerWebsiteUrl, '_blank')
+  }
+}
+
+// 삭제 팝업 상태
+const showDeleteModal = ref(false)
 
 
 // 삭제 버튼 클릭
@@ -57,14 +65,7 @@ const deleteMembership = async () => {
     router.replace('/points')
   } catch (error) {
     errorMessage.value = error?.response?.data?.message || error?.message || '멤버십 삭제에 실패했습니다.'
-  } finally {
-    showDeleteModal.value = false
   }
-}
-
-const openOfficialSite = () => {
-  const url = getOfficialSiteUrl(membership.value.providerName, membership.value.officialSiteUrl)
-  if (url) window.open(url, '_blank', 'noopener,noreferrer')
 }
 
 onMounted(loadMembership)
@@ -86,17 +87,14 @@ onMounted(loadMembership)
 
     <main class="content">
 
-      <p v-if="errorMessage">{{ errorMessage }}</p>
 
-
-      <!-- 멤버십 이름 -->
+      <!-- 멤버십 이미지 & 이름 -->
       <section class="membership-title">
-
         <img
-          v-if="membership.logo"
-          :src="membership.logo"
-          :alt="`${membership.providerName} 로고`"
-          class="membership-logo"
+          v-if="membership.logoImageUrl"
+          :src="membership.logoImageUrl"
+          :alt="membership.providerName"
+          class="membership-logo-large"
         />
 
         <h1>
@@ -116,7 +114,7 @@ onMounted(loadMembership)
 
 
         <p>
-          {{ membership.registeredAt || '등록 정보 없음' }}
+          {{ membership.providerName }}
         </p>
 
       </section>
@@ -125,7 +123,7 @@ onMounted(loadMembership)
 
 
       <!-- 주요 사용처 -->
-      <section class="info-section">
+      <section v-if="membership.usagePlaces?.length" class="info-section">
 
         <h2>
           주요 사용처
@@ -134,7 +132,7 @@ onMounted(loadMembership)
 
         <ul>
 
-          <li v-for="place in membership.usagePlaces" :key="place.usagePlaceId || place.placeName">
+          <li v-for="place in membership.usagePlaces" :key="place.usagePlaceId">
             {{ place.placeName }}
           </li>
 
@@ -147,7 +145,11 @@ onMounted(loadMembership)
 
 
       <!-- 공식 사이트 -->
-      <button class="official-button" @click="openOfficialSite">
+      <button
+        v-if="membership.partnerWebsiteUrl"
+        class="official-button"
+        @click="goOfficialWebsite"
+      >
 
         공식 사이트 이동
 
@@ -212,9 +214,6 @@ onMounted(loadMembership)
 
     </div>
 
-    <BottomNavigation />
-
-
   </div>
 
 </div>
@@ -226,21 +225,6 @@ onMounted(loadMembership)
 
 
 <style scoped>
-
-.membership-title {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-}
-
-.membership-logo {
-  width: 56px;
-  height: 56px;
-  flex: 0 0 56px;
-  border-radius: 14px;
-  object-fit: contain;
-  background: #fff;
-}
 
 .membership-detail-page {
 
@@ -263,6 +247,22 @@ onMounted(loadMembership)
 
 
 
+.membership-title {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-bottom: var(--space-xl);
+}
+
+.membership-logo-large {
+  width: 80px;
+  height: 80px;
+  border-radius: var(--radius-lg);
+  object-fit: cover;
+  margin-bottom: var(--space-md);
+}
+
 .membership-title h1 {
 
   font-size: var(--typo-display-medium-size);
@@ -270,7 +270,7 @@ onMounted(loadMembership)
   line-height: var(--typo-display-medium-line-height);
   letter-spacing: var(--typo-display-medium-letter-spacing);
 
-  margin-bottom: var(--space-xl);
+  margin: 0;
 
   color: var(--color-text-primary);
 
@@ -521,4 +521,3 @@ onMounted(loadMembership)
 
 
 </style>
-<!-- 07_25 연동 변경: 멤버십 상세 API와 공식 사이트·주요 사용처 정보를 연결한다. -->

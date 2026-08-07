@@ -15,8 +15,6 @@ const showResult = ref(false);
 const scanResult = ref({
   cardName: 'KB My WE:SH 카드',
   cardNumber: '1234567890121123',
-  // PR #29 연동: 촬영 목 결과도 서버 BIN/Luhn 검증을 통과하는 시연용 KB 카드번호를 사용한다.
-  cardNumber: '2228790000000008',
   expiryDate: '12/28',
 });
 
@@ -76,7 +74,6 @@ const complete = () => {
         <h2>카드 촬영</h2>
 
         <button @click="close"><Icon name="close" size="sm" /></button>
-        <button @click="close">✕</button>
       </div>
 
       <!-- 촬영 화면 -->
@@ -90,7 +87,6 @@ const complete = () => {
         <button class="scan-button" @click="scanCard" :disabled="isScanning">
           <template v-if="isScanning">카드 정보를 분석 중입니다</template>
           <template v-else><Icon name="camera" size="sm" /> 촬영</template>
-          {{ isScanning ? '카드 정보를 분석 중입니다' : '📷 촬영' }}
         </button>
       </div>
 
@@ -147,7 +143,6 @@ const complete = () => {
   width: 90%;
 
   background: var(--color-surface);
-  background: white;
 
   border-radius: 24px;
 
@@ -183,7 +178,6 @@ const complete = () => {
   height: 180px;
 
   border: 2px dashed var(--color-border);
-  border: 2px dashed #4f46e5;
   border-radius: 20px;
 
   display: flex;
@@ -193,7 +187,6 @@ const complete = () => {
   overflow: hidden;
 
   color: var(--color-text-secondary);
-  color: #777;
 }
 
 /* 카드 스캔 라인 */
@@ -209,7 +202,6 @@ const complete = () => {
   height: 3px;
 
   background: var(--color-border);
-  background: #4f46e5;
 
   animation: scan 1.2s infinite;
 }
@@ -249,9 +241,6 @@ const complete = () => {
     );
 
   color: var(--color-btn-primary-text);
-  background: #4f46e5;
-
-  color: white;
 }
 
 .info {
@@ -268,7 +257,3 @@ const complete = () => {
   border-bottom: 1px solid var(--color-border);
 }
 </style>
-  border-bottom: 1px solid #eee;
-}
-</style>
-<!-- 07_25 연동 변경: 카드 스캔 결과를 카드등록 API 입력으로 전달하도록 보완했다. -->

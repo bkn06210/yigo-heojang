@@ -1,8 +1,5 @@
 ﻿<script setup>
 defineEmits(['click'])
-<script setup>
-
-const emit = defineEmits(['click'])
 
 defineProps({
   text: {
@@ -101,8 +98,6 @@ defineProps({
   color: var(--color-text-secondary);
 
   background: var(--color-border);
-  background-color: #f1f1f1;
-  color: #777;
 }
 
 

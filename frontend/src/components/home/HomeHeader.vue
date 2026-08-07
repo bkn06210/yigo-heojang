@@ -34,9 +34,6 @@ defineProps({
       <Icon name="lightbulb" size="sm" />
     </span>
     두리
-  <!-- 앱 이름 -->
-  <h1 class="logo">
-    YIGO
   </h1>
 
 
@@ -51,7 +48,6 @@ defineProps({
       @click="$emit('chat')"
     >
       <Icon name="chat" size="md" />
-      🤖
     </button>
 
 
@@ -64,7 +60,6 @@ defineProps({
     >
 
       <Icon name="bell" size="md" />
-      🔔
 
 
       <!-- 읽지 않은 알림 -->
@@ -74,18 +69,6 @@ defineProps({
       />
 
     </button>
-
-
-
-    <!-- 사용자 이름 -->
-    <span
-      v-if="user"
-      class="user-name"
-    >
-      {{ user.name }}
-    </span>
-
-
 
     <!-- 프로필 -->
     <button
@@ -107,7 +90,6 @@ defineProps({
         class="default-profile"
       >
         <Icon name="profile" size="md" />
-        👤
       </span>
 
     </button>
@@ -207,13 +189,6 @@ defineProps({
   width:40px;
 
   height:40px;
-/* 공통 아이콘 버튼 */
-.icon-button,
-.profile-button {
-
-  width:32px;
-
-  height:32px;
 
   border:none;
 
@@ -260,7 +235,6 @@ defineProps({
   border-radius:50%;
 
   background: var(--color-coral);
-  background:#ff3b30;
 
 }
 

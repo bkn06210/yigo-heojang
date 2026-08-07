@@ -19,23 +19,6 @@ const emit = defineEmits([
   'save',
 ]);
 
-const fileInput = ref(null);
-
-const closeSheet = () => emit('close');
-
-const openFilePicker = () => fileInput.value?.click();
-
-const changeProfileImage = (event) => {
-  const file = event.target.files?.[0];
-  if (!file) return;
-
-  const reader = new FileReader();
-  reader.onload = () => {
-    form.value.profileImageUrl = String(reader.result || '');
-  };
-  reader.readAsDataURL(file);
-};
-
 
 // 수정용 임시 데이터
 const form = ref({
@@ -124,7 +107,6 @@ const changeProfileImage = (event) => {
 
           <button class="camera-button" type="button" @click="openFilePicker">
             <Icon name="camera" size="sm" />
-            <span class="material-icons"> photo_camera </span>
           </button>
         </div>
       </div>
@@ -182,11 +164,6 @@ const changeProfileImage = (event) => {
   background: var(--color-surface);
   border-top: 1px solid rgba(255, 255, 255, 0.08);
   box-shadow: 0 -16px 40px rgba(0, 0, 0, 0.35);
-  background: white;
-
-  border-radius: 24px 24px 0 0;
-
-  padding: 24px;
 }
 
 .handle {
@@ -199,11 +176,6 @@ const changeProfileImage = (event) => {
   border-radius: 10px;
 
   margin: 0 auto var(--space-lg);
-  background: #ddd;
-
-  border-radius: 10px;
-
-  margin: 0 auto 20px;
 }
 
 h2 {
@@ -243,7 +215,6 @@ h2 {
 
 .default-image {
   background: var(--color-border);
-  background: #ddd;
 
   width: 100%;
 
@@ -287,15 +258,6 @@ h2 {
 [data-theme="dark"] .camera-button {
   background: white;
   color: #333;
-  width: 34px;
-
-  height: 34px;
-
-  border-radius: 50%;
-
-  background: white;
-
-  border: 1px solid #ddd;
 }
 
 .button-area {
@@ -310,4 +272,3 @@ h2 {
   flex: 1;
 }
 </style>
-<!-- 07_25 연동 변경: 회원 프로필 수정 내용을 실제 회원 API로 저장한다. -->

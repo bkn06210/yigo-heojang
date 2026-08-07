@@ -5,12 +5,6 @@ import { useToast } from '@/composables/useToast'
 
 const router = useRouter()
 const { showToast } = useToast()
-<script setup>
-import { ref, computed, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
-import { getTerms } from '@/api/authApi'
-
-const router = useRouter()
 
 
 // 전체 동의
@@ -39,24 +33,6 @@ const terms = ref([
     checked: false
   }
 ])
-const terms = ref([])
-const errorMessage = ref('')
-
-const loadTerms = async () => {
-  try {
-    const response = await getTerms()
-    terms.value = (response.data?.data?.terms || []).map((term) => ({
-      id: term.termsId,
-      versionId: term.termsVersionId,
-      title: term.termsName,
-      content: term.content,
-      required: Boolean(term.required),
-      checked: false,
-    }))
-  } catch (error) {
-    errorMessage.value = error.response?.data?.message || '약관을 불러오지 못했습니다.'
-  }
-}
 
 
 // 전체 동의 클릭
@@ -95,8 +71,6 @@ const openDetail = (term) => {
 
   console.log('약관 상세:', term.id)
 
-const openDetail = (term) => {
-  alert(term.content || '약관 내용이 없습니다.')
 }
 
 
@@ -105,23 +79,13 @@ const goSignup = () => {
 
   if (!canNext.value) {
     showToast('warning', '필수 약관에 동의해주세요.')
-    alert('필수 약관에 동의해주세요.')
     return
   }
 
 
-  sessionStorage.setItem('termsAgreements', JSON.stringify(
-    terms.value.map((term) => ({
-      termsVersionId: term.versionId,
-      agreed: term.checked,
-    }))
-  ))
-
   router.push('/auth/signup')
 
 }
-
-onMounted(loadTerms)
 
 </script>
 
@@ -131,12 +95,6 @@ onMounted(loadTerms)
     <div class="terms-container">
 
       <h1>약관 동의</h1>
-
-  <div class="terms">
-
-    <h1>약관 동의</h1>
-
-    <p v-if="errorMessage">{{ errorMessage }}</p>
 
 
     <label>
@@ -192,14 +150,6 @@ onMounted(loadTerms)
       </button>
 
     </div>
-    <button
-      :disabled="!canNext"
-      @click="goSignup"
-    >
-      다음
-    </button>
-
-
   </div>
 </template>
 
@@ -298,21 +248,6 @@ button:disabled {
   background: var(--color-border);
   color: var(--color-text-tertiary);
   cursor: not-allowed;
-.terms {
-  padding:24px;
-}
-
-
-.term-item {
-  display:flex;
-  justify-content:space-between;
-  margin-top:16px;
-}
-
-
-button {
-  cursor:pointer;
 }
 
 </style>
-<!-- 07_25 연동 변경: 약관 동의 결과를 회원가입 API 입력에 포함하도록 보완했다. -->

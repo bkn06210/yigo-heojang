@@ -1,5 +1,4 @@
 ﻿<script setup>
-<script setup>
 import { ref } from 'vue'
 
 
@@ -238,11 +237,6 @@ const backToCategory = () => {
   border-radius: var(--radius-xl) var(--radius-xl) 0 0;
 
   padding: var(--space-xl);
-  background: white;
-
-  border-radius: 24px 24px 0 0;
-
-  padding: 24px;
 
   max-height: 70vh;
 
@@ -269,9 +263,6 @@ h2 {
   color: var(--color-text-primary);
 
   margin: 0 0 var(--space-xl);
-  font-size: 20px;
-
-  margin-bottom: 20px;
 
 }
 
@@ -312,12 +303,6 @@ h2 {
   background: linear-gradient(135deg, rgba(var(--color-primary-dark-rgb), 0.18) 0%, rgba(var(--color-primary-dark-rgb), 0.06) 100%);
   border: 1px solid rgba(var(--color-primary-dark-rgb), 0.28);
 
-  padding: 16px 0;
-
-  border-bottom: 1px solid #eee;
-
-  cursor: pointer;
-
 }
 
 
@@ -332,9 +317,6 @@ h2 {
 
   background: var(--color-surface);
   border: 1px solid var(--color-border);
-  padding: 16px 0;
-
-  border-bottom: 1px solid #eee;
 
 }
 
@@ -345,7 +327,6 @@ h2 {
   margin-top: 6px;
 
   color: var(--color-text-secondary);
-  color: #666;
 
 }
 
@@ -358,7 +339,6 @@ h2 {
   margin-top: 8px;
 
   color: var(--color-text-primary);
-  color: #2563eb;
 
 }
 
@@ -373,9 +353,6 @@ h2 {
   color: var(--color-text-primary);
 
   margin: 0 0 var(--space-lg);
-  font-size: 28px;
-
-  font-weight: 700;
 
 }
 
@@ -437,7 +414,6 @@ h2 {
   cursor: pointer;
 
   transition: var(--transition-fast);
-  background: #f3f4f6;
 
 }
 

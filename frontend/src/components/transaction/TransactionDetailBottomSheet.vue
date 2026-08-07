@@ -174,10 +174,6 @@ const close = () => {
 
 
 <!-- <template>
-</script>
-
-
-<template>
 
 <div
   class="overlay"
@@ -333,11 +329,6 @@ class="apply-button"
 
 
 <!-- <style scoped>
-</template>
-
-
-
-<style scoped>
 
 .overlay {
 
@@ -362,7 +353,6 @@ z-index:1200;
 width:100%;
 
 background:var(--color-surface);
-background:white;
 
 border-radius:24px 24px 0 0;
 
@@ -379,7 +369,6 @@ width:40px;
 height:5px;
 
 background:var(--color-border);
-background:#ddd;
 
 border-radius:10px;
 
@@ -442,7 +431,6 @@ display:block;
 font-size:13px;
 
 color: var(--color-text-tertiary);
-color:#777;
 
 }
 
@@ -510,7 +498,6 @@ text-align:center;
 font-size:13px;
 
 color: var(--color-text-tertiary);
-color:#777;
 
 }
 
@@ -527,9 +514,6 @@ border:1px solid var(--color-border);
 background:var(--color-surface);
 
 color:var(--color-text-primary);
-border:1px solid #eee;
-
-background:white;
 
 }
 
@@ -545,9 +529,6 @@ background:
   );
 
 color:var(--color-btn-primary-text);
-background:#4F46E5;
-
-color:white;
 
 border:none;
 
@@ -576,9 +557,6 @@ background:
   );
 
 color:var(--color-btn-primary-text);
-background:#4F46E5;
-
-color:white;
 
 font-size:16px;
 
@@ -634,7 +612,6 @@ const close = () => {
 
 <h2>
 상세 이용내역
-사용내역 상세
 </h2>
 
 
@@ -642,7 +619,6 @@ const close = () => {
 @click="close"
 >
 <Icon name="close" size="sm" />
-✕
 </button>
 
 
@@ -669,10 +645,6 @@ const close = () => {
 
 <span>
 거래일
-<div class="row">
-
-<span>
-사용일자
 </span>
 
 <strong>
@@ -686,11 +658,6 @@ const close = () => {
 
 <span>
 가맹점명
-
-<div class="row">
-
-<span>
-가맹점
 </span>
 
 <strong>
@@ -708,16 +675,6 @@ const close = () => {
 
 <strong>
 {{ props.transaction.category }}
-
-
-<div class="row">
-
-<span>
-사용 카드
-</span>
-
-<strong>
-{{ props.transaction.cardName }}
 </strong>
 
 </div>
@@ -771,16 +728,6 @@ const close = () => {
 
 <strong>
 {{ props.transaction.status }}
-
-
-<div class="row amount">
-
-<span>
-결제 금액
-</span>
-
-<strong>
--{{ props.transaction.amount.toLocaleString() }}원
 </strong>
 
 </div>
@@ -844,13 +791,6 @@ background: var(--color-surface);
 border-radius: 24px 24px 0 0;
 
 padding: 20px;
-width:100%;
-
-background:white;
-
-border-radius:24px 24px 0 0;
-
-padding:20px;
 
 }
 
@@ -863,7 +803,6 @@ width:40px;
 height:5px;
 
 background:var(--color-border);
-background:#ddd;
 
 border-radius:10px;
 
@@ -908,7 +847,6 @@ flex: 1;
 overflow-y: auto;
 
 padding-right: 8px;
-margin-top:24px;
 
 }
 
@@ -963,7 +901,6 @@ justify-content:space-between;
 padding:16px 0;
 
 border-bottom:1px solid var(--color-border);
-border-bottom:1px solid #eee;
 
 }
 
@@ -992,16 +929,11 @@ color:var(--color-text-secondary);
   color: var(--color-text-secondary);
 }
 
-color:#777;
-
-}
-
 
 
 .amount strong {
 
 color:var(--color-coral);
-color:#e53935;
 
 font-size:18px;
 
@@ -1029,12 +961,8 @@ background:
   );
 
 color:var(--color-btn-primary-text);
-background:#4F46E5;
-
-color:white;
 
 }
 
 
 </style> -->
-</style>

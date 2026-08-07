@@ -1,7 +1,5 @@
 ﻿<script setup>
 import { ref, watch, onMounted } from 'vue';
-<script setup>
-import { computed, onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { storeToRefs } from 'pinia';
 
@@ -9,7 +7,6 @@ import { useAuthStore } from '@/stores/authStore';
 import PageHeader from '@/components/common/PageHeader.vue';
 import AuthVerifyModal from '@/components/auth/AuthVerifyModal.vue';
 import PinChangeModal from '@/components/auth/PinChangeModal.vue';
-import { getMyInfo } from '@/api/memberApi';
 
 const authStore = useAuthStore();
 
@@ -48,19 +45,6 @@ const handlePinChangeSuccess = () => {
 };
 
 const joinedDate = '2026.07.16';
-const joinedDate = computed(() =>
-  user.value?.createdAt?.slice(0, 10).replaceAll('-', '.') || '-'
-);
-
-const loadMyInfo = async () => {
-  try {
-    authStore.updateUser(await getMyInfo());
-  } catch (error) {
-    console.error('회원정보 조회 실패:', error);
-  }
-};
-
-onMounted(loadMyInfo);
 
 // 보안 설정
 const appLock = ref(false);
@@ -91,11 +75,6 @@ watch([appLock, autoLogin], ([newAppLock, newAutoLogin]) => {
 });
 
 
-
-// 간편비밀번호 변경 이동
-const goPinChange = () => {
-  router.push('/settings/pin-change');
-};
 
 // 이름 마스킹
 const maskName = (name) => {
@@ -289,7 +268,6 @@ const navigateTo = (path) => {
     <div
       class="menu-item"
       @click="openPinVerify"
-      @click="goPinChange"
     >
 
       <span class="menu-label">
@@ -370,15 +348,6 @@ const navigateTo = (path) => {
       @success="handlePinChangeSuccess"
     />
 
-      v-if="showPasswordVerify"
-
-      @close="showPasswordVerify = false"
-
-      @verify-success="goPasswordChange"
-
-    />
-
-
   </div>
 </template>
 
@@ -392,9 +361,6 @@ const navigateTo = (path) => {
   border-radius: var(--radius-full);
 
   background: var(--color-text-tertiary);
-  border-radius: 20px;
-
-  background: #ddd;
 
   padding: 3px;
 
@@ -404,7 +370,6 @@ const navigateTo = (path) => {
   cursor: pointer;
 
   transition: var(--transition-normal);
-  transition: 0.2s;
 }
 
 
@@ -417,17 +382,11 @@ const navigateTo = (path) => {
   border-radius: var(--radius-full);
 
   transition: var(--transition-normal);
-  background: white;
-
-  border-radius: 50%;
-
-  transition: 0.2s;
 }
 
 
 .toggle.active {
   background: var(--color-primary);
-  background: #4f46e5;
 }
 
 
@@ -440,7 +399,6 @@ const navigateTo = (path) => {
   flex-direction: column;
   min-height: 100vh;
   background-color: var(--color-bg);
-  background-color: #f9f9f9;
 }
 
 .content-container {
@@ -486,26 +444,6 @@ const navigateTo = (path) => {
   background: linear-gradient(135deg, rgba(var(--color-primary-dark-rgb), 0.2) 0%, rgba(var(--color-primary-dark-rgb), 0.07) 100%);
   border: 1px solid rgba(var(--color-primary-dark-rgb), 0.28);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.06);
-  padding: 20px;
-}
-
-.section-group {
-  margin-bottom: 24px;
-}
-
-.section-title {
-  font-size: 0.85rem;
-  color: #888;
-  margin-bottom: 8px;
-  font-weight: 600;
-  padding-left: 4px;
-}
-
-.info-card {
-  background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-  padding: 16px 20px;
 }
 
 .info-row {
@@ -514,8 +452,6 @@ const navigateTo = (path) => {
   align-items: center;
   padding: var(--space-sm) 0;
   border-bottom: 1px solid rgba(255, 255, 255, 0.15);
-  padding: 12px 0;
-  border-bottom: 1px solid #f0f0f0;
 }
 .info-row:last-child {
   border-bottom: none;
@@ -540,21 +476,6 @@ const navigateTo = (path) => {
   background-color: var(--color-surface);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-card);
-.info-label {
-  font-size: 0.95rem;
-  color: #666;
-}
-
-.info-value {
-  font-size: 0.95rem;
-  color: #333;
-  font-weight: 500;
-}
-
-.menu-list {
-  background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
   overflow: hidden;
 }
 
@@ -566,10 +487,6 @@ const navigateTo = (path) => {
   border-bottom: 1px solid var(--color-bg);
   cursor: pointer;
   transition: background-color var(--transition-normal);
-  padding: 18px 20px;
-  border-bottom: 1px solid #f0f0f0;
-  cursor: pointer;
-  transition: background-color 0.2s;
 }
 .menu-item:last-child {
   border-bottom: none;
@@ -589,20 +506,5 @@ const navigateTo = (path) => {
 
 .chevron-icon {
   color: var(--color-text-tertiary);
-  background-color: #fafafa;
-}
-
-.menu-label {
-  font-size: 1rem;
-  color: #333;
-}
-
-.withdraw-item .menu-label {
-  color: #e53935; /* 탈퇴 메뉴는 눈에 띄게 붉은 계열 포인트 */
-}
-
-.chevron-icon {
-  color: #888;
 }
 </style>
-<!-- 07_25 연동 변경: 계정 정보를 회원 API에서 조회하고 수정 결과를 반영한다. -->

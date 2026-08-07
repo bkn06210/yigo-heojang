@@ -1,7 +1,5 @@
 <script setup>
 
-
-
 defineProps({
 
   title:{
@@ -28,7 +26,6 @@ defineProps({
   }
 
 })
-
 
 
 const emit = defineEmits([
@@ -135,11 +132,6 @@ const emit = defineEmits([
   border: 1px solid var(--color-border);
 
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
-  padding:32px 20px;
-
-  border-radius:16px;
-
-  background:#f7f7f7;
 
   display:flex;
 
@@ -156,7 +148,6 @@ const emit = defineEmits([
   word-break:break-word;
 
   box-sizing:border-box;
-  gap:12px;
 
 }
 
@@ -173,9 +164,6 @@ const emit = defineEmits([
   font-weight:var(--font-semibold);
 
   line-height: 1.4;
-  margin:0;
-
-  font-size:15px;
 
 }
 
@@ -190,11 +178,6 @@ const emit = defineEmits([
   font-size:var(--font-sm);
 
   line-height: 1.5;
-  margin:0;
-
-  font-size:13px;
-
-  color:#777;
 
 }
 
@@ -207,7 +190,6 @@ const emit = defineEmits([
   gap:var(--space-xs);
 
   margin-top:var(--space-sm);
-  gap:10px;
 
 }
 
@@ -232,12 +214,6 @@ button{
   cursor:pointer;
 
   transition:var(--transition-fast);
-
-  padding:10px 20px;
-
-  border-radius:20px;
-
-  cursor:pointer;
 
 }
 

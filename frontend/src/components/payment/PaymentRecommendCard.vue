@@ -27,7 +27,6 @@ class="card"
 
 
 <img
-v-if="card.image"
 :src="card.image"
 />
 
@@ -93,17 +92,6 @@ box-shadow:0 4px 16px rgba(0,0,0,0.08);
 .selected{
 
 border:2px solid var(--color-primary);
-gap:16px;
-padding:16px;
-border:1px solid #ddd;
-border-radius:16px;
-
-}
-
-
-.selected{
-
-border:2px solid #333;
 
 }
 
@@ -113,12 +101,8 @@ img{
 width:72px;
 height:auto;
 border-radius:var(--radius-sm);
-width:70px;
-height:100px;
 
 }
 
 
 </style>
-</style>
-<!-- 07_25 연동 변경: 추천 API가 반환한 카드·예상 혜택 정보를 표시한다. -->

@@ -8,7 +8,6 @@ import Icon from '@/components/common/Icon.vue';
 
 <Icon name="lock" size="xs" />
 안전한 결제를 위해
-🔒 안전한 결제를 위해
 <br>
 QR은 1분 후 자동으로 만료됩니다.
 
@@ -44,4 +43,3 @@ QR은 1분 후 자동으로 만료됩니다.
 }
 
 </style>
-</template>

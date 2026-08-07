@@ -52,50 +52,22 @@ export const useAuthStore = defineStore(
 
 
 
-   
+
     // 로그인
-   const setLogin = (
-  loginToken,
-  userInfo
-) => {
+    const setLogin = (loginToken, userInfo) => {
+      console.log('로그인 userInfo 확인:', userInfo);
 
-  console.log('로그인 userInfo 확인:', userInfo);
+      token.value = loginToken;
+      user.value = userInfo;
 
+      localStorage.setItem('token', loginToken);
+      localStorage.setItem('user', JSON.stringify(userInfo));
+    };
 
-  token.value = loginToken;
-
-  user.value = userInfo;
-
-
-  localStorage.setItem(
-    'token',
-    loginToken
-  );
-const setAccessToken = (newAccessToken) => {
-  token.value = newAccessToken
-
-  localStorage.setItem(
-    'token',
-    newAccessToken
-  )
-}
-
-  localStorage.setItem(
-    'user',
-    JSON.stringify(userInfo)
-  );
-
-};
-const setAccessToken = (newAccessToken) => {
-
-  token.value = newAccessToken;
-
-  localStorage.setItem(
-    'token',
-    newAccessToken
-  );
-
-};
+    const setAccessToken = (newAccessToken) => {
+      token.value = newAccessToken;
+      localStorage.setItem('token', newAccessToken);
+    };
     const updateUser = (updatedUser) => {
 
   user.value = {

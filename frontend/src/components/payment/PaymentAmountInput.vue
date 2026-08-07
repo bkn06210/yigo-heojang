@@ -3,7 +3,6 @@
 import { computed } from 'vue';
 
 const props = defineProps({
-defineProps({
   modelValue:{
     type:Number,
     default:0
@@ -61,10 +60,6 @@ const updateAmount=(amount)=>{
  type="text"
  placeholder="금액을 입력해주세요"
  inputmode="numeric"
- :value="modelValue"
- type="number"
- placeholder="금액 입력"
- @input="$emit('update:modelValue', Number($event.target.value))"
 />
 
 
@@ -188,4 +183,3 @@ input::placeholder{
 }
 
 </style>
-</template>

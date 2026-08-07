@@ -1,5 +1,4 @@
 ﻿<script setup>
-<script setup>
 import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import PageHeader from '@/components/common/PageHeader.vue';
@@ -10,8 +9,6 @@ import { useToast } from '@/composables/useToast';
 
 const router = useRouter();
 const { showToast } = useToast();
-
-const router = useRouter();
 
 const form = ref({
   currentPassword: '',
@@ -42,7 +39,6 @@ const openVerifyModal = () => {
 const handleVerifySuccess = () => {
   isModalOpen.value = false;       // 인증 팝업 노출 여부 상태
   showToast('success', '비밀번호가 안전하게 변경되었습니다.');
-  alert('비밀번호가 안전하게 변경되었습니다.');
   router.go(-1);
 };
 </script>
@@ -96,7 +92,6 @@ const handleVerifySuccess = () => {
   flex-direction: column;
   min-height: 100vh;
   background-color: var(--color-bg);
-  background-color: #f9f9f9;
 }
 
 .content-container {
@@ -135,19 +130,6 @@ const handleVerifySuccess = () => {
 
 .input-group {
   margin-bottom: var(--space-md);
-  padding: 20px;
-  padding-bottom: 100px;
-}
-
-.form-section {
-  background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-  padding: 20px;
-}
-
-.input-group {
-  margin-bottom: 20px;
 }
 .input-group:last-child {
   margin-bottom: 0;
@@ -160,11 +142,6 @@ const handleVerifySuccess = () => {
   color: var(--color-text-primary);
   margin-bottom: var(--space-xs);
 }
-  font-size: 0.9rem;
-  font-weight: 500;
-  color: #333;
-  margin-bottom: 8px;
-} 
 
 .footer-button-area {
   position: fixed;
@@ -185,11 +162,5 @@ const handleVerifySuccess = () => {
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.04) 0%, var(--color-surface) 40%);
   border-top: 1px solid rgba(255, 255, 255, 0.08);
   box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.3);
-}
-</style>
-  padding: 15px 20px;
-  background-color: white;
-  box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
-  box-sizing: border-box;
 }
 </style>

@@ -18,16 +18,6 @@ const { user } = storeToRefs(authStore);
 // 비로그인 상태일 때는 빈 배열로 처리
 const notificationsData = [
 
-import NotificationModal from '@/components/notification/NotificationModal.vue';
-  
-// 뒤로가기용
-const router = useRouter();
-
-
-// 알림 데이터
-// TODO: GET /notifications API 연결 예정
-const notifications = ref([
-
   {
     id: 1,
 
@@ -106,9 +96,6 @@ const displayNotifications = computed(() => {
   return user.value ? notifications.value : [];
 });
 
-]);
-const selectedNotification = ref(null);
-
 const openNotification = (item) => {
   selectedNotification.value = item;
 };
@@ -120,7 +107,6 @@ const openNotification = (item) => {
 const unreadCount = computed(() => {
 
   return displayNotifications.value.filter(
-  return notifications.value.filter(
     item => !item.isRead
   ).length;
 
@@ -205,7 +191,6 @@ const deleteNotification = (id) => {
       @click="goBack"
     >
       ‹
-      ←
     </button>
 
 
@@ -232,7 +217,6 @@ const deleteNotification = (id) => {
 
     <div
       v-if="displayNotifications.length === 0"
-      v-if="notifications.length === 0"
       class="empty"
     >
       새로운 알림이 없습니다.
@@ -242,7 +226,6 @@ const deleteNotification = (id) => {
 
     <article
       v-for="item in displayNotifications"
-      v-for="item in notifications"
       :key="item.id"
       class="notification-item"
       :class="{
@@ -354,11 +337,6 @@ const deleteNotification = (id) => {
   padding: var(--space-md);
 
   padding-bottom: calc(var(--space-xl) + var(--space-2xl) + var(--space-xl));
-  background:#fafafa;
-
-  padding:20px;
-
-  padding-bottom:100px;
 
 }
 
@@ -373,9 +351,6 @@ const deleteNotification = (id) => {
   gap: var(--space-sm);
 
   margin-bottom: var(--space-xl);
-  gap:12px;
-
-  margin-bottom:24px;
 
 }
 
@@ -386,9 +361,6 @@ const deleteNotification = (id) => {
   font-size: var(--font-title);
 
   font-weight: var(--font-bold);
-  font-size:22px;
-
-  font-weight:700;
 
 }
 
@@ -405,10 +377,6 @@ const deleteNotification = (id) => {
   cursor:pointer;
 
   color: var(--color-text-primary);
-
-  font-size:24px;
-
-  cursor:pointer;
 
 }
 
@@ -433,17 +401,6 @@ const deleteNotification = (id) => {
   color: var(--color-btn-primary-text);
 
   font-size: var(--font-xs);
-  width:22px;
-
-  height:22px;
-
-  border-radius:50%;
-
-  background:#ff4d4f;
-
-  color:white;
-
-  font-size:12px;
 
 }
 
@@ -451,13 +408,11 @@ const deleteNotification = (id) => {
 
 .notification-list {
   margin-top: var(--space-md);
-
   display:flex;
 
   flex-direction:column;
 
   gap: var(--space-sm);
-  gap:12px;
 
 }
 
@@ -480,15 +435,6 @@ const deleteNotification = (id) => {
   color: var(--color-text-secondary);
 
   transition: var(--transition-normal);
-  padding:18px;
-
-  background:white;
-
-  border-radius:16px;
-
-  color:#999;
-
-  transition:.2s;
 
 }
 
@@ -499,9 +445,6 @@ const deleteNotification = (id) => {
   color: var(--color-text-primary);
 
   font-weight: var(--font-semibold);
-  color:#222;
-
-  font-weight:600;
 
 }
 
@@ -514,9 +457,6 @@ const deleteNotification = (id) => {
   font-size: var(--font-md);
 
   font-weight: var(--font-semibold);
-  margin:0 0 8px;
-
-  font-size:16px;
 
 }
 
@@ -529,11 +469,6 @@ const deleteNotification = (id) => {
   font-size: var(--font-sm);
 
   font-weight: var(--font-regular);
-  margin:0 0 10px;
-
-  font-size:14px;
-
-  font-weight:400;
 
 }
 
@@ -544,9 +479,6 @@ const deleteNotification = (id) => {
   font-size: var(--font-xs);
 
   color: var(--color-text-tertiary);
-  font-size:12px;
-
-  color:#aaa;
 
 }
 
@@ -561,9 +493,6 @@ const deleteNotification = (id) => {
   font-size: var(--font-lg);
 
   color: var(--color-text-tertiary);
-  font-size:22px;
-
-  color:#aaa;
 
   cursor:pointer;
 
@@ -578,16 +507,12 @@ const deleteNotification = (id) => {
   right: var(--space-md);
 
   bottom: var(--space-lg);
-  right:20px;
-
-  bottom:30px;
 
   display:flex;
 
   flex-direction:column;
 
   gap: var(--space-xs);
-  gap:10px;
 
 }
 
@@ -604,15 +529,6 @@ const deleteNotification = (id) => {
   background: var(--color-primary);
 
   color: var(--color-btn-primary-text);
-  padding:12px 18px;
-
-  border:none;
-
-  border-radius:20px;
-
-  background:#222;
-
-  color:white;
 
   cursor:pointer;
 
@@ -627,9 +543,6 @@ const deleteNotification = (id) => {
   color: var(--color-text-secondary);
 
   padding: calc(var(--space-2xl) * 2.5) 0;
-  color:#999;
-
-  padding:60px 0;
 
 }
 

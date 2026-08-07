@@ -29,7 +29,7 @@ const { user } = storeToRefs(authStore);
 // 카드 store 연결
 const cardStore = useCardStore();
 
-const { cards, points } = storeToRefs(cardStore);
+const { cards, points, memberships } = storeToRefs(cardStore);
 
 // 금융 포인트 - 제일 많은 순서로 3개까지
 const topPoints = computed(() =>
@@ -50,7 +50,7 @@ const showNotification = (type, message) => {
 };
 
 const hasMembership = computed(
-  () => (homeData.value.memberships?.length ?? 0) > 0,
+  () => (memberships.value?.length ?? 0) > 0,
 );
 
 const hasCard = computed(() => cards.value.length > 0);
@@ -104,24 +104,6 @@ const homeData = ref({
   briefing: {
     content: '',
   },
-
-  myCard: {
-    image: '',
-
-    cardName: '신한 Mr.Life',
-
-    currentAmount: 300000,
-
-    targetAmount: 500000,
-
-    remainAmount: 200000,
-
-    remainBenefit: 13500,
-
-    achievementRate: 60,
-  },
-
-  memberships: [],
 });
 
 // 혜택 리포트
@@ -199,8 +181,8 @@ const goPointDetail = (item) => {
 
 // 멤버십
 
-const goMembershipDetail = (item) => {
-  console.log(item);
+const goMembershipDetail = (membership) => {
+  router.push(`/memberships/${membership.membershipRegisterId}`);
 };
 
 const goMembershipRegister = () => {
@@ -220,68 +202,496 @@ const goSignup = () => {
 // 데이터 조회
 
 const loadHome = async () => {
-  if (!user.value && !localStorage.getItem('token')) return;
-  try {
-    await cardStore.loadMonthlyStatuses();
-    homeData.value.myCard = cards.value[0] || null;
-    if (cardBriefing.value?.message) {
-      homeData.value.briefing.content = cardBriefing.value.message;
-    }
-  } catch (error) {
-    console.error('홈 카드 현황 조회 실패', error);
-  }
-};
+  /*
+    추후
 
-const addMockData = () => {
-  if (!user.value) {
-    authStore.setLogin('dummy-token', {
-      id: 1,
-      email: 'test@example.com',
-      name: '테스트',
-      nickname: '테스트유저'
-    });
-  }
-  if (cards.value.length === 0) {
-    cardStore.addCard({
-      id: 1,
-      name: '신한 Mr.Life',
-      cardNumber: '4111111111111111',
-      company: '신한카드',
-      image: '',
-      pinned: false,
-      achievementRate: 68,
-      benefits: ['카페 10% 할인', '식당 5% 캐시백', '교통비 2배 적립']
-    });
-  } else {
-    // 이미 있는 카드에 benefits 추가
-    cards.value.forEach(card => {
-      if (!card.benefits) {
-        card.benefits = ['카페 10% 할인', '식당 5% 캐시백', '교통비 2배 적립'];
-      }
-    });
-  }
+    GET /home
+
+    응답 예:
+    {
+      hasCard:true,
+      card:{},
+      points:[],
+      memberships:[]
+    }
+
+  */
 };
 
 onMounted(async () => {
+  await cardStore.loadCards();
+  await cardStore.loadPoints();
+  await cardStore.loadMemberships();
   await loadHome();
-  addMockData();
 });
 </script>
 
-
-
 <template>
+  <div class="home-view">
+    <!-- 토스트 알림 -->
+    <ToastNotification
+      v-if="showToast"
+      :type="toastType"
+      :message="toastMessage"
+      :duration="3000"
+      @close="showToast = false"
+    />
+
+    <main class="home-content">
+      <!-- 프로필 섹션 -->
+      <div class="profile-briefing-section">
+        <!-- 프로필 헤더 섹션 -->
+        <section v-if="user" class="profile-header-section">
+          <div class="profile-avatar-large" @click="goProfile">{{ user.nickname?.charAt(0) || '👤' }}</div>
+          <p class="profile-date-text">{{ currentDate }}</p>
+          <p class="greeting-text">{{ timeGreeting.message }}</p>
+        </section>
+
+        <!-- 우측 상단 버튼들 -->
+        <div class="profile-header-buttons">
+          <button @click="goChatBot" class="header-btn" title="채팅">
+            <Icon name="chat" size="md" />
+          </button>
+          <button @click="goNotification" class="header-btn notification-btn" :class="{ 'has-notification': hasUnreadNotification }" title="알림">
+            <Icon name="bell" size="md" />
+            <span v-if="hasUnreadNotification" class="notification-dot" />
+          </button>
+        </div>
+      </div>
+
+      <!-- AI 브리핑 -->
+      <AIBriefingCard v-if="user" :is-login="true" :message="briefingMessage" />
+
+      <AIBriefingCard v-else :is-login="false" :message="briefingMessage" />
+
+      <!-- 혜택 리포트 -->
+
+      <section class="home-section benefit-section">
+        <div class="section-header-row">
+          <h2>혜택 리포트</h2>
+        </div>
+
+        <BenefitReportCard
+          v-if="user && hasCard"
+          :report="benefitReport"
+          @open="goBenefit"
+        />
+
+        <EmptyStateCard
+          v-else-if="user && !hasCard"
+          title="등록된 카드가 없어요"
+          description="카드를 등록하면 혜택 리포트를 확인할 수 있습니다."
+          buttonText="카드 등록"
+          @click="goCardList"
+        />
+
+        <EmptyStateCard
+          v-else
+          title="로그인 후 이용할 수 있어요"
+          description="로그인하면 맞춤 혜택을 확인할 수 있습니다."
+          buttonText="로그인"
+          @click="goLogin"
+        />
+      </section>
+
+      <!-- 카드 상세 내역 -->
+
+      <section class="home-section spending-section">
+        <div class="section-header-row">
+          <h2>카드 이용 내역</h2>
+        </div>
+
+        <SpendingSummaryCard
+          :count="spendingSummary.count"
+          :total-amount="spendingSummary.totalAmount"
+          :has-card="hasCard"
+          :is-logged-in="!!user"
+          @open="goSpending"
+          @go-card-list="goCardList"
+        />
+      </section>
+
+      <!-- 카드 -->
+
+      <section class="home-section">
+        <div class="section-header-row">
+          <h2>내 카드</h2>
+          <button
+            v-if="user && hasCard"
+            type="button"
+            class="section-more-btn"
+            @click="goCardList"
+          >
+            더보기
+          </button>
+        </div>
+
+        <!-- 카드 목록에서 고정(pinned)한 카드만 표시 -->
+        <MyCardSummaryCard
+          v-if="user && hasPinnedCard"
+          :is-login="true"
+          :cards="pinnedCards"
+          @click-card="goCardDetail"
+          @click-more="goCardList"
+        />
+
+        <!-- 카드는 있지만 고정한 카드가 없는 경우: 카드 등록 유도가 아니라 '고정' 유도 -->
+        <EmptyStateCard
+          v-else-if="user && hasCard && !hasPinnedCard"
+          title="고정된 카드가 없어요"
+          description="카드 목록에서 카드를 고정하면 여기에 표시됩니다."
+          buttonText="카드 고정하러 가기"
+          @click="goCardList"
+        />
+
+        <EmptyStateCard
+          v-else-if="user && !hasCard"
+          title="등록된 카드가 없어요"
+          description="카드를 등록하면 맞춤 혜택을 확인할 수 있습니다."
+          buttonText="카드 등록"
+          @click="goCardList"
+        />
+
+        <EmptyStateCard
+          v-else
+          title="로그인 후 이용할 수 있어요"
+          description="로그인하면 내 카드를 관리할 수 있습니다."
+          buttonText="로그인"
+          @click="goLogin"
+        />
+      </section>
+
+      <!-- 금융 포인트 & 멤버십 (Bento UI 2열 레이아웃) -->
+
+      <div class="home-grid">
+        <!-- 금융 포인트 -->
+
+        <section class="home-section point-section">
+          <div class="section-header-row">
+            <h2>금융 포인트</h2>
+            <button
+              v-if="user && hasCard"
+              type="button"
+              class="section-more-btn"
+              @click="goPointList"
+            >
+              더보기
+            </button>
+          </div>
+
+          <PointSummaryCard
+            v-if="user && hasCard"
+            :is-login="true"
+            :points="topPoints"
+            @click-item="goPointDetail"
+          />
+
+          <EmptyStateCard
+            v-else
+            title="금융 포인트를 확인할 수 없어요"
+            description="카드 등록 후 포인트를 관리할 수 있습니다."
+          />
+        </section>
+
+        <!-- 멤버십 -->
+
+        <section class="home-section membership-section">
+          <div class="section-header-row">
+            <h2>멤버십</h2>
+            <button
+              v-if="user && hasMembership"
+              type="button"
+              class="section-more-btn"
+              @click="goMembershipRegister"
+            >
+              더보기
+            </button>
+          </div>
+
+          <MembershipSummaryCard
+            v-if="user && hasMembership"
+            :memberships="memberships"
+            @click-item="goMembershipDetail"
+            @click-more="goMembershipRegister"
+          />
+
+          <EmptyStateCard
+            v-else-if="user && !hasMembership"
+            title="등록된 멤버십이 없어요"
+            description="멤버십을 등록하면 혜택을 함께 관리할 수 있습니다."
+            buttonText="멤버십 등록"
+            @click="goMembershipRegister"
+          />
+
+          <EmptyStateCard
+            v-else
+            title="로그인 후 이용할 수 있어요"
+            description="로그인하면 멤버십을 관리할 수 있습니다."
+          />
+        </section>
+      </div>
+    </main>
+
+    <BottomNavigation />
+  </div>
 </template>
-
-
 
 <style scoped>
 
 /* 홈 전체 */
 .home-view {
+  min-height: 100vh;
+
+  padding: var(--space-md);
+
+  padding-bottom: calc(var(--space-xl) + var(--space-2xl) + var(--space-xl));
+
+  background: var(--color-bg);
+
+  box-sizing: border-box;
+
+  width: 100%;
+
+  max-width: 480px;
+
+  margin: 0 auto;
+
+  overflow: visible;
+}
+
+/* 콘텐츠 영역 */
+.home-content {
   display: flex;
 
   flex-direction: column;
 
+  width: 100%;
+
+  max-width: 100%;
+
+  box-sizing: border-box;
+}
+
+/* 각 섹션 */
+.home-section {
+  width: 100%;
+
+  box-sizing: border-box;
+
+  display: flex;
+
+  flex-direction: column;
+
+  margin-bottom: var(--space-lg);
+}
+
+
+/* 혜택 리포트 (더 큰 간격) */
+.benefit-section {
+  margin-top: var(--space-lg);
+  margin-bottom: var(--space-xl);
+}
+
+/* 섹션 제목 */
+.home-section h2 {
+  margin: 0 0 var(--space-md);
+
+  color: var(--color-text-primary);
+
+  font-size: var(--font-lg);
+
+  font-weight: var(--font-bold);
+
+  letter-spacing: -0.3px;
+}
+
+/* 제목 + 더보기를 한 줄에 배치하는 헤더 (카드 밖) */
+.section-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.section-header-row h2 {
+  margin: 0 0 var(--space-md);
+}
+
+.section-more-btn {
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: var(--color-text-secondary);
+  font-size: var(--font-sm);
+  height: var(--font-lg);
+  display: flex;
+  align-items: center;
+  margin-top: calc(var(--font-lg) * -0.3);
+}
+
+/* 프로필 섹션 */
+.profile-briefing-section {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-lg);
+  margin: 0;
+  padding: var(--space-lg) var(--space-md) var(--space-md);
+  background: transparent;
+}
+
+/* 브리핑 카드 - 위로 올리고 크기 증가 */
+.home-content > :deep(.ai-briefing-card) {
+  margin-top: calc(var(--space-lg) * 1);
+  margin-bottom: var(--space-lg);
+  padding: calc(var(--space-lg) * 1.7) !important;
+  min-height: 110px;
+}
+
+/* 프로필 헤더 섹션 */
+.profile-header-section {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-sm);
+  margin-bottom: 0;
+  padding: 0;
+  background: transparent;
+  border-radius: 0;
+  border: none;
+  box-shadow: none;
+}
+
+/* 프로필 사진 */
+.profile-avatar-large {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  font-weight: var(--font-bold);
+  color: white;
+  flex-shrink: 0;
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
+
+.profile-avatar-large:hover {
+  opacity: 0.8;
+  transform: scale(1.05);
+}
+
+/* 프로필 헤더 우측 버튼들 */
+.profile-header-buttons {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-left: auto;
+}
+
+.header-btn {
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition-fast);
+  color: var(--color-text-primary);
+  padding: 0;
+}
+
+.header-btn:hover {
+  opacity: 0.7;
+}
+
+.header-btn.notification-btn {
+  position: relative;
+}
+
+.notification-dot {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-danger);
+}
+
+/* 날짜 */
+.profile-date-text {
+  margin: 0;
+  font-size: var(--font-sm);
+  color: var(--color-text-secondary);
+}
+
+/* 인사말 */
+.greeting-text {
+  margin: 0;
+  font-size: var(--font-xl);
+  font-weight: var(--font-bold);
+  color: var(--color-text-primary);
+  line-height: 1.3;
+}
+
+/* Empty 버튼 영역 */
+.home-section :deep(.button-group) {
+  margin-top: var(--space-xs);
+}
+
+/* Bento UI 그리드 - 금융 포인트 & 멤버십 2열 */
+.home-grid {
+  display: grid;
+
+  grid-template-columns: 1fr 1fr;
+
+  gap: var(--space-md);
+
+  grid-auto-rows: 1fr;
+
+  width: 100%;
+
+  max-width: 100%;
+
+  box-sizing: border-box;
+}
+
+.home-grid .home-section {
+  display: flex;
+
+  flex-direction: column;
+
+  height: 100%;
+}
+
+.home-grid .home-section h2 {
+  margin-bottom: var(--space-md);
+
+  flex-shrink: 0;
+}
+
+.home-grid .home-section :deep(.base-card),
+.home-grid .home-section :deep(.empty-card) {
+  flex: 1;
+
+  display: flex;
+
+  flex-direction: column;
+
+  justify-content: center;
+
+  min-height: 200px;
+}
+
+:deep(.empty-card button:first-child) {
+  background: var(--color-primary);
+
+  color: var(--color-btn-primary-text);
+}
 </style>
-<!-- 07_25 연동 변경: 홈 요약 데이터를 카드·포인트·멤버십 API에서 조회한다. -->

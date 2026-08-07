@@ -10,12 +10,6 @@ const emit = defineEmits([
   'update:modelValue'
 ]);
 
-
-const emit = defineEmits([
-  'update:modelValue'
-]);
-
-
 </script>
 
 
@@ -59,10 +53,6 @@ const emit = defineEmits([
   color: var(--color-text-primary);
 
   font-size: var(--font-sm);
-  display:flex;
-  gap:8px;
-  align-items:center;
-  font-size:14px;
 }
 
 
@@ -76,9 +66,5 @@ input {
   cursor: pointer;
 }
 
-
-  width:18px;
-  height:18px;
-}
 
 </style>

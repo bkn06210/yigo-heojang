@@ -37,13 +37,11 @@ const handleBack = () => {
     {{ title }}
   </h1>
 
-
   <div class="actions">
 
     <slot />
 
   </div>
-
 
 </header>
 
@@ -110,14 +108,6 @@ const handleBack = () => {
 
   line-height: 1;
 
-  padding: 20px 0;
-  font-size: 20px;
-  font-weight: 700;
-}
-
-.menu-wrapper {
-  margin-left: auto;
-  position: relative;
 }
 
 h1 {
@@ -147,22 +137,5 @@ h1 {
 }
 
 
-
-  margin:0;
-
-  font-size:20px;
-
-  font-weight:700;
-
-}
-
-
-.actions {
-
-  display:flex;
-
-  align-items:center;
-
-}
 
 </style>

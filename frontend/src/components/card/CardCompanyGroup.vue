@@ -66,7 +66,6 @@ const togglePin = (id) => {
 
 
       <span class="card-count">
-      <span>
         {{ company.cards.length }}장
       </span>
 
@@ -85,13 +84,6 @@ const togglePin = (id) => {
       />
 
     </div>
-    <!-- 카드 목록 -->
-    <CardItem
-      v-for="card in visibleCards"
-      :key="card.id"
-      :card="card"
-      @toggle-pin="togglePin"
-    />
 
 
 
@@ -105,7 +97,6 @@ const togglePin = (id) => {
       {{
         isExpanded
           ? '접기 ∧'
-          ? '접기'
           : `+ ${company.cards.length - limit}개 더보기`
       }}
 
@@ -123,7 +114,6 @@ const togglePin = (id) => {
 .company-group {
 
   margin-bottom: var(--space-2xl);
-  margin-bottom:32px;
 
 }
 
@@ -140,13 +130,6 @@ const togglePin = (id) => {
   margin-bottom: var(--space-md);
 
   padding: 0 var(--space-xs);
-  display:flex;
-
-  justify-content:space-between;
-
-  align-items:center;
-
-  margin-bottom:12px;
 
 }
 
@@ -163,9 +146,6 @@ const togglePin = (id) => {
   color: var(--color-text-primary);
 
   letter-spacing: -0.2px;
-  font-size:18px;
-
-  font-weight:700;
 
 }
 
@@ -178,11 +158,6 @@ const togglePin = (id) => {
   font-size: var(--font-xs);
 
   font-weight: var(--font-medium);
-.company-header span {
-
-  color:#888;
-
-  font-size:14px;
 
 }
 
@@ -227,26 +202,5 @@ const togglePin = (id) => {
   color: var(--color-text-primary);
 
 }
-
-</style>
-
-.more-button {
-
-  width:100%;
-
-  padding:12px;
-
-  border:none;
-
-  background:none;
-
-  color:#666;
-
-  cursor:pointer;
-
-  font-size:14px;
-
-}
-
 
 </style>

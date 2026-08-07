@@ -16,7 +16,7 @@ const props = defineProps({
   },
 })
 
-const formattedPoint = computed(() => props.point.toLocaleString())
+const formattedPoint = computed(() => props.point ? props.point.toLocaleString() : '0')
 
 const emit = defineEmits(['click', 'select-point'])
 

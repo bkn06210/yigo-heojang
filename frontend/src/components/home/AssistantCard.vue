@@ -22,7 +22,6 @@
 
 
   background: var(--color-bg);
-  background:#f5f5f5;
 
 
 }

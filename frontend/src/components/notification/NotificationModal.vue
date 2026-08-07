@@ -215,7 +215,6 @@ const confirmNotification = () => {
   padding:24px;
 
   background:var(--color-surface);
-  background:white;
 
   border-radius:20px;
 
@@ -240,7 +239,6 @@ const confirmNotification = () => {
   font-size:24px;
 
   color:var(--color-text-tertiary);
-  color:#999;
 
   cursor:pointer;
 
@@ -255,9 +253,6 @@ const confirmNotification = () => {
   font-size: var(--font-lg);
 
   font-weight: var(--font-bold);
-  font-size:20px;
-
-  font-weight:700;
 
 }
 
@@ -272,7 +267,6 @@ const confirmNotification = () => {
   font-size:15px;
 
   color:var(--color-text-primary);
-  color:#333;
 
 }
 
@@ -283,7 +277,6 @@ const confirmNotification = () => {
   font-size:13px;
 
   color:var(--color-text-tertiary);
-  color:#999;
 
 }
 
@@ -309,9 +302,6 @@ const confirmNotification = () => {
     );
 
   color:var(--color-btn-primary-text);
-  background:#222;
-
-  color:white;
 
   font-size:15px;
 

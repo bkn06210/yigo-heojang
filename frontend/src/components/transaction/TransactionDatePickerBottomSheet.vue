@@ -18,7 +18,6 @@ const currentDate = ref(new Date());
 // 월 선택 모드
 const showMonthPicker = ref(false);
 
-
 // 선택 날짜
 const startDate = ref('');
 
@@ -132,7 +131,6 @@ const calendarDays = computed(() => {
 
 
 
-
 // 날짜 포맷
 
 const formatDate = (date) => {
@@ -150,7 +148,6 @@ const formatDate = (date) => {
 
 
 };
-
 
 
 
@@ -219,9 +216,6 @@ const selectDate = (date) => {
 
 
 };
-
-
-
 
 
 
@@ -312,15 +306,7 @@ const apply = () => {
 
     applyEndDate = formatDate(lastDay);
 
-  if(!startDate.value || !endDate.value) {
-
-
-    return;
-
-
   }
-
-
 
 
   emit(
@@ -332,9 +318,6 @@ const apply = () => {
       startDate:applyStartDate,
 
       endDate:applyEndDate,
-      startDate:startDate.value,
-
-      endDate:endDate.value,
 
     }
 
@@ -342,8 +325,6 @@ const apply = () => {
 
 
 };
-
-
 
 
 
@@ -383,84 +364,6 @@ const close = () => {
 </div>
 
 <div class="selected">
-
-
-
-
-
-<template>
-
-
-<div
-
-class="overlay"
-
-@click.self="close"
-
->
-
-
-<section class="sheet">
-
-
-
-<div class="handle"></div>
-
-
-
-
-
-<div class="header">
-
-
-<button
-@click="changeMonth(-1)"
->
-‹
-</button>
-
-
-
-<h2>
-
-{{currentDate.getFullYear()}}
-
-년
-
-{{currentDate.getMonth()+1}}
-
-월
-
-</h2>
-
-
-
-<button
-@click="changeMonth(1)"
->
-›
-</button>
-
-
-
-<button
-@click="close"
->
-✕
-</button>
-
-
-
-</div>
-
-
-
-
-
-
-
-<div class="selected">
-
 
 <div>
 
@@ -538,14 +441,6 @@ class="overlay"
 
 <div class="calendar">
 
-
-
-
-
-<div class="calendar">
-
-
-
 <button
 
 v-for="(day,index) in calendarDays"
@@ -559,7 +454,6 @@ active:isSelected(day),
 between:isBetween(day),
 'range-start':isFirstInRange(day),
 'range-end':isLastInRange(day)
-active:isSelected(day)
 }"
 
 @click="selectDate(day)"
@@ -572,29 +466,11 @@ active:isSelected(day)
 
 </div>
 
-{{day?.split('.')[2]}}
-
-
-</button>
-
-
-
 </div>
 
 
 
 <button class="apply" @click="apply">
-
-
-
-
-<button
-
-class="apply"
-
-@click="apply"
-
->
 
 적용
 
@@ -846,182 +722,5 @@ color:var(--color-btn-primary-text);
 font-weight:var(--font-semibold);
 cursor:pointer;
 }
-
-</style>
-
-
-</section>
-
-
-</div>
-
-
-</template>
-
-
-
-
-
-
-
-<style scoped>
-
-
-.overlay {
-
-position:fixed;
-
-inset:0;
-
-background:rgba(0,0,0,.35);
-
-display:flex;
-
-align-items:flex-end;
-
-z-index:1200;
-
-}
-
-
-
-.sheet {
-
-width:100%;
-
-background:white;
-
-border-radius:24px 24px 0 0;
-
-padding:20px;
-
-}
-
-
-
-.handle {
-
-width:40px;
-
-height:5px;
-
-background:#ddd;
-
-border-radius:10px;
-
-margin:0 auto 20px;
-
-}
-
-
-
-.header {
-
-display:flex;
-
-align-items:center;
-
-justify-content:space-between;
-
-}
-
-
-
-.header button {
-
-border:none;
-
-background:none;
-
-font-size:22px;
-
-}
-
-
-
-.selected {
-
-display:flex;
-
-justify-content:space-around;
-
-margin:24px 0;
-
-}
-
-
-
-.selected p {
-
-font-size:13px;
-
-color:#777;
-
-}
-
-
-
-.selected strong {
-
-font-size:16px;
-
-}
-
-
-
-.calendar {
-
-display:grid;
-
-grid-template-columns:repeat(7,1fr);
-
-gap:8px;
-
-}
-
-
-
-.calendar button {
-
-height:42px;
-
-border-radius:10px;
-
-border:1px solid #ddd;
-
-background:white;
-
-}
-
-
-
-.calendar button.active {
-
-border:2px solid #4F46E5;
-
-color:#4F46E5;
-
-}
-
-
-
-.apply {
-
-width:100%;
-
-height:50px;
-
-margin-top:24px;
-
-border:none;
-
-border-radius:12px;
-
-background:#4F46E5;
-
-color:white;
-
-}
-
 
 </style>

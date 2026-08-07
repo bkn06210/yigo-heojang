@@ -15,10 +15,6 @@ const props = defineProps({
     default: null
   }
 });
-<script setup>
-
-import { ref } from 'vue';
-
 
 const emit = defineEmits([
   'update:category',
@@ -42,68 +38,29 @@ const getMerchants = () => {
 
 const merchants = computed(() => getMerchants());
 
-const categories = [
-  '카페',
-  '음식점',
-  '쇼핑',
-  '교통',
-  '문화'
-];
-
-
-const merchants = {
-
-  카페:[
-    '스타벅스',
-    '투썸플레이스'
-  ],
-
-  음식점:[
-    '배달의민족',
-    '쿠팡이츠'
-  ]
-
-};
-
-
-const selectedCategory = ref(null);
-const selectedMerchant = ref(null);
-
-
 
 // 업종 선택
 const selectCategory = (category) => {
-
-  selectedCategory.value = category;
-
-
   // 기존 가맹점 선택 초기화
   emit(
     'update:merchant',
     null
   );
-  selectedMerchant.value = null;
-
 
   emit(
     'update:category',
     category
   );
-
 };
 
 
 
 // 가맹점 선택
 const selectMerchant = (merchant) => {
-
-  selectedMerchant.value = merchant;
-
   emit(
     'update:merchant',
     merchant
   );
-
 };
 
 </script>
@@ -127,12 +84,6 @@ const selectMerchant = (merchant) => {
       :class="{ active: cat.label === category }"
     >
       {{ cat.label }}
-      v-for="category in categories"
-      :key="category"
-      @click="selectCategory(category)"
-      :class="{ active: selectedCategory === category }"
-    >
-      {{ category }}
     </button>
 
   </div>
@@ -144,13 +95,11 @@ const selectMerchant = (merchant) => {
 <!-- 가맹점 선택 영역 -->
 <section
   v-if="category"
-  v-if="selectedCategory"
   class="merchant-section"
 >
 
   <h3>
     {{ category }} 가맹점 선택
-    {{ selectedCategory }} 가맹점 선택
   </h3>
 
 
@@ -163,12 +112,6 @@ const selectMerchant = (merchant) => {
       :class="{ active: mct === merchant }"
     >
       {{ mct }}
-      v-for="merchant in merchants[selectedCategory] || []"
-      :key="merchant"
-      @click="selectMerchant(merchant)"
-      :class="{ active: selectedMerchant === merchant }"
-    >
-      {{ merchant }}
 
     </button>
 
@@ -259,4 +202,3 @@ const selectMerchant = (merchant) => {
 }
 
 </style>
-<!-- 07_25 연동 변경: 결제 추천 API가 요구하는 가맹점 정보를 선택 결과로 전달한다. -->

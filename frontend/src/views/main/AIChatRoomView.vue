@@ -63,7 +63,6 @@ const selectQuestion = (question) => {
 <template>
   <div class="chat-view">
     <PageHeader title="AI 금융 비서" @back="router.back()" />
-    <PageHeader title="AI 금융 비서" />
 
     <!-- 채팅 영역 -->
     <section class="chat-area">
@@ -94,7 +93,6 @@ const selectQuestion = (question) => {
       />
 
       <button type="button" @click="sendMessage"><Icon name="send" size="sm" /></button>
-      <button type="button" @click="sendMessage">➤</button>
     </section>
   </div>
 </template>
@@ -108,7 +106,6 @@ const selectQuestion = (question) => {
   height: 100vh;
 
   background: var(--color-bg);
-  background: #f5f6fa;
 }
 
 .chat-area {
@@ -123,9 +120,6 @@ const selectQuestion = (question) => {
   gap: var(--space-md);
 
   padding: var(--space-md);
-  gap: 16px;
-
-  padding: 20px;
 }
 
 .quick-question-area {
@@ -136,11 +130,6 @@ const selectQuestion = (question) => {
   overflow-x: auto;
 
   padding: var(--space-xs) var(--space-md);
-  gap: 10px;
-
-  overflow-x: auto;
-
-  padding: 12px 16px;
 }
 
 .quick-question-area::-webkit-scrollbar {
@@ -157,13 +146,6 @@ const selectQuestion = (question) => {
   border-top: 1px solid var(--color-border);
 
   background: var(--color-surface);
-  gap: 12px;
-
-  padding: 16px;
-
-  border-top: 1px solid #e5e7eb;
-
-  background: white;
 }
 
 .input-area input {
@@ -183,13 +165,6 @@ const selectQuestion = (question) => {
 
 .input-area input::placeholder {
   color: var(--color-text-tertiary);
-  border: 1px solid #ddd;
-
-  border-radius: 24px;
-
-  padding: 12px 16px;
-
-  outline: none;
 }
 
 .input-area button {
@@ -202,11 +177,6 @@ const selectQuestion = (question) => {
   background: var(--color-primary);
 
   color: var(--color-btn-primary-text);
-  border-radius: 50%;
-
-  background: #4f46e5;
-
-  color: white;
 
   cursor: pointer;
 }

@@ -12,6 +12,8 @@ const props = defineProps({
   },
 })
 
+console.log('MembershipCard props:', props.membership)
+
 const goDetail = (id) => {
   router.push(`/memberships/${id}`)
 }
@@ -20,9 +22,17 @@ const goDetail = (id) => {
 <template>
   <BaseCard class="membership-card">
     <div class="membership-item">
-      <span class="membership-name">
-        {{ props.membership.name }}
-      </span>
+      <div class="membership-info">
+        <img
+          v-if="props.membership.logoImageUrl"
+          :src="props.membership.logoImageUrl"
+          :alt="props.membership.providerName || props.membership.name"
+          class="membership-logo"
+        />
+        <span class="membership-name">
+          {{ props.membership.providerName || props.membership.name }}
+        </span>
+      </div>
 
       <AppButton
         text="상세 보기"
@@ -32,36 +42,6 @@ const goDetail = (id) => {
       />
     </div>
   </BaseCard>
-  <div class="membership-card">
-
-
-    <div class="membership-item">
-
-
-      <span class="membership-main">
-        <img
-          v-if="membership.logo"
-          :src="membership.logo"
-          :alt="`${membership.name} 로고`"
-          class="membership-logo"
-        />
-        <span class="membership-name">{{ membership.name }}</span>
-      </span>
-
-
-      <button
-        class="move-button"
-        @click="goDetail(membership.id)"
-      >
-        상세 보기
-      </button>
-
-
-    </div>
-
-
-  </div>
-
 </template>
 
 <style scoped>
@@ -69,47 +49,31 @@ const goDetail = (id) => {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: var(--space-sm);
+}
+
+.membership-info {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  flex: 1;
+  min-width: 0;
+}
+
+.membership-logo {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-md);
+  object-fit: cover;
+  flex-shrink: 0;
 }
 
 .membership-name {
   font-size: var(--font-sm);
   font-weight: var(--font-medium);
   color: var(--color-text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 </style>
-
-.membership-main {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  min-width: 0;
-}
-
-.membership-logo {
-  width: 44px;
-  height: 44px;
-  flex: 0 0 44px;
-  border-radius: 12px;
-  object-fit: contain;
-  background: #fff;
-}
-
-
-.move-button {
-
-  border: none;
-
-  background: #f3f4f6;
-
-  border-radius: 8px;
-
-  padding: 8px 12px;
-
-  font-size: 13px;
-
-  cursor: pointer;
-
-}
-
-</style>
-<!-- 07_25 연동 변경: 멤버십 API 데이터와 제휴사 로고를 카드에 표시한다. -->

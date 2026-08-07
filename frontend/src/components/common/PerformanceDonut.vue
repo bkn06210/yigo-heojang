@@ -88,13 +88,6 @@ defineProps({
   border-radius:50%;
 
 
-  /*
-    현재는 CSS conic-gradient 사용
-
-    --rate 값만 바뀌면
-    카드별 달성률 적용 가능
-  */
-
   background:
 
     conic-gradient(
@@ -102,9 +95,6 @@ defineProps({
       var(--color-primary) var(--rate),
 
       var(--color-border) var(--rate)
-      #4f46e5 var(--rate),
-
-      #eeeeee var(--rate)
 
     );
 
@@ -132,7 +122,6 @@ defineProps({
 
 
   background:var(--color-surface);
-  background:white;
 
 
   display:flex;
@@ -156,9 +145,6 @@ defineProps({
 
   font-weight:var(--font-bold);
 
-  font-size:20px;
-
-
 }
 
 
@@ -169,10 +155,6 @@ defineProps({
   color:var(--color-text-secondary);
 
   font-size:var(--font-xs);
-  font-size:12px;
-
-
-  color:#777;
 
 
 }

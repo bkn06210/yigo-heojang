@@ -166,7 +166,6 @@ const skip = () => {
 
   padding: var(--space-xl);
   background: var(--color-bg);
-  padding: 24px;
 
   box-sizing: border-box;
 
@@ -193,9 +192,6 @@ const skip = () => {
 
   font-weight: var(--font-semibold);
   color: var(--color-text-primary);
-  font-size: 14px;
-
-  font-weight: 600;
 
 }
 
@@ -209,9 +205,6 @@ const skip = () => {
   color: var(--color-text-tertiary);
 
   font-size: var(--font-sm);
-  color: #888;
-
-  font-size: 14px;
 
   cursor: pointer;
 
@@ -250,13 +243,6 @@ const skip = () => {
   color: var(--color-text-primary);
 
   margin-bottom: var(--space-2xl);
-  font-size: 28px;
-
-  line-height: 1.4;
-
-  font-weight: 700;
-
-  margin-bottom: 40px;
 
 }
 
@@ -295,7 +281,6 @@ const skip = () => {
 .bottom-area {
 
   padding-bottom: var(--space-md);
-  padding-bottom: 20px;
 
 }
 
@@ -309,7 +294,6 @@ const skip = () => {
 
 
   border-radius: var(--radius-md);
-  border-radius: 14px;
 
   border: none;
 
@@ -322,14 +306,6 @@ const skip = () => {
   font-size: var(--font-md);
 
   font-weight: var(--font-semibold);
-  background: #111;
-
-  color: white;
-
-
-  font-size: 16px;
-
-  font-weight: 600;
 
 
   cursor: pointer;

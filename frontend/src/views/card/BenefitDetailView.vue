@@ -41,7 +41,6 @@ const benefits = ref([
 <template>
   <div class="benefit-detail-page">
     <PageHeader title="혜택 상세" @back="router.back()" />
-    <PageHeader title="혜택 상세" />
 
     <!-- 카드 정보 -->
     <section class="card-section">
@@ -69,7 +68,6 @@ const benefits = ref([
 .benefit-detail-page {
   padding: var(--space-md);
   box-sizing: border-box;
-  padding: 20px;
 }
 
 .card-section {
@@ -77,7 +75,6 @@ const benefits = ref([
   flex-direction: column;
   align-items: center;
   margin-bottom: var(--space-2xl);
-  margin-bottom: 32px;
 }
 
 .card-image {
@@ -90,19 +87,11 @@ const benefits = ref([
   font-size: var(--font-xl);
   font-weight: var(--font-bold);
   color: var(--color-text-primary);
-  border-radius: 12px;
-  margin-bottom: 16px;
-}
-
-.card-section h2 {
-  font-size: 20px;
-  font-weight: 700;
 }
 
 .benefit-section {
   display: flex;
   flex-direction: column;
   gap: var(--space-md);
-  gap: 16px;
 }
 </style> 

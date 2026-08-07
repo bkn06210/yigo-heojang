@@ -1,5 +1,4 @@
 ﻿<script setup>
-<script setup>
 const props = defineProps({
 
   // 바텀시트 표시 여부
@@ -76,7 +75,6 @@ const selectCard = () => {
       >
 
         <img
-          v-if="card.image"
           :src="card.image"
           :alt="card.name"
           class="card-image"
@@ -218,11 +216,6 @@ const selectCard = () => {
   letter-spacing: var(--typo-display-medium-letter-spacing);
   color: var(--color-text-primary);
   margin: 0;
-  background:#fff;
-
-  border-radius:24px 24px 0 0;
-
-  padding:24px;
 
 }
 
@@ -237,9 +230,6 @@ const selectCard = () => {
   background:var(--color-border);
 
   margin:0 auto var(--space-lg);
-  background:#ddd;
-
-  margin:0 auto 20px;
 
 }
 
@@ -290,9 +280,6 @@ const selectCard = () => {
 
   color: var(--color-primary-dark);
   font-weight: var(--font-bold);
-  gap:16px;
-
-  margin:24px 0;
 
 }
 
@@ -316,7 +303,6 @@ const selectCard = () => {
   font-size: var(--font-sm);
   font-weight: var(--font-semibold);
   color: var(--color-text-primary);
-  margin-bottom:24px;
 
 }
 
@@ -325,9 +311,6 @@ const selectCard = () => {
   margin-top: var(--space-sm);
 
   padding-left: var(--space-lg);
-  margin-top:12px;
-
-  padding-left:20px;
 
 }
 
@@ -346,7 +329,6 @@ const selectCard = () => {
   font-size: var(--font-sm);
   color: var(--color-text-secondary);
   line-height: 1.5;
-  margin-bottom:8px;
 
 }
 
@@ -384,7 +366,3 @@ const selectCard = () => {
 }
 
 </style>
-}
-
-</style>
-<!-- 07_25 연동 변경: 추천 API의 상세 계산 결과를 바텀시트에 표시한다. -->

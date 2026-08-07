@@ -1,7 +1,7 @@
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { computed, onMounted, ref } from 'vue';
+import { getTransactions } from '@/api/walletApi';
 
 import PageHeader from '@/components/common/PageHeader.vue';
 import TransactionFilterBottomSheet from '@/components/transaction/TransactionFilterBottomSheet.vue';
@@ -19,14 +19,6 @@ const filterCardId = computed(() =>
 );
 
 const filterCardName = computed(() => route.query.cardName || '');
-
-import {
-  getExpenseCategories,
-  getTransaction,
-  getTransactions,
-  syncTransactions,
-} from '@/api/walletApi';
-
 
 // 조회조건 표시
 const showFilter = ref(false);
@@ -49,6 +41,11 @@ const selectedDate = ref({
   startDate: '',
   endDate: '',
 });
+
+// 페이지네이션
+const currentPage = ref(1);
+const itemsPerPage = 15;
+const pagesPerGroup = 5;
 
 
 // 카드 목록
@@ -74,174 +71,51 @@ const cards = ref([
 ]);
 
 
-// 사용내역 임시 데이터
-const transactions = ref([
-  {
-    id: 1,
-    cardId: 1,
-    date: '2026.08.04 09:30',
-    merchant: '스타벅스',
-    amount: 8500,
-    category: '음식/카페',
-    status: '승인',
-    cardName: 'KB My WE:SH 카드',
-    cardLastDigits: '1234',
-    cardType: '신용카드',
-    installment: '일시불',
-    approvalNumber: '12345678',
-  },
-  {
-    id: 2,
-    cardId: 1,
-    date: '2026.08.03 18:45',
-    merchant: 'GS25',
-    amount: 12400,
-    category: '편의점',
-    status: '승인',
-    cardName: 'KB My WE:SH 카드',
-    cardLastDigits: '1234',
-    cardType: '신용카드',
-    installment: '일시불',
-    approvalNumber: '87654321',
-  },
-  {
-    id: 3,
-    cardId: 1,
-    date: '2026.08.02 14:20',
-    merchant: '넥슨 게임샵',
-    amount: 29000,
-    category: '게임/엔터',
-    status: '승인',
-    cardName: 'KB My WE:SH 카드',
-    cardLastDigits: '1234',
-    cardType: '신용카드',
-    installment: '일시불',
-    approvalNumber: '11223344',
-  },
-  {
-    id: 4,
-    cardId: 2,
-    date: '2026.08.01 16:15',
-    merchant: '컬리마켓',
-    amount: 45800,
-    category: '쇼핑',
-    status: '승인',
-    cardName: '신한 Deep Dream 카드',
-    cardLastDigits: '5678',
-    cardType: '체크카드',
-    installment: '일시불',
-    approvalNumber: '55667788',
-  },
-  {
-    id: 5,
-    cardId: 2,
-    date: '2026.07.31 10:50',
-    merchant: '로또판매점',
-    amount: 5000,
-    category: '기타',
-    status: '승인',
-    cardName: '신한 Deep Dream 카드',
-    cardLastDigits: '5678',
-    cardType: '체크카드',
-    installment: '일시불',
-    approvalNumber: '99887766',
-  },
-]);
-
-// 카드 상세에서 진입한 경우 해당 카드 소비내역만, 홈에서 진입한 경우 전체
-const filteredTransactions = computed(() => {
-  if (!filterCardId.value) return transactions.value;
-
-  return transactions.value.filter(
-    (transaction) => transaction.cardId === filterCardId.value,
-  );
-});
-
-const loading = ref(false);
-const detailLoading = ref(false);
-const errorMessage = ref('');
-const activeFilter = ref(null);
-const expenseCategories = ref([]);
-
-const formatDate = (value) => value ? value.slice(0, 10).replaceAll('-', '.') : '-';
-const toDateKey = (value) => (value || '').slice(0, 10).replaceAll('.', '-');
-const mapTransaction = (item) => ({
-  ...item,
-  id: item.expenseId,
-  date: formatDate(item.paymentDate),
-  merchant: item.merchantName || '가맹점 정보 없음',
-  cardName: item.cardName || '카드 정보 없음',
-  amount: Number(item.paymentAmount || 0),
-});
-
-const cardTypeLabels = {
-  CREDIT: '신용카드',
-  CHECK: '체크카드',
-  PREPAID: '선불카드',
-  GIFT: '기프트카드',
-};
-
-const cardTypeCodes = {
-  신용카드: 'CREDIT',
-  체크카드: 'CHECK',
-  선불카드: 'PREPAID',
-  기프트카드: 'GIFT',
-};
-
-const transactionTypeCodes = {
-  일시불: 'LUMP_SUM',
-  할부: 'INSTALLMENT',
-  단기카드대출: 'CASH_ADVANCE',
-};
-
-
-// 카드 목록
-const cards = computed(() => {
-  const unique = new Map();
-  transactions.value.forEach((item) => {
-    if (!unique.has(item.userCardId)) {
-      unique.set(item.userCardId, {
-        id: item.userCardId,
-        name: item.cardName,
-        type: cardTypeLabels[item.cardType] || '카드',
-        imageUrl: '',
-      });
-    }
-  });
-  return [...unique.values()];
-});
-
-
-// 사용내역 임시 데이터
+// 사용내역 API에서 조회
 const transactions = ref([]);
 
-const visibleTransactions = computed(() => {
-  const filter = activeFilter.value;
-  if (!filter) return transactions.value;
-  return transactions.value.filter((item) => {
-    if (filter.card !== '전체' && item.cardName !== filter.card) return false;
-    if (filter.transactionType === '취소' && item.paymentStatus !== 'CANCELED') return false;
-    const paymentDate = toDateKey(item.paymentDate);
-    const startDate = toDateKey(filter.startDate);
-    const endDate = toDateKey(filter.endDate);
-    if (startDate && paymentDate < startDate) return false;
-    if (endDate && paymentDate > endDate) return false;
-    return true;
-  });
+// 카드 필터링 (페이지네이션 전)
+const allFilteredTransactions = computed(() => {
+  let result = transactions.value;
+
+  if (filterCardId.value) {
+    result = result.filter(
+      (transaction) => transaction.cardId === filterCardId.value,
+    );
+  }
+
+  return result;
 });
 
-const loadTransactions = async (params = {}) => {
-  loading.value = true;
-  errorMessage.value = '';
-  try {
-    const response = await getTransactions(params);
-    transactions.value = (response?.transactions || response || []).map(mapTransaction);
-  } catch (error) {
-    errorMessage.value = error?.message || '카드 사용내역을 불러오지 못했습니다.';
-  } finally {
-    loading.value = false;
+// 페이지네이션된 거래
+const filteredTransactions = computed(() => {
+  const start = (currentPage.value - 1) * itemsPerPage;
+  return allFilteredTransactions.value.slice(start, start + itemsPerPage);
+});
+
+// 총 페이지 수
+const totalPages = computed(() => {
+  return Math.ceil(allFilteredTransactions.value.length / itemsPerPage);
+});
+
+// 현재 페이지 그룹의 시작 페이지
+const currentGroupStart = computed(() => {
+  return Math.floor((currentPage.value - 1) / pagesPerGroup) * pagesPerGroup + 1;
+});
+
+// 현재 페이지 그룹의 끝 페이지
+const currentGroupEnd = computed(() => {
+  return Math.min(currentGroupStart.value + pagesPerGroup - 1, totalPages.value);
+});
+
+// 표시할 페이지 배열
+const visiblePages = computed(() => {
+  const pages = [];
+  for (let i = currentGroupStart.value; i <= currentGroupEnd.value; i++) {
+    pages.push(i);
   }
-};
+  return pages;
+});
 
 
 // 조회조건 열기
@@ -277,7 +151,6 @@ const applyDate = (date) => {
   };
 
   showDatePicker.value = false;
-  showFilter.value = true;
 
 };
 
@@ -291,26 +164,38 @@ const applyFilter = (filter) => {
   );
 
   showFilter.value = false;
-const applyFilter = async (filter) => {
-  activeFilter.value = { ...filter };
-  showFilter.value = false;
-  const params = {
-    categoryId: filter.categoryId || undefined,
-    userCardId: filter.userCardId || undefined,
-    paymentStatus: filter.transactionType === '취소' ? 'CANCELED' : undefined,
-    approvalStatus: filter.approval === '결제확정'
-      ? 'CONFIRMED'
-      : filter.approval === '승인'
-        ? 'APPROVED'
-        : undefined,
-    cardType: cardTypeCodes[filter.cardType] || undefined,
-    region: filter.region === '국내' ? 'DOMESTIC' : filter.region === '해외' ? 'OVERSEAS' : undefined,
-    transactionType: transactionTypeCodes[filter.transactionType] || undefined,
-    startDate: toDateKey(filter.startDate) || undefined,
-    endDate: toDateKey(filter.endDate) || undefined,
-  };
-  await loadTransactions(params);
 
+};
+
+// 페이지 이동
+const goToPage = (page) => {
+  if (page >= 1 && page <= totalPages.value) {
+    currentPage.value = page;
+  }
+};
+
+// 맨 앞으로
+const firstPage = () => {
+  goToPage(1);
+};
+
+// 이전 그룹으로
+const prevGroup = () => {
+  const newStart = Math.max(currentGroupStart.value - pagesPerGroup, 1);
+  goToPage(newStart);
+};
+
+// 다음 그룹으로
+const nextGroup = () => {
+  const newStart = currentGroupStart.value + pagesPerGroup;
+  if (newStart <= totalPages.value) {
+    goToPage(newStart);
+  }
+};
+
+// 맨 뒤로
+const lastPage = () => {
+  goToPage(totalPages.value);
 };
 
 
@@ -321,17 +206,6 @@ const openDetail = (transaction) => {
 
   showDetail.value = true;
 
-const openDetail = async (transaction) => {
-  selectedTransaction.value = transaction;
-  showDetail.value = true;
-  detailLoading.value = true;
-  try {
-    selectedTransaction.value = mapTransaction(await getTransaction(transaction.id));
-  } catch (error) {
-    errorMessage.value = error?.message || '사용내역 상세 정보를 불러오지 못했습니다.';
-  } finally {
-    detailLoading.value = false;
-  }
 };
 
 
@@ -344,24 +218,63 @@ const closeDetail = () => {
 
 };
 
-const initializeTransactions = async () => {
-  try {
-    const categoryData = await getExpenseCategories();
-    expenseCategories.value = categoryData?.categories || [];
-  } catch (error) {
-    console.error('소비 카테고리 조회 실패:', error);
-  }
-
-  try {
-    await syncTransactions();
-  } catch (error) {
-    console.error('소비내역 동기화 실패:', error);
-  }
-
-  await loadTransactions();
+// 카드타입 변환
+const cardTypeMap = {
+  CREDIT: '신용',
+  DEBIT: '체크',
 };
 
-onMounted(initializeTransactions);
+// 거래 구분 변환
+const transactionTypeMap = {
+  LUMP_SUM: '일시불',
+  INSTALLMENT: '할부',
+};
+
+// 거래 상태 변환
+const paymentStatusMap = {
+  APPROVED: '승인',
+  PENDING: '대기 중',
+  CANCELLED: '취소됨',
+  FAILED: '실패',
+};
+
+// 날짜 포맷팅 (YYYY.MM.DD HH:MM)
+const formatDate = (dateStr) => {
+  const d = new Date(dateStr);
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  const hours = String(d.getHours()).padStart(2, '0');
+  const minutes = String(d.getMinutes()).padStart(2, '0');
+  return `${year}.${month}.${day} ${hours}:${minutes}`;
+};
+
+// 사용내역 조회
+const loadTransactions = async () => {
+  try {
+    const response = await getTransactions();
+    const rawTransactions = response?.transactions || [];
+    transactions.value = rawTransactions.map((t) => ({
+      id: t.expenseId,
+      cardId: t.userCardId,
+      merchant: t.merchantName || t.categoryName,
+      amount: t.paymentAmount,
+      date: formatDate(t.paymentDate),
+      category: t.categoryName,
+      cardLastDigits: t.cardName.slice(-4),
+      cardType: cardTypeMap[t.cardType] || t.cardType,
+      installment: transactionTypeMap[t.transactionType] || t.transactionType,
+      approvalNumber: String(t.expenseId).padStart(8, '0'),
+      status: paymentStatusMap[t.paymentStatus] || t.paymentStatus,
+    }));
+  } catch (error) {
+    console.error('사용내역 조회 실패:', error);
+  }
+};
+
+onMounted(() => {
+  loadTransactions();
+});
 
 </script>
 
@@ -377,7 +290,6 @@ onMounted(initializeTransactions);
       :title="filterCardName ? `${filterCardName} 이용내역` : '카드이용내역'"
       @back="router.back()"
     />
-    <PageHeader title="카드 사용내역" />
 
 
     <button
@@ -385,7 +297,6 @@ onMounted(initializeTransactions);
       @click="openFilter"
     >
       <Icon name="filter" size="sm" />
-      ⚙️
     </button>
 
   </div>
@@ -397,19 +308,6 @@ onMounted(initializeTransactions);
 
   <div
   v-for="transaction in filteredTransactions"
-  <p v-if="errorMessage" class="transaction-message">
-    {{ errorMessage }}
-  </p>
-
-  <p
-    v-else-if="!loading && visibleTransactions.length === 0"
-    class="transaction-message"
-  >
-    선택한 조건에 해당하는 카드 사용내역이 없습니다.
-  </p>
-
-  <div
-  v-for="transaction in visibleTransactions"
   :key="transaction.id"
   class="transaction-item"
   @click="openDetail(transaction)"
@@ -436,37 +334,54 @@ onMounted(initializeTransactions);
       <span class="info-text">{{ transaction.installment }}</span>
       <span class="info-dot">|</span>
       <span class="info-text">{{ transaction.cardType }}</span>
-
-    <div class="top">
-
-      <span>
-        {{ transaction.date }}
-      </span>
-
-
-      <span class="amount">
-        -{{ transaction.amount.toLocaleString() }}원
-      </span>
-
     </div>
 
 
+  </div>
 
-    <div class="merchant">
+  <!-- 페이지네이션 -->
+  <div v-if="totalPages > 1" class="pagination">
+    <button
+      class="nav-button"
+      @click="firstPage"
+      :disabled="currentPage === 1"
+    >
+      &lt;&lt;
+    </button>
+    <button
+      class="nav-button"
+      @click="prevGroup"
+      :disabled="currentGroupStart === 1"
+    >
+      &lt;
+    </button>
 
-      {{ transaction.merchant }}
-
+    <div class="page-numbers">
+      <button
+        v-for="page in visiblePages"
+        :key="page"
+        class="page-button"
+        :class="{ active: currentPage === page }"
+        @click="goToPage(page)"
+      >
+        {{ page }}
+      </button>
     </div>
 
-
-
-    <div class="card-name">
-
-      {{ transaction.cardName }}
-
-    </div>
-
-
+    <button
+      class="nav-button"
+      @click="nextGroup"
+      :disabled="currentGroupEnd === totalPages"
+    >
+      &gt;
+    </button>
+    <button
+      class="nav-button"
+      @click="lastPage"
+      :disabled="currentPage === totalPages"
+    >
+      &gt;&gt;
+    </button>
   </div>
 
 
@@ -481,8 +396,6 @@ onMounted(initializeTransactions);
     v-if="showFilter"
 
     :cards="cards"
-
-    :categories="expenseCategories"
 
     :selectedDate="selectedDate"
 
@@ -539,7 +452,6 @@ onMounted(initializeTransactions);
   max-width: 480px;
   box-sizing: border-box;
   overflow: hidden visible;
-  padding:20px;
 }
 
 
@@ -561,7 +473,6 @@ background:none;
 font-size: var(--font-lg);
 cursor: pointer;
 color: var(--color-text-primary);
-font-size:20px;
 
 }
 
@@ -620,63 +531,63 @@ font-size:20px;
   color: var(--color-text-tertiary);
 }
 
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-top: var(--space-2xl);
+  margin-bottom: var(--space-xl);
+}
+
+.nav-button {
+  background: none;
+  border: none;
+  color: var(--color-text-primary);
+  cursor: pointer;
+  font-size: var(--font-sm);
+  font-weight: var(--font-semibold);
+  padding: 4px 8px;
+  transition: var(--transition-fast);
+}
+
+.nav-button:hover:not(:disabled) {
+  color: var(--color-primary);
+}
+
+.nav-button:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.page-numbers {
+  display: flex;
+  gap: 4px;
+}
+
+.page-button {
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text-primary);
+  border-radius: var(--radius-md);
+  font-weight: var(--font-semibold);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  font-size: var(--font-sm);
+}
+
+.page-button:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.page-button.active {
+  background: var(--color-primary);
+  color: var(--color-btn-primary-text);
+  border-color: var(--color-primary);
+  font-weight: var(--font-bold);
+}
+
 </style>
-
-padding:16px 0;
-
-border-bottom:1px solid #eee;
-
-cursor:pointer;
-
-}
-
-.transaction-message {
-  padding: 40px 0;
-  text-align: center;
-  color: #777;
-}
-
-
-
-.top {
-
-display:flex;
-
-justify-content:space-between;
-
-}
-
-
-
-.amount {
-
-color:#e53935;
-
-font-weight:600; 
-
-}
-
-
-
-.merchant {
-
-font-size:16px;
-
-font-weight:600;
-
-}
-
-
-
-.card-name {
-
-margin-top:4px;
-
-color:#888;
-
-font-size:14px;
-
-}
-
-</style>
-<!-- 07_25 연동 변경: 소비내역 목록과 조회조건을 실제 백엔드 API에 연결한다. -->

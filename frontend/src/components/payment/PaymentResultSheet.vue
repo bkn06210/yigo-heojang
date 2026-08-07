@@ -203,14 +203,6 @@ box-sizing:border-box;
 .result-card:hover{
 
 transform:translateY(-2px);
-gap:12px;
-
-padding:16px;
-
-border:1px solid #ddd;
-border-radius:16px;
-
-margin-bottom:12px;
 
 }
 
@@ -218,7 +210,6 @@ margin-bottom:12px;
 .result-card.selected{
 
 border:2px solid var(--color-primary);
-border:2px solid #333;
 
 }
 
@@ -286,9 +277,5 @@ transition:var(--transition-fast);
 background:var(--color-border);
 
 }
-font-size:14px;
-
-}
-
 
 </style>

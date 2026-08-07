@@ -34,7 +34,6 @@ defineProps({
   background: var(--color-surface);
 
   color: var(--color-text-primary);
-  background:white;
 
 
   padding:10px 14px;
@@ -47,7 +46,6 @@ defineProps({
 
 
   box-shadow: 0 2px 8px rgba(0,0,0,.06);
-  box-shadow:0 2px 8px rgba(0,0,0,.06);
 
 
   cursor:pointer;

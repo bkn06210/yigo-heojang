@@ -79,7 +79,6 @@ const goPoint = ()=>{
 
 <div class="icon">
 <Icon name="check" size="lg" />
-✓
 </div>
 
 
@@ -229,7 +228,6 @@ width:320px;
 padding:28px;
 
 background: var(--color-surface);
-background:white;
 
 border-radius:20px;
 

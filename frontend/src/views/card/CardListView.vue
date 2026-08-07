@@ -5,15 +5,9 @@ import { useRouter } from 'vue-router';
 import { storeToRefs } from 'pinia';
 import { useAuthStore } from '@/stores/authStore';
 import { useCardStore } from '@/stores/cardStore';
+import { updateCardRepresentative } from '@/api/walletApi';
 
 import PageHeader from '@/components/common/PageHeader.vue';
-import { computed, onMounted } from 'vue';
-import { useRouter } from 'vue-router';
-import { storeToRefs } from 'pinia';
-
-import { useCardStore } from '@/stores/cardStore';
-import { useAuthStore } from '@/stores/authStore';
-
 import CardItem from '@/components/card/CardItem.vue';
 import CardCompanyGroup from '@/components/card/CardCompanyGroup.vue';
 import EmptyStateCard from '@/components/common/EmptyStateCard.vue';
@@ -35,34 +29,6 @@ const isLogin = computed(() => !!user.value);
 const cardStore = useCardStore();
 
 const { cards } = storeToRefs(cardStore);
-
-
-
-// 카드 Store 연결
-const cardStore = useCardStore();
-const authStore = useAuthStore();
-
-const { cards } = storeToRefs(cardStore);
-
-// 테스트 로그 추가
-console.log('카드 목록 진입:', cards.value);
-
-
-
-// 로그인 상태
-// TODO: 추후 authStore 연결
-// PR #25 연동: 로그인 상태일 때만 인증이 필요한 카드 현황 API를 호출한다.
-const isLogin = computed(() => Boolean(authStore.token || localStorage.getItem('token')));
-
-// PR #32 연동: 기본 보유카드 목록을 조회한 뒤 PR #25 실적 정보를 카드 ID로 결합한다.
-onMounted(async () => {
-  if (!isLogin.value) return;
-  try {
-    await cardStore.loadCards();
-  } catch (error) {
-    console.error('카드 현황 조회 실패', error);
-  }
-});
 
 
 
@@ -152,51 +118,28 @@ const cardCompanies = computed(() => {
 
 
 // 카드 고정
-const togglePin = (id) => {
-
-
-  const target = cards.value.find(
-
-    card => card.id === id
-
-  );
-
+const togglePin = async (id) => {
+  const target = cards.value.find(card => card.id === id);
 
   if (!target) return;
 
-
-  const pinnedCount =
-
-    cards.value.filter(
-
-      card => card.pinned
-
-    ).length;
-
-
+  const pinnedCount = cards.value.filter(card => card.pinned).length;
 
   if (!target.pinned && pinnedCount >= 3) {
-
     showToast('warning', '고정 카드는 최대 3개까지 가능합니다.');
-
     return;
-
-
-    alert(
-
-      '고정 카드는 최대 3개까지 가능합니다.'
-
-    );
-
-
-    return;
-
-
   }
 
-
-  target.pinned = !target.pinned;
-
+  try {
+    // 백엔드에 고정 상태 저장
+    await updateCardRepresentative(id, !target.pinned);
+    // 성공하면 로컬 상태도 업데이트
+    target.pinned = !target.pinned;
+    showToast('success', target.pinned ? '카드를 고정했습니다.' : '고정을 해제했습니다.');
+  } catch (error) {
+    console.error('카드 고정 변경 실패:', error);
+    showToast('error', '카드 고정 변경에 실패했습니다.');
+  }
 };
 
 // 추천 카드 숨기기
@@ -208,7 +151,6 @@ const closeRecommendedCard = () => {
   hideRecommendedCard.value = true;
   localStorage.setItem('hideRecommendedCard', 'true');
 };
-
 
 </script>
 
@@ -232,41 +174,6 @@ const closeRecommendedCard = () => {
       <button v-else @click="goRegister" style="padding: 12px 20px; background: var(--color-primary); color: var(--color-btn-primary-text); border: none; border-radius: var(--radius-full); font-weight: 600; cursor: pointer;">카드 등록</button>
     </div>
   </main>
-
-
-  <!-- 비로그인 -->
-
-  <EmptyStateCard
-
-    v-if="!isLogin"
-
-    title="로그인 후 이용할 수 있어요"
-
-    description="로그인하면 내 카드를 등록하고 관리할 수 있습니다."
-
-    buttonText="로그인"
-
-    @click="goLogin"
-
-  />
-
-
-
-  <!-- 로그인 + 카드 없음 -->
-
-  <EmptyStateCard
-
-    v-else-if="cards.length === 0"
-
-    title="등록된 카드가 없어요"
-
-    description="카드를 등록하면 혜택과 소비 관리를 시작할 수 있습니다."
-
-    buttonText="카드 등록"
-
-    @click="goRegister"
-
-  />
 
 
 
@@ -294,60 +201,6 @@ const closeRecommendedCard = () => {
           @toggle-pin="togglePin"
         />
       </div>
-    <header class="header">
-
-
-      <h1>
-        내 카드
-      </h1>
-
-
-
-
-      <button
-
-        class="register-button"
-
-        @click="goRegister"
-
-      >
-
-        + 카드 등록
-
-      </button>
-
-
-
-    </header>
-
-
-
-
-    <!-- 고정 카드 -->
-
-    <section class="card-section">
-
-
-      <h2>
-        📌 고정 카드
-      </h2>
-
-
-
-
-      <CardItem
-
-        v-for="card in pinnedCards"
-
-        :key="card.id"
-
-        :card="card"
-
-        @toggle-pin="togglePin"
-
-      />
-
-
 
     </section>
 
@@ -367,16 +220,6 @@ const closeRecommendedCard = () => {
           + 카드 등록
         </button>
       </div>
-    <!-- 전체 카드 -->
-
-    <section class="card-section">
-
-
-      <h2>
-        전체 카드
-      </h2>
-
-
 
 
       <CardCompanyGroup
@@ -392,14 +235,12 @@ const closeRecommendedCard = () => {
       />
 
 
-
     </section>
 
 
 
   </template>
 
-  
 <BottomNavigation />
 
 </div>
@@ -434,11 +275,6 @@ const closeRecommendedCard = () => {
   display: flex;
 
   flex-direction: column;
-  padding:20px;
-
-  min-height:100vh;
-
-  background:#fafafa;
 
 }
 
@@ -454,16 +290,6 @@ const closeRecommendedCard = () => {
   align-items: center;
 
   margin-bottom: var(--space-xl);
-
-.header {
-
-  display:flex;
-
-  justify-content:space-between;
-
-  align-items:center;
-
-  margin-bottom:24px;
 
 }
 
@@ -483,14 +309,6 @@ const closeRecommendedCard = () => {
   letter-spacing: var(--typo-display-medium-letter-spacing);
 
   color: var(--color-text-primary);
-
-.header h1 {
-
-  margin:0;
-
-  font-size:24px;
-
-  font-weight:700;
 
 }
 
@@ -579,43 +397,12 @@ const closeRecommendedCard = () => {
 
 }
 
-.register-button {
-
-
-  border:none;
-
-  background:#4F46E5;
-
-  color:white;
-
-
-  padding:11px 16px;
-
-
-  border-radius:14px;
-
-
-  font-size:14px;
-
-
-  font-weight:600;
-
-
-  cursor:pointer;
-
-
-}
-
-
 
 
 
 .card-section {
 
   margin-bottom: var(--space-lg);
-
-  margin-bottom:32px;
-
 
 }
 
@@ -657,20 +444,6 @@ const closeRecommendedCard = () => {
   color: var(--color-text-primary);
 
   letter-spacing: -0.3px;
-
-
-
-.card-section h2 {
-
-
-  font-size:18px;
-
-
-  margin-bottom:16px;
-
-
-  font-weight:700;
-
 
 }
 
@@ -872,8 +645,6 @@ const closeRecommendedCard = () => {
 }
 
 
-
-
 :deep(.empty-card) {
 
   background: var(--color-surface);
@@ -883,23 +654,6 @@ const closeRecommendedCard = () => {
   padding: var(--space-2xl) var(--space-md);
 
   box-shadow: var(--shadow-card);
-
-  margin-top:40px;
-
-
-  background:white;
-
-
-  border-radius:20px;
-
-
-  padding:36px 20px;
-
-
-  box-shadow:
-
-    0 4px 12px rgba(0,0,0,0.06);
-
 
 }
 
@@ -912,16 +666,7 @@ const closeRecommendedCard = () => {
 
   color: var(--color-btn-primary-text);
 
-  background:#4F46E5;
-
-
-  color:white;
-
-
 }
 
 
-
-
 </style>
-<!-- 07_25 연동 변경: 로그인 회원의 실제 보유카드 목록 API를 화면 진입 시 호출한다. -->

@@ -1,6 +1,5 @@
 ﻿<script setup>
 import Icon from '@/components/common/Icon.vue';
-<script setup>
 
 const emit = defineEmits([
   'close',
@@ -36,8 +35,6 @@ const close = () => {
 
     <h2>
       카드 등록 완료
-    <h2>
-      🎉 카드 등록 완료
     </h2>
 
 
@@ -80,7 +77,6 @@ z-index:3000;
 .modal {
 
 background:var(--color-surface);
-background:white;
 
 width:80%;
 
@@ -130,9 +126,6 @@ background:
   );
 
 color:var(--color-btn-primary-text);
-background:#4f46e5;
-
-color:white;
 
 }
 

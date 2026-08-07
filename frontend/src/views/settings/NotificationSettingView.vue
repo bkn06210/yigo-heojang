@@ -1,7 +1,5 @@
 ﻿<script setup>
 import { ref, watch, onMounted } from 'vue';
-<script setup>
-import { ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import PageHeader from '@/components/common/PageHeader.vue';
 
@@ -32,8 +30,6 @@ onMounted(() => {
 // 설정 값이 변경될 때마다 localStorage에 저장
 watch(notifications, (newVal) => {
   localStorage.setItem('notificationSettings', JSON.stringify(newVal));
- // 설정 값이 변경될 때마다 자동 저장 혹은 API 연동을 처리할 수 있음.
-watch(notifications, (newVal) => {
   // TODO: 백엔드 API 호출하여 알림 설정 저장
   console.log('알림 설정 변경됨:', newVal);
 }, { deep: true });
@@ -54,12 +50,6 @@ watch(notifications, (newVal) => {
         <div class="setting-item" :class="{ 'is-active': notifications.shortage }">
           <div class="setting-info">
             <span class="setting-title">실적 부족 알림</span>
-      <!-- 알림 설정 토글 리스트 -->
-      <div class="setting-list">
-        <!-- 1. 실적 부족 알림 -->
-        <div class="setting-item">
-          <div class="setting-info">
-            <span class="setting-title">실적 부족 탈림</span>
             <span class="setting-desc">이번 달 목표 실적 달성이 어려울 때 알려드려요.</span>
           </div>
           <!-- 토글 스위치 -->
@@ -71,7 +61,6 @@ watch(notifications, (newVal) => {
 
         <!-- 2. 혜택 한도 소진 알림 -->
         <div class="setting-item" :class="{ 'is-active': notifications.limitExhausted }">
-        <div class="setting-item">
           <div class="setting-info">
             <span class="setting-title">혜택 한도 소진 알림</span>
             <span class="setting-desc">카드 할인 및 포인트 적립 한도가 거의 소진되면 알려드려요.</span>
@@ -84,7 +73,6 @@ watch(notifications, (newVal) => {
 
         <!-- 3. 혜택 미적용 결제 알림 -->
         <div class="setting-item" :class="{ 'is-active': notifications.unappliedBenefit }">
-        <div class="setting-item">
           <div class="setting-info">
             <span class="setting-title">혜택 미적용 결제 알림</span>
             <span class="setting-desc">조건을 충족하지 않아 혜택을 받지 못한 결제가 발생했을 때 알려드려요.</span>
@@ -105,7 +93,6 @@ watch(notifications, (newVal) => {
   flex-direction: column;
   min-height: 100vh;
   background-color: var(--color-bg);
-  background-color: #f9f9f9;
 }
 
 .content-container {
@@ -130,16 +117,6 @@ watch(notifications, (newVal) => {
 }
 
 /* 알림 카드 (Bento: 독립 카드) */
-  padding: 20px;
-}
-
-.setting-list {
-  background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-  overflow: hidden;
-}
-
 .setting-item {
   display: flex;
   justify-content: space-between;
@@ -164,11 +141,6 @@ watch(notifications, (newVal) => {
   background: linear-gradient(135deg, rgba(var(--color-primary-dark-rgb), 0.18) 0%, rgba(var(--color-primary-dark-rgb), 0.06) 100%);
   border: 1px solid rgba(var(--color-primary-dark-rgb), 0.28);
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.05);
-  padding: 20px;
-  border-bottom: 1px solid #eee;
-}
-.setting-item:last-child {
-  border-bottom: none;
 }
 
 .setting-info {
@@ -187,19 +159,6 @@ watch(notifications, (newVal) => {
 .setting-desc {
   font-size: var(--font-xs);
   color: var(--color-text-tertiary);
-  gap: 4px;
-  padding-right: 15px;
-}
-
-.setting-title {
-  font-size: 1rem;
-  font-weight: 500;
-  color: #333;
-}
-
-.setting-desc {
-  font-size: 0.8rem;
-  color: #888;
   line-height: 1.3;
 }
 
@@ -224,8 +183,6 @@ watch(notifications, (newVal) => {
   top: 0; left: 0; right: 0; bottom: 0;
   background-color: var(--color-text-tertiary);
   transition: var(--transition-normal);
-  background-color: #ccc;
-  transition: .3s;
   border-radius: 28px;
 }
 
@@ -238,14 +195,11 @@ watch(notifications, (newVal) => {
   bottom: 3px;
   background-color: var(--color-surface);
   transition: var(--transition-normal);
-  background-color: white;
-  transition: .3s;
   border-radius: 50%;
 }
 
 input:checked + .slider {
   background-color: var(--color-primary);
-  background-color: #4CAF50; /* 활성화 색상 */
 }
 
 input:checked + .slider:before {

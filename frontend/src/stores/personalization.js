@@ -7,6 +7,7 @@ export const usePersonalizationStore = defineStore(
     // 개인화 카테고리 설정 (현장 결제 기준)
     const categories = ref([
       {
+        id: null,
         key: 'cafe',
         label: '카페',
         checked: false,
@@ -14,6 +15,7 @@ export const usePersonalizationStore = defineStore(
         inputTag: '',
       },
       {
+        id: null,
         key: 'convenience',
         label: '편의점',
         checked: false,
@@ -21,6 +23,7 @@ export const usePersonalizationStore = defineStore(
         inputTag: '',
       },
       {
+        id: null,
         key: 'food',
         label: '음식점',
         checked: false,
@@ -28,6 +31,7 @@ export const usePersonalizationStore = defineStore(
         inputTag: '',
       },
       {
+        id: null,
         key: 'mart',
         label: '마트',
         checked: false,
@@ -35,6 +39,7 @@ export const usePersonalizationStore = defineStore(
         inputTag: '',
       },
       {
+        id: null,
         key: 'shopping',
         label: '쇼핑',
         checked: false,
@@ -42,6 +47,7 @@ export const usePersonalizationStore = defineStore(
         inputTag: '',
       },
       {
+        id: null,
         key: 'beauty',
         label: '뷰티',
         checked: false,
@@ -49,6 +55,7 @@ export const usePersonalizationStore = defineStore(
         inputTag: '',
       },
       {
+        id: null,
         key: 'culture',
         label: '문화/여가',
         checked: false,
@@ -56,6 +63,7 @@ export const usePersonalizationStore = defineStore(
         inputTag: '',
       },
       {
+        id: null,
         key: 'transport',
         label: '교통',
         checked: false,
@@ -63,6 +71,7 @@ export const usePersonalizationStore = defineStore(
         inputTag: '',
       },
       {
+        id: null,
         key: 'medical',
         label: '의료',
         checked: false,

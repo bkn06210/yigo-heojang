@@ -1,20 +1,10 @@
 ﻿<template>
-<script setup>
-defineProps({
-  image: { type: String, default: '' },
-  loading: { type: Boolean, default: false },
-})
-</script>
-
-<template>
 
 <div class="qr-box">
 
 <div class="qr">
 
 QR
-<img v-if="image" :src="image" alt="결제 QR 코드" />
-<span v-else>{{ loading ? 'QR 생성 중...' : 'QR' }}</span>
 
 </div>
 
@@ -31,7 +21,6 @@ QR
 display:flex;
 justify-content:center;
 margin: var(--space-2xl) 0;
-margin:30px;
 
 }
 
@@ -68,17 +57,3 @@ box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.
 }
 
 </style>
-background:#eee;
-
-font-size:40px;
-
-}
-
-.qr img{
-width:100%;
-height:100%;
-object-fit:contain;
-}
-
-</style>
-<!-- 07_25 연동 변경: QR 결제 API 응답과 만료 상태를 화면에 반영한다. -->

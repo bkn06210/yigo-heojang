@@ -95,11 +95,6 @@ const closeDetail = () => {
   <div class="header">
 
     <PageHeader title="카드 이용내역" @back="router.back()" />
-<h1>테스트 화면</h1>
-
-  <div class="header">
-
-    <PageHeader title="카드 사용내역" />
 
 
     <button
@@ -107,7 +102,6 @@ const closeDetail = () => {
       @click="openFilter"
     >
       <Icon name="filter" size="sm" :color="'var(--color-text-primary)'" />
-      ⚙️
     </button>
 
 
@@ -202,7 +196,6 @@ const closeDetail = () => {
 .transaction-detail-page {
 
   padding: var(--space-md);
-  padding:20px;
 
 }
 
@@ -232,10 +225,6 @@ const closeDetail = () => {
 
   color:var(--color-text-primary);
 
-  font-size:20px;
-
-  cursor:pointer;
-
 }
 
 
@@ -245,9 +234,6 @@ const closeDetail = () => {
   padding: var(--space-md) 0;
 
   border-bottom: 1px solid var(--color-border);
-  padding:16px 0;
-
-  border-bottom:1px solid #eee;
 
   cursor:pointer;
 
@@ -264,9 +250,6 @@ const closeDetail = () => {
   font-size: var(--font-sm);
 
   color: var(--color-text-secondary);
-  font-size:14px;
-
-  color:#777;
 
 }
 
@@ -277,9 +260,6 @@ const closeDetail = () => {
   font-weight: var(--font-semibold);
 
   color: var(--color-text-primary);
-  font-weight:600;
-
-  color:#222;
 
 }
 
@@ -293,11 +273,6 @@ const closeDetail = () => {
 
   font-weight: var(--font-semibold);
   color: var(--color-text-primary);
-  margin-top:8px;
-
-  font-size:16px;
-
-  font-weight:600;
 
 } 
 
@@ -310,11 +285,6 @@ const closeDetail = () => {
   font-size: var(--font-xs);
 
   color: var(--color-text-tertiary);
-  margin-top:4px;
-
-  font-size:13px;
-
-  color:#888;
 
 }
 

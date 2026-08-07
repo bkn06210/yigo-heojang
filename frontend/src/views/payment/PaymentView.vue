@@ -1,19 +1,19 @@
 ﻿<script setup>
-import { ref, computed, watch } from 'vue';
+import { ref, computed, watch, onMounted, onUnmounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { storeToRefs } from 'pinia';
 import { usePaymentStore } from '@/stores/payment';
 import { useAuthStore } from '@/stores/authStore';
 import { useCardStore } from '@/stores/cardStore';
+import { createPaymentQr, getPaymentQr } from '@/api/paymentQrApi';
+import { getPayment } from '@/api/walletApi';
 import PageHeader from '@/components/common/PageHeader.vue';
 import BottomNavigation from '@/components/layout/BottomNavigation.vue';
 import ToastNotification from '@/components/common/ToastNotification.vue';
 import PaymentPasswordModal from '@/components/payment/PaymentPasswordModal.vue';
 import PaymentQRModal from '@/components/payment/PaymentQRModal.vue';
 import PaymentTimeoutModal from '@/components/payment/PaymentTimeoutModal.vue';
-import { createPaymentQr, getPaymentQr } from '@/api/paymentQrApi';
-import { getPayment } from '@/api/walletApi';
-import QRCode from 'qrcode';
+
 const paymentStore = usePaymentStore();
 const router = useRouter();
 const authStore = useAuthStore();
@@ -60,18 +60,15 @@ const showToast = ref(false);
 const toastMessage = ref('');
 const isFlipping = ref(false);
 
-// QR 관련 상태
-const qrToken = ref('');
-const qrSeconds = ref(300);
-const qrImage = ref('');
-const qrLoading = ref(false);
-let qrTimer = null;
-let statusTimer = null;
 
 let touchStartX = 0;
 let touchStartY = 0;
 let isDragging = false;
 let swipeDirection = null;
+
+// 스와이프 진행도 (-1 ~ 1, 우측/-좌측/+)
+const swipeProgress = ref(0);
+const isSwipeAnimating = ref(false);
 
 // 부채꼴 배치 (카드 수에 따라 자동 각도 분배)
 const getCardStyle = (index) => {
@@ -102,16 +99,28 @@ const getCardStyle = (index) => {
     yLift = 80;
   } else if (cardCount === 2) {
     // 2장: 좌우 균형 배치
-    angle = offset * 25; // -25도, 25도
-    spread = 80;
-    yLift = 40;
+    angle = offset * 40; // -40도, 40도
+    spread = 100;
+    yLift = 50;
   } else {
     // 3장 이상: 부채꼴 배치
     const maxOffset = Math.floor(cardCount / 2);
-    const angleStep = 90 / maxOffset;
-    angle = offset * angleStep;
-    spread = 100;
-    yLift = index === centerIndex ? 80 : 0;
+    const depthFactor = Math.abs(offset);
+
+    // 1번은 90도, 2번은 45도
+    if (depthFactor === 0) {
+      angle = 0;
+      spread = 0;
+      yLift = 80;
+    } else if (depthFactor === 1) {
+      angle = offset > 0 ? 45 : -45;
+      spread = 70;
+      yLift = 60;
+    } else {
+      angle = offset > 0 ? 90 : -90;
+      spread = 60;
+      yLift = 0;
+    }
   }
 
   const x = offset * spread;
@@ -171,20 +180,22 @@ const handleTouchMove = (e) => {
 
   swipeDirection = { deltaX, deltaY };
 
-  // 위로 드래그할 때만 카드 이동
+  // 위로 드래그할 때: 카드 플립
   if (deltaY > 0) {
-    cardUpOffset.value = Math.min(deltaY, 300); // 최대 300px까지 (모달 높이 기준)
-    flipProgress.value = Math.min(deltaY / 300, 1); // 0~1로 정규화, 서서히 뒤집어짐
+    cardUpOffset.value = Math.min(deltaY, 300);
+    flipProgress.value = Math.min(deltaY / 300, 1);
 
-    // 플립 시작 (100px 이상일 때)
     if (deltaY > CAROUSEL_CONFIG.FLIP_THRESHOLD && !flippingIndex.value) {
       flippingIndex.value = selectedIndex.value;
     }
 
-    // 카드 50% 도는 순간부터 모달 나타나기 시작 (더 일찍, 더 여유롭게)
     if (flipProgress.value >= 0.5) {
       showPasswordModal.value = true;
     }
+  }
+  // 좌우로 드래그할 때: 카드 회전
+  else if (Math.abs(deltaX) > 10) {
+    swipeProgress.value = deltaX / 300; // 300px를 기준으로 -1 ~ 1
   }
 };
 
@@ -200,15 +211,27 @@ const handleTouchEnd = () => {
 
   console.log('🎯 Swipe detected:', { deltaX, deltaY, FLIP_THRESHOLD: CAROUSEL_CONFIG.FLIP_THRESHOLD });
 
-  if (Math.abs(deltaX) > CAROUSEL_CONFIG.HORIZONTAL_SWIPE_THRESHOLD && flipProgress.value === 0) {
-    console.log('→ Horizontal swipe');
-    cardUpOffset.value = 0;
-    if (deltaX > 0) {
+  // 가로 스와이프로 카드 회전
+  if (Math.abs(swipeProgress.value) > 0.2 && flipProgress.value === 0) {
+    console.log('→ Horizontal swipe - rotating cards');
+    isSwipeAnimating.value = true;
+
+    if (swipeProgress.value > 0) {
       selectedIndex.value = (selectedIndex.value - 1 + cards.value.length) % cards.value.length;
     } else {
       selectedIndex.value = (selectedIndex.value + 1) % cards.value.length;
     }
+
+    setTimeout(() => {
+      swipeProgress.value = 0;
+      isSwipeAnimating.value = false;
+    }, 400);
     return;
+  }
+
+  // 스와이프 진행도 복원
+  if (Math.abs(swipeProgress.value) > 0) {
+    swipeProgress.value = 0;
   }
 
   // 50% 이상 올렸으면 자동으로 1까지 완성 (spring animation)
@@ -232,9 +255,8 @@ const selectCard = (index) => {
   selectedIndex.value = index;
 };
 
-const handlePasswordSuccess = async () => {
+const handlePasswordSuccess = () => {
   showPasswordModal.value = false;
-  await issueQr();
   showQRModal.value = true;
 };
 
@@ -265,10 +287,6 @@ const handlePasswordClose = () => {
 
 const handleQRClose = () => {
   showQRModal.value = false;
-  clearInterval(qrTimer);
-  clearInterval(statusTimer);
-  qrToken.value = '';
-  qrImage.value = '';
   // 카드를 원위치로 복원 (간편비번 취소와 동일)
   flipProgress.value = 0;
   cardUpOffset.value = 0;
@@ -302,9 +320,8 @@ const handleQRTimeout = () => {
   showTimeoutModal.value = true;
 };
 
-const handleTimeoutRegenerate = async () => {
+const handleTimeoutRegenerate = () => {
   showTimeoutModal.value = false;
-  await issueQr();
   showQRModal.value = true;
 };
 
@@ -312,9 +329,15 @@ const handleTimeoutCancel = () => {
   showTimeoutModal.value = false;
 };
 
-const payment = () => {
-  flipProgress.value = 1; // 모달이 보이도록 설정
-  showPasswordModal.value = true;
+const payment = async () => {
+  try {
+    if (!currentCard.value?.id) return;
+    const qrData = await createPaymentQr(currentCard.value.id, 10000);
+    flipProgress.value = 1;
+    showPasswordModal.value = true;
+  } catch (error) {
+    console.error('결제 QR 생성 실패:', error);
+  }
 };
 
 const closeModal = () => {
@@ -323,72 +346,6 @@ const closeModal = () => {
   flippingIndex.value = null;
   cardUpOffset.value = 0;
   isFlipping.value = false;
-};
-
-// QR 타이머 시작
-const startQRTimer = () => {
-  clearInterval(qrTimer);
-  qrTimer = setInterval(() => {
-    qrSeconds.value--;
-    if (qrSeconds.value <= 0) {
-      clearInterval(qrTimer);
-      clearInterval(statusTimer);
-      showTimeoutModal.value = true;
-    }
-  }, 1000);
-};
-
-// QR 상태 확인
-const checkQrStatus = async () => {
-  if (!qrToken.value) return;
-  try {
-    const status = await getPaymentQr(qrToken.value);
-    if (status.status === 'USED') {
-      clearInterval(statusTimer);
-      clearInterval(qrTimer);
-      if (status.paymentId) await getPayment(status.paymentId);
-      showQRModal.value = false;
-      toastMessage.value = '결제 성공';
-      showToast.value = true;
-    } else if (status.status === 'EXPIRED' || status.status === 'FAILED') {
-      clearInterval(statusTimer);
-      clearInterval(qrTimer);
-      showTimeoutModal.value = true;
-    }
-  } catch (error) {
-    console.error('QR 상태 조회 실패:', error);
-  }
-};
-
-// QR 발급
-const issueQr = async () => {
-  if (!currentCard.value?.id) {
-    alert('카드를 선택해주세요');
-    return;
-  }
-
-  qrLoading.value = true;
-  qrImage.value = '';
-  clearInterval(statusTimer);
-
-  try {
-    const data = await createPaymentQr(Number(currentCard.value.id), Number(paymentStore.paymentAmount));
-    if (!data?.qrToken) throw new Error('QR 토큰을 발급받지 못했습니다.');
-
-    qrToken.value = data.qrToken;
-    qrImage.value = await QRCode.toDataURL(data.qrToken, { width: 220, margin: 2 });
-    qrSeconds.value = data.expiresAt
-      ? Math.max(1, Math.floor((new Date(data.expiresAt).getTime() - Date.now()) / 1000))
-      : 300;
-
-    startQRTimer();
-    statusTimer = setInterval(checkQrStatus, 2000);
-  } catch (error) {
-    alert(error.message || 'QR 생성에 실패했습니다.');
-    showPasswordModal.value = false;
-  } finally {
-    qrLoading.value = false;
-  }
 };
 </script>
 
@@ -449,9 +406,6 @@ const issueQr = async () => {
                             @success="handlePasswordSuccess"
                             @close="handlePasswordClose" />
       <PaymentQRModal v-if="showQRModal"
-                      :qr-image="qrImage"
-                      :qr-seconds="qrSeconds"
-                      :qr-loading="qrLoading"
                       @close="handleQRClose"
                       @timeout="handleQRTimeout"
                       @success="handleQRSuccess" />
@@ -908,289 +862,5 @@ main {
   transform: translateY(0);
   opacity: 0.8;
 }
-=======
-import { ref, onMounted, onUnmounted } from 'vue';
-import { useRouter } from 'vue-router';
-import { usePaymentStore } from '@/stores/payment';
-import { computed } from 'vue';
 
-import PageHeader from '@/components/common/PageHeader.vue';
-
-import PaymentQR from '@/components/payment/PaymentQR.vue';
-import PaymentTimer from '@/components/payment/PaymentTimer.vue';
-import PaymentSecurity from '@/components/payment/PaymentSecurity.vue';
-
-import PaymentResultModal from '@/components/payment/PaymentResultModal.vue';
-import PaymentExpireModal from '@/components/payment/PaymentExpireModal.vue';
-import QRCode from 'qrcode';
-import { createPaymentQr, getPaymentQr } from '@/api/paymentQrApi';
-import { getPayment } from '@/api/walletApi';
-
-
-const paymentStore = usePaymentStore();
-
-const router = useRouter();
-
-const amount = computed(() => paymentStore.paymentAmount);
-
-const card = computed(() => paymentStore.selectedCard);
-
-const membershipBenefit = computed(() => paymentStore.membershipBenefit);
-
-// 결제 결과 모달 상태
-const showResult = ref(false);
-
-const qrSeconds = ref(300);
-let qrTimer = null;
-let statusTimer = null;
-const qrImage = ref('');
-const qrToken = ref('');
-const qrLoading = ref(false);
-
-const showExpireModal = ref(false);
-
-const success = ref(true);
-
-/*
-| QR 타이머 시작
-|
-| 1초마다 감소
-|
-| 0초가 되면 QR 만료 처리
-*/
-const startQRTimer = () => {
-
-
-  // 기존 타이머 제거
-  clearInterval(qrTimer);
-
-  qrTimer = setInterval(() => {
-
-    qrSeconds.value--;
-
-    // QR 만료
-    if(qrSeconds.value <= 0){
-
-
-      clearInterval(qrTimer);
-      clearInterval(statusTimer);
-
-
-      showExpireModal.value = true;
-
-    }
-
-  },1000);
-
-
-};
-
-
-const checkQrStatus = async () => {
-  if (!qrToken.value) return;
-  try {
-    const status = await getPaymentQr(qrToken.value);
-    if (status.status === 'USED') {
-      clearInterval(statusTimer);
-      clearInterval(qrTimer);
-      if (status.paymentId) await getPayment(status.paymentId);
-      success.value = true;
-      showResult.value = true;
-    } else if (status.status === 'EXPIRED' || status.status === 'FAILED') {
-      clearInterval(statusTimer);
-      clearInterval(qrTimer);
-      showExpireModal.value = true;
-    }
-  } catch (error) {
-    console.error('QR 상태 조회 실패', error);
-  }
-};
-
-const issueQr = async () => {
-  if (!card.value?.id) {
-    router.replace('/payment/recommend');
-    return;
-  }
-
-  qrLoading.value = true;
-  qrImage.value = '';
-  clearInterval(statusTimer);
-  try {
-    const data = await createPaymentQr(Number(card.value.id), Number(amount.value)); // 07_25 연동 수정: QR 발급 시 결제금액을 확정한다.
-    if (!data?.qrToken) throw new Error('QR 토큰을 발급받지 못했습니다.');
-    qrToken.value = data.qrToken;
-    qrImage.value = await QRCode.toDataURL(data.qrToken, { width: 220, margin: 2 }); // 07_25 연동 수정: QR 이미지는 프론트에서 직접 생성한다.
-    qrSeconds.value = data.expiresAt
-      ? Math.max(1, Math.floor((new Date(data.expiresAt).getTime() - Date.now()) / 1000))
-      : 300;
-    startQRTimer();
-    statusTimer = setInterval(checkQrStatus, 2000);
-  } catch (error) {
-    alert(error.response?.data?.message || error.message || 'QR 생성에 실패했습니다.');
-    router.replace('/payment/recommend');
-  } finally {
-    qrLoading.value = false;
-  }
-};
-
-/*
-| 결제 취소
-*/
-const cancelPayment = () => {
-
-  showExpireModal.value = false;
-
-  router.back();
-
-};
-
-// QR 재발급
-const refreshQR = async () => {
-
-  showExpireModal.value = false;
-
-  await issueQr();
-
-};
-
-/*
-| 페이지 진입 시 QR 타이머 시작
-*/
-onMounted(issueQr);
-
-/*
-| 페이지 종료 시 타이머 제거
-*/
-onUnmounted(()=>{
-
-  clearInterval(qrTimer);
-  clearInterval(statusTimer);
-
-});
-
-
-</script>
-
-<template>
-
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
-
-<div class="payment-page">
-
-
-<PageHeader title="결제"/>
-
-
-<main>
-
-
-<section class="amount">
-
-<p>
-결제 금액
-</p>
-
-<h1>
-{{amount.toLocaleString()}}원
-</h1>
-
-</section>
-
-<!--
-  선택한 카드 정보
-
-  card가 없는 상태에서 화면이 먼저 렌더링될 수 있으므로
-  v-if로 null 체크
-
-  API 연결 후에도 동일하게 사용 가능
--->
-<section
-  v-if="card"
-  class="card"
->
-
-  <img
-    v-if="card.image"
-    :src="card.image"
-    :alt="card.name"
-  />
-
-  <p>
-    {{ card.name }}
-  </p>
-
-</section>
-
-
-<PaymentQR :image="qrImage" :loading="qrLoading" />
-
-
-<PaymentTimer
-
-  :seconds="qrSeconds"
-
-/>
-
-<p class="scan-message">
-
-QR 코드를 스캔해 결제하세요
-
-</p>
-
-
-<PaymentSecurity />
-
-</main>
-
-
-<button
-class="cancel"
-
-@click="cancelPayment"
->
-결제 취소
-</button>
-
-
-<!--
-  결제 결과 모달
-
-  close 이벤트:
-  모달 닫기 처리
--->
-<PaymentResultModal
-
-  v-if="showResult"
-
-  :success="success"
-
-  :amount="amount"
-
-  :card="card"
-
-  :membershipBenefit="membershipBenefit"
-
-  @close="showResult = false"
-
-/>
-
-<!--
-  QR 유효시간 종료 모달
--->
-<PaymentExpireModal
-
-  v-if="showExpireModal"
-
-  @refresh="refreshQR"
-
-  @cancel="cancelPayment"
-
-/>
-
-
-
-</div>
-
-
-</template> 
-<!-- 07_25 연동 변경: 결제 요청·추천·결과 정산 API를 기존 결제 UI에 연결한다. -->
+</style>

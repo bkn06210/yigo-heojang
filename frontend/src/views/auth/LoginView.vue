@@ -1,5 +1,4 @@
 ﻿<script setup>
-<script setup>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 
@@ -24,9 +23,6 @@ const router = useRouter();
 const { showToast } = useToast();
 
 
-const router = useRouter();
-
-
 // 로그인 상태 저장소
 const authStore = useAuthStore();
 
@@ -44,7 +40,6 @@ const login = async () => {
   // 이메일 입력 확인
   if (!email.value) {
     showToast('warning', '이메일을 입력해주세요.');
-    alert('이메일을 입력해주세요.');
     return;
   }
 
@@ -52,7 +47,6 @@ const login = async () => {
   // 비밀번호 입력 확인
   if (!password.value) {
     showToast('warning', '비밀번호를 입력해주세요.');
-    alert('비밀번호를 입력해주세요.');
     return;
   }
 
@@ -128,17 +122,11 @@ const login = async () => {
     if (error.response) {
 
       showToast('error', error.response.data.message);
-      alert(
-        error.response.data.message
-      );
 
 
     } else {
 
       showToast('error', '서버와 연결할 수 없습니다.');
-      alert(
-        '서버와 연결할 수 없습니다.'
-      );
 
     }
 
@@ -177,12 +165,11 @@ const findPassword = () => {
 
 
 // 본인인증 완료
-const verifyPasswordFind = (passwordResetToken) => {
+const verifyPasswordFind = () => {
 
   showPasswordFind.value = false;
 
   router.push('/auth/password-change');
-  router.push({ path: '/auth/password-change', state: { passwordResetToken } });
 
 };
 
@@ -191,8 +178,6 @@ const verifyPasswordFind = (passwordResetToken) => {
 
 
 <template>
-
-  <div class="login">
 
   <div class="login-page">
 
@@ -266,12 +251,6 @@ const verifyPasswordFind = (passwordResetToken) => {
           </button>
         </div>
 
-      <label>비밀번호</label>
-
-      <PasswordInput
-        v-model="password"
-      />
-
         <!-- 로그인 버튼 -->
         <button
           type="submit"
@@ -297,8 +276,6 @@ const verifyPasswordFind = (passwordResetToken) => {
         </p>
       </div>
 
-    <div class="buttons">
-
       <!-- 또는 -->
       <div class="or-section">
         <span class="or-line"></span>
@@ -317,31 +294,6 @@ const verifyPasswordFind = (passwordResetToken) => {
         </button>
       </div>
 
-
-      <p>
-
-        계정이 없으신가요?
-
-        <span @click="goSignup">
-
-          회원가입
-
-        </span>
-
-      </p>
-
-
-
-      <p
-        class="password"
-        @click="findPassword"
-      >
-
-        비밀번호를 잊으셨나요?
-
-      </p>
-
-
     </div>
 
     <AuthVerifyModal
@@ -351,21 +303,6 @@ const verifyPasswordFind = (passwordResetToken) => {
     />
 
   </div>
-
-  </div>
-
-
-
-  <AuthVerifyModal
-
-    v-if="showPasswordFind"
-
-    @close="showPasswordFind=false"
-
-    @success="verifyPasswordFind"
-
-  />
-
 
 </template>
 
@@ -397,17 +334,6 @@ const verifyPasswordFind = (passwordResetToken) => {
   padding: var(--space-xl);
   box-sizing: border-box;
   box-shadow: var(--shadow-lg);
-.login {
-
-  padding: 24px;
-
-}
-
-
-h1 {
-
-  margin-bottom: 40px;
-
 }
 
 .login-header {
@@ -461,11 +387,7 @@ h1 {
 }
 
 .login-form {
-
-section {
-
   display: flex;
-
   flex-direction: column;
   gap: var(--space-sm);
   margin-bottom: var(--space-2xl);
@@ -486,29 +408,6 @@ section {
   letter-spacing: 0.5px;
   margin: 0;
   text-align: left;
-
-  gap: 14px;
-
-}
-
-
-
-.buttons {
-
-  margin-top: 40px;
-
-}
-
-
-
-.buttons p {
-
-  text-align: center;
-
-  font-size: 14px;
-
-  margin-top: 20px;
-
 }
 
 .text-input {
@@ -692,15 +591,3 @@ section {
 }
 
 </style>
-
-span,
-.password {
-
-  cursor: pointer;
-
-  text-decoration: underline;
-
-}
-
-</style>
-<!-- 07_25 연동 변경: 로그인 입력을 실제 인증 API와 연결하고 오류를 표시한다. -->

@@ -1,5 +1,4 @@
 ﻿<script setup>
-<script setup>
 import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import PageHeader from '@/components/common/PageHeader.vue';
@@ -10,8 +9,6 @@ import { useToast } from '@/composables/useToast';
 
 const router = useRouter();
 const { showToast } = useToast();
-
-const router = useRouter();
 
 const agreements = ref({
   deleteData: false,
@@ -51,9 +48,6 @@ const handleWithdrawal = () => {
   console.log('회원 탈퇴 완료, 선택된 사유:', withdrawalData);
   showToast('success', '회원 탈퇴가 정상적으로 처리되었습니다.');
   router.push('/auth/login');
-  console.log('회원 탈퇴 완료, 선택된 사유:', reasons.value);
-  alert('회원 탈퇴가 정상적으로 처리되었습니다.');
-  router.push('/login');
 };
 </script>
 
@@ -123,7 +117,6 @@ const handleWithdrawal = () => {
   flex-direction: column;
   min-height: 100vh;
   background-color: var(--color-bg);
-  background-color: #f9f9f9;
 }
 
 .content-container {
@@ -169,33 +162,6 @@ const handleWithdrawal = () => {
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.02) 100%);
   border: 1px solid rgba(255, 255, 255, 0.08);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.05);
-  padding: 20px;
-  padding-bottom: 100px;
-}
-
-.notice-section {
-  margin-bottom: 20px;
-  padding-left: 4px;
-}
-
-.notice-title {
-  font-size: 1.2rem;
-  font-weight: bold;
-  color: #333;
-  margin-bottom: 4px;
-}
-
-.notice-subtitle {
-  font-size: 0.9rem;
-  color: #666;
-}
-
-.card-box {
-  background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-  padding: 20px;
-  margin-bottom: 16px;
 }
 
 .checkbox-group {
@@ -209,14 +175,6 @@ const handleWithdrawal = () => {
   font-weight: var(--font-semibold);
   color: var(--color-text-primary);
   margin-bottom: var(--space-sm);
-  gap: 12px;
-}
-
-.section-label {
-  font-size: 0.95rem;
-  font-weight: 600;
-  color: #333;
-  margin-bottom: 12px; 
 }
 
 .reason-list {
@@ -264,7 +222,6 @@ const handleWithdrawal = () => {
   font-size: var(--font-xs);
   color: var(--color-text-tertiary);
   text-align: right;
-  gap: 12px;
 }
 
 .footer-button-area {
@@ -286,11 +243,5 @@ const handleWithdrawal = () => {
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.04) 0%, var(--color-surface) 40%);
   border-top: 1px solid rgba(255, 255, 255, 0.08);
   box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.3);
-}
-</style>
-  padding: 15px 20px;
-  background-color: white;
-  box-shadow: -2px 10px rgba(0,0,0,0.05);
-  box-sizing: border-box;
 }
 </style>

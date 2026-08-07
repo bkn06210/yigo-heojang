@@ -2,11 +2,6 @@
 import { ref, watch, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { storeToRefs } from 'pinia';
-import { onMounted, ref } from 'vue';
-import { useRouter } from 'vue-router';
-import { storeToRefs } from 'pinia';
-import { logout as logoutApi } from '@/api/authApi';
-import { getMyInfo, updateMyInfo } from '@/api/memberApi';
 
 import { useAuthStore } from '@/stores/authStore';
 
@@ -67,7 +62,6 @@ onMounted(() => {
   displaySetting.value = savedTheme;
   document.documentElement.setAttribute('data-theme', savedTheme);
 });
-const displaySetting = ref('system');
 
 
 // 로그인 이동
@@ -154,42 +148,6 @@ const logout = () => {
 
   router.push('/');
 
-const updateProfile = async (updatedUser) => {
-  try {
-    const member = await updateMyInfo(updatedUser.nickname);
-    authStore.updateUser({
-      ...member,
-      profileImageUrl: updatedUser.profileImageUrl,
-    });
-    closeProfileEdit();
-  } catch (error) {
-    alert(error.response?.data?.message || '프로필 수정에 실패했습니다.');
-  }
-};
-
-const loadMyInfo = async () => {
-  if (!authStore.isLogin()) return;
-  try {
-    authStore.updateUser(await getMyInfo());
-  } catch (error) {
-    console.error('회원정보 조회 실패:', error);
-  }
-};
-
-onMounted(loadMyInfo);
-
-
-
-// 로그아웃
-const logout = async () => {
-  try {
-    await logoutApi();
-  } catch (error) {
-    console.log('로그아웃 API 실패:', error);
-  } finally {
-    authStore.logout();
-    router.push('/auth/login');
-  }
 };
 
 </script>
@@ -202,11 +160,6 @@ const logout = async () => {
     <PageHeader
       title="설정"
       :show-back="false"
-
-    <!-- 헤더 -->
-    <PageHeader
-      title="설정"
-      @back="goBack"
     />
 
 
@@ -262,9 +215,6 @@ const logout = async () => {
             >
 
               <Icon name="edit" size="md" />
-              <span class="material-icons">
-                edit
-              </span>
 
             </button>
 
@@ -306,7 +256,6 @@ const logout = async () => {
 
 
 
-
       <!-- 설정 메뉴 -->
 
       <section class="menu-list">
@@ -335,7 +284,6 @@ const logout = async () => {
 
 
 
-
         <!-- 알림 -->
 
         <div
@@ -358,11 +306,9 @@ const logout = async () => {
 
 
 
-
         <!-- 보기 설정 -->
 
         <div class="menu-item dropdown-item">
-
 
           <span>
             보기
@@ -395,43 +341,7 @@ const logout = async () => {
             </div>
           </div>
 
-
-
-          <div class="menu-value-dropdown">
-
-
-            <select v-model="displaySetting">
-
-
-              <option value="system">
-                시스템 설정
-              </option>
-
-
-              <option value="light">
-                라이트 모드
-              </option>
-
-
-              <option value="dark">
-                다크 모드
-              </option>
-
-
-            </select>
-
-
-
-            <span class="dropdown-arrow">
-              ▾
-            </span>
-
-
-          </div>
-
-
         </div>
-
 
 
 
@@ -458,7 +368,6 @@ const logout = async () => {
 
 
       </section>
-
 
 
 
@@ -491,7 +400,6 @@ const logout = async () => {
 
 
 
-
     <!-- 프로필 수정 바텀시트 -->
 
     <ProfileEditBottomSheet
@@ -505,7 +413,6 @@ const logout = async () => {
       @save="updateProfile"
 
     />
-
 
 
 
@@ -795,375 +702,4 @@ const logout = async () => {
   cursor: pointer;
   transition: var(--transition-fast);
 }
-.settings-view {
-
-  min-height: 100vh;
-
-  background: #f7f7f8;
-
-  display:flex;
-
-  flex-direction:column;
-
-}
-
-
-
-/* 본문 */
-
-.settings-content {
-
-  flex:1;
-
-  padding:20px;
-
-  padding-bottom:100px;
-
-}
-
-
-
-/* 프로필 */
-
-.profile-section {
-
-  background:white;
-
-  border-radius:20px;
-
-  padding:24px 20px;
-
-  display:flex;
-
-  flex-direction:column;
-
-  align-items:center;
-
-  margin-bottom:20px;
-
-}
-
-
-
-.guest-profile {
-
-  gap:16px;
-
-}
-
-
-
-.guest-profile p {
-
-  margin:0;
-
-  color:#666;
-
-  font-size:15px;
-
-}
-
-
-
-.login-button {
-
-  border:none;
-
-  background:#4F46E5;
-
-  color:white;
-
-  padding:10px 24px;
-
-  border-radius:20px;
-
-  font-size:14px;
-
-  cursor:pointer;
-
-}
-
-
-
-
-
-.profile-image-wrapper {
-
-  width:88px;
-
-  height:88px;
-
-}
-
-
-
-.profile-image {
-
-  width:100%;
-
-  height:100%;
-
-  border-radius:50%;
-
-  object-fit:cover;
-
-}
-
-
-
-.default-image {
-
-  background:#e5e7eb;
-
-}
-
-
-
-.profile-info {
-
-  margin-top:14px;
-
-}
-
-
-
-.nickname-area {
-
-  display:flex;
-
-  align-items:center;
-
-  gap:8px;
-
-}
-
-
-
-.nickname {
-
-  font-size:18px;
-
-  font-weight:700;
-
-}
-
-
-
-.edit-profile-button {
-
-  width:28px;
-
-  height:28px;
-
-  border:none;
-
-  background:#f3f4f6;
-
-  border-radius:50%;
-
-  display:flex;
-
-  align-items:center;
-
-  justify-content:center;
-
-  cursor:pointer;
-
-}
-
-
-
-.edit-profile-button .material-icons {
-
-  font-size:16px;
-
-  color:#666;
-
-}
-
-
-
-
-
-/* 설정 메뉴 */
-
-.menu-list {
-
-  background:white;
-
-  border-radius:20px;
-
-  overflow:hidden;
-
-  box-shadow:0 2px 10px rgba(0,0,0,0.04);
-
-}
-
-
-
-.menu-item {
-
-  min-height:56px;
-
-  padding:0 20px;
-
-  display:flex;
-
-  justify-content:space-between;
-
-  align-items:center;
-
-  border-bottom:1px solid #f1f1f1;
-
-  font-size:15px;
-
-  cursor:pointer;
-
-}
-
-
-
-.menu-item:last-child {
-
-  border-bottom:none;
-
-}
-
-
-
-.menu-item span:last-child {
-
-  color:#999;
-
-  font-size:22px;
-
-}
-
-
-
-
-
-/* 보기 설정 */
-
-.dropdown-item {
-
-  cursor:default;
-
-}
-
-
-
-.menu-value-dropdown {
-
-  position:relative;
-
-  display:flex;
-
-  align-items:center;
-
-}
-
-
-
-.menu-value-dropdown select {
-
-  appearance:none;
-
-  -webkit-appearance:none;
-
-  border:none;
-
-  outline:none;
-
-
-  background:#f5f5f7;
-
-  color:#555;
-
-
-  height:34px;
-
-  min-width:110px;
-
-
-  padding:0 34px 0 14px;
-
-
-  border-radius:18px;
-
-
-  font-size:13px;
-
-  font-weight:500;
-
-  cursor:pointer;
-
-}
-
-
-
-.dropdown-arrow {
-
-  position:absolute;
-
-  right:12px;
-
-  color:#888;
-
-  font-size:12px;
-
-  pointer-events:none;
-
-}
-
-
-
-
-
-/* 로그아웃 */
-
-.logout-section {
-
-  margin-top:32px;
-
-  display:flex;
-
-  justify-content:center;
-
-}
-
-
-
-.logout-button {
-
-  border:none;
-
-  background:white;
-
-
-  width:100%;
-
-  height:52px;
-
-
-  border-radius:16px;
-
-
-  color:#ef4444;
-
-
-  font-size:15px;
-
-  font-weight:600;
-
-
-  cursor:pointer;
-
-
-  box-shadow:0 2px 8px rgba(0,0,0,0.04);
-
-}
-
-
 </style>
-<!-- 07_25 연동 변경: 설정 화면의 회원 정보와 인증 동작을 실제 API에 연결한다. -->

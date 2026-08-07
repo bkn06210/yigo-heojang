@@ -37,7 +37,7 @@ import FinancialPointDetailView from '@/views/point/FinancialPointDetailView.vue
 import PointListView from '@/views/point/PointListView.vue'
 import MembershipDetailView from '@/views/point/MembershipDetailView.vue'
 import MembershipRegisterView from '@/views/point/MembershipRegisterView.vue'
-import BenefitDetailView from '@/views/point/BenefitDetailView.vue'
+// import BenefitDetailView from '@/views/point/BenefitDetailView.vue'
 
 // Settings
 import SettingsView from '@/views/settings/SettingsView.vue'
@@ -46,7 +46,7 @@ import AccountInfoView from '@/views/settings/AccountInfoView.vue'
 // import SecuritySettingView from '@/views/settings/SecuritySettingView.vue'  //계정 및 보안으로 합침
 import SecurityPasswordChangeView from '@/views/settings/SecurityPasswordChangeView.vue'
 import NotificationSettingView from '@/views/settings/NotificationSettingView.vue'
-import DisplaySettingView from '@/views/settings/DisplaySettingView.vue'
+// import DisplaySettingView from '@/views/settings/DisplaySettingView.vue'
 import PersonalizationSettingView from '@/views/settings/PersonalizationSettingView.vue'
 import WithdrawalView from '@/views/settings/WithdrawalView.vue'
 
@@ -80,7 +80,7 @@ const routes = [
   { path: '/cards', component: CardListView },
   { path: '/cards/:id', component: CardDetailView },
   { path: '/cards/register', component: CardRegisterView },
-  { path: '/benefits/:id', component: BenefitDetailView },
+  // { path: '/benefits/:id', component: BenefitDetailView },
 
   // Payment
   // 결제 직전 AI 카드 추천 기능 포함이라 /card로 정의함
@@ -108,7 +108,7 @@ const routes = [
   // { path: '/settings/security', component: SecuritySettingView },
   { path: '/settings/security/password', component: SecurityPasswordChangeView },
   { path: '/settings/notifications', component: NotificationSettingView },
-  { path: '/settings/display', component: DisplaySettingView },
+  // { path: '/settings/display', component: DisplaySettingView },
   { path: '/settings/personalization', component: PersonalizationSettingView },
   { path: '/settings/withdrawal', component: WithdrawalView },
 
