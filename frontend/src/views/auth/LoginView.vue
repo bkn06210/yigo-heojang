@@ -186,7 +186,7 @@ const verifyPasswordFind = () => {
       <!-- 헤더 -->
       <div class="login-header">
         <button class="back-button" @click="goHome">
-          <span>&lt;</span>
+          <span>‹</span>
         </button>
         <h1 class="login-title">Login</h1>
       </div>

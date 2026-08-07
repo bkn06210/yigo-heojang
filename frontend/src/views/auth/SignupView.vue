@@ -207,7 +207,7 @@ const nextStep = async () => {
       <!-- 헤더 -->
       <div class="signup-header">
         <button class="back-button" @click="goBack">
-          <span>&lt;</span>
+          <span>‹</span>
         </button>
         <h1 class="signup-title">회원가입</h1>
       </div>

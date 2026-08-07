@@ -13,15 +13,9 @@ const emit = defineEmits(['click-more', 'click-item'])
 
 <template>
   <BaseCard class="membership-summary">
-    <div v-if="props.memberships.length" class="membership-header">
-      <button type="button" class="more-btn" @click="emit('click-more')">
-        더보기
-      </button>
-    </div>
-
-    <div class="membership-list">
+    <div class="membership-list" :class="{ multiple: props.memberships.length > 1 }">
       <article
-        v-for="membership in props.memberships.slice(0, 2)"
+        v-for="membership in props.memberships.slice(0, 3)"
         :key="membership.id"
         class="membership-item"
         @click="emit('click-item', membership)"
@@ -42,33 +36,17 @@ const emit = defineEmits(['click-more', 'click-item'])
   justify-content: center;
 }
 
-.membership-header {
-  display: flex;
-  justify-content: flex-start;
-  margin-bottom: var(--space-sm);
-}
-
-.more-btn {
-  border: none;
-  background: none;
-  cursor: pointer;
-  color: var(--color-text-secondary);
-  font-size: var(--font-xs);
-  font-weight: var(--font-medium);
-  transition: var(--transition-fast);
-}
-
-.more-btn:hover {
-  color: var(--color-text-primary);
-}
-
 .membership-list {
   display: flex;
   flex-direction: column;
   gap: var(--space-xs);
   width: 100%;
-  justify-content: center;
+  justify-content: flex-start;
   flex: 1;
+}
+
+.membership-list.multiple {
+  justify-content: flex-start;
 }
 
 .membership-item {

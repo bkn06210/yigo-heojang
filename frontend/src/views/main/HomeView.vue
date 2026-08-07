@@ -370,7 +370,7 @@ onMounted(async () => {
 
       <section class="home-section spending-section">
         <div class="section-header-row">
-          <h2>카드 상세 내역</h2>
+          <h2>카드 이용 내역</h2>
         </div>
 
         <SpendingSummaryCard
