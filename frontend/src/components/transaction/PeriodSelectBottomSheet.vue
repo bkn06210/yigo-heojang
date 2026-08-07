@@ -1,6 +1,9 @@
 <script setup>
 import { computed, ref } from 'vue';
+<<<<<<< HEAD
 import Icon from '@/components/common/Icon.vue';
+=======
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 const emit = defineEmits([
   'close',
@@ -212,7 +215,11 @@ const close = () => {
   <button
     @click="close"
   >
+<<<<<<< HEAD
     <Icon name="close" size="sm" />
+=======
+    ✕
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
   </button>
 
 </div>
@@ -388,7 +395,11 @@ const close = () => {
 
   width:100%;
 
+<<<<<<< HEAD
   background:var(--color-surface);
+=======
+  background:white;
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
   border-radius:24px 24px 0 0;
 
@@ -403,7 +414,11 @@ const close = () => {
   width:42px;
   height:5px;
 
+<<<<<<< HEAD
   background:var(--color-border);
+=======
+  background:#ddd;
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
   border-radius:99px;
 
@@ -423,8 +438,11 @@ const close = () => {
 
   margin:20px 0;
 
+<<<<<<< HEAD
   color:var(--color-text-primary);
 
+=======
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 }
 
 
@@ -436,8 +454,11 @@ const close = () => {
 
   font-size:20px;
 
+<<<<<<< HEAD
   color:var(--color-text-primary);
 
+=======
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 }
 
 
@@ -457,6 +478,7 @@ const close = () => {
 }
 
 
+<<<<<<< HEAD
 .month-header button {
 
   border:none;
@@ -472,12 +494,17 @@ const close = () => {
 }
 
 
+=======
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 .month {
 
   font-weight:bold;
 
+<<<<<<< HEAD
   color:var(--color-text-primary);
 
+=======
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 }
 
 
@@ -494,6 +521,7 @@ const close = () => {
 
 }
 
+<<<<<<< HEAD
 .month-picker button {
 
   color:var(--color-text-primary);
@@ -510,6 +538,8 @@ const close = () => {
 
 }
 
+=======
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 
 .week,
@@ -528,7 +558,11 @@ const close = () => {
 
   font-size:13px;
 
+<<<<<<< HEAD
   color:var(--color-text-secondary);
+=======
+  color:#777;
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 }
 
@@ -540,11 +574,15 @@ const close = () => {
 
   border:none;
 
+<<<<<<< HEAD
   background:var(--color-surface);
 
   color:var(--color-text-primary);
 
   cursor:pointer;
+=======
+  background:white;
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 }
 
@@ -552,6 +590,7 @@ const close = () => {
 
 .calendar .selected {
 
+<<<<<<< HEAD
   background:
     linear-gradient(
       90deg,
@@ -560,6 +599,11 @@ const close = () => {
     );
 
   color:var(--color-btn-primary-text);
+=======
+  background:#4F46E5;
+
+  color:white;
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
   border-radius:50%;
 
@@ -568,7 +612,11 @@ const close = () => {
 
 .calendar .between {
 
+<<<<<<< HEAD
   background:var(--color-filter-active-bg);
+=======
+  background:#EEF2FF;
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 }
 
@@ -584,8 +632,11 @@ const close = () => {
 
   margin:20px 0;
 
+<<<<<<< HEAD
   color:var(--color-text-primary);
 
+=======
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 }
 
 
@@ -616,11 +667,15 @@ const close = () => {
 
 .reset {
 
+<<<<<<< HEAD
   background:var(--color-border);
 
   color:var(--color-text-secondary);
 
   font-weight:var(--font-semibold);
+=======
+  background:#eee;
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 }
 
@@ -628,6 +683,7 @@ const close = () => {
 
 .confirm {
 
+<<<<<<< HEAD
   background:
     linear-gradient(
       90deg,
@@ -638,6 +694,11 @@ const close = () => {
   color:var(--color-btn-primary-text);
 
   font-weight:var(--font-semibold);
+=======
+  background:#4F46E5;
+
+  color:white;
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 }
 

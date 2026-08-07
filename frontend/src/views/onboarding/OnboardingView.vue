@@ -164,8 +164,12 @@ const skip = () => {
   display: flex;
   flex-direction: column;
 
+<<<<<<< HEAD
   padding: var(--space-xl);
   background: var(--color-bg);
+=======
+  padding: 24px;
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
   box-sizing: border-box;
 
@@ -188,10 +192,16 @@ const skip = () => {
 
 .progress {
 
+<<<<<<< HEAD
   font-size: var(--font-sm);
 
   font-weight: var(--font-semibold);
   color: var(--color-text-primary);
+=======
+  font-size: 14px;
+
+  font-weight: 600;
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 }
 
@@ -202,9 +212,15 @@ const skip = () => {
 
   background: none;
 
+<<<<<<< HEAD
   color: var(--color-text-tertiary);
 
   font-size: var(--font-sm);
+=======
+  color: #888;
+
+  font-size: 14px;
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
   cursor: pointer;
 
@@ -235,6 +251,7 @@ const skip = () => {
 
   white-space: pre-line;
 
+<<<<<<< HEAD
   font-size: var(--font-2xl);
 
   line-height: 1.4;
@@ -243,6 +260,15 @@ const skip = () => {
   color: var(--color-text-primary);
 
   margin-bottom: var(--space-2xl);
+=======
+  font-size: 28px;
+
+  line-height: 1.4;
+
+  font-weight: 700;
+
+  margin-bottom: 40px;
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 }
 
@@ -280,7 +306,11 @@ const skip = () => {
 
 .bottom-area {
 
+<<<<<<< HEAD
   padding-bottom: var(--space-md);
+=======
+  padding-bottom: 20px;
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 }
 
@@ -293,11 +323,16 @@ const skip = () => {
   height: 56px;
 
 
+<<<<<<< HEAD
   border-radius: var(--radius-md);
+=======
+  border-radius: 14px;
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
   border: none;
 
 
+<<<<<<< HEAD
   background: var(--color-text-primary);
 
   color: var(--color-btn-primary-text);
@@ -306,6 +341,16 @@ const skip = () => {
   font-size: var(--font-md);
 
   font-weight: var(--font-semibold);
+=======
+  background: #111;
+
+  color: white;
+
+
+  font-size: 16px;
+
+  font-weight: 600;
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 
   cursor: pointer;

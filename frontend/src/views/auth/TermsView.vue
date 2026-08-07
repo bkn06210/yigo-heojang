@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ﻿<script setup>
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
@@ -5,12 +6,21 @@ import { useToast } from '@/composables/useToast'
 
 const router = useRouter()
 const { showToast } = useToast()
+=======
+<script setup>
+import { ref, computed, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+import { getTerms } from '@/api/authApi'
+
+const router = useRouter()
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 
 // 전체 동의
 const agreeAll = ref(false)
 
 
+<<<<<<< HEAD
 // 약관 목록
 // 추후 백 API 응답 데이터로 교체
 const terms = ref([
@@ -33,6 +43,26 @@ const terms = ref([
     checked: false
   }
 ])
+=======
+const terms = ref([])
+const errorMessage = ref('')
+
+const loadTerms = async () => {
+  try {
+    const response = await getTerms()
+    terms.value = (response.data?.data?.terms || []).map((term) => ({
+      id: term.termsId,
+      versionId: term.termsVersionId,
+      title: term.termsName,
+      content: term.content,
+      required: Boolean(term.required),
+      checked: false,
+    }))
+  } catch (error) {
+    errorMessage.value = error.response?.data?.message || '약관을 불러오지 못했습니다.'
+  }
+}
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 
 // 전체 동의 클릭
@@ -65,12 +95,17 @@ const canNext = computed(() => {
 })
 
 
+<<<<<<< HEAD
 // 상세보기
 // 추후 백 API 연결 위치
 const openDetail = (term) => {
 
   console.log('약관 상세:', term.id)
 
+=======
+const openDetail = (term) => {
+  alert(term.content || '약관 내용이 없습니다.')
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 }
 
 
@@ -78,23 +113,51 @@ const openDetail = (term) => {
 const goSignup = () => {
 
   if (!canNext.value) {
+<<<<<<< HEAD
     showToast('warning', '필수 약관에 동의해주세요.')
+=======
+    alert('필수 약관에 동의해주세요.')
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
     return
   }
 
 
+<<<<<<< HEAD
+=======
+  sessionStorage.setItem('termsAgreements', JSON.stringify(
+    terms.value.map((term) => ({
+      termsVersionId: term.versionId,
+      agreed: term.checked,
+    }))
+  ))
+
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
   router.push('/auth/signup')
 
 }
 
+<<<<<<< HEAD
+=======
+onMounted(loadTerms)
+
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 </script>
 
 
 <template>
+<<<<<<< HEAD
   <div class="terms-page">
     <div class="terms-container">
 
       <h1>약관 동의</h1>
+
+=======
+  <div class="terms">
+
+    <h1>약관 동의</h1>
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
+
+    <p v-if="errorMessage">{{ errorMessage }}</p>
 
 
     <label>
@@ -142,6 +205,7 @@ const goSignup = () => {
 
 
 
+<<<<<<< HEAD
       <button
         :disabled="!canNext"
         @click="goSignup"
@@ -150,12 +214,23 @@ const goSignup = () => {
       </button>
 
     </div>
+=======
+    <button
+      :disabled="!canNext"
+      @click="goSignup"
+    >
+      다음
+    </button>
+
+
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
   </div>
 </template>
 
  
 <style scoped>
 
+<<<<<<< HEAD
 .terms-page {
   min-height: 100vh;
   background:
@@ -248,6 +323,23 @@ button:disabled {
   background: var(--color-border);
   color: var(--color-text-tertiary);
   cursor: not-allowed;
+=======
+.terms {
+  padding:24px;
+}
+
+
+.term-item {
+  display:flex;
+  justify-content:space-between;
+  margin-top:16px;
+}
+
+
+button {
+  cursor:pointer;
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 }
 
 </style>
+<!-- 07_25 연동 변경: 약관 동의 결과를 회원가입 API 입력에 포함하도록 보완했다. -->

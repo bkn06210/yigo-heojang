@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 ﻿<script setup>
+=======
+<script setup>
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 // 금융 포인트 상세 바텀시트
 //
@@ -21,6 +25,13 @@
 // 백엔드 API 구조는 그대로 재사용 가능
 
 
+<<<<<<< HEAD
+=======
+import AIBriefingCard from '@/components/common/AIBriefingCard.vue'
+
+
+
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 const props = defineProps({
 
   point: {
@@ -123,7 +134,11 @@ const closeSheet = () => {
 <p class="point">
 
 
+<<<<<<< HEAD
 {{ point?.totalPoint?.toLocaleString() }}
+=======
+{{ point.point.toLocaleString() }}P
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 
 </p>
@@ -135,6 +150,22 @@ const closeSheet = () => {
 
 
 
+<<<<<<< HEAD
+=======
+<!-- AI 브리핑 -->
+
+<AIBriefingCard
+
+  :isLogin="true"
+
+  :message="point.aiMessage"
+
+/>
+
+
+
+
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 <!-- 포인트 활용 방법 -->
 
@@ -177,6 +208,20 @@ v-for="method in point.usageMethods"
 
 
 
+<<<<<<< HEAD
+=======
+<section class="info-section">
+  <h3>포인트 이용내역</h3>
+  <ul v-if="point.histories?.length">
+    <li v-for="history in point.histories" :key="history.pointHistoryId">
+      {{ history.content || history.providerName }}
+      {{ history.pointType === 'USE' ? '-' : '+' }}{{ Number(history.pointAmount || 0).toLocaleString() }}P
+    </li>
+  </ul>
+  <p v-else>포인트 이용내역이 없습니다.</p>
+</section>
+
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 <!-- 포인트 안내 -->
 
 
@@ -247,14 +292,23 @@ z-index: 1000;
 
 width: 100%;
 
+<<<<<<< HEAD
 border-radius: var(--radius-xl) var(--radius-xl) 0 0;
 
 padding: var(--space-xl);
+=======
+background: white;
+
+border-radius: 24px 24px 0 0;
+
+padding: 24px;
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 max-height: 80vh;
 
 overflow-y: auto;
 
+<<<<<<< HEAD
 /* 카드사용내역 상세 바텀시트와 동일하게 불투명 배경으로 통일 */
 background: var(--color-surface);
 box-shadow: 0 -16px 40px rgba(0, 0, 0, 0.12);
@@ -265,6 +319,8 @@ box-shadow: 0 -16px 40px rgba(0, 0, 0, 0.12);
 
 box-shadow: 0 -16px 40px rgba(0, 0, 0, 0.35);
 
+=======
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 }
 
 
@@ -277,7 +333,11 @@ justify-content: space-between;
 
 align-items: center;
 
+<<<<<<< HEAD
 margin-bottom: var(--space-xl);
+=======
+margin-bottom: 20px;
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 }
 
@@ -285,6 +345,7 @@ margin-bottom: var(--space-xl);
 
 .sheet-header h2 {
 
+<<<<<<< HEAD
 font-size: var(--font-xl);
 
 font-weight: var(--font-bold);
@@ -292,6 +353,11 @@ font-weight: var(--font-bold);
 letter-spacing: -0.2px;
 
 color: var(--color-text-primary);
+=======
+font-size: 20px;
+
+font-weight: 700;
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 }
 
@@ -305,8 +371,11 @@ background: none;
 
 font-size: 24px;
 
+<<<<<<< HEAD
 color: var(--color-text-secondary);
 
+=======
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 cursor: pointer;
 
 }
@@ -315,6 +384,7 @@ cursor: pointer;
 
 .point-summary {
 
+<<<<<<< HEAD
 border-radius: var(--radius-lg);
 
 padding: var(--space-lg);
@@ -334,6 +404,15 @@ backdrop-filter: blur(8px);
 background: linear-gradient(135deg, rgba(var(--color-primary-dark-rgb), 0.18) 0%, rgba(var(--color-primary-dark-rgb), 0.06) 100%);
 border: 1px solid rgba(var(--color-primary-dark-rgb), 0.28);
 box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+=======
+background: #f8f9fa;
+
+border-radius: 16px;
+
+padding: 20px;
+
+margin-bottom: 20px;
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 }
 
@@ -341,9 +420,15 @@ box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.
 
 .label {
 
+<<<<<<< HEAD
 font-size: var(--font-sm);
 
 color: var(--color-text-secondary);
+=======
+font-size: 14px;
+
+color: #666;
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 }
 
@@ -351,6 +436,7 @@ color: var(--color-text-secondary);
 
 .point {
 
+<<<<<<< HEAD
 margin-top: var(--space-xs);
 
 font-size: var(--typo-display-large-size);
@@ -358,6 +444,13 @@ font-weight: var(--typo-display-large-weight);
 line-height: var(--typo-display-large-line-height);
 letter-spacing: var(--typo-display-large-letter-spacing);
 color: var(--color-text-primary);
+=======
+margin-top: 8px;
+
+font-size: 30px;
+
+font-weight: 700;
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 }
 
@@ -365,7 +458,13 @@ color: var(--color-text-primary);
 
 .info-section {
 
+<<<<<<< HEAD
 margin-top: var(--space-xl);
+=======
+background: white;
+
+margin-top: 20px;
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 }
 
@@ -373,6 +472,7 @@ margin-top: var(--space-xl);
 
 .info-section h3 {
 
+<<<<<<< HEAD
 font-size: var(--font-md);
 
 font-weight: var(--font-semibold);
@@ -380,6 +480,11 @@ font-weight: var(--font-semibold);
 margin-bottom: var(--space-sm);
 
 color: var(--color-text-primary);
+=======
+font-size: 16px;
+
+margin-bottom: 12px;
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 }
 
@@ -401,7 +506,11 @@ li {
 
 padding: 12px 0;
 
+<<<<<<< HEAD
 border-bottom: 1px solid var(--color-border);
+=======
+border-bottom: 1px solid #eee;
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 }
 
@@ -419,7 +528,11 @@ border-bottom: none;
 
 font-size: 14px;
 
+<<<<<<< HEAD
 color: var(--color-text-secondary);
+=======
+color: #666;
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 margin: 8px 0;
 
@@ -427,4 +540,9 @@ margin: 8px 0;
 
 
 
+<<<<<<< HEAD
 </style>
+=======
+</style>
+<!-- 07_25 연동 변경: 금융포인트 상세 API 응답을 바텀시트에 표시한다. -->
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e

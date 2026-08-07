@@ -1,6 +1,9 @@
 <script setup>
 import { ref } from 'vue';
+<<<<<<< HEAD
 import Icon from '@/components/common/Icon.vue';
+=======
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 const emit = defineEmits([
   'close',
@@ -28,7 +31,12 @@ const scanStep = ref('');
 // 실제 서비스에서는 OCR API 결과
 const scanResult = ref({
   cardName: 'KB My WE:SH 카드',
+<<<<<<< HEAD
   cardNumber: '1234567890121123',
+=======
+  // PR #29 연동: 업로드 목 결과도 서버 BIN/Luhn 검증을 통과하는 시연용 KB 카드번호를 사용한다.
+  cardNumber: '2228790000000008',
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
   expiryDate: '12/28',
 });
 
@@ -154,7 +162,11 @@ const complete = () => {
 
 
 <button @click="close">
+<<<<<<< HEAD
 <Icon name="close" size="sm" />
+=======
+✕
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 </button>
 
 </div>
@@ -171,7 +183,11 @@ class="upload-area"
 <label class="upload-button">
 
 
+<<<<<<< HEAD
 <Icon name="image" size="sm" /> 카드 사진 선택
+=======
+🖼 카드 사진 선택
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 
 <input
@@ -232,7 +248,11 @@ class="result"
 
 
 <h3>
+<<<<<<< HEAD
 <Icon name="check" size="sm" /> 카드 정보 인식 완료
+=======
+✅ 카드 정보 인식 완료
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 </h3>
 
 
@@ -320,7 +340,11 @@ z-index:2000;
 
 width:90%;
 
+<<<<<<< HEAD
 background:var(--color-surface);
+=======
+background:white;
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 border-radius:24px;
 
@@ -348,8 +372,11 @@ background:none;
 
 font-size:20px;
 
+<<<<<<< HEAD
 color:var(--color-text-primary);
 
+=======
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 }
 
 
@@ -366,7 +393,11 @@ margin-top:30px;
 
 height:160px;
 
+<<<<<<< HEAD
 border:2px dashed var(--color-border);
+=======
+border:2px dashed #4f46e5;
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 border-radius:20px;
 
@@ -428,7 +459,11 @@ width:80%;
 
 height:3px;
 
+<<<<<<< HEAD
 background:var(--color-border);
+=======
+background:#4f46e5;
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 animation:scan 1.5s infinite;
 
@@ -472,7 +507,11 @@ justify-content:space-between;
 
 padding:14px 0;
 
+<<<<<<< HEAD
 border-bottom:1px solid var(--color-border);
+=======
+border-bottom:1px solid #eee;
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 }
 
@@ -490,6 +529,7 @@ border:none;
 
 border-radius:12px;
 
+<<<<<<< HEAD
 background:
   linear-gradient(
     90deg,
@@ -502,3 +542,13 @@ color:var(--color-btn-primary-text);
 }
 
 </style>
+=======
+background:#4f46e5;
+
+color:white;
+
+}
+
+</style>
+<!-- 07_25 연동 변경: 카드 이미지 인식 결과를 카드등록 흐름에 전달하도록 보완했다. -->
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e

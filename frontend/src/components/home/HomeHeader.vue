@@ -1,5 +1,8 @@
 <script setup>
+<<<<<<< HEAD
 import Icon from '@/components/common/Icon.vue';
+=======
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 // 부모(HomeView)로 전달하는 이벤트
 defineEmits([
@@ -28,12 +31,18 @@ defineProps({
 
 <header class="home-header">
 
+<<<<<<< HEAD
   <!-- 앱 이름 (아이콘 + 텍스트) -->
   <h1 class="logo">
     <span class="logo-badge">
       <Icon name="lightbulb" size="sm" />
     </span>
     두리
+=======
+  <!-- 앱 이름 -->
+  <h1 class="logo">
+    YIGO
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
   </h1>
 
 
@@ -47,7 +56,11 @@ defineProps({
       class="icon-button"
       @click="$emit('chat')"
     >
+<<<<<<< HEAD
       <Icon name="chat" size="md" />
+=======
+      🤖
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
     </button>
 
 
@@ -59,7 +72,11 @@ defineProps({
       @click="$emit('click-notification')"
     >
 
+<<<<<<< HEAD
       <Icon name="bell" size="md" />
+=======
+      🔔
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 
       <!-- 읽지 않은 알림 -->
@@ -70,6 +87,21 @@ defineProps({
 
     </button>
 
+<<<<<<< HEAD
+=======
+
+
+    <!-- 사용자 이름 -->
+    <span
+      v-if="user"
+      class="user-name"
+    >
+      {{ user.name }}
+    </span>
+
+
+
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
     <!-- 프로필 -->
     <button
       type="button"
@@ -89,7 +121,11 @@ defineProps({
         v-else
         class="default-profile"
       >
+<<<<<<< HEAD
         <Icon name="profile" size="md" />
+=======
+        👤
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
       </span>
 
     </button>
@@ -120,12 +156,15 @@ defineProps({
 
 .logo {
 
+<<<<<<< HEAD
   display:flex;
 
   align-items:center;
 
   gap:6px;
 
+=======
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
   font-size:24px;
 
   font-weight:700;
@@ -134,6 +173,7 @@ defineProps({
 
 
 
+<<<<<<< HEAD
 /* 로고 아이콘 배지 - 브랜드 옐로우 원형 배경 */
 .logo-badge {
 
@@ -159,6 +199,8 @@ defineProps({
 
 
 
+=======
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 .actions {
 
   display:flex;
@@ -181,6 +223,7 @@ defineProps({
 
 
 
+<<<<<<< HEAD
 /* 공통 아이콘 버튼 — 시각적 아이콘 크기는 그대로 두고 터치 영역만
    iOS/Android 권장 최소 터치 타깃(44px)에 가깝게 확대 */
 .icon-button,
@@ -189,6 +232,15 @@ defineProps({
   width:40px;
 
   height:40px;
+=======
+/* 공통 아이콘 버튼 */
+.icon-button,
+.profile-button {
+
+  width:32px;
+
+  height:32px;
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
   border:none;
 
@@ -204,8 +256,11 @@ defineProps({
 
   cursor:pointer;
 
+<<<<<<< HEAD
   color:var(--color-text-primary);
 
+=======
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 }
 
 
@@ -234,7 +289,11 @@ defineProps({
 
   border-radius:50%;
 
+<<<<<<< HEAD
   background: var(--color-coral);
+=======
+  background:#ff3b30;
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 }
 

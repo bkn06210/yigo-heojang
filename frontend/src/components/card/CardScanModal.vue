@@ -1,6 +1,9 @@
 <script setup>
 import { ref } from 'vue';
+<<<<<<< HEAD
 import Icon from '@/components/common/Icon.vue';
+=======
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 const emit = defineEmits(['close', 'complete']);
 
@@ -14,7 +17,12 @@ const showResult = ref(false);
 // 실제 서비스에서는 OCR API 응답 데이터
 const scanResult = ref({
   cardName: 'KB My WE:SH 카드',
+<<<<<<< HEAD
   cardNumber: '1234567890121123',
+=======
+  // PR #29 연동: 촬영 목 결과도 서버 BIN/Luhn 검증을 통과하는 시연용 KB 카드번호를 사용한다.
+  cardNumber: '2228790000000008',
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
   expiryDate: '12/28',
 });
 
@@ -73,7 +81,11 @@ const complete = () => {
       <div class="header">
         <h2>카드 촬영</h2>
 
+<<<<<<< HEAD
         <button @click="close"><Icon name="close" size="sm" /></button>
+=======
+        <button @click="close">✕</button>
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
       </div>
 
       <!-- 촬영 화면 -->
@@ -85,8 +97,12 @@ const complete = () => {
         </div>
 
         <button class="scan-button" @click="scanCard" :disabled="isScanning">
+<<<<<<< HEAD
           <template v-if="isScanning">카드 정보를 분석 중입니다</template>
           <template v-else><Icon name="camera" size="sm" /> 촬영</template>
+=======
+          {{ isScanning ? '카드 정보를 분석 중입니다' : '📷 촬영' }}
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
         </button>
       </div>
 
@@ -142,7 +158,11 @@ const complete = () => {
 .modal {
   width: 90%;
 
+<<<<<<< HEAD
   background: var(--color-surface);
+=======
+  background: white;
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
   border-radius: 24px;
 
@@ -163,8 +183,11 @@ const complete = () => {
   background: none;
 
   font-size: 20px;
+<<<<<<< HEAD
 
   color: var(--color-text-primary);
+=======
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 }
 
 .camera-area {
@@ -177,7 +200,11 @@ const complete = () => {
   position: relative;
   height: 180px;
 
+<<<<<<< HEAD
   border: 2px dashed var(--color-border);
+=======
+  border: 2px dashed #4f46e5;
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
   border-radius: 20px;
 
   display: flex;
@@ -186,7 +213,11 @@ const complete = () => {
 
   overflow: hidden;
 
+<<<<<<< HEAD
   color: var(--color-text-secondary);
+=======
+  color: #777;
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 }
 
 /* 카드 스캔 라인 */
@@ -201,7 +232,11 @@ const complete = () => {
 
   height: 3px;
 
+<<<<<<< HEAD
   background: var(--color-border);
+=======
+  background: #4f46e5;
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
   animation: scan 1.2s infinite;
 }
@@ -233,6 +268,7 @@ const complete = () => {
 
   border-radius: 12px;
 
+<<<<<<< HEAD
   background:
     linear-gradient(
       90deg,
@@ -241,6 +277,11 @@ const complete = () => {
     );
 
   color: var(--color-btn-primary-text);
+=======
+  background: #4f46e5;
+
+  color: white;
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 }
 
 .info {
@@ -254,6 +295,13 @@ const complete = () => {
 
   padding: 12px 0;
 
+<<<<<<< HEAD
   border-bottom: 1px solid var(--color-border);
 }
 </style>
+=======
+  border-bottom: 1px solid #eee;
+}
+</style>
+<!-- 07_25 연동 변경: 카드 스캔 결과를 카드등록 API 입력으로 전달하도록 보완했다. -->
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e

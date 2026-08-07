@@ -1,5 +1,6 @@
 <script setup>
 
+<<<<<<< HEAD
 import { ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
@@ -8,6 +9,15 @@ import { useCardStore } from '@/stores/cardStore';
 import PageHeader from '@/components/common/PageHeader.vue';
 import BottomNavigation from '@/components/layout/BottomNavigation.vue';
 import { useToast } from '@/composables/useToast';
+=======
+import { computed, onMounted, ref } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+
+import { useCardStore } from '@/stores/cardStore';
+import { getCardMonthlyStatus } from '@/api/walletApi';
+
+import PageHeader from '@/components/common/PageHeader.vue';
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 const cardStore = useCardStore();
 
@@ -15,7 +25,10 @@ const route = useRoute();
 
 // 라우터
 const router = useRouter();
+<<<<<<< HEAD
 const { showToast } = useToast();
+=======
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 // 더보기 메뉴 표시
 const showMenu = ref(false);
@@ -26,6 +39,12 @@ const showEditModal = ref(false);
 // 삭제 확인 모달
 const showDeleteModal = ref(false);
 
+<<<<<<< HEAD
+=======
+// PR #34 연동: 중복 삭제 요청을 막고 처리 중 상태를 버튼에 표시한다.
+const deleteLoading = ref(false);
+
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 // 수정 대상
 const editType = ref('');
 
@@ -93,6 +112,7 @@ const closeDelete = () => {
   showDeleteModal.value = false;
 };
 
+<<<<<<< HEAD
 // 삭제 확인
   /*
     실제 API
@@ -116,11 +136,31 @@ const confirmDelete = () => {
 
   router.push('/cards');
 
+=======
+// PR #34 연동: DELETE /api/user-cards/{userCardId}가 204를 반환한 뒤 목록으로 이동한다.
+const confirmDelete = async () => {
+  const cardId = Number(route.params.id);
+  deleteLoading.value = true;
+  try {
+    await cardStore.removeCard(cardId);
+    showDeleteModal.value = false;
+    alert('카드가 삭제되었습니다.');
+    router.push('/cards');
+  } catch (error) {
+    alert(error?.response?.data?.message || error?.message || '카드를 삭제하지 못했습니다.');
+  } finally {
+    deleteLoading.value = false;
+  }
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 };
 
 // 임시 데이터
 // 추후 카드 상세 API 연결
+<<<<<<< HEAD
 const card = {
+=======
+const card = ref({
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
   id: route.params.id,
 
   name: 'Deep Dream (체크)',
@@ -132,7 +172,35 @@ const card = {
   cardNumber: '1234567890127034',
 
   image: '/images/cards/shinhan.png',
+<<<<<<< HEAD
 };
+=======
+});
+
+// PR #25 연동: 선택한 카드의 월 실적과 혜택 사용 현황을 서버 응답으로 보관한다.
+const cardStatus = ref(null);
+const statusError = ref('');
+
+// PR #25 연동: API 혜택 배열을 기존 진행률 UI에서 바로 사용할 수 있게 정규화한다.
+const benefitStatuses = computed(() => (cardStatus.value?.benefits || []).map((benefit) => ({
+  ...benefit,
+  usagePercent: benefit.usageRate == null ? 0 : Number(benefit.usageRate),
+})));
+
+// PR #25 연동: GET /api/cards/{userCardId}/monthly-status로 카드 상세 현황을 조회한다.
+onMounted(async () => {
+  try {
+    cardStatus.value = await getCardMonthlyStatus(Number(route.params.id));
+    card.value = {
+      ...card.value,
+      id: cardStatus.value.userCardId,
+      name: cardStatus.value.cardName,
+    };
+  } catch (error) {
+    statusError.value = error?.response?.data?.message || error?.message || '카드 현황을 불러오지 못했습니다.';
+  }
+});
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 // 카드번호 표시
 const maskCardNumber = (number) => {
@@ -145,6 +213,7 @@ const maskCardNumber = (number) => {
 
 // 혜택 상세 이동
 const goBenefitDetail = () => {
+<<<<<<< HEAD
   router.push(`/benefits/${card.id}`);
 };
 
@@ -154,6 +223,14 @@ const goTransaction = () => {
     path: '/transactions',
     query: { cardId: card.id, cardName: card.name },
   });
+=======
+  router.push(`/benefits/${card.value.id}`);
+};
+
+// 소비내역 이동
+const goTransaction = () => {
+  router.push('/transactions');
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 };
 
 // 메모 표시 여부
@@ -173,7 +250,11 @@ const toggleMemo = () => {
     <!-- 헤더 -->
 <div class="detail-header">
 
+<<<<<<< HEAD
   <PageHeader title="카드 상세" @back="router.back()" />
+=======
+  <PageHeader title="카드 상세" />
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
   <div class="menu-wrapper">
 
@@ -223,6 +304,7 @@ const toggleMemo = () => {
     <!-- 카드 정보 -->
 <section class="card-info">
 
+<<<<<<< HEAD
   <div class="card-header">
 
     <h1>
@@ -246,10 +328,69 @@ const toggleMemo = () => {
         {{ cardMemo }}
       </div>
 
+=======
+  <div class="card-title-row">
+
+    <!-- 왼쪽 카드 정보 -->
+    <div class="title-area">
+
+      <div class="name-row">
+
+        <h1>
+          {{ card.name }}
+        </h1>
+
+
+        <button
+          class="alias-tag"
+          @click="toggleMemo"
+        >
+          {{ cardAlias }}
+        </button>
+
+      </div>
+
+
+
+      <div class="info-row">
+
+        <div class="left-info">
+
+          <p class="company">
+            {{ card.company }}
+          </p>
+
+
+          <p class="number">
+
+            {{ card.owner }}
+
+            {{ maskCardNumber(card.cardNumber) }}
+
+          </p>
+
+        </div>
+
+
+
+        <!-- 별칭 아래 메모 -->
+        <div
+          v-if="showMemo"
+          class="memo-box"
+        >
+          {{ cardMemo }}
+        </div>
+
+
+      </div>
+
+
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
     </div>
 
   </div>
 
+<<<<<<< HEAD
   <div class="card-details">
 
     <p class="company">
@@ -265,12 +406,47 @@ const toggleMemo = () => {
 </section>
 
     <!-- 혜택 상세 -->
+=======
+</section>
+
+    <!-- 혜택 상세 -->
+    <!-- PR #25 연동: API가 계산한 카드 실적과 혜택별 사용률을 상세 화면에 표시한다. -->
+    <section v-if="cardStatus" class="benefit-progress">
+      <h2>이번 달 카드 현황</h2>
+      <p>
+        실적 {{ Number(cardStatus.currentPerformanceAmount).toLocaleString() }}원 /
+        {{ Number(cardStatus.targetPerformance).toLocaleString() }}원
+      </p>
+      <p>
+        {{ cardStatus.achievementRate == null ? '실적 조건 없음' : `달성률 ${cardStatus.achievementRate}%` }}
+      </p>
+
+      <!-- PR #25 연동: 한도 없는 혜택은 퍼센트 대신 '한도 없음'으로 구분한다. -->
+      <div v-for="benefit in benefitStatuses" :key="benefit.benefitId" class="benefit-item">
+        <div class="benefit-title">
+          <span>{{ benefit.benefitName }}</span>
+          <span>{{ benefit.usageRate == null ? '한도 없음' : `${benefit.usagePercent}%` }}</span>
+        </div>
+        <div v-if="benefit.usageRate != null" class="progress-bar">
+          <div class="progress" :style="{ width: `${benefit.usagePercent}%` }" />
+        </div>
+      </div>
+    </section>
+
+    <!-- PR #25 연동: 조회 실패 시 서버 오류 메시지를 표시한다. -->
+    <p v-if="statusError" class="error">{{ statusError }}</p>
+
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
     <button class="benefit-button" @click="goBenefitDetail">
       혜택 자세히 보기
     </button>
 
     <!-- 혜택 달성 -->
+<<<<<<< HEAD
     <section class="benefit-progress">
+=======
+    <section v-if="!cardStatus" class="benefit-progress">
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
       <h2>주요 혜택 달성</h2>
 
       <div class="benefit-item">
@@ -345,6 +521,7 @@ const toggleMemo = () => {
     <div v-if="showEditModal" class="modal-overlay">
       <div class="edit-modal">
         <h3>
+<<<<<<< HEAD
           {{ editType === 'alias' ? '별칭' : '메모' }}
         </h3>
 
@@ -369,6 +546,12 @@ const toggleMemo = () => {
             {{ editValue.length }}/15
           </span>
         </div>
+=======
+          {{ editType === 'alias' ? '별칭 수정' : '메모 수정' }}
+        </h3>
+
+        <input v-model="editValue" placeholder="내용을 입력해주세요" />
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
         <div class="modal-buttons">
           <button @click="closeEdit">취소</button>
@@ -388,11 +571,21 @@ const toggleMemo = () => {
         <div class="modal-buttons">
           <button @click="closeDelete">취소</button>
 
+<<<<<<< HEAD
           <button class="delete-confirm" @click="confirmDelete">삭제</button>
         </div>
       </div>
     </div>
   <BottomNavigation/>
+=======
+          <!-- PR #34 연동: 삭제 API 처리 중에는 재클릭을 차단한다. -->
+          <button class="delete-confirm" :disabled="deleteLoading" @click="confirmDelete">
+            {{ deleteLoading ? '삭제 중...' : '삭제' }}
+          </button>
+        </div>
+      </div>
+    </div>
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
   </div>
 </template>
 
@@ -400,22 +593,29 @@ const toggleMemo = () => {
 /* ---------------- 공통 ---------------- */
 
 .card-detail-page {
+<<<<<<< HEAD
   padding: var(--space-md);
   padding-bottom: calc(var(--space-xl) + var(--space-2xl) + var(--space-xl));
   margin: 0 auto;
   max-width: 480px;
   box-sizing: border-box;
+=======
+  padding: 20px;
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 }
 
 .detail-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+<<<<<<< HEAD
   position: sticky;
   top: 0;
   z-index: 100;
   background: var(--color-bg);
   padding: var(--space-md) 0;
+=======
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 }
 
 /* ---------------- 카드 이미지 ---------------- */
@@ -423,17 +623,26 @@ const toggleMemo = () => {
 .card-image-section {
   display: flex;
   justify-content: center;
+<<<<<<< HEAD
   margin-bottom: var(--space-md);
+=======
+  margin-bottom: 20px;
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 }
 
 .card-image {
   width: 220px;
+<<<<<<< HEAD
   border-radius: var(--radius-md);
+=======
+  border-radius: 16px;
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 }
 
 /* ---------------- 카드 정보 ---------------- */
 
 .card-info {
+<<<<<<< HEAD
   margin-bottom: var(--space-md);
 }
 
@@ -448,10 +657,30 @@ const toggleMemo = () => {
   flex-direction: column;
   gap: var(--space-xs);
   position: relative;
+=======
+  margin-bottom: 20px;
+}
+
+.card-title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.title-area {
+  flex: 1;
+}
+
+.name-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 }
 
 .card-info h1 {
   margin: 0;
+<<<<<<< HEAD
   font-size: var(--font-xl);
   color: var(--color-text-primary);
   font-weight: var(--font-bold);
@@ -476,12 +705,28 @@ const toggleMemo = () => {
   margin: 0;
   color: var(--color-text-secondary);
   font-size: var(--font-sm);
+=======
+  font-size: 22px;
+}
+
+.company {
+  margin-top: 8px;
+  color: #666;
+  font-size: 14px;
+}
+
+.number {
+  margin-top: 12px;
+  color: #555;
+  font-size: 14px;
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 }
 
 /* ---------------- 별칭 ---------------- */
 
 .alias-tag {
   border: none;
+<<<<<<< HEAD
   background: var(--color-bg);
 
   color: var(--color-text-secondary);
@@ -496,6 +741,23 @@ const toggleMemo = () => {
 
   display: inline-block;
   white-space: nowrap;
+=======
+  background: #f3f4f6;
+
+  color: #555;
+
+  border-radius: 999px;
+
+  padding: 5px 12px;
+
+  font-size: 12px;
+
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  gap: 4px;
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 }
 
 .arrow {
@@ -505,6 +767,7 @@ const toggleMemo = () => {
 /* ---------------- 메모 (포스트잇) ---------------- */
 
 .memo-box {
+<<<<<<< HEAD
   position: absolute;
   top: 100%;
   left: 0;
@@ -522,11 +785,28 @@ const toggleMemo = () => {
   color: var(--color-text-primary);
 
   font-size: var(--font-xs);
+=======
+  margin-top: 8px;
+  max-width: 180px;
+
+  padding: 8px 10px;
+
+  border-radius: 10px;
+
+  background: #fff8bf;
+
+  border: 1px solid #f5df6d;
+
+  color: #444;
+
+  font-size: 12px;
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
   line-height: 1.5;
 
   word-break: break-word;
 
+<<<<<<< HEAD
   box-shadow: var(--shadow-card);
 
   display: -webkit-box;
@@ -535,6 +815,20 @@ const toggleMemo = () => {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+=======
+  box-shadow: 0 2px 6px rgba(0,0,0,.08);
+}
+
+.left-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 }
 /* ---------------- 메뉴 ---------------- */
 
@@ -546,10 +840,16 @@ const toggleMemo = () => {
   border: none;
   background: none;
 
+<<<<<<< HEAD
   font-size: var(--font-2xl);
 
   cursor: pointer;
   color: var(--color-text-primary);
+=======
+  font-size: 28px;
+
+  cursor: pointer;
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 }
 
 .menu-popover {
@@ -560,6 +860,7 @@ const toggleMemo = () => {
 
   width: 150px;
 
+<<<<<<< HEAD
   background: var(--color-surface);
 
   border-radius: var(--radius-sm);
@@ -569,20 +870,40 @@ const toggleMemo = () => {
   box-shadow: var(--shadow-card);
 
   z-index: var(--z-dropdown);
+=======
+  background: #fff;
+
+  border-radius: 12px;
+
+  overflow: hidden;
+
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+
+  z-index: 100;
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 }
 
 .menu-popover button {
   width: 100%;
 
+<<<<<<< HEAD
   padding: var(--space-sm) var(--space-md);
 
   border: none;
 
   background: var(--color-surface);
+=======
+  padding: 14px 16px;
+
+  border: none;
+
+  background: white;
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
   text-align: left;
 
   cursor: pointer;
+<<<<<<< HEAD
   color: var(--color-text-primary);
 }
 
@@ -592,6 +913,16 @@ const toggleMemo = () => {
 
 .menu-popover .delete {
   color: var(--color-coral);
+=======
+}
+
+.menu-popover button:hover {
+  background: #f5f5f5;
+}
+
+.menu-popover .delete {
+  color: #ef4444;
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 }
 
 /* ---------------- 혜택 버튼 ---------------- */
@@ -603,6 +934,7 @@ const toggleMemo = () => {
 
   border: none;
 
+<<<<<<< HEAD
   border-radius: var(--radius-sm);
 
   background: var(--color-primary);
@@ -615,11 +947,23 @@ const toggleMemo = () => {
 
   margin-bottom: var(--space-xl);
   cursor: pointer;
+=======
+  border-radius: 12px;
+
+  background: #4f46e5;
+
+  color: white;
+
+  font-size: 15px;
+
+  margin-bottom: 28px;
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 }
 
 /* ---------------- 혜택 ---------------- */
 
 h2 {
+<<<<<<< HEAD
   margin: 0 0 var(--space-md);
 
   color: var(--color-text-primary);
@@ -633,6 +977,15 @@ h2 {
 
 .benefit-item {
   margin-bottom: var(--space-md);
+=======
+  font-size: 18px;
+
+  margin-bottom: 16px;
+}
+
+.benefit-item {
+  margin-bottom: 18px;
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 }
 
 .benefit-title {
@@ -640,17 +993,27 @@ h2 {
 
   justify-content: space-between;
 
+<<<<<<< HEAD
   margin-bottom: var(--space-xs);
   font-size: var(--font-sm);
   color: var(--color-text-primary);
+=======
+  margin-bottom: 8px;
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 }
 
 .progress-bar {
   height: 8px;
 
+<<<<<<< HEAD
   background: var(--color-border);
 
   border-radius: var(--radius-sm);
+=======
+  background: #eee;
+
+  border-radius: 10px;
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
   overflow: hidden;
 }
@@ -658,13 +1021,21 @@ h2 {
 .progress {
   height: 100%;
 
+<<<<<<< HEAD
   background: var(--color-primary);
+=======
+  background: #4f46e5;
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 }
 
 /* ---------------- 소비내역 ---------------- */
 
 .transaction-section {
+<<<<<<< HEAD
   margin-top: var(--space-2xl);
+=======
+  margin-top: 32px;
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 }
 
 .transaction-item {
@@ -672,16 +1043,23 @@ h2 {
 
   justify-content: space-between;
 
+<<<<<<< HEAD
   padding: var(--space-sm) 0;
 
   border-bottom: 1px solid var(--color-border);
   color: var(--color-text-primary);
   font-size: var(--font-sm);
+=======
+  padding: 12px 0;
+
+  border-bottom: 1px solid #eee;
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 }
 
 .more-button {
   width: 100%;
 
+<<<<<<< HEAD
   margin-top: var(--space-sm);
 
   border: none;
@@ -699,6 +1077,17 @@ h2 {
   font-weight: var(--font-semibold);
 
   text-align: center;
+=======
+  margin-top: 12px;
+
+  border: none;
+
+  background: none;
+
+  padding: 12px;
+
+  cursor: pointer;
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 }
 
 /* ---------------- 모달 ---------------- */
@@ -715,12 +1104,17 @@ h2 {
 
   justify-content: center;
 
+<<<<<<< HEAD
   z-index: var(--z-modal);
+=======
+  z-index: 3000;
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 }
 
 .edit-modal {
   width: 85%;
 
+<<<<<<< HEAD
   background: var(--color-surface);
 
   border-radius: var(--radius-lg);
@@ -733,6 +1127,17 @@ h2 {
   color: var(--color-text-primary);
   font-size: var(--font-md);
   font-weight: var(--font-semibold);
+=======
+  background: white;
+
+  border-radius: 20px;
+
+  padding: 24px;
+}
+
+.edit-modal h3 {
+  margin-bottom: 20px;
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 }
 
 .edit-modal input {
@@ -740,6 +1145,7 @@ h2 {
 
   height: 48px;
 
+<<<<<<< HEAD
   border: 1px solid var(--color-input-border);
 
   border-radius: var(--radius-sm);
@@ -768,14 +1174,29 @@ h2 {
 .input-info .warning {
   color: var(--color-coral);
   font-weight: var(--font-semibold);
+=======
+  border: 1px solid #ddd;
+
+  border-radius: 12px;
+
+  padding: 0 12px;
+
+  font-size: 15px;
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 }
 
 .modal-buttons {
   display: flex;
 
+<<<<<<< HEAD
   gap: var(--space-xs);
 
   margin-top: var(--space-md);
+=======
+  gap: 10px;
+
+  margin-top: 20px;
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 }
 
 .modal-buttons button {
@@ -783,6 +1204,7 @@ h2 {
 
   height: 44px;
 
+<<<<<<< HEAD
   border-radius: var(--radius-sm);
 
   font-weight: var(--font-semibold);
@@ -812,5 +1234,25 @@ h2 {
   background: var(--color-coral);
 
   color: var(--color-btn-primary-text);
+=======
+  border: none; 
+
+  border-radius: 12px;
+
+  background: #eee;
+}
+
+.confirm {
+  background: #4f46e5 !important;
+
+  color: white;
+}
+
+.delete-confirm {
+  background: #ef4444 !important;
+
+  color: white;
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 }
 </style>
+<!-- 07_25 연동 변경: 카드 상세·실적·혜택 API 응답을 기존 UI에 표시한다. -->

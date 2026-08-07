@@ -37,16 +37,21 @@ DROP TABLE IF EXISTS notification_setting;
 DROP TABLE IF EXISTS notification;
 DROP TABLE IF EXISTS member_preferred_merchant;
 DROP TABLE IF EXISTS member_preferred_category;
+DROP TABLE IF EXISTS member_personalization_brand;
+DROP TABLE IF EXISTS member_personalization_category;
 DROP TABLE IF EXISTS membership_register;
 DROP TABLE IF EXISTS point_usage_place;
 DROP TABLE IF EXISTS point_history;
 DROP TABLE IF EXISTS point_wallet;
 DROP TABLE IF EXISTS point_provider;
 DROP TABLE IF EXISTS user_benefit_usage;
+DROP TABLE IF EXISTS user_card_benefit_selection;
 DROP TABLE IF EXISTS user_card_monthly_state;
 DROP TABLE IF EXISTS recommend_input;
+DROP TABLE IF EXISTS payment_qr;
 DROP TABLE IF EXISTS payment;
 DROP TABLE IF EXISTS expense;
+DROP TABLE IF EXISTS card_benefit_exclusion;
 DROP TABLE IF EXISTS benefit_exclusion;
 DROP TABLE IF EXISTS benefit_tier_limit;
 DROP TABLE IF EXISTS benefit;
@@ -55,11 +60,16 @@ DROP TABLE IF EXISTS performance_tier;
 DROP TABLE IF EXISTS user_card;
 DROP TABLE IF EXISTS merchant;
 DROP TABLE IF EXISTS category;
+DROP TABLE IF EXISTS card_annual_fee;
+DROP TABLE IF EXISTS card_term_document;
 DROP TABLE IF EXISTS card;
+DROP TABLE IF EXISTS card_bin;
+DROP TABLE IF EXISTS card_company;
 DROP TABLE IF EXISTS member_term_agreement;
 DROP TABLE IF EXISTS term_version;
 DROP TABLE IF EXISTS term;
 DROP TABLE IF EXISTS refresh_token;
+DROP TABLE IF EXISTS signup_email_verification;
 DROP TABLE IF EXISTS password_reset_verification;
 DROP TABLE IF EXISTS member_withdrawal;
 DROP TABLE IF EXISTS member;
@@ -196,21 +206,79 @@ CREATE TABLE member_term_agreement (
 --    카드별 테이블 분리 금지 — 새 카드는 행 추가로 끝난다.
 -- ════════════════════════════════════════════════════════════
 
+CREATE TABLE card_company (
+    card_company_id BIGINT      NOT NULL AUTO_INCREMENT COMMENT '카드사 ID',
+    company_code    VARCHAR(30) NOT NULL COMMENT '카드사 코드',
+    company_name    VARCHAR(50) NOT NULL COMMENT '카드사명',
+    is_active       CHAR(1)     NOT NULL DEFAULT 'Y' COMMENT '사용 여부: Y | N',
+    created_at      DATETIME    NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '생성일시',
+    PRIMARY KEY (card_company_id),
+    UNIQUE KEY uk_card_company_code (company_code),
+    UNIQUE KEY uk_card_company_name (company_name)
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT '카드사 마스터';
+
+-- 카드번호 앞자리로 카드사를 판별한다. 카드 등록 화면이 입력값을 검증할 때 쓴다.
+CREATE TABLE card_bin (
+    card_bin_id     BIGINT     NOT NULL AUTO_INCREMENT COMMENT '카드 BIN ID',
+    card_company_id BIGINT     NOT NULL COMMENT '카드사 ID',
+    bin_prefix      VARCHAR(8) NOT NULL COMMENT '6자리 또는 8자리 BIN',
+    bin_length      TINYINT    NOT NULL COMMENT 'BIN 길이: 6 또는 8',
+    is_active       CHAR(1)    NOT NULL DEFAULT 'Y' COMMENT '사용 여부: Y | N',
+    created_at      DATETIME   NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '생성일시',
+    PRIMARY KEY (card_bin_id),
+    UNIQUE KEY uk_card_bin_prefix (bin_prefix),
+    KEY idx_card_bin_company (card_company_id),
+    CONSTRAINT fk_card_bin_company FOREIGN KEY (card_company_id) REFERENCES card_company (card_company_id),
+    CONSTRAINT chk_card_bin_length CHECK (bin_length IN (6, 8))
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT '카드 BIN과 카드사 매핑';
+
 CREATE TABLE card (
-    card_id     BIGINT       NOT NULL AUTO_INCREMENT COMMENT '카드 ID',
-    card_name   VARCHAR(100) NOT NULL COMMENT '카드명 (예: 나라사랑카드)',
-    issuer      VARCHAR(50)  NOT NULL COMMENT '카드사 (예: KB국민, 현대)',
-    card_type   VARCHAR(20)  NOT NULL COMMENT '카드 종류: CREDIT(신용) | CHECK(체크)',
-    annual_fee  INT          NOT NULL DEFAULT 0 COMMENT '연회비(원). 체크카드는 0',
-    image_url   VARCHAR(255) NULL COMMENT '카드 이미지 URL',
-    description VARCHAR(500) NULL COMMENT '카드 한줄 소개',
-    is_active   CHAR(1)      NOT NULL DEFAULT 'Y' COMMENT '판매중 여부: Y | N',
-    created_at  DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '생성일시',
-    updated_at  DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '수정일시',
-    PRIMARY KEY (card_id)
+    card_id         BIGINT       NOT NULL AUTO_INCREMENT COMMENT '카드 ID',
+    card_company_id BIGINT       NOT NULL COMMENT '카드사 ID',
+    card_name       VARCHAR(100) NOT NULL COMMENT '카드명 (예: 나라사랑카드)',
+    card_type       VARCHAR(20)  NOT NULL COMMENT '카드 종류: CREDIT(신용) | CHECK(체크)',
+    annual_fee      INT          NOT NULL DEFAULT 0 COMMENT '연회비(원). 체크카드는 0. 브랜드·발급형태별 금액은 card_annual_fee',
+    image_url       VARCHAR(255) NULL COMMENT '카드 이미지 URL',
+    description     VARCHAR(500) NULL COMMENT '카드 한줄 소개',
+    is_active       CHAR(1)      NOT NULL DEFAULT 'Y' COMMENT '판매중 여부: Y | N',
+    created_at      DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '생성일시',
+    updated_at      DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '수정일시',
+    PRIMARY KEY (card_id),
+    KEY idx_card_company_active (card_company_id, is_active),
+    CONSTRAINT fk_card_company FOREIGN KEY (card_company_id) REFERENCES card_company (card_company_id)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT '카드 마스터';
 
--- 카테고리 표준 (대분류 6 / 중분류 24, 계층 깊이 2단계 고정).
+-- 연회비는 하나가 아니다. 국제브랜드(국내전용/VISA/Mastercard)와 발급 형태(실물/모바일단독)에
+-- 따라 갈리고, 기본연회비와 제휴연회비가 따로 청구된다.
+-- card.annual_fee는 대표값으로 남겨 목록·비교 화면이 쓰고, 정확한 금액이 필요하면 이 표를 본다.
+CREATE TABLE card_annual_fee (
+    card_annual_fee_id BIGINT      NOT NULL AUTO_INCREMENT COMMENT '카드 연회비 ID',
+    card_id            BIGINT      NOT NULL COMMENT '카드 ID',
+    -- ANY는 약관이 브랜드를 구분하지 않고 한 금액만 제시할 때 쓴다.
+    -- NULL로 두면 UNIQUE 제약이 중복을 못 막으므로 값으로 표현한다.
+    brand              VARCHAR(30) NOT NULL COMMENT '국제브랜드: LOCAL(국내전용) | VISA | MASTERCARD | AMEX | UNIONPAY | K_WORLD | ANY(브랜드 무관)',
+    issue_type         VARCHAR(20) NOT NULL DEFAULT 'PLASTIC' COMMENT '발급 형태: PLASTIC(실물) | MOBILE(모바일단독) | ANY',
+    -- 같은 카드가 리워드 종류로 갈리며 연회비가 다른 경우가 있다.
+    -- 약관 예) The BEST-XO는 마이신한포인트형과 스카이패스형의 연회비가 2만원 차이난다.
+    -- 브랜드·발급형태와는 다른 축이라 그 컬럼에 넣으면 의미가 어긋나고, 빼면 같은 (카드,브랜드)에
+    -- 금액이 둘이 되어 UNIQUE 제약에 걸린다. 갈리지 않는 카드는 ANY다.
+    variant            VARCHAR(30) NOT NULL DEFAULT 'ANY' COMMENT '상품형(리워드 종류). 갈리지 않으면 ANY',
+    -- 실제로 청구되는 금액이라 항상 있다.
+    total_fee          INT         NOT NULL COMMENT '총 연회비(원)',
+    -- 약관이 "20,000원(기본 7천 + 제휴 13천)"처럼 나눠 적을 때만 채운다.
+    -- 나누지 않은 약관에 임의로 배분하면 없는 값을 만드는 것이라 NULL로 둔다.
+    base_fee           INT         NULL COMMENT '기본연회비(원). 약관이 분리 표기할 때만',
+    partner_fee        INT         NULL COMMENT '제휴연회비(원). 약관이 분리 표기할 때만',
+    PRIMARY KEY (card_annual_fee_id),
+    UNIQUE KEY uk_card_annual_fee (card_id, brand, issue_type, variant),
+    CONSTRAINT fk_card_annual_fee_card FOREIGN KEY (card_id) REFERENCES card (card_id),
+    -- 나눠 적었으면 합이 총액과 맞아야 한다. 안 맞으면 추출이 틀린 것이다.
+    CONSTRAINT ck_card_annual_fee_total CHECK (
+        base_fee IS NULL OR partner_fee IS NULL OR base_fee + partner_fee = total_fee
+    )
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT '카드 연회비 (브랜드·발급형태별)';
+
+-- 카테고리 표준 (대분류 7 / 중분류 33, 계층 깊이 2단계 고정).
 -- 계층을 두는 이유: 카드사가 대분류 단위로 혜택을 거는 경우가 실제로 있다.
 -- 혜택이 대분류를 겨냥하면 엔진이 하위 중분류 결제까지 매칭한다.
 -- 깊이를 2로 고정했으므로 혜택 조회는 조인 한 번으로 끝난다
@@ -239,13 +307,53 @@ CREATE TABLE merchant (
     CONSTRAINT fk_merchant_category FOREIGN KEY (category_id) REFERENCES category (category_id)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT '가맹점(브랜드)';
 
+-- 카드사가 공시한 약관 원문. benefit으로 구조화하기 전의 원본이다.
+-- 원문을 DB에 두는 이유: 혜택 규칙과 약관이 같은 곳에서 관리돼야 카드를 추가할 때
+-- 한쪽만 갱신되는 일이 없다. 임베딩 같은 파생물은 이 원문에서 언제든 다시 만든다.
+-- benefit이 계산용 규칙만 담는 것과 달리, 청구 시점·분실 처리처럼 컬럼으로 만들 수 없는
+-- 내용이 여기 남는다. 서로 대체할 수 없다.
+CREATE TABLE card_term_document (
+    card_term_document_id BIGINT       NOT NULL AUTO_INCREMENT COMMENT '약관 문서 ID',
+    card_id               BIGINT       NULL COMMENT '카드 ID. 카드 마스터와 매칭되기 전이면 NULL',
+    -- 수집 시점에는 대응하는 card 행이 없을 수 있다. 카드사가 표기한 이름을 그대로 남겨야
+    -- card_id가 NULL인 문서를 나중에 어느 카드에 붙일지 판단할 수 있다.
+    source_card_name      VARCHAR(200) NOT NULL COMMENT '카드사 표기 카드명. card_id 매칭의 근거',
+    issuer                VARCHAR(50)  NOT NULL COMMENT '카드사 (예: KB국민, 삼성)',
+    -- 카드사마다 문서 구성이 다르다. 유형을 ENUM으로 고정하면 카드사를 추가할 때마다
+    -- ALTER가 필요하므로 값으로 흡수한다.
+    doc_type              VARCHAR(30)  NOT NULL COMMENT '문서 유형: PRODUCT_GUIDE(상품설명서) | KEY_TERMS(주요거래조건)',
+    source_url            VARCHAR(500) NOT NULL COMMENT '수집 출처 URL',
+    -- 카드사 URL은 사이트 개편으로 죽는다. 원본을 따로 보관해야 재추출이 가능하다.
+    storage_path          VARCHAR(500) NOT NULL COMMENT '보관한 원본 PDF 경로',
+    -- 스캔 이미지로만 된 PDF는 텍스트가 거의 나오지 않는다. 상태를 남겨야
+    -- 재처리 대상을 골라낼 수 있다. 상태를 안 남기면 빈 원문이 정상처럼 섞인다.
+    extract_status        VARCHAR(20)  NOT NULL COMMENT '추출 상태: TEXT_OK | IMAGE_ONLY(텍스트 추출 불가)',
+    page_count            INT          NULL COMMENT '페이지 수',
+    content_text          LONGTEXT     NULL COMMENT '추출된 원문 텍스트. IMAGE_ONLY면 NULL',
+    -- 같은 문서를 다시 받았을 때 개정 여부를 판정한다. 해시가 같으면 구조화를 건너뛴다.
+    content_hash          CHAR(64)     NOT NULL COMMENT '원본 PDF의 SHA-256. 개정 감지용',
+    -- 카드사가 목록에 함께 주는 값이다. 이 값이 있으면 내려받기 전에 이미 가진 문서인지
+    -- 가려낼 수 있다. 없으면 판정할 방법이 해시뿐이라 매번 다시 받아야 한다.
+    revised_at            CHAR(8)      NULL COMMENT '약관 시행일 YYYYMMDD. 카드사가 주지 않으면 NULL',
+    fetched_at            DATETIME     NOT NULL COMMENT '수집 일시',
+
+    PRIMARY KEY (card_term_document_id),
+    KEY idx_card_term_document_revision (issuer, source_card_name, doc_type, revised_at),
+    -- 같은 문서를 여러 번 수집해도 행이 늘지 않게 막는다.
+    -- 약관이 개정되면 해시가 달라지므로 새 행으로 쌓여 이력이 남는다.
+    UNIQUE KEY uk_card_term_document (issuer, doc_type, content_hash),
+    KEY idx_card_term_document_card (card_id),
+    CONSTRAINT fk_card_term_document_card FOREIGN KEY (card_id) REFERENCES card (card_id)
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT '카드 약관 원문';
+
 -- ════════════════════════════════════════════════════════════
 -- 4. 보유카드
 --    엔진의 상태 테이블은 전부 user_card_id 기준이다 (card_id 아님).
 -- ════════════════════════════════════════════════════════════
 
--- 대표 카드는 회원당 최대 1개. 생성 컬럼 + UNIQUE로 DB가 강제한다.
--- (활성 대표 카드일 때만 member_id가 채워지고, 그 컬럼에 UNIQUE가 걸려 있다)
+-- 대표 카드는 회원당 최대 3개까지 허용한다.
+-- DB에서는 대표 카드 여부만 저장하고, "최대 3개" 규칙은 서비스 트랜잭션에서 검증한다.
+-- 이유: 일반적인 UNIQUE 제약만으로 "회원당 최대 3개" 같은 개수 제한을 표현하기 어렵기 때문이다.
 CREATE TABLE user_card (
     user_card_id             BIGINT      NOT NULL AUTO_INCREMENT COMMENT '보유카드 ID',
     member_id                BIGINT      NOT NULL COMMENT '회원 ID',
@@ -254,13 +362,15 @@ CREATE TABLE user_card (
     is_representative        TINYINT(1)  NOT NULL DEFAULT 0 COMMENT '대표카드 여부',
     registered_at            DATETIME    NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '등록일시',
     card_status              ENUM('ACTIVE','DELETED') NOT NULL DEFAULT 'ACTIVE' COMMENT '카드 상태',
-    representative_member_id BIGINT      GENERATED ALWAYS AS (
-        CASE WHEN is_representative = 1 AND card_status = 'ACTIVE' THEN member_id ELSE NULL END
-    ) STORED COMMENT '대표카드 유일성 보장용 생성 컬럼',
     PRIMARY KEY (user_card_id),
+
     UNIQUE KEY uk_user_card_member_card (member_id, card_id),
-    UNIQUE KEY uk_user_card_representative (representative_member_id),
-    KEY idx_user_card_member_status (member_id, card_status),
+
+    -- 보유 카드 목록 조회와 대표 카드 개수 조회에서 함께 사용할 인덱스다.
+    -- member_id, card_status 조건만 사용하는 기존 목록 조회도 이 인덱스를 활용할 수 있다.
+    -- 대표 카드 설정 시에는 member_id + ACTIVE + is_representative = 1 조건으로 현재 개수를 빠르게 조회한다.
+    KEY idx_user_card_member_status_representative (member_id, card_status, is_representative),
+
     CONSTRAINT fk_user_card_member FOREIGN KEY (member_id) REFERENCES member (member_id),
     CONSTRAINT fk_user_card_card FOREIGN KEY (card_id) REFERENCES card (card_id)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT '보유카드';
@@ -279,10 +389,14 @@ CREATE TABLE user_card (
 CREATE TABLE performance_tier (
     tier_id                BIGINT NOT NULL AUTO_INCREMENT COMMENT '실적구간 ID',
     card_id                BIGINT NOT NULL COMMENT '카드 ID',
-    min_performance_amount BIGINT NOT NULL COMMENT '이 구간의 최소 전월실적(원). 조건 없으면 0',
+    -- 한 카드가 기간이 다른 구간표를 둘 가지는 경우가 있다.
+    -- 약관 예) 일상 영역은 전월 40만원, 특정 영역은 전분기 100/200/300만원.
+    -- benefit.performance_period가 어느 구간표를 볼지 가리킨다.
+    period_type            VARCHAR(10) NOT NULL DEFAULT 'MONTH' COMMENT '구간 기준 기간: MONTH(전월) | QUARTER(전분기)',
+    min_performance_amount BIGINT NOT NULL COMMENT '이 구간의 최소 실적(원). 조건 없으면 0',
     shared_monthly_limit   BIGINT NULL COMMENT '통합할인한도(월, 원). NULL = 통합한도 없음(개별한도만 적용), 0 = 혜택 없음',
     PRIMARY KEY (tier_id),
-    UNIQUE KEY uk_performance_tier (card_id, min_performance_amount),
+    UNIQUE KEY uk_performance_tier (card_id, period_type, min_performance_amount),
     CONSTRAINT fk_performance_tier_card FOREIGN KEY (card_id) REFERENCES card (card_id)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT '실적구간별 통합할인한도';
 
@@ -299,7 +413,31 @@ CREATE TABLE performance_tier (
 --   TRANSACTION_ATTR    'INTEREST_FREE'         무이자할부 건 제외
 --                       'DISCOUNTED'            이미 할인받은 건 제외
 --                       'OVERSEAS'              해외 이용분 제외
+--                       'CASH_ADVANCE'          현금서비스
+--                       'CARD_LOAN'             카드론(장기카드대출)
+--                       'GIFT_CARD'             상품권·선불카드 구매/충전
+--                       'TAX'                   국세·지방세
+--                       'SOCIAL_INSURANCE'      4대 사회보험료
+--                       'FEE_INTEREST'          수수료·이자·연체료
+--                       'ANNUAL_FEE'            연회비
+--                       'GOV_SUBSIDY'           정부지원금(보육료·바우처 등)
+--                       'POSTPAID_TRANSIT'      후불교통요금
+--                       'UNAPPROVED'            무승인전표(자판기·통행료 등)
+--                       'CANCELED'              취소·부분취소 거래
+--                       'LEVY'                  부담금·준조세(장애인 고용부담금 등)
+--                       'POINT_USED'            포인트로 결제한 금액
+--                       'INSTALLMENT_CONVERTED' 일시불을 할부로 전환한 거래
+--                       'RECURRING'             정기결제·자동이체 등록 건
+--                       'CARD_SERVICE_FEE'      카드사 부가서비스 이용료(문자알림 등)
 --   MIN_TXN_AMOUNT      '10000'                 건당 1만원 미만 제외
+--
+-- 위 목록은 카드사 약관에 반복해서 나오는 항목을 표준화한 것이다.
+-- 다만 판정하려면 소비내역에 그 거래가 어떤 종류인지 남아 있어야 한다.
+-- 지금 expense가 구분할 수 있는 것은 무이자할부·할인적용 여부뿐이므로,
+-- 나머지 값은 표현만 가능하고 엔진이 해석하지 못한다. 시드에 넣으면 조용히 무시되므로 넣지 않는다.
+--
+-- '특정 혜택을 받은 거래만 실적 제외'는 여기 적지 않는다. 'DISCOUNTED'로 적으면
+-- 다른 혜택을 받은 거래까지 빠져 실적이 실제보다 낮아진다. benefit.exclude_from_performance를 쓴다.
 --
 -- 값에 FK를 못 거는 게 이 설계의 비용이다. 그래서 id 대신 코드 문자열을 쓴다 —
 -- 어차피 무결성 이점이 없으니 시드 가독성을 택했다('301'보다 'PUBLIC_TRANSPORT').
@@ -336,10 +474,16 @@ CREATE TABLE benefit (
     card_id              BIGINT        NOT NULL COMMENT '카드 ID',
     benefit_name         VARCHAR(100)  NOT NULL COMMENT '혜택명 (예: 카페 10% 청구할인)',
 
-    benefit_kind         VARCHAR(20)   NOT NULL COMMENT '혜택 종류: DISCOUNT(할인) | POINT(적립) | SPECIAL_PRICE(특가) | GIFT(증정) | RETROACTIVE(사후정산, 계산 제외)',
-    calc_method          VARCHAR(10)   NOT NULL COMMENT '계산 방식: RATE(정률) | FIXED(정액)',
-    benefit_value        DECIMAL(10,2) NOT NULL COMMENT 'RATE면 퍼센트(10.00 = 10%), FIXED면 금액(원, 소수부 미사용)',
-    apply_timing         VARCHAR(20)   NULL COMMENT '할인 시점: IMMEDIATE(즉시) | BILLED(청구). benefit_kind=DISCOUNT일 때만 값',
+    -- INSTALLMENT_FREE는 금액으로 환산할 수 없어 GIFT·RETROACTIVE와 함께 계산에서 빠진다.
+    -- 카드 상세 화면이 정보로만 보여준다.
+    benefit_kind         VARCHAR(20)   NOT NULL COMMENT '혜택 종류: DISCOUNT(할인) | POINT(적립) | SPECIAL_PRICE(특가) | GIFT(증정) | INSTALLMENT_FREE(무이자할부) | RETROACTIVE(사후정산). 뒤 셋은 계산 제외',
+    calc_method          VARCHAR(15)   NOT NULL COMMENT '계산 방식: RATE(정률) | FIXED(정액) | COUNT_STEP(N회마다 정액)',
+    benefit_value        DECIMAL(10,2) NOT NULL COMMENT 'RATE면 퍼센트(10.00 = 10%), FIXED·COUNT_STEP이면 금액(원, 소수부 미사용)',
+    -- "5회 이용할 때마다 3천 포인트" 같은 누적 횟수 기반 혜택용.
+    -- FIXED로 넣으면 결제마다 지급되어 실제의 step_count배가 된다(에러 없이 금액만 틀림).
+    step_count           INT           NULL COMMENT 'COUNT_STEP일 때 몇 회마다 지급하는지',
+    -- CASHBACK은 청구서에서 빼는 대신 결제계좌로 돈이 들어온다. 금액 계산은 청구할인과 같다.
+    apply_timing         VARCHAR(20)   NULL COMMENT '할인 시점: IMMEDIATE(즉시) | BILLED(청구) | CASHBACK(결제계좌 입금). benefit_kind=DISCOUNT일 때만 값',
 
     target_type          VARCHAR(20)   NOT NULL COMMENT '대상 유형: CATEGORY | MERCHANT | ALL(전 가맹점)',
     target_category_id   BIGINT        NULL COMMENT 'target_type=CATEGORY일 때만. 대분류를 넣으면 하위 중분류까지 적용',
@@ -348,9 +492,21 @@ CREATE TABLE benefit (
     -- require_performance='Y'의 충족 기준을 여기서 못 박는다.
     -- 0원 구간 필수 규칙 때문에 "구간 못 찾음 = 미충족"이 성립하지 않는다.
     require_performance  CHAR(1)       NOT NULL DEFAULT 'Y' COMMENT '전월실적 조건 필요 여부: Y | N. 충족 기준 = 판정된 구간의 min_performance_amount > 0',
+    -- 한 카드가 월 실적과 분기 실적을 함께 쓰는 경우가 있다(일상 영역은 전월, 특정 영역은 전분기).
+    -- 분기 실적은 따로 저장하지 않고 user_card_monthly_state의 직전 3개월을 합산해 구한다.
+    performance_period   VARCHAR(10)   NOT NULL DEFAULT 'MONTH' COMMENT '실적 기준 기간: MONTH(전월) | QUARTER(전분기)',
     -- 요일·시간대·채널 조건이 필요해지면 benefit_condition(benefit_id, condition_type,
     -- condition_value) 테이블로 확장하고 이 컬럼을 흡수한다 (benefit_exclusion과 대칭).
-    require_payment_type VARCHAR(30)   NULL COMMENT '특정 결제수단에서만 적용 (예: SIMPLE_PAY). NULL이면 수단 무관',
+    -- 표준값을 정해두지 않으면 같은 조건이 카드마다 다른 문자열이 되어 엔진이 매칭하지 못한다.
+    -- (실제로 "자동납부"가 자동납부/자동이체/AUTO_TRANSFER/AUTO_PAYMENT 넷으로 갈렸다.)
+    --   AUTO_TRANSFER  자동이체·자동납부 등록 건
+    --   SIMPLE_PAY     간편결제 일반 (브랜드를 가리지 않을 때)
+    --   브랜드 지정이 필요하면 아래 값을 쓴다. 약관이 여러 개를 열거하면 대상마다 행을 쪼갠다.
+    --   SAMSUNG_PAY / LG_PAY / KB_PAY / NAVER_PAY / KAKAO_PAY / PAYCO
+    --   SSG_PAY / L_PAY / SOL_PAY / COUPAY / SMILE_PAY
+    -- expense.payment_type에 같은 값이 들어와야 판정된다. 브랜드가 안 들어오는 환경에서는
+    -- SIMPLE_PAY로만 판정되고, 그러면 열거되지 않은 간편결제까지 혜택을 받는다.
+    require_payment_type VARCHAR(30)   NULL COMMENT '특정 결제수단에서만 적용. NULL이면 수단 무관. 표준값은 위 주석 참조',
     min_txn_amount       BIGINT        NULL COMMENT '건당 최소 결제금액(원). 미만이면 혜택 없음',
 
     max_eligible_amount  BIGINT        NULL COMMENT '혜택 대상 금액 상한(원). 이 금액까지만 율을 곱한다',
@@ -358,13 +514,44 @@ CREATE TABLE benefit (
     monthly_limit        BIGINT        NULL COMMENT '이 혜택의 월 개별 한도(원). NULL=한도 없음',
     -- "통신·공과금·마트 각 10%, 합쳐서 월 5천원" 같은 묶음 한도용.
     -- 안 묶으면 한도가 혜택 수만큼 배로 샌다(에러 없이 금액만 틀림).
-    limit_group_code     VARCHAR(30)   NULL COMMENT '묶음 한도 코드. 같은 카드 내 같은 코드끼리 monthly_limit 공유',
+    -- 금액뿐 아니라 횟수도 함께 묶는다. "렌탈 5건 / 생활월납 3건"처럼 여러 대상이
+    -- 건수를 공유하는 약관이 흔하고, 금액만 묶으면 횟수가 대상 수만큼 배로 샌다.
+    limit_group_code     VARCHAR(30)   NULL COMMENT '묶음 한도 코드. 같은 카드 내 같은 코드끼리 monthly_limit·횟수 한도를 함께 공유',
     monthly_count_limit  INT           NULL COMMENT '월 최대 적용 횟수',
     daily_count_limit    INT           NULL COMMENT '일 최대 적용 횟수',
+    -- 월·일과 축이 다르다. "영화 연 12회"처럼 연 단위로만 걸리는 한도가 실제로 있다.
+    -- 연 소진량은 user_benefit_usage의 같은 해 월별 행을 합산해 구한다(별도 상태 없음).
+    yearly_count_limit   INT           NULL COMMENT '연 최대 적용 횟수',
+    quarterly_count_limit INT          NULL COMMENT '분기 최대 적용 횟수',
+    -- 금액 한도도 월·일 말고 분기·연으로 걸리는 약관이 있다.
+    -- 분기 한도를 monthly_limit에 넣으면 매달 리셋되어 실제의 세 배가 나간다(에러 없이 금액만 틀림).
+    -- 소진량은 횟수와 마찬가지로 user_benefit_usage의 해당 기간 월별 행을 합산해 구한다.
+    quarterly_limit      BIGINT        NULL COMMENT '분기 최대 혜택액(원)',
+    yearly_limit         BIGINT        NULL COMMENT '연 최대 혜택액(원)',
+    -- 금액을 묶는 범위와 횟수를 묶는 범위가 다를 때 쓴다.
+    -- 약관 예) "택시·커피·영화관 합쳐 월 5천원"(금액) + "영화관 3사 합쳐 연 4회"(횟수).
+    -- 하나로 묶으면 좁은 쪽 한도가 대상 수만큼 배로 샌다. NULL이면 limit_group_code를 따른다.
+    count_group_code     VARCHAR(30)   NULL COMMENT '횟수 묶음 코드. NULL이면 limit_group_code 기준',
     -- 일 단위 금액 한도. 횟수(daily_count_limit)와 축이 다르다.
     -- 약관 예) "월 적립한도 3만점, 일 적립한도 1만점" — 횟수로는 표현할 수 없다.
     daily_limit          BIGINT        NULL COMMENT '일 최대 혜택액(원). NULL=일 한도 없음',
     use_shared_limit     CHAR(1)       NOT NULL DEFAULT 'Y' COMMENT '카드 통합할인한도를 함께 소진하는가: Y | N',
+
+    -- 이 혜택을 받은 거래만 실적에서 빼는 약관이 흔하다.
+    -- performance_exclusion의 TRANSACTION_ATTR='DISCOUNTED'로 적으면 다른 혜택을 받은 거래까지
+    -- 실적에서 빠져 실적이 실제보다 낮게 잡힌다. 그래서 혜택 쪽에 둔다.
+    -- 판정은 expense.applied_benefit_id로 한다.
+    exclude_from_performance CHAR(1)   NOT NULL DEFAULT 'N' COMMENT '이 혜택이 적용된 거래를 전월실적에서 제외하는가: Y | N',
+    -- 회원이 매월 하나를 고르는 혜택 묶음. 같은 코드끼리는 그달에 선택된 하나만 적용된다.
+    -- 선택 상태는 user_card_benefit_selection에 있고, 코드가 NULL이면 선택과 무관하게 항상 적용된다.
+    option_group_code    VARCHAR(30)   NULL COMMENT '선택형 혜택 묶음 코드. 같은 코드 중 선택된 하나만 적용',
+    -- 선택지 하나가 혜택 여러 개로 이뤄지는 경우가 있다("배달팩을 고르면 4개 혜택이 함께 켜진다").
+    -- 회원은 팩을 고르는 것이지 혜택 행을 고르는 게 아니므로 선택 단위를 따로 둔다.
+    option_key           VARCHAR(30)   NULL COMMENT '선택지 식별자. 같은 option_group_code 안에서 이 혜택이 속한 선택지',
+
+    -- 이 규칙이 어느 약관에서 나왔는지. 카드가 늘면 값의 근거를 사람이 기억할 수 없어
+    -- 검수할 때 원문으로 되짚을 경로가 필요하다.
+    source_document_id   BIGINT        NULL COMMENT '출처 약관 문서. 수기로 넣은 혜택이면 NULL',
 
     -- 계산에 절대 쓰지 않는다. 스키마로 표현하지 못한 약관 단서를 원문 그대로 남기는 칸.
     -- 추천 근거 문구는 여기서 읽지 않고 benefit_name + 계산값으로 엔진이 조립한다.
@@ -378,10 +565,12 @@ CREATE TABLE benefit (
     KEY idx_benefit_target_category (target_category_id),
     KEY idx_benefit_target_merchant (target_merchant_id),
     KEY idx_benefit_limit_group (card_id, limit_group_code),
+    KEY idx_benefit_option_group (card_id, option_group_code),
 
     CONSTRAINT fk_benefit_card     FOREIGN KEY (card_id)            REFERENCES card (card_id),
     CONSTRAINT fk_benefit_category FOREIGN KEY (target_category_id) REFERENCES category (category_id),
     CONSTRAINT fk_benefit_merchant FOREIGN KEY (target_merchant_id) REFERENCES merchant (merchant_id),
+    CONSTRAINT fk_benefit_source_document FOREIGN KEY (source_document_id) REFERENCES card_term_document (card_term_document_id),
 
     -- 대상 컬럼은 target_type에 맞는 것 정확히 하나만 채운다
     CONSTRAINT ck_benefit_target CHECK (
@@ -389,10 +578,17 @@ CREATE TABLE benefit (
      OR (target_type = 'MERCHANT' AND target_merchant_id IS NOT NULL AND target_category_id IS NULL)
      OR (target_type = 'ALL'      AND target_category_id IS NULL     AND target_merchant_id IS NULL)
     ),
+    -- 몇 회마다 주는지 모르면 계산할 수 없다.
+    CONSTRAINT ck_benefit_step_count CHECK (
+        (calc_method = 'COUNT_STEP' AND step_count IS NOT NULL)
+     OR (calc_method <> 'COUNT_STEP' AND step_count IS NULL)
+    ),
     -- 할인 시점은 할인 혜택에만 있다. 적립·특가·증정·사후정산은 NULL이어야 한다.
+    -- 할인인데 NULL인 것은 허용한다 — 약관이 즉시/청구를 밝히지 않는 경우가 실제로 많고
+    -- (카드 15장 중 33개 혜택), 기본값을 정해 채우면 약관에 없는 값을 만드는 것이 된다.
+    -- 엔진은 이 값을 계산에 쓰지 않는다(표시용).
     CONSTRAINT ck_benefit_apply_timing CHECK (
-        (benefit_kind = 'DISCOUNT' AND apply_timing IS NOT NULL)
-     OR (benefit_kind <> 'DISCOUNT' AND apply_timing IS NULL)
+        benefit_kind = 'DISCOUNT' OR apply_timing IS NULL
     )
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT '혜택 규칙';
 
@@ -403,6 +599,11 @@ CREATE TABLE benefit_tier_limit (
     benefit_id         BIGINT        NOT NULL COMMENT '혜택 ID',
     tier_id            BIGINT        NOT NULL COMMENT '실적구간 ID',
     tier_monthly_limit BIGINT        NULL COMMENT '이 구간에서의 월 개별 한도(원). NULL이면 benefit.monthly_limit 사용',
+    -- 구간별 한도도 기간 축이 갈린다. 분기 실적을 쓰는 혜택은 한도도 분기로 걸린다
+    -- ("전분기 100만원 이상 분기 1만점, 200만원 이상 1만5천점").
+    -- 이 값을 tier_monthly_limit에 넣으면 매달 리셋되어 실제의 세 배가 나간다.
+    tier_quarterly_limit BIGINT      NULL COMMENT '이 구간에서의 분기 개별 한도(원). NULL이면 benefit.quarterly_limit 사용',
+    tier_yearly_limit  BIGINT        NULL COMMENT '이 구간에서의 연 개별 한도(원). NULL이면 benefit.yearly_limit 사용',
     tier_benefit_value DECIMAL(10,2) NULL COMMENT '이 구간에서의 혜택값(율 또는 정액). NULL이면 benefit.benefit_value 사용',
     PRIMARY KEY (benefit_id, tier_id),
     KEY idx_benefit_tier_limit_tier (tier_id),
@@ -413,13 +614,50 @@ CREATE TABLE benefit_tier_limit (
 -- 약관 예) "외식 5% (단, 배달앱 제외)"
 --   → benefit은 대분류 외식을 겨냥하고, 여기에 CATEGORY 'DELIVERY' 한 행.
 -- performance_exclusion과 동일한 (유형, 값) 패턴이다.
+-- MERCHANT_LOCATION은 "백화점 입점 매장 제외"처럼 같은 브랜드 안에서 매장 위치로 가르는 조건이다.
+--   IN_DEPARTMENT_STORE  백화점 입점        IN_LARGE_MART    대형마트·할인점 입점
+--   IN_SHOPPING_MALL     쇼핑몰 임대매장     IN_TRANSIT_HUB   기차역·지하철역·공항 입점
+-- 표현은 가능하되 지금은 판정할 수 없다 — merchant가 브랜드 단위라 지점을 구분하지 않고,
+-- expense에도 매장 위치가 남지 않는다. 시드에 넣으면 조용히 무시되므로 넣지 않는다.
+-- 마이데이터로 "GS25 신세계백화점점" 같은 가맹점명이 들어오면 그때 판정 경로가 생긴다.
 CREATE TABLE benefit_exclusion (
     benefit_id      BIGINT      NOT NULL COMMENT '혜택 ID',
-    exclusion_type  VARCHAR(20) NOT NULL COMMENT '제외 유형: CATEGORY | MERCHANT | PAYMENT_TYPE | TRANSACTION_ATTR',
+    exclusion_type  VARCHAR(20) NOT NULL COMMENT '제외 유형: CATEGORY | MERCHANT | PAYMENT_TYPE | TRANSACTION_ATTR | MERCHANT_LOCATION',
     exclusion_value VARCHAR(50) NOT NULL COMMENT '제외 값 (CATEGORY면 category_code, MERCHANT면 merchant_code)',
     PRIMARY KEY (benefit_id, exclusion_type, exclusion_value),
     CONSTRAINT fk_benefit_exclusion_benefit FOREIGN KEY (benefit_id) REFERENCES benefit (benefit_id)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT '혜택 적용 예외';
+
+-- 약관의 "할인서비스 제외 대상"처럼 카드의 모든 혜택에 공통으로 걸리는 예외다.
+-- benefit_exclusion은 혜택 하나에 걸리는 예외라, 카드 공통 예외를 거기 넣으면
+-- 혜택 수만큼 같은 행이 복제된다(카드 한 장에서 수백 행까지 늘어난다).
+-- 그보다 나쁜 것은 혜택을 새로 추가할 때 그 복제를 빠뜨리면 그 혜택만 조용히 예외가 안 걸리는 것이다.
+-- 엔진은 혜택을 적용하기 전에 이 표와 benefit_exclusion을 함께 확인한다.
+CREATE TABLE card_benefit_exclusion (
+    card_id         BIGINT      NOT NULL COMMENT '카드 ID',
+    exclusion_type  VARCHAR(20) NOT NULL COMMENT '제외 유형: CATEGORY | MERCHANT | PAYMENT_TYPE | TRANSACTION_ATTR | MERCHANT_LOCATION',
+    exclusion_value VARCHAR(50) NOT NULL COMMENT '제외 값 (CATEGORY면 category_code, MERCHANT면 merchant_code)',
+    PRIMARY KEY (card_id, exclusion_type, exclusion_value),
+    CONSTRAINT fk_card_benefit_exclusion_card FOREIGN KEY (card_id) REFERENCES card (card_id)
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT '카드 전체 혜택 적용 예외';
+
+-- 회원이 매월 고르는 혜택. 약관 예) "의료 20% 또는 생활 10% 중 택 1, 매월 변경 가능"
+-- 고른 값은 회원마다 다르고 달마다 바뀌므로 카드 쪽(benefit)이 아니라 여기에 둔다.
+-- 선택 기록이 없는 달은 그 묶음의 혜택이 하나도 적용되지 않는다.
+CREATE TABLE user_card_benefit_selection (
+    user_card_id      BIGINT  NOT NULL COMMENT '보유카드 ID',
+    -- 다른 월 상태 테이블(user_card_monthly_state·user_benefit_usage)과 같은 형식이다.
+    -- 같은 개념에 형식이 둘이면 조회 키가 에러 없이 안 맞아 선택이 없는 것으로 읽힌다.
+    base_year_month   CHAR(7) NOT NULL COMMENT '기준 연월 (YYYY-MM)',
+    option_group_code VARCHAR(30) NOT NULL COMMENT '선택형 혜택 묶음 코드',
+    -- 혜택 ID가 아니라 선택지를 저장한다. 선택지 하나가 혜택 여러 개로 이뤄지는 경우가 있어
+    -- ("배달팩을 고르면 4개 혜택이 함께 켜진다") 혜택 ID로는 고른 것을 담지 못한다.
+    -- 엔진은 benefit.option_key가 이 값과 같은 혜택만 그달에 적용한다.
+    selected_option_key VARCHAR(30) NOT NULL COMMENT '그달에 선택한 선택지 (benefit.option_key와 대응)',
+    -- 한 묶음에서 한 달에 하나만 고를 수 있다는 규칙을 PK로 못 박는다.
+    PRIMARY KEY (user_card_id, base_year_month, option_group_code),
+    CONSTRAINT fk_user_card_benefit_selection_card FOREIGN KEY (user_card_id) REFERENCES user_card (user_card_id)
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT '선택형 혜택의 월별 선택 상태';
 
 -- ════════════════════════════════════════════════════════════
 -- 7. 소비 · 결제
@@ -444,6 +682,9 @@ CREATE TABLE expense (
     -- 취소 건은 실적·혜택 계산에서 제외한다(약관의 실적 제외 대상에 '취소금액'이 있다).
     -- 물리 삭제하지 않고 상태만 바꾸므로 엔진이 이 값을 보고 걸러야 한다.
     payment_status     VARCHAR(20)  NOT NULL DEFAULT 'APPROVED' COMMENT '결제 상태: APPROVED | CANCELED',
+    approval_status    VARCHAR(20)  NOT NULL DEFAULT 'APPROVED' COMMENT '승인 단계: APPROVED | CONFIRMED',
+    transaction_type   VARCHAR(30)  NOT NULL DEFAULT 'LUMP_SUM' COMMENT '거래 구분: LUMP_SUM | INSTALLMENT | CASH_ADVANCE',
+    region             VARCHAR(20)  NOT NULL DEFAULT 'DOMESTIC' COMMENT '이용 지역: DOMESTIC | OVERSEAS',
     applied_benefit_id BIGINT       NULL COMMENT '적용된 혜택 ID. 엔진이 채운다. 카드당 1개만 적용되므로 단수',
     discount_amount    BIGINT       NOT NULL DEFAULT 0 COMMENT '실제 받은 할인/적립액. 엔진이 채운다',
     -- 전월실적 계산에 필요하다. 카드 약관은 특정 결제수단과 무이자할부를
@@ -453,6 +694,7 @@ CREATE TABLE expense (
     created_at         DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '등록일시',
     PRIMARY KEY (expense_id),
     KEY idx_expense_member_date (member_id, payment_date),
+    KEY idx_expense_member_filters (member_id, payment_date, payment_status, approval_status, region),
     KEY idx_expense_card_date (user_card_id, payment_date),
     KEY idx_expense_merchant (merchant_id),
     KEY idx_expense_benefit (applied_benefit_id),
@@ -492,6 +734,31 @@ CREATE TABLE payment (
 -- 사용자가 추천을 요청하며 입력한 값의 기록.
 -- 추천 "결과"는 저장하지 않는다 — 카드 한도 소진 상태에 따라 매번 달라져
 -- 저장하는 순간 낡은 값이 된다. 엔진이 실시간 계산해 응답으로 내려준다.
+-- QR 결제 요청의 발급·만료·사용·실패 상태를 저장한다.
+CREATE TABLE payment_qr (
+    payment_qr_id BIGINT       NOT NULL AUTO_INCREMENT COMMENT 'QR 결제 ID',
+    qr_token      VARCHAR(100) NOT NULL COMMENT '외부에 노출하는 QR 식별 토큰',
+    member_id     BIGINT       NOT NULL COMMENT '회원 ID',
+    user_card_id  BIGINT       NOT NULL COMMENT '결제에 사용할 보유카드 ID',
+    payment_amount BIGINT      NOT NULL COMMENT 'QR 발급 시 확정한 결제금액',
+    status        VARCHAR(20)  NOT NULL DEFAULT 'READY' COMMENT 'QR 상태: READY | USED | EXPIRED | FAILED',
+    expires_at    DATETIME     NOT NULL COMMENT 'QR 만료 일시',
+    used_at       DATETIME     NULL COMMENT 'QR 사용 일시',
+    failed_at     DATETIME     NULL COMMENT '결제 실패 일시',
+    fail_reason   VARCHAR(255) NULL COMMENT '결제 실패 사유',
+    payment_id    BIGINT       NULL COMMENT '완료된 결제 ID',
+    created_at    DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '생성 일시',
+    PRIMARY KEY (payment_qr_id),
+    UNIQUE KEY uk_payment_qr_token (qr_token),
+    KEY idx_payment_qr_token (qr_token),
+    KEY idx_payment_qr_member_status (member_id, status),
+    KEY idx_payment_qr_card (user_card_id),
+    KEY idx_payment_qr_payment (payment_id),
+    CONSTRAINT fk_payment_qr_member  FOREIGN KEY (member_id)    REFERENCES member (member_id),
+    CONSTRAINT fk_payment_qr_card    FOREIGN KEY (user_card_id) REFERENCES user_card (user_card_id),
+    CONSTRAINT fk_payment_qr_payment FOREIGN KEY (payment_id)   REFERENCES payment (payment_id)
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT 'QR 결제 상태';
+
 CREATE TABLE recommend_input (
     recommend_input_id BIGINT       NOT NULL AUTO_INCREMENT COMMENT '추천입력 ID',
     member_id          BIGINT       NOT NULL COMMENT '회원 ID',
@@ -661,6 +928,30 @@ CREATE TABLE member_preferred_merchant (
 -- ════════════════════════════════════════════════════════════
 -- 11. 알림
 -- ════════════════════════════════════════════════════════════
+
+-- 개인화 설정 화면에서 직접 입력한 브랜드 문자열을 저장한다.
+CREATE TABLE member_personalization_category (
+    member_id    BIGINT      NOT NULL COMMENT '회원 ID',
+    category_key VARCHAR(30) NOT NULL COMMENT '프론트 개인화 카테고리 키',
+    created_at   DATETIME    NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '생성 일시',
+    PRIMARY KEY (member_id, category_key),
+    CONSTRAINT fk_personalization_category_member
+        FOREIGN KEY (member_id) REFERENCES member (member_id)
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT '회원 개인화 카테고리';
+
+CREATE TABLE member_personalization_brand (
+    member_id    BIGINT       NOT NULL COMMENT '회원 ID',
+    category_key VARCHAR(30)  NOT NULL COMMENT '프론트 개인화 카테고리 키',
+    priority     TINYINT      NOT NULL COMMENT '브랜드 표시 순서 1~3',
+    brand_name   VARCHAR(100) NOT NULL COMMENT '관심 브랜드명',
+    created_at   DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '생성 일시',
+    PRIMARY KEY (member_id, category_key, priority),
+    UNIQUE KEY uk_personalization_brand_name (member_id, category_key, brand_name),
+    CONSTRAINT fk_personalization_brand_category
+        FOREIGN KEY (member_id, category_key)
+        REFERENCES member_personalization_category (member_id, category_key)
+        ON DELETE CASCADE
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT '회원 개인화 관심 브랜드';
 
 CREATE TABLE notification (
     notification_id     BIGINT        NOT NULL AUTO_INCREMENT COMMENT '알림 ID',

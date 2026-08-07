@@ -88,7 +88,11 @@ const openSheet = () => {
 
   width: 100%;
 
+<<<<<<< HEAD
   background: var(--color-surface);
+=======
+  background: white;
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
   border-radius: 16px;
 
@@ -115,7 +119,11 @@ const openSheet = () => {
 
   font-size: 14px;
 
+<<<<<<< HEAD
   color: var(--color-text-secondary);
+=======
+  color: #666;
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 }
 
@@ -159,7 +167,11 @@ const openSheet = () => {
 
   font-size: 14px;
 
+<<<<<<< HEAD
   color: var(--color-text-secondary);
+=======
+  color: #666;
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 }
 
@@ -179,7 +191,11 @@ const openSheet = () => {
 
   font-size: 13px;
 
+<<<<<<< HEAD
   color: var(--color-primary-dark);
+=======
+  color: #2563eb;
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 }
 

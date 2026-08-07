@@ -71,7 +71,14 @@ export const useAuthStore = defineStore(
     'token',
     loginToken
   );
+const setAccessToken = (newAccessToken) => {
+  token.value = newAccessToken
 
+  localStorage.setItem(
+    'token',
+    newAccessToken
+  )
+}
 
   localStorage.setItem(
     'user',
@@ -79,7 +86,16 @@ export const useAuthStore = defineStore(
   );
 
 };
+const setAccessToken = (newAccessToken) => {
 
+  token.value = newAccessToken;
+
+  localStorage.setItem(
+    'token',
+    newAccessToken
+  );
+
+};
     const updateUser = (updatedUser) => {
 
   user.value = {
@@ -142,12 +158,16 @@ export const useAuthStore = defineStore(
 
   setLogin,
 
+  setAccessToken,
+
   updateUser,
 
   logout,
 
   isLogin
 
+
 }
   }
 )
+// 07_25 연동 변경: 로그인 토큰과 인증 상태를 실제 인증 API 기준으로 관리한다.

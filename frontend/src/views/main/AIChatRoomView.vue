@@ -1,13 +1,19 @@
 <script setup>
 import { ref } from 'vue';
+<<<<<<< HEAD
 import { useRouter } from 'vue-router';
+=======
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 import PageHeader from '@/components/common/PageHeader.vue';
 import ChatMessage from '@/components/chat/ChatMessage.vue';
 import QuickQuestion from '@/components/chat/QuickQuestion.vue';
+<<<<<<< HEAD
 import Icon from '@/components/common/Icon.vue';
 
 const router = useRouter();
+=======
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 // TODO
 // POST /ai/chat
@@ -62,7 +68,11 @@ const selectQuestion = (question) => {
 
 <template>
   <div class="chat-view">
+<<<<<<< HEAD
     <PageHeader title="AI 금융 비서" @back="router.back()" />
+=======
+    <PageHeader title="AI 금융 비서" />
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
     <!-- 채팅 영역 -->
     <section class="chat-area">
@@ -92,7 +102,11 @@ const selectQuestion = (question) => {
         @keyup.enter="sendMessage"
       />
 
+<<<<<<< HEAD
       <button type="button" @click="sendMessage"><Icon name="send" size="sm" /></button>
+=======
+      <button type="button" @click="sendMessage">➤</button>
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
     </section>
   </div>
 </template>
@@ -105,7 +119,11 @@ const selectQuestion = (question) => {
 
   height: 100vh;
 
+<<<<<<< HEAD
   background: var(--color-bg);
+=======
+  background: #f5f6fa;
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 }
 
 .chat-area {
@@ -117,19 +135,33 @@ const selectQuestion = (question) => {
 
   flex-direction: column;
 
+<<<<<<< HEAD
   gap: var(--space-md);
 
   padding: var(--space-md);
+=======
+  gap: 16px;
+
+  padding: 20px;
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 }
 
 .quick-question-area {
   display: flex;
 
+<<<<<<< HEAD
   gap: var(--space-xs);
 
   overflow-x: auto;
 
   padding: var(--space-xs) var(--space-md);
+=======
+  gap: 10px;
+
+  overflow-x: auto;
+
+  padding: 12px 16px;
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 }
 
 .quick-question-area::-webkit-scrollbar {
@@ -139,6 +171,7 @@ const selectQuestion = (question) => {
 .input-area {
   display: flex;
 
+<<<<<<< HEAD
   gap: var(--space-sm);
 
   padding: var(--space-md);
@@ -146,11 +179,21 @@ const selectQuestion = (question) => {
   border-top: 1px solid var(--color-border);
 
   background: var(--color-surface);
+=======
+  gap: 12px;
+
+  padding: 16px;
+
+  border-top: 1px solid #e5e7eb;
+
+  background: white;
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 }
 
 .input-area input {
   flex: 1;
 
+<<<<<<< HEAD
   border: 1px solid var(--color-input-border);
 
   border-radius: var(--radius-full);
@@ -165,6 +208,15 @@ const selectQuestion = (question) => {
 
 .input-area input::placeholder {
   color: var(--color-text-tertiary);
+=======
+  border: 1px solid #ddd;
+
+  border-radius: 24px;
+
+  padding: 12px 16px;
+
+  outline: none;
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 }
 
 .input-area button {
@@ -172,11 +224,19 @@ const selectQuestion = (question) => {
 
   border: none;
 
+<<<<<<< HEAD
   border-radius: var(--radius-full);
 
   background: var(--color-primary);
 
   color: var(--color-btn-primary-text);
+=======
+  border-radius: 50%;
+
+  background: #4f46e5;
+
+  color: white;
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
   cursor: pointer;
 }

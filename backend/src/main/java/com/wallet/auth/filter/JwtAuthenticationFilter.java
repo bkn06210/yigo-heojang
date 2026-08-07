@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import org.springframework.lang.NonNull;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -50,6 +51,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtTokenProvider jwtTokenProvider;
     private final ObjectMapper objectMapper;
 
+    @Value("${app.cors.allowed-origin:http://localhost:5173}")
+    private String frontendOrigin;
+
     @Override
     protected void doFilterInternal(
         @NonNull HttpServletRequest request,
@@ -64,7 +68,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String accessToken = extractAccessToken(request);
 
         if (accessToken == null) {
-            writeErrorResponse(response, ErrorCode.ACCESS_TOKEN_INVALID);
+            writeErrorResponse(request, response, ErrorCode.ACCESS_TOKEN_INVALID);
             return;
         }
 
@@ -76,9 +80,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             filterChain.doFilter(request, response);
         } catch (ExpiredJwtException e) {
-            writeErrorResponse(response, ErrorCode.ACCESS_TOKEN_EXPIRED);
+            writeErrorResponse(request, response, ErrorCode.ACCESS_TOKEN_EXPIRED);
         } catch (JwtException | IllegalArgumentException e) {
-            writeErrorResponse(response, ErrorCode.ACCESS_TOKEN_INVALID);
+            writeErrorResponse(request, response, ErrorCode.ACCESS_TOKEN_INVALID);
         }
     }
 
@@ -128,7 +132,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             && authorizationHeader.length() > BEARER_PREFIX.length();
     }
 
-    private void writeErrorResponse(HttpServletResponse response, ErrorCode errorCode) throws IOException {
+    private void writeErrorResponse(
+        HttpServletRequest request,
+        HttpServletResponse response,
+        ErrorCode errorCode
+    ) throws IOException {
+        String origin = request.getHeader("Origin");
+        if (frontendOrigin != null && frontendOrigin.equals(origin)) {
+            response.setHeader("Access-Control-Allow-Origin", frontendOrigin);
+            response.setHeader("Access-Control-Allow-Credentials", "true");
+            response.setHeader("Vary", "Origin");
+        }
         response.setStatus(errorCode.getStatus().value());
         response.setContentType("application/json;charset=UTF-8");
 

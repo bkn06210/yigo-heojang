@@ -10,6 +10,8 @@ import PasswordChangeView from '@/views/auth/PasswordChangeView.vue'
 import OnboardingView from '@/views/onboarding/OnboardingView.vue'
 
 // Main
+// import GuestMainView from '@/views/main/GuestMainView.vue'
+// import HomeEmptyView from '@/views/main/HomeEmptyView.vue'
 import HomeView from '@/views/main/HomeView.vue'
 import AIChatRoomView from '@/views/main/AIChatRoomView.vue'
 import NotificationView from '@/views/main/NotificationView.vue'
@@ -18,38 +20,45 @@ import NotificationView from '@/views/main/NotificationView.vue'
 import CardListView from '@/views/card/CardListView.vue'
 import CardDetailView from '@/views/card/CardDetailView.vue'
 import CardRegisterView from '@/views/card/CardRegisterView.vue'
-import BenefitDetailView from '@/views/card/BenefitDetailView.vue'
 
 // Payment
 import PaymentView from '@/views/payment/PaymentView.vue'
-import PaymentRecommendView from '@/views/payment/PaymentRecommendView.vue'
+import PaymentRecommendView from '@/views/payment/PaymentRecommendView.vue' //주소 명칭 변경
+import PaymentQrView from '@/views/payment/PaymentQrView.vue'
+// import CardRecommendResultView from '@/views/card/CardRecommendResultView.vue' //모달로 뺐음
+
 
 // Transaction
 import TransactionListView from '@/views/transaction/TransactionListView.vue'
 import TransactionDetailView from '@/views/transaction/TransactionDetailView.vue'
 
-// Point / Membership
+// Point
 import FinancialPointDetailView from '@/views/point/FinancialPointDetailView.vue'
 import PointListView from '@/views/point/PointListView.vue'
 import MembershipDetailView from '@/views/point/MembershipDetailView.vue'
 import MembershipRegisterView from '@/views/point/MembershipRegisterView.vue'
+import BenefitDetailView from '@/views/point/BenefitDetailView.vue'
 
 // Settings
 import SettingsView from '@/views/settings/SettingsView.vue'
 import ProfileView from '@/views/settings/ProfileView.vue'
 import AccountInfoView from '@/views/settings/AccountInfoView.vue'
+// import SecuritySettingView from '@/views/settings/SecuritySettingView.vue'  //계정 및 보안으로 합침
 import SecurityPasswordChangeView from '@/views/settings/SecurityPasswordChangeView.vue'
 import NotificationSettingView from '@/views/settings/NotificationSettingView.vue'
+import DisplaySettingView from '@/views/settings/DisplaySettingView.vue'
 import PersonalizationSettingView from '@/views/settings/PersonalizationSettingView.vue'
 import WithdrawalView from '@/views/settings/WithdrawalView.vue'
 
 
 const routes = [
-  // Default
+
+    // Default
   {
     path: '/',
-    redirect: '/home',
+    redirect: '/home'
   },
+
 
   // Auth
   { path: '/auth/terms', component: TermsView },
@@ -58,22 +67,27 @@ const routes = [
   { path: '/auth/password-change', component: PasswordChangeView },
 
   // Onboarding
-  { path: '/onboarding', component: OnboardingView },
+  {path: '/onboarding', component: OnboardingView},
 
   // Main
+  // { path: '/main/guest', component: GuestMainView },
+  // { path: '/home/empty', component: HomeEmptyView },
   { path: '/home', component: HomeView },
   { path: '/ai/chat', component: AIChatRoomView },
   { path: '/notifications', component: NotificationView },
 
-  // Card — static paths before dynamic :id
+  // Card
   { path: '/cards', component: CardListView },
-  { path: '/cards/register', component: CardRegisterView },
   { path: '/cards/:id', component: CardDetailView },
+  { path: '/cards/register', component: CardRegisterView },
   { path: '/benefits/:id', component: BenefitDetailView },
 
   // Payment
-  { path: '/payment', name: 'Payment', component: PaymentView },
-  { path: '/payment/recommend', name: 'PaymentRecommend', component: PaymentRecommendView },
+  // 결제 직전 AI 카드 추천 기능 포함이라 /card로 정의함
+  { path: '/payment',  name: 'Payment', component: PaymentView },
+  { path: '/payment/recommend', component: PaymentRecommendView }, //주소 명칭 변경
+  { path: '/payments/qr', name: 'PaymentQr', component: PaymentQrView },
+  // { path: '/cards/recommend/result', component: CardRecommendResultView }, //모달로 뺐음
 
   // Transaction
   { path: '/transactions', component: TransactionListView },
@@ -83,61 +97,35 @@ const routes = [
   { path: '/points', component: PointListView },
   { path: '/points/financial/:id', component: FinancialPointDetailView },
 
-  // Membership — static paths before dynamic :id
+  // Membership
   { path: '/memberships/register', component: MembershipRegisterView },
   { path: '/memberships/:id', component: MembershipDetailView },
-
+  
   // Settings
   { path: '/settings', component: SettingsView },
   { path: '/settings/profile', component: ProfileView },
   { path: '/settings/account', component: AccountInfoView },
+  // { path: '/settings/security', component: SecuritySettingView },
   { path: '/settings/security/password', component: SecurityPasswordChangeView },
   { path: '/settings/notifications', component: NotificationSettingView },
+  { path: '/settings/display', component: DisplaySettingView },
   { path: '/settings/personalization', component: PersonalizationSettingView },
   { path: '/settings/withdrawal', component: WithdrawalView },
 
-  // 404
+  
+  
+   // 404 처리
   {
     path: '/:pathMatch(.*)*',
-    redirect: '/home',
-  },
+    redirect: '/home'
+  }
 ]
 
 
 const router = createRouter({
   history: createWebHistory(),
   routes,
-  scrollBehavior() {
-    return { top: 0 }
-  }
-})
-
-// 하단 네비게이션 탭의 루트 경로 — 탭 간 이동은 슬라이드 대신 페이드로 처리
-const TAB_ROOTS = ['/home', '/cards', '/payment', '/points', '/settings']
-
-// 현재까지 쌓인 이동 경로 스택 — router.back() 시 이전 경로와 비교해 뒤로가기 여부를 판단
-let pathStack = []
-
-router.beforeEach((to, from) => {
-  const toIsTab = TAB_ROOTS.includes(to.path)
-  const fromIsTab = TAB_ROOTS.includes(from.path)
-
-  // 탭 ↔ 탭 이동은 방향성이 없는 수평 전환이라 페이드로 처리하고 스택을 새로 시작
-  if (toIsTab && fromIsTab) {
-    to.meta.transition = 'fade'
-    pathStack = [to.path]
-    return
-  }
-
-  const isBack = pathStack.length >= 2 && pathStack[pathStack.length - 2] === to.path
-
-  if (isBack) {
-    pathStack.pop()
-    to.meta.transition = 'slide-back'
-  } else {
-    pathStack.push(to.path)
-    to.meta.transition = 'slide-forward'
-  }
 })
 
 export default router
+// 07_25 연동 변경: 추가된 API 시연 화면의 프론트 라우트를 등록한다.

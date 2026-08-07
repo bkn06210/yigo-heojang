@@ -1,9 +1,15 @@
+<<<<<<< HEAD
 ﻿<script setup>
 import { ref, computed, onMounted } from 'vue';
+=======
+<script setup>
+import { ref, onMounted } from 'vue';
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 import { useRouter } from 'vue-router';
 
 import { usePaymentStore } from '@/stores/payment';
 import { useAuthStore } from '@/stores/authStore';
+<<<<<<< HEAD
 import { usePersonalizationStore } from '@/stores/personalization';
 
 import { storeToRefs } from 'pinia';
@@ -14,14 +20,23 @@ import { Pagination } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/pagination';
 
+=======
+
+import { getCardRecommendations } from '@/api/walletApi';
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 import PageHeader from '@/components/common/PageHeader.vue';
 
 import PaymentPasswordModal from '@/components/payment/PaymentPasswordModal.vue';
+<<<<<<< HEAD
 import PaymentQRModal from '@/components/payment/PaymentQRModal.vue';
 import PaymentQR from '@/components/payment/PaymentQR.vue';
 import PaymentTimer from '@/components/payment/PaymentTimer.vue';
 import PaymentRecommendationDetailSheet from '@/components/payment/PaymentRecommendationDetailSheet.vue';
+=======
+import PaymentRecommendationDetailSheet from '@/components/payment/PaymentRecommendationDetailSheet.vue';
+import PaymentResultSheet from '@/components/payment/PaymentResultSheet.vue';
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 import PaymentAmountInput from '@/components/payment/PaymentAmountInput.vue';
 import MerchantSelector from '@/components/payment/MerchantSelector.vue';
 import PaymentLoading from '@/components/payment/PaymentLoading.vue';
@@ -33,6 +48,7 @@ import EmptyStateCard from '@/components/common/EmptyStateCard.vue';
 // 라우터
 const router = useRouter();
 
+<<<<<<< HEAD
 const cardStore = useCardStore();
 
 const { cards } = storeToRefs(cardStore);
@@ -56,6 +72,16 @@ const goPersonalizationSetting = () => {
 
 // 로그인 상태 (authStore 기준)
 const isLogin = computed(() => !!authStore.user);
+=======
+// Store
+const paymentStore = usePaymentStore();
+const authStore = useAuthStore();
+
+
+// 로그인 상태
+// TODO : 실제 로그인 상태는 Pinia 기준 사용
+const isLogin = ref(false);
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 
 // 로그인 안내 모달
@@ -64,10 +90,15 @@ const showLoginModal = ref(false);
 
 // 카드 등록 안내 모달
 const showCardRegisterModal = ref(false);
+<<<<<<< HEAD
+=======
+const hasRegisteredCards = ref(true);
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 
 
 // 결제 금액
+<<<<<<< HEAD
 const paymentAmount = ref(0);
 
 
@@ -109,6 +140,9 @@ const closeQuickPay = () => {
   selectedCard.value = null;
 
 };
+=======
+const paymentAmount = ref(30000);
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 
 // 선택 데이터
@@ -140,6 +174,7 @@ const detailCard = ref(null);
 
 
 
+<<<<<<< HEAD
 // 가맹점 - 멤버십 매핑 (mock)
 // TODO : 실제로는 사용자가 등록한 멤버십 목록과 가맹점을 비교해서 매칭해야 함
 const merchantMembershipMap = {
@@ -239,6 +274,34 @@ const recommendedCards = ref([
 // 초기화
 onMounted(() => {
   // mock 데이터는 추가하지 않음
+=======
+const membershipBenefit = ref(null);
+const recommendedCards = ref([]);
+
+const categoryIds = {
+  카페: 102,
+  음식점: 101,
+  쇼핑: 2,
+  교통: 3,
+  문화: 5,
+};
+
+
+
+// 로그인 상태 확인
+onMounted(() => {
+
+  isLogin.value = authStore.isLogin();
+
+
+  // 로그인하지 않은 경우
+  if (!isLogin.value) {
+
+    showLoginModal.value = true;
+
+  }
+
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 });
 
 
@@ -274,7 +337,11 @@ const goHome = () => {
 
 
 // 추천 실행
+<<<<<<< HEAD
 const recommendCard = () => {
+=======
+const recommendCard = async () => {
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 
   // 비로그인
@@ -288,6 +355,7 @@ const recommendCard = () => {
 
 
 
+<<<<<<< HEAD
   // 카드 없음
   if (cards.value.length === 0) {
 
@@ -299,6 +367,8 @@ const recommendCard = () => {
 
 
 
+=======
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
   selectedCard.value = null;
 
 
@@ -306,6 +376,7 @@ const recommendCard = () => {
 
 
 
+<<<<<<< HEAD
   // TODO
   // POST /api/payment/recommend
 
@@ -322,6 +393,35 @@ const recommendCard = () => {
   }, 500);
 
 
+=======
+  try {
+    const response = await getCardRecommendations({
+      expectedAmount: Number(paymentAmount.value),
+      categoryId: categoryIds[selectedCategory.value] || undefined,
+      paymentType: 'CARD',
+    });
+
+    recommendedCards.value = (response.recommendations || []).map((item) => ({
+      id: Number(item.userCardId),
+      name: item.cardName,
+      image: '',
+      benefit: Number(item.expectedBenefit || 0),
+      benefitAmount: Number(item.expectedBenefit || 0),
+      reasons: item.reason ? [item.reason] : [],
+      membershipBenefit: null,
+    }));
+    membershipBenefit.value = response.membershipEarn?.[0] || null;
+    isRecommended.value = true;
+    if (recommendedCards.value.length === 0) {
+      hasRegisteredCards.value = false;
+      showCardRegisterModal.value = true;
+    }
+  } catch (error) {
+    alert(error.response?.data?.message || error.message || '카드 추천에 실패했습니다.');
+  } finally {
+    isLoading.value = false;
+  }
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 };
 
 
@@ -332,9 +432,12 @@ const selectCard = (card) => {
 
   selectedCard.value = card;
 
+<<<<<<< HEAD
   // 상세 시트에서 선택한 경우 시트 닫기
   showDetailSheet.value = false;
 
+=======
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 };
 
 
@@ -351,15 +454,19 @@ const openDetail = (card) => {
 
     category: selectedCategory.value,
 
+<<<<<<< HEAD
     // 가맹점 선택 여부에 따라 매칭되는 멤버십만 표시
     membershipBenefit: membershipBenefit.value,
 
+=======
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
   };
 
   showDetailSheet.value = true;
 
 };
 
+<<<<<<< HEAD
 // QR 타이머 시작
 const startQRTimer = () => {
   clearInterval(qrTimer);
@@ -390,6 +497,10 @@ const cancelPayment = () => {
   isPasswordModalAnimating.value = false;
   clearInterval(qrTimer);
 };
+=======
+
+
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 // 결제하기
 const clickPayment = () => {
@@ -405,6 +516,7 @@ const clickPayment = () => {
 
 
 
+<<<<<<< HEAD
   if (cards.value.length === 0) {
 
   showCardRegisterModal.value = true;
@@ -419,6 +531,9 @@ const clickPayment = () => {
 
   showPasswordModal.value = true;
   isPasswordModalAnimating.value = true;
+=======
+  showPasswordModal.value = true;
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 
 };
@@ -433,7 +548,11 @@ const onPasswordSuccess = () => {
 
   showPasswordModal.value = false;
 
+<<<<<<< HEAD
   isPasswordModalAnimating.value = false;
+=======
+
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
   paymentStore.setPaymentInfo(
 
@@ -441,6 +560,7 @@ const onPasswordSuccess = () => {
 
     paymentAmount.value,
 
+<<<<<<< HEAD
     membershipBenefit.value
 
   );
@@ -448,6 +568,23 @@ const onPasswordSuccess = () => {
   showQRModal.value = true;
   isQRModalAnimating.value = true;
   startQRTimer();
+=======
+    membershipBenefit.value,
+    {
+      categoryId: categoryIds[selectedCategory.value] || 1,
+      merchantName: selectedMerchant.value || selectedCategory.value || '일반 가맹점',
+    }
+
+  );
+
+
+
+  router.push({
+
+    name: 'Payment',
+
+  });
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 
 };
@@ -477,17 +614,39 @@ const refreshPayment = async () => {
 
 <div class="payment-page">
 
+<<<<<<< HEAD
   <PageHeader title="결제 추천" :show-back="true" @back="router.push('/payment')" />
+=======
+
+  <PageHeader title="결제 추천" />
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 
 
   <!-- 비로그인 상태 -->
+<<<<<<< HEAD
   <main v-if="!isLogin" style="flex: 1; display: flex; align-items: center; justify-content: center;">
     <div style="text-align: center; display: flex; flex-direction: column; gap: 16px;">
       <h2 style="margin: 0; font-size: 18px; font-weight: 700; color: var(--color-text-primary);">로그인이 필요합니다</h2>
       <p style="margin: 0; font-size: 14px; color: var(--color-text-secondary);">혜택을 받으려면 로그인해주세요.</p>
       <button @click="goLogin" style="padding: 12px 20px; background: var(--color-primary); color: var(--color-btn-primary-text); border: none; border-radius: var(--radius-full); font-weight: 600; cursor: pointer;">로그인</button>
     </div>
+=======
+  <main v-if="!isLogin">
+
+    <EmptyStateCard
+
+      title="로그인 후 이용할 수 있어요"
+
+      description="로그인하면 결제 혜택 추천 서비스를 이용할 수 있습니다."
+
+      buttonText="로그인"
+
+      @click="goLogin"
+
+    />
+
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
   </main>
 
 
@@ -501,7 +660,11 @@ const refreshPayment = async () => {
 
     <EmptyStateCard
 
+<<<<<<< HEAD
       v-if="cards.length === 0"
+=======
+      v-if="!hasRegisteredCards"
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
       title="등록된 카드가 없어요"
 
@@ -543,6 +706,7 @@ const refreshPayment = async () => {
 
 
 
+<<<<<<< HEAD
 
 
 
@@ -622,10 +786,28 @@ const refreshPayment = async () => {
         <PaymentLoading
 
           v-if="isLoading"
+=======
+      <!-- 장소 선택 -->
+
+      <section class="payment-section">
+
+
+        <h2>
+          이용 장소
+        </h2>
+
+
+        <MerchantSelector
+
+          v-model:category="selectedCategory"
+
+          v-model:merchant="selectedMerchant"
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
         />
 
 
+<<<<<<< HEAD
       </template>
 
 
@@ -738,6 +920,56 @@ const refreshPayment = async () => {
         </div>
 
       </section>
+=======
+      </section>
+
+
+
+
+      <!-- 추천 버튼 -->
+
+      <button
+
+        class="recommend-button"
+
+        @click="recommendCard"
+
+      >
+
+        추천받기
+
+      </button>
+
+
+
+
+      <!-- 추천 로딩 -->
+
+      <PaymentLoading
+
+        v-if="isLoading"
+
+      />
+
+
+
+
+      <!-- 추천 결과 -->
+
+      <PaymentResultSheet
+
+        v-if="isRecommended"
+
+        :cards="recommendedCards"
+
+        :selectedCard="selectedCard"
+
+        @select="selectCard"
+
+        @detail="openDetail"
+
+      />
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 
 
@@ -754,7 +986,11 @@ const refreshPayment = async () => {
 
   <button
 
+<<<<<<< HEAD
     v-if="isLogin && cards.length > 0"
+=======
+    v-if="isLogin && hasRegisteredCards"
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
     class="payment-button"
 
@@ -772,6 +1008,24 @@ const refreshPayment = async () => {
 
 
 
+<<<<<<< HEAD
+=======
+  <!-- 비밀번호 인증 -->
+
+  <PaymentPasswordModal
+
+
+    :visible="showPasswordModal"
+
+
+    @success="onPasswordSuccess"
+
+
+    @close="showPasswordModal = false"
+
+
+  />
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 
 
@@ -901,6 +1155,7 @@ const refreshPayment = async () => {
 
   />
 
+<<<<<<< HEAD
   <!-- 비밀번호 모달 -->
   <PaymentPasswordModal v-if="showPasswordModal"
                         @success="onPasswordSuccess"
@@ -912,6 +1167,8 @@ const refreshPayment = async () => {
                   @timeout="cancelPayment"
                   @success="cancelPayment" />
 
+=======
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 <BottomNavigation/>
 
 
@@ -929,6 +1186,7 @@ const refreshPayment = async () => {
 
   min-height: 100vh;
 
+<<<<<<< HEAD
   background: var(--color-bg);
 
   padding: var(--space-md);
@@ -947,6 +1205,11 @@ const refreshPayment = async () => {
   display: flex;
 
   flex-direction: column;
+=======
+  background: #f8f8fb;
+
+  padding-bottom: 120px;
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 }
 
@@ -955,7 +1218,11 @@ const refreshPayment = async () => {
 /* 본문 */
 main {
 
+<<<<<<< HEAD
   display: block;
+=======
+  padding: 20px;
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 }
 
@@ -964,6 +1231,7 @@ main {
 /* 섹션 카드 느낌 */
 .payment-section {
 
+<<<<<<< HEAD
   background: var(--color-surface);
 
   border-radius: var(--radius-lg);
@@ -973,6 +1241,19 @@ main {
   margin-bottom: var(--space-lg);
 
   box-shadow: var(--shadow-card);
+=======
+  background: white;
+
+  border-radius: 20px;
+
+  padding: 20px;
+
+  margin-bottom: 18px;
+
+  box-shadow:
+
+    0 3px 12px rgba(0,0,0,0.05);
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 }
 
@@ -982,6 +1263,7 @@ main {
 
   margin: 0 0 16px;
 
+<<<<<<< HEAD
   font-size: var(--font-lg);
 
   font-weight: var(--font-bold);
@@ -1242,6 +1524,11 @@ main {
 .quick-card-slide-button .quick-card-detail-link:hover {
 
   color: var(--color-primary-dark);
+=======
+  font-size: 18px;
+
+  font-weight: 700;
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 }
 
@@ -1255,7 +1542,12 @@ main {
 
   height: 54px;
 
+<<<<<<< HEAD
   margin-bottom: var(--space-lg);
+=======
+
+  margin-top: 8px;
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 
   border: none;
@@ -1263,6 +1555,7 @@ main {
   border-radius: 16px;
 
 
+<<<<<<< HEAD
   background:
     linear-gradient(
       90deg,
@@ -1272,6 +1565,12 @@ main {
 
 
   color: var(--color-btn-primary-text);
+=======
+  background: #4F46E5;
+
+
+  color: white;
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 
   font-size: 16px;
@@ -1286,11 +1585,14 @@ main {
 
 }
 
+<<<<<<< HEAD
 .recommend-button:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
 
+=======
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 
 .recommend-button:active {
@@ -1301,6 +1603,7 @@ main {
 
 
 
+<<<<<<< HEAD
 /* 바로 결제: 보유 카드 목록 */
 
 .quick-card-list {
@@ -1386,6 +1689,8 @@ main {
 }
 
 
+=======
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 /* 하단 결제 버튼 */
 
@@ -1411,6 +1716,7 @@ main {
   border-radius: 18px;
 
 
+<<<<<<< HEAD
   background:
     linear-gradient(
       90deg,
@@ -1420,6 +1726,12 @@ main {
 
 
   color: var(--color-btn-primary-text);
+=======
+  background: #4F46E5;
+
+
+  color: white;
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 
   font-size: 16px;
@@ -1430,7 +1742,11 @@ main {
 
   box-shadow:
 
+<<<<<<< HEAD
     0 8px 20px rgba(var(--color-primary-dark-rgb),0.25);
+=======
+    0 8px 20px rgba(79,70,229,0.25);
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 
 
@@ -1443,10 +1759,17 @@ main {
 .payment-button:disabled {
 
 
+<<<<<<< HEAD
   background: var(--color-btn-disabled-bg);
 
 
   color: var(--color-text-tertiary);
+=======
+  background: #d1d5db;
+
+
+  color: #888;
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 
   box-shadow: none;
@@ -1500,7 +1823,11 @@ main {
   max-width:360px;
 
 
+<<<<<<< HEAD
   background: var(--color-surface);
+=======
+  background:white;
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 
   border-radius:24px;
@@ -1512,7 +1839,14 @@ main {
   text-align:center;
 
 
+<<<<<<< HEAD
   box-shadow: var(--shadow-card);
+=======
+  box-shadow:
+
+
+    0 10px 30px rgba(0,0,0,0.15);
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 
 }
@@ -1526,10 +1860,17 @@ main {
   margin:0 0 14px;
 
 
+<<<<<<< HEAD
   font-size: var(--font-lg);
 
 
   font-weight: var(--font-bold);
+=======
+  font-size:20px;
+
+
+  font-weight:700;
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 
 }
@@ -1543,7 +1884,11 @@ main {
   margin-bottom:24px;
 
 
+<<<<<<< HEAD
   color: var(--color-text-secondary);
+=======
+  color:#666;
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 
   font-size:14px;
@@ -1562,7 +1907,11 @@ main {
 .login-link {
 
 
+<<<<<<< HEAD
   color:var(--color-surface);
+=======
+  color:#4F46E5;
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 
   text-decoration:underline;
@@ -1593,6 +1942,7 @@ main {
   border-radius:14px;
 
 
+<<<<<<< HEAD
   background:
     linear-gradient(
       90deg,
@@ -1602,6 +1952,9 @@ main {
 
 
   color:var(--color-btn-primary-text);
+=======
+  background:#f1f2f7;
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 
   font-size:15px;
@@ -1644,6 +1997,7 @@ main {
 :deep(.card) {
 
 
+<<<<<<< HEAD
   background: var(--color-surface);
 
 
@@ -1651,6 +2005,18 @@ main {
 
 
   box-shadow: var(--shadow-card);
+=======
+  background:white;
+
+
+  border-radius:20px;
+
+
+  box-shadow:
+
+
+    0 3px 12px rgba(0,0,0,0.06);
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 
 }
@@ -1673,6 +2039,7 @@ main {
 
 /* EmptyStateCard 보정 */
 
+<<<<<<< HEAD
 :deep(.empty-card) {
 
 
@@ -1680,16 +2047,33 @@ main {
 
 
   border-radius: var(--radius-lg);
+=======
+:deep(.empty-state-card) {
+
+
+  background:white;
+
+
+  border-radius:20px; 
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 
   padding:24px;
 
 
+<<<<<<< HEAD
   box-shadow: var(--shadow-card);
+=======
+  box-shadow:
+
+
+    0 3px 12px rgba(0,0,0,0.05);
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 
 }
 
+<<<<<<< HEAD
 /* QR 모달 */
 .qr-overlay {
   position: fixed;
@@ -1770,3 +2154,8 @@ main {
 }
 
 </style>
+=======
+
+</style>
+<!-- 07_25 연동 변경: 기존 추천 UI를 유지하면서 실제 카드 추천 API를 호출한다. -->
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e

@@ -2,14 +2,18 @@
 
 <div class="loading">
 
+<<<<<<< HEAD
 <span class="spinner"></span>
 
+=======
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 <p>
 혜택을 분석하고 있어요...
 </p>
 
 </div>
 
+<<<<<<< HEAD
 </template>
 
 
@@ -68,3 +72,6 @@
 }
 
 </style>
+=======
+</template>
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e

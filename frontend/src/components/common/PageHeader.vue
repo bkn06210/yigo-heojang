@@ -10,12 +10,15 @@ const props = defineProps({
     default: true
   }
 });
+<<<<<<< HEAD
 
 const emit = defineEmits(['back']);
 
 const handleBack = () => {
   emit('back');
 };
+=======
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 </script>
 
@@ -24,6 +27,7 @@ const handleBack = () => {
 
 <header class="page-header">
 
+<<<<<<< HEAD
   <button
     v-if="showBack"
     class="back-button"
@@ -33,16 +37,26 @@ const handleBack = () => {
     <span class="back-icon">‹</span>
   </button>
 
+=======
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
   <h1>
     {{ title }}
   </h1>
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
   <div class="actions">
 
     <slot />
 
   </div>
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 </header>
 
 </template>
@@ -51,6 +65,7 @@ const handleBack = () => {
 <style scoped>
 
 .page-header {
+<<<<<<< HEAD
 
   display: flex;
 
@@ -108,10 +123,21 @@ const handleBack = () => {
 
   line-height: 1;
 
+=======
+  padding: 20px 0;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.menu-wrapper {
+  margin-left: auto;
+  position: relative;
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 }
 
 h1 {
 
+<<<<<<< HEAD
   margin: 0;
 
   color: var(--color-text-primary);
@@ -138,4 +164,23 @@ h1 {
 
 
 
+=======
+  margin:0;
+
+  font-size:20px;
+
+  font-weight:700;
+
+}
+
+
+.actions {
+
+  display:flex;
+
+  align-items:center;
+
+}
+
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 </style>

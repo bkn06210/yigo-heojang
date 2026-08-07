@@ -1,14 +1,23 @@
+<<<<<<< HEAD
 ﻿<script setup>
+=======
+<script setup>
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import PageHeader from '@/components/common/PageHeader.vue';
 import PasswordInput from '@/components/common/PasswordInput.vue';
 import AppButton from '@/components/common/AppButton.vue';
 import AuthVerifyModal from '@/components/auth/AuthVerifyModal.vue';
+<<<<<<< HEAD
 import { useToast } from '@/composables/useToast';
 
 const router = useRouter();
 const { showToast } = useToast();
+=======
+
+const router = useRouter();
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 const form = ref({
   currentPassword: '',
@@ -38,7 +47,11 @@ const openVerifyModal = () => {
 
 const handleVerifySuccess = () => {
   isModalOpen.value = false;       // 인증 팝업 노출 여부 상태
+<<<<<<< HEAD
   showToast('success', '비밀번호가 안전하게 변경되었습니다.');
+=======
+  alert('비밀번호가 안전하게 변경되었습니다.');
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
   router.go(-1);
 };
 </script>
@@ -49,8 +62,11 @@ const handleVerifySuccess = () => {
     <PageHeader title="비밀번호 변경" @back="goBack" />
 
     <div class="content-container">
+<<<<<<< HEAD
       <h1 class="page-title">비밀번호 변경</h1>
 
+=======
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
       <div class="form-section">
         <!-- 1. 현재 비밀번호 입력 -->
         <div class="input-group">
@@ -91,11 +107,16 @@ const handleVerifySuccess = () => {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+<<<<<<< HEAD
   background-color: var(--color-bg);
+=======
+  background-color: #f9f9f9;
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 }
 
 .content-container {
   flex: 1;
+<<<<<<< HEAD
   padding: var(--space-lg);
   padding-bottom: calc(var(--space-xl) + var(--space-2xl) + var(--space-xl));
 }
@@ -130,6 +151,21 @@ const handleVerifySuccess = () => {
 
 .input-group {
   margin-bottom: var(--space-md);
+=======
+  padding: 20px;
+  padding-bottom: 100px;
+}
+
+.form-section {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  padding: 20px;
+}
+
+.input-group {
+  margin-bottom: 20px;
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 }
 .input-group:last-child {
   margin-bottom: 0;
@@ -137,17 +173,26 @@ const handleVerifySuccess = () => {
 
 .input-label {
   display: block;
+<<<<<<< HEAD
   font-size: var(--font-sm);
   font-weight: var(--font-medium);
   color: var(--color-text-primary);
   margin-bottom: var(--space-xs);
 }
+=======
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 8px;
+} 
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 .footer-button-area {
   position: fixed;
   bottom: 0;
   left: 0;
   width: 100%;
+<<<<<<< HEAD
   padding: var(--space-sm) var(--space-md);
   box-sizing: border-box;
 
@@ -164,3 +209,11 @@ const handleVerifySuccess = () => {
   box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.3);
 }
 </style>
+=======
+  padding: 15px 20px;
+  background-color: white;
+  box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+  box-sizing: border-box;
+}
+</style>
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e

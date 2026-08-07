@@ -85,6 +85,7 @@ const emit = defineEmits([
 
   width:320px;
 
+<<<<<<< HEAD
   border-radius: var(--radius-xl);
 
   padding: var(--space-xl);
@@ -114,18 +115,33 @@ const emit = defineEmits([
   color: var(--color-text-primary);
   margin: 0;
 
+=======
+  background:white;
+
+  border-radius:20px;
+
+  padding:28px;
+
+  text-align:center;
+
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 }
 
 .icon{
 
   font-size:42px;
 
+<<<<<<< HEAD
   margin-bottom: var(--space-md);
+=======
+  margin-bottom:16px;
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 }
 
 .description{
 
+<<<<<<< HEAD
   margin: var(--space-lg) 0;
 
   line-height:1.6;
@@ -133,6 +149,13 @@ const emit = defineEmits([
   font-size: var(--font-sm);
 
   color: var(--color-text-secondary);
+=======
+  margin:20px 0;
+
+  line-height:1.6;
+
+  font-size:14px;
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 }
 
@@ -142,16 +165,26 @@ const emit = defineEmits([
 
   flex-direction:column;
 
+<<<<<<< HEAD
   gap: var(--space-sm);
 
 }
 
 .refresh-button{
+=======
+  gap:12px;
+
+}
+
+.refresh-button,
+.cancel-button{
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
   height:48px;
 
   border:none;
 
+<<<<<<< HEAD
   border-radius: var(--radius-md);
 
   background: linear-gradient(90deg, var(--color-btn-primary-start), var(--color-btn-primary-end));
@@ -199,6 +232,12 @@ const emit = defineEmits([
   background: var(--color-surface);
   color: var(--color-text-primary);
 
+=======
+  border-radius:12px;
+
+  cursor:pointer;
+
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 }
 
 </style>

@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 ﻿<script setup>
+=======
+<script setup>
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 import { ref } from 'vue'
 
 
@@ -234,14 +238,23 @@ const backToCategory = () => {
 
   box-sizing: border-box;
 
+<<<<<<< HEAD
   border-radius: var(--radius-xl) var(--radius-xl) 0 0;
 
   padding: var(--space-xl);
+=======
+  background: white;
+
+  border-radius: 24px 24px 0 0;
+
+  padding: 24px;
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
   max-height: 70vh;
 
   overflow-y: auto;
 
+<<<<<<< HEAD
   /* 카드사용내역 상세 바텀시트와 동일하게 불투명 배경으로 통일 */
   background: var(--color-surface);
   box-shadow: 0 -16px 40px rgba(0, 0, 0, 0.12);
@@ -252,17 +265,25 @@ const backToCategory = () => {
 
   box-shadow: 0 -16px 40px rgba(0, 0, 0, 0.35);
 
+=======
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 }
 
 
 h2 {
 
+<<<<<<< HEAD
   font-size: var(--font-xl);
   font-weight: var(--font-bold);
   letter-spacing: -0.2px;
   color: var(--color-text-primary);
 
   margin: 0 0 var(--space-xl);
+=======
+  font-size: 20px;
+
+  margin-bottom: 20px;
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 }
 
@@ -274,6 +295,7 @@ h2 {
 
   justify-content: space-between;
 
+<<<<<<< HEAD
   align-items: center;
 
   padding: var(--space-md);
@@ -303,12 +325,21 @@ h2 {
   background: linear-gradient(135deg, rgba(var(--color-primary-dark-rgb), 0.18) 0%, rgba(var(--color-primary-dark-rgb), 0.06) 100%);
   border: 1px solid rgba(var(--color-primary-dark-rgb), 0.28);
 
+=======
+  padding: 16px 0;
+
+  border-bottom: 1px solid #eee;
+
+  cursor: pointer;
+
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 }
 
 
 
 .detail-item {
 
+<<<<<<< HEAD
   padding: var(--space-md);
 
   margin-bottom: var(--space-sm);
@@ -317,6 +348,11 @@ h2 {
 
   background: var(--color-surface);
   border: 1px solid var(--color-border);
+=======
+  padding: 16px 0;
+
+  border-bottom: 1px solid #eee;
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 }
 
@@ -326,7 +362,11 @@ h2 {
 
   margin-top: 6px;
 
+<<<<<<< HEAD
   color: var(--color-text-secondary);
+=======
+  color: #666;
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 }
 
@@ -338,7 +378,11 @@ h2 {
 
   margin-top: 8px;
 
+<<<<<<< HEAD
   color: var(--color-text-primary);
+=======
+  color: #2563eb;
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 }
 
@@ -346,6 +390,7 @@ h2 {
 
 .total {
 
+<<<<<<< HEAD
   font-size: var(--typo-display-large-size);
   font-weight: var(--typo-display-large-weight);
   line-height: var(--typo-display-large-line-height);
@@ -353,6 +398,11 @@ h2 {
   color: var(--color-text-primary);
 
   margin: 0 0 var(--space-lg);
+=======
+  font-size: 28px;
+
+  font-weight: 700;
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 }
 
@@ -362,6 +412,7 @@ h2 {
 
   margin-bottom: 16px;
 
+<<<<<<< HEAD
   width: auto;
 
   height: 40px;
@@ -382,6 +433,8 @@ h2 {
 
   transition: var(--transition-fast);
 
+=======
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 }
 
 
@@ -396,6 +449,7 @@ h2 {
 
   border-radius: 12px;
 
+<<<<<<< HEAD
   border: none;
 
   background:
@@ -414,6 +468,9 @@ h2 {
   cursor: pointer;
 
   transition: var(--transition-fast);
+=======
+  background: #f3f4f6;
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 }
 

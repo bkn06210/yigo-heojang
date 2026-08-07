@@ -25,17 +25,24 @@ target/
 .DS_Store
 Thumbs.db
 
+# Python
+__pycache__/
+*.pyc
+
 
 # 카드사 약관 원문 — 저작권상 레포에 올리지 않는다.
 # card_term_document.source_url로 재취득 가능하고, 추출 결과는 시드 SQL로 커밋된다.
 ai-server/ingest/raw/
+# 추출한 약관 본문도 원문이다. DB(card_term_document)에 들어가고 파이프라인으로 재생성된다.
+ai-server/ingest/out/terms/
+# 이전 회차 구조화 결과 (비교용 백업)
+ai-server/ingest/out/structured_v1/
 # PDF 페이지 렌더링 (중간 산출물, 재생성 가능)
 ai-server/ingest/out/*.png
+ai-server/ingest/out/vision/
 
 # Frontend dependencies
-node_modules/
 frontend/node_modules/
 
 # Frontend build output
-dist/
 frontend/dist/

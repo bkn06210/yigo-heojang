@@ -115,9 +115,14 @@ class PerformanceSnapshotServiceIntegrationTest {
                 "INSERT INTO member (email, password_hash, name, nickname) VALUES (?, ?, ?, ?)",
                 "perf-it@test.local", "x", "실적테스트회원", "별명A");
 
+        long cardCompanyId = insert(
+            "INSERT INTO card_company (company_code, company_name) VALUES (?, ?)",
+            "TEST_CARD", "테스트카드사"
+        );
+
         cardId = insert(
-                "INSERT INTO card (card_name, issuer, card_type) VALUES (?, ?, ?)",
-                "실적테스트카드", "TEST", "CREDIT");
+                "INSERT INTO card (card_name, card_company_id, card_type) VALUES (?, ?, ?)",
+                "실적테스트카드", cardCompanyId, "CREDIT");
 
         parentCategoryId = insert(
                 "INSERT INTO category (category_code, category_name, parent_category_id) VALUES (?, ?, NULL)",

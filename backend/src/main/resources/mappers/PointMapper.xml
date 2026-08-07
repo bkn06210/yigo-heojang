@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.wallet.point.mapper.PointMapper">
+
+    <select id="selectPointList"
+            parameterType="long"
+            resultType="com.wallet.point.dto.PointResponse">
+
+        SELECT
+            pw.point_wallet_id AS pointWalletId,
+            pp.point_provider_id AS pointProviderId,
+            pp.point_provider_name AS providerName,
+            pp.point_provider_type AS providerType,
+            pp.logo_image_url AS logoImage,
+            pw.total_point AS totalPoint
+        FROM point_wallet pw
+                 JOIN point_provider pp
+                      ON pw.point_provider_id = pp.point_provider_id
+        WHERE pw.member_id = #{memberId}
+          AND pp.use_yn = 'Y'
+        ORDER BY
+            pw.total_point DESC,
+            pp.point_provider_name ASC
+
+    </select>
+
+
+    <select id="selectPointHistory"
+            resultType="com.wallet.point.dto.PointHistoryResponse">
+
+        SELECT
+        ph.point_history_id AS pointHistoryId,
+        ph.point_wallet_id AS pointWalletId,
+        pp.point_provider_name AS providerName,
+        ph.point_type AS pointType,
+        ph.point_amount AS pointAmount,
+        ph.content AS content,
+        DATE_FORMAT(ph.occurred_at, '%Y-%m-%dT%H:%i:%s') AS occurredAt
+        FROM point_history ph
+        JOIN point_wallet pw
+        ON ph.point_wallet_id = pw.point_wallet_id
+        JOIN point_provider pp
+        ON pw.point_provider_id = pp.point_provider_id
+        WHERE ph.member_id = #{memberId}
+
+        <if test="pointWalletId != null">
+            AND ph.point_wallet_id = #{pointWalletId}
+        </if>
+
+        <if test="pointType != null and pointType != ''">
+            AND ph.point_type = #{pointType}
+        </if>
+
+        <if test="yearMonth != null and yearMonth != ''">
+            AND DATE_FORMAT(ph.occurred_at, '%Y-%m') = #{yearMonth}
+        </if>
+
+        ORDER BY ph.occurred_at DESC
+
+    </select>
+
+
+    <select id="selectPointUsagePlaces"
+            resultType="com.wallet.point.dto.PointUsagePlaceResponse">
+
+        SELECT
+        pup.point_usage_place_id AS usagePlaceId,
+        pup.point_provider_id AS pointProviderId,
+        pp.point_provider_name AS providerName,
+        pup.place_name AS placeName,
+        pup.category_id AS categoryId,
+        c.category_name AS categoryName,
+        pup.use_yn AS useYn,
+        pup.description AS description
+        FROM point_usage_place pup
+        JOIN point_provider pp
+        ON pup.point_provider_id = pp.point_provider_id
+        LEFT JOIN category c
+        ON pup.category_id = c.category_id
+        WHERE pup.point_provider_id = #{pointProviderId}
+        AND pup.use_yn = 'Y'
+        AND pp.use_yn = 'Y'
+
+        <if test="categoryId != null">
+            AND pup.category_id = #{categoryId}
+        </if>
+
+        ORDER BY pup.point_usage_place_id ASC
+
+    </select>
+
+</mapper>

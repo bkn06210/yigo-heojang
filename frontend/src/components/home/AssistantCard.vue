@@ -21,7 +21,11 @@
   border-radius:20px;
 
 
+<<<<<<< HEAD
   background: var(--color-bg);
+=======
+  background:#f5f5f5;
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 
 }

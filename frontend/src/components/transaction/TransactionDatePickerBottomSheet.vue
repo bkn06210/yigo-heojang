@@ -2,7 +2,10 @@
 
 <script setup>
 import { ref, computed } from 'vue';
+<<<<<<< HEAD
 import Icon from '@/components/common/Icon.vue';
+=======
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 
 const emit = defineEmits([
@@ -15,8 +18,12 @@ const emit = defineEmits([
 // 현재 보고 있는 달
 const currentDate = ref(new Date());
 
+<<<<<<< HEAD
 // 월 선택 모드
 const showMonthPicker = ref(false);
+=======
+
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 // 선택 날짜
 const startDate = ref('');
@@ -45,6 +52,7 @@ const changeMonth = (value) => {
 
 
 
+<<<<<<< HEAD
 // 월 선택
 
 const selectMonth = (month) => {
@@ -58,6 +66,8 @@ const selectMonth = (month) => {
 };
 
 
+=======
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 // 캘린더 날짜 생성
 
@@ -131,6 +141,10 @@ const calendarDays = computed(() => {
 
 
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 // 날짜 포맷
 
 const formatDate = (date) => {
@@ -152,6 +166,10 @@ const formatDate = (date) => {
 
 
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 // 날짜 선택
 
 const selectDate = (date) => {
@@ -220,6 +238,12 @@ const selectDate = (date) => {
 
 
 
+<<<<<<< HEAD
+=======
+
+
+
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 // 선택 상태
 
 const isSelected = (date) => {
@@ -238,6 +262,7 @@ const isSelected = (date) => {
 
 
 
+<<<<<<< HEAD
 // 범위 내 상태 (시작일과 종료일 사이)
 
 const isBetween = (date) => {
@@ -277,6 +302,8 @@ const isLastInRange = (date) => {
   return date === endDate.value;
 
 };
+=======
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 
 
@@ -285,6 +312,7 @@ const isLastInRange = (date) => {
 
 const apply = () => {
 
+<<<<<<< HEAD
   let applyStartDate = startDate.value;
 
   let applyEndDate = endDate.value;
@@ -305,19 +333,38 @@ const apply = () => {
     applyStartDate = formatDate(firstDay);
 
     applyEndDate = formatDate(lastDay);
+=======
+
+  if(!startDate.value || !endDate.value) {
+
+
+    return;
+
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
   }
 
 
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
   emit(
 
     'apply',
 
     {
 
+<<<<<<< HEAD
       startDate:applyStartDate,
 
       endDate:applyEndDate,
+=======
+      startDate:startDate.value,
+
+      endDate:endDate.value,
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
     }
 
@@ -329,6 +376,11 @@ const apply = () => {
 
 
 
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 // 닫기
 
 const close = () => {
@@ -342,6 +394,7 @@ const close = () => {
 
 </script>
 
+<<<<<<< HEAD
 <template>
 
 <div class="overlay" @click.self="close">
@@ -365,6 +418,86 @@ const close = () => {
 
 <div class="selected">
 
+=======
+
+
+
+
+<template>
+
+
+<div
+
+class="overlay"
+
+@click.self="close"
+
+>
+
+
+<section class="sheet">
+
+
+
+<div class="handle"></div>
+
+
+
+
+
+<div class="header">
+
+
+<button
+@click="changeMonth(-1)"
+>
+‹
+</button>
+
+
+
+<h2>
+
+{{currentDate.getFullYear()}}
+
+년
+
+{{currentDate.getMonth()+1}}
+
+월
+
+</h2>
+
+
+
+<button
+@click="changeMonth(1)"
+>
+›
+</button>
+
+
+
+<button
+@click="close"
+>
+✕
+</button>
+
+
+
+</div>
+
+
+
+
+
+
+
+<div class="selected">
+
+
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 <div>
 
 <p>
@@ -407,6 +540,7 @@ const close = () => {
 
 
 
+<<<<<<< HEAD
 <div v-if="showMonthPicker" class="month-picker">
 
 <div class="month-grid">
@@ -441,6 +575,16 @@ const close = () => {
 
 <div class="calendar">
 
+=======
+
+
+
+
+<div class="calendar">
+
+
+
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 <button
 
 v-for="(day,index) in calendarDays"
@@ -450,27 +594,55 @@ v-for="(day,index) in calendarDays"
 :disabled="!day"
 
 :class="{
+<<<<<<< HEAD
 active:isSelected(day),
 between:isBetween(day),
 'range-start':isFirstInRange(day),
 'range-end':isLastInRange(day)
+=======
+active:isSelected(day)
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 }"
 
 @click="selectDate(day)"
 
 >
 
+<<<<<<< HEAD
 <span>{{day?.split('.')[2]}}</span>
 
 </button>
 
 </div>
+=======
+
+{{day?.split('.')[2]}}
+
+
+</button>
+
+
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 </div>
 
 
 
+<<<<<<< HEAD
 <button class="apply" @click="apply">
+=======
+
+
+
+
+<button
+
+class="apply"
+
+@click="apply"
+
+>
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 적용
 
@@ -478,6 +650,7 @@ between:isBetween(day),
 
 
 
+<<<<<<< HEAD
 </section>
 
 </div>
@@ -724,3 +897,182 @@ cursor:pointer;
 }
 
 </style>
+=======
+
+
+</section>
+
+
+</div>
+
+
+</template>
+
+
+
+
+
+
+
+<style scoped>
+
+
+.overlay {
+
+position:fixed;
+
+inset:0;
+
+background:rgba(0,0,0,.35);
+
+display:flex;
+
+align-items:flex-end;
+
+z-index:1200;
+
+}
+
+
+
+.sheet {
+
+width:100%;
+
+background:white;
+
+border-radius:24px 24px 0 0;
+
+padding:20px;
+
+}
+
+
+
+.handle {
+
+width:40px;
+
+height:5px;
+
+background:#ddd;
+
+border-radius:10px;
+
+margin:0 auto 20px;
+
+}
+
+
+
+.header {
+
+display:flex;
+
+align-items:center;
+
+justify-content:space-between;
+
+}
+
+
+
+.header button {
+
+border:none;
+
+background:none;
+
+font-size:22px;
+
+}
+
+
+
+.selected {
+
+display:flex;
+
+justify-content:space-around;
+
+margin:24px 0;
+
+}
+
+
+
+.selected p {
+
+font-size:13px;
+
+color:#777;
+
+}
+
+
+
+.selected strong {
+
+font-size:16px;
+
+}
+
+
+
+.calendar {
+
+display:grid;
+
+grid-template-columns:repeat(7,1fr);
+
+gap:8px;
+
+}
+
+
+
+.calendar button {
+
+height:42px;
+
+border-radius:10px;
+
+border:1px solid #ddd;
+
+background:white;
+
+}
+
+
+
+.calendar button.active {
+
+border:2px solid #4F46E5;
+
+color:#4F46E5;
+
+}
+
+
+
+.apply {
+
+width:100%;
+
+height:50px;
+
+margin-top:24px;
+
+border:none;
+
+border-radius:12px;
+
+background:#4F46E5;
+
+color:white;
+
+}
+
+
+</style>
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e

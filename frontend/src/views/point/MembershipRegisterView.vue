@@ -1,8 +1,18 @@
+<<<<<<< HEAD
 ﻿<script setup>
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 
 import PageHeader from '@/components/common/PageHeader.vue'
+=======
+<script setup>
+import { ref, computed, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+import { getMembershipProviders, registerMembership } from '@/api/walletApi'
+import { getPartnerUsagePlaces } from '@/utils/partnerUsagePlaces'
+import { getPartnerLogo } from '@/utils/partnerLogos'
+
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 const router = useRouter()
 
@@ -21,6 +31,7 @@ const selectedMembership = ref(null)
 
 // 임시 멤버십 데이터
 // 추후 API 응답 데이터로 교체 예정
+<<<<<<< HEAD
 const membershipList = ref([
   {
     id: 1,
@@ -51,8 +62,26 @@ const membershipList = ref([
       '영화관',
       '카페'
     ]
+=======
+const membershipList = ref([])
+const errorMessage = ref('')
+
+const loadProviders = async () => {
+  try {
+    const data = await getMembershipProviders()
+    membershipList.value = (data?.providers || data || [])
+      .filter((provider) => !provider.isRegistered)
+      .map((provider) => ({
+        id: Number(provider.pointProviderId),
+        name: provider.providerName,
+        logo: getPartnerLogo(provider.providerName, provider.logoImageUrl),
+        mainUses: getPartnerUsagePlaces(provider.providerName).slice(0, 3).map((place) => place.placeName),
+      }))
+  } catch (error) {
+    errorMessage.value = error?.response?.data?.message || error?.message || '제휴 멤버십을 불러오지 못했습니다.'
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
   }
-])
+}
 
 
 // 한글 초성만 추출 (예: "스타벅스" → "ㅅㅌㅂㅅ")
@@ -174,6 +203,7 @@ const popularMemberships = computed(() => {
 
 
 // 멤버십 추가 클릭
+<<<<<<< HEAD
 // TODO: 백엔드 연동 필요 - 현재는 완료 팝업만 띄우고 실제로 저장하지 않음.
 // PointListView.vue의 membershipList(로컬 빈 배열)와 연결되어 있지 않아서
 // 여기서 "추가"를 눌러도 혜택 목록 페이지에는 반영되지 않음.
@@ -184,6 +214,17 @@ const addMembership = (membership) => {
 
   showModal.value = true
 
+=======
+const addMembership = async (membership) => {
+  try {
+    await registerMembership(membership.id)
+    selectedMembership.value = membership
+    showModal.value = true
+    membershipList.value = membershipList.value.filter((item) => item.id !== membership.id)
+  } catch (error) {
+    errorMessage.value = error?.response?.data?.message || error?.message || '멤버십 추가에 실패했습니다.'
+  }
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 }
 
 
@@ -227,6 +268,8 @@ const selectSuggestion = (membership) => {
 
 }
 
+onMounted(loadProviders)
+
 </script>
 
 
@@ -243,6 +286,8 @@ const selectSuggestion = (membership) => {
     <p class="description">
       자주 사용하는 멤버십을 추가해보세요
     </p>
+
+    <p v-if="errorMessage" class="description">{{ errorMessage }}</p>
 
 
 
@@ -319,8 +364,14 @@ const selectSuggestion = (membership) => {
         :class="{ 'is-featured': index === 0 }"
       >
 
-        <span>
-          {{ membership.name }}
+        <span class="membership-label">
+          <img
+            v-if="membership.logo"
+            :src="membership.logo"
+            :alt="`${membership.name} 로고`"
+            class="membership-logo"
+          />
+          <span>{{ membership.name }}</span>
         </span>
 
 
@@ -568,6 +619,22 @@ h2 {
 
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.06);
 
+}
+
+.membership-label {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.membership-logo {
+  width: 44px;
+  height: 44px;
+  flex: 0 0 44px;
+  border-radius: 12px;
+  object-fit: contain;
+  background: #fff;
 }
 
 
@@ -828,6 +895,7 @@ button:hover {
 
 .suggestion-item:hover {
 
+<<<<<<< HEAD
   background: rgba(255, 255, 255, 0.15);
 
 }
@@ -836,6 +904,10 @@ button:hover {
 
   background: rgba(255, 255, 255, 0.04);
 
+=======
+  background: #f8f8f8;
+ 
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 }
 
 
@@ -848,3 +920,4 @@ button:hover {
 }
 
 </style>
+<!-- 07_25 연동 변경: 제휴 멤버십 목록 조회와 멤버십 추가 API를 연결한다. -->

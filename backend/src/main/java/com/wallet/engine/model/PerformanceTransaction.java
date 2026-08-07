@@ -24,6 +24,14 @@ public final class PerformanceTransaction {
     private final String paymentType;
     private final boolean interestFree;
     private final long discountAmount;
+    /**
+     * 이 거래에 적용된 혜택이 실적 제외 대상인가 (benefit.exclude_from_performance).
+     *
+     * 카드 단위 제외 규칙(performance_exclusion)과 축이 다르다. TRANSACTION_ATTR='DISCOUNTED'로
+     * 적으면 <b>다른 혜택을 받은 거래까지</b> 빠져 실적이 실제보다 낮아지는데, 이 플래그는
+     * 지정된 그 혜택을 받은 거래만 뺀다. 적용 혜택이 없으면 false다.
+     */
+    private final boolean benefitExcludedFromPerformance;
 
     private PerformanceTransaction(Builder builder) {
         if (builder.amount < 0) {
@@ -40,6 +48,7 @@ public final class PerformanceTransaction {
         this.paymentType = builder.paymentType;
         this.interestFree = builder.interestFree;
         this.discountAmount = builder.discountAmount;
+        this.benefitExcludedFromPerformance = builder.benefitExcludedFromPerformance;
     }
 
     public static Builder builder() {
@@ -78,6 +87,10 @@ public final class PerformanceTransaction {
         return discountAmount;
     }
 
+    public boolean isBenefitExcludedFromPerformance() {
+        return benefitExcludedFromPerformance;
+    }
+
     public static final class Builder {
         private long expenseId;
         private long amount;
@@ -87,6 +100,7 @@ public final class PerformanceTransaction {
         private String paymentType;
         private boolean interestFree;
         private long discountAmount;
+        private boolean benefitExcludedFromPerformance;
 
         private Builder() {
         }
@@ -128,6 +142,11 @@ public final class PerformanceTransaction {
 
         public Builder discountAmount(long discountAmount) {
             this.discountAmount = discountAmount;
+            return this;
+        }
+
+        public Builder benefitExcludedFromPerformance(boolean benefitExcludedFromPerformance) {
+            this.benefitExcludedFromPerformance = benefitExcludedFromPerformance;
             return this;
         }
 

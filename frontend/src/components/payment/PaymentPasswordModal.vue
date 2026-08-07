@@ -17,8 +17,16 @@ const props = defineProps({
 
 
 const emit = defineEmits([
+<<<<<<< HEAD
   'success',
   'close'
+=======
+
+  'success',
+
+  'close'
+
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 ]);
 
 
@@ -88,8 +96,18 @@ const closeModal = () => {
 </script>
 
 <template>
+<<<<<<< HEAD
   <div class="overlay" @click="closeModal">
     <div class="modal" @click.stop>
+=======
+
+  <div
+    v-if="visible"
+    class="overlay"
+  >
+
+    <div class="modal">
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
       <h2>
 
@@ -174,6 +192,7 @@ const closeModal = () => {
 <style scoped>
 
 .overlay{
+<<<<<<< HEAD
   display:flex;
   justify-content:center;
   align-items:center;
@@ -235,15 +254,49 @@ const closeModal = () => {
   font-weight: var(--font-bold);
   color: var(--color-text-primary);
   margin: 0;
+=======
+
+  position:fixed;
+
+  inset:0;
+
+  background:rgba(0,0,0,.45);
+
+  display:flex;
+
+  justify-content:center;
+
+  align-items:center;
+
+  z-index:9999;
+
+}
+
+.modal{
+
+  width:340px;
+
+  padding:28px;
+
+  border-radius:20px;
+
+  background:#fff;
+
+  text-align:center;
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 }
 
 .description{
 
+<<<<<<< HEAD
   margin-top: var(--space-xs);
 
   font-size: var(--font-sm);
   color: var(--color-text-secondary);
+=======
+  margin-top:8px;
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 }
 
@@ -267,13 +320,21 @@ const closeModal = () => {
 
   border-radius:50%;
 
+<<<<<<< HEAD
   background:var(--color-border);
+=======
+  background:#ddd;
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 }
 
 .dots span.active{
 
+<<<<<<< HEAD
   background:var(--color-primary);
+=======
+  background:#222;
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 }
 
@@ -295,12 +356,17 @@ const closeModal = () => {
 
   height:80px;
 
+<<<<<<< HEAD
   border:1px solid var(--color-border);
+=======
+  border:none;
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
   border-radius:50%;
 
   font-size:24px;
 
+<<<<<<< HEAD
   background: var(--color-surface);
 
   color:var(--color-text-primary);
@@ -317,6 +383,8 @@ const closeModal = () => {
 
   transform:scale(0.95);
 
+=======
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 }
 
 .empty{
@@ -333,6 +401,7 @@ const closeModal = () => {
 
   height:48px;
 
+<<<<<<< HEAD
   border:none;
 
   border-radius:12px;
@@ -352,6 +421,8 @@ const closeModal = () => {
 
   transition:var(--transition-fast);
 
+=======
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 }
 
 </style>

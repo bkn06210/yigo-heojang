@@ -1,5 +1,9 @@
+<<<<<<< HEAD
 ﻿<script setup>
 import Icon from '@/components/common/Icon.vue';
+=======
+<script setup>
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 const emit = defineEmits([
   'close',
@@ -29,12 +33,17 @@ const close = () => {
 
   <section class="modal">
 
+<<<<<<< HEAD
     <div class="success-icon">
       <Icon name="check" size="lg" />
     </div>
 
     <h2>
       카드 등록 완료
+=======
+    <h2>
+      🎉 카드 등록 완료
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
     </h2>
 
 
@@ -76,7 +85,11 @@ z-index:3000;
 
 .modal {
 
+<<<<<<< HEAD
 background:var(--color-surface);
+=======
+background:white;
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 width:80%;
 
@@ -88,6 +101,7 @@ text-align:center;
 
 }
 
+<<<<<<< HEAD
 .success-icon {
 
   width: 60px;
@@ -105,6 +119,8 @@ text-align:center;
 
 }
 
+=======
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 button {
 
@@ -118,6 +134,7 @@ border:none;
 
 border-radius:12px;
 
+<<<<<<< HEAD
 background:
   linear-gradient(
     90deg,
@@ -126,6 +143,11 @@ background:
   );
 
 color:var(--color-btn-primary-text);
+=======
+background:#4f46e5;
+
+color:white;
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 }
 

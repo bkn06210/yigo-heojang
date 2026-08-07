@@ -1,0 +1,1707 @@
+{
+  "card": {
+    "card_name": "신한카드 Deep Once",
+    "card_type": "CREDIT",
+    "annual_fee": null,
+    "annual_fees": [
+      {
+        "brand": "LOCAL",
+        "issue_type": null,
+        "base_fee": 20000,
+        "partner_fee": null,
+        "_source": "연회비 국내전용(Local) 2만원, 해외겸용(Master) 2만 3천원 / ※ 연회비는 카드별(기본연회비와 서비스연회비)로 청구됩니다. — 기본연회비와 서비스연회비의 분리 금액이 약관에 없어 총액을 base_fee에 넣고 partner_fee는 비웠다."
+      },
+      {
+        "brand": "MASTERCARD",
+        "issue_type": null,
+        "base_fee": 23000,
+        "partner_fee": null,
+        "_source": "연회비 국내전용(Local) 2만원, 해외겸용(Master) 2만 3천원 / ※ 연회비는 카드별(기본연회비와 서비스연회비)로 청구됩니다. — 기본연회비와 서비스연회비의 분리 금액이 약관에 없어 총액을 base_fee에 넣고 partner_fee는 비웠다."
+      }
+    ],
+    "_source": {
+      "card_name": "신한카드 Deep Once 서비스 / 신한카드 Deep Once 적립서비스 유의사항",
+      "card_type": "※ 신용카드 발급이 부적정한 경우(개인신용평점 낮음, 연체(단기 포함) 사유 발생 등), 카드발급이 제한 될 수 있습니다. / 연회비 국내전용(Local) 2만원, 해외겸용(Master) 2만 3천원"
+    },
+    "_needs_review": [
+      "annual_fee",
+      "annual_fees[].issue_type",
+      "annual_fees[].partner_fee"
+    ]
+  },
+  "card_exclusions": [
+    {
+      "exclusion_type": "TRANSACTION_ATTR",
+      "exclusion_value": "DISCOUNTED",
+      "_source": "● 아래 거래는 포인트 적립에서 제외됩니다. - 신한카드 Deep Once로 신한카드 할인서비스(이벤트 포함)를 적용받은 모든 거래(해당 거래금액 전체)"
+    },
+    {
+      "exclusion_type": "TRANSACTION_ATTR",
+      "exclusion_value": "CANCELED",
+      "_source": "● 아래 거래는 포인트 적립에서 제외됩니다. - 거래취소금액"
+    },
+    {
+      "exclusion_type": "TRANSACTION_ATTR",
+      "exclusion_value": "INTEREST_FREE",
+      "_source": "● 아래 거래는 포인트 적립에서 제외됩니다. - 무이자할부 이용거래"
+    },
+    {
+      "exclusion_type": "PAYMENT_TYPE",
+      "exclusion_value": "SIMPLE_PAY",
+      "_source": "※ 간편결제(Pay)로 결제 시 가맹점 명이 해당 업체가 아닌 간편결제명(네이버페이, 스마일페이 등)인 경우는 서비스 적용 제외되오니 유의 바랍니다."
+    }
+  ],
+  "performance_tiers": [
+    {
+      "period_type": "MONTH",
+      "min_performance_amount": 0,
+      "shared_monthly_limit": null,
+      "_source": "[전월 이용금액별 적립 포인트] 표가 전월 이용금액 40만원 이상부터 시작해 40만원 미만 구간에는 적립 포인트가 없다. 카드 통합 할인한도 개념이 없어 shared_monthly_limit은 null."
+    },
+    {
+      "period_type": "MONTH",
+      "min_performance_amount": 400000,
+      "shared_monthly_limit": null,
+      "_source": "[전월 이용금액별 적립 포인트] 전월 이용금액 40만원 이상 80만원 미만"
+    },
+    {
+      "period_type": "MONTH",
+      "min_performance_amount": 800000,
+      "shared_monthly_limit": null,
+      "_source": "[전월 이용금액별 적립 포인트] 전월 이용금액 80만원 이상 120만원 미만"
+    },
+    {
+      "period_type": "MONTH",
+      "min_performance_amount": 1200000,
+      "shared_monthly_limit": null,
+      "_source": "[전월 이용금액별 적립 포인트] 전월 이용금액 120만원 이상"
+    }
+  ],
+  "performance_exclusions": [
+    {
+      "exclusion_type": "TRANSACTION_ATTR",
+      "exclusion_value": "ANNUAL_FEE",
+      "_source": "● 아래 거래는 전월 이용금액에서 제외됩니다. - 연회비"
+    },
+    {
+      "exclusion_type": "TRANSACTION_ATTR",
+      "exclusion_value": "CASH_ADVANCE",
+      "_source": "● 아래 거래는 전월 이용금액에서 제외됩니다. - 단기카드대출(현금서비스)/ 장기카드대출(카드론)"
+    },
+    {
+      "exclusion_type": "TRANSACTION_ATTR",
+      "exclusion_value": "CARD_LOAN",
+      "_source": "● 아래 거래는 전월 이용금액에서 제외됩니다. - 단기카드대출(현금서비스)/ 장기카드대출(카드론)"
+    },
+    {
+      "exclusion_type": "TRANSACTION_ATTR",
+      "exclusion_value": "FEE_INTEREST",
+      "_source": "● 아래 거래는 전월 이용금액에서 제외됩니다. - 각종 수수료/이자(할부수수료, SMS 이용수수료, 연체이자 등)"
+    },
+    {
+      "exclusion_type": "TRANSACTION_ATTR",
+      "exclusion_value": "CANCELED",
+      "_source": "● 아래 거래는 전월 이용금액에서 제외됩니다. - 거래취소금액"
+    },
+    {
+      "exclusion_type": "TRANSACTION_ATTR",
+      "exclusion_value": "GIFT_CARD",
+      "_source": "● 아래 거래는 전월 이용금액에서 제외됩니다. - 기프트카드/상품권 구매·충전금액 / - 선불카드(선불전자지급수단 포함) 구매·충전금액"
+    }
+  ],
+  "benefits": [
+    {
+      "benefit_name": "렌탈 자동이체 마이신한포인트 적립 - LG전자 케어솔루션",
+      "benefit_kind": "POINT",
+      "calc_method": "FIXED",
+      "benefit_value": null,
+      "step_count": null,
+      "apply_timing": null,
+      "target_type": "MERCHANT",
+      "target_category_code": null,
+      "target_merchant_name": "LG전자 케어솔루션",
+      "require_performance": "Y",
+      "performance_period": "MONTH",
+      "require_payment_type": null,
+      "min_txn_amount": 10000,
+      "max_eligible_amount": null,
+      "max_benefit_per_txn": 7000,
+      "monthly_limit": null,
+      "limit_group_code": null,
+      "monthly_count_limit": 5,
+      "daily_count_limit": null,
+      "daily_limit": null,
+      "yearly_count_limit": null,
+      "count_group_code": "RENTAL_AUTO_PAY_5",
+      "use_shared_limit": "N",
+      "exclude_from_performance": "N",
+      "option_group_code": null,
+      "option_key": null,
+      "description": "10개 렌탈사 자동이체 이용 시 마이신한포인트 적립. 전월 이용금액 구간에 따라 건당 3,000/5,000/7,000포인트(건별 최대 7,000포인트). 렌탈 업체별 월 1건, 렌탈 서비스 통합 월 5건까지 적립(자동이체 거래승인일 기준 당월 1일~말일). 매월 정기결제 및 자동결제(자동이체)를 이 카드로 등록하여 발생한 거래에 한하여 적용된다.",
+      "tier_limits": [
+        {
+          "min_performance_amount": 400000,
+          "monthly_limit": null,
+          "benefit_value": 3000,
+          "_source": "렌탈 10개 렌탈사 자동이체 이용 시 마이신한포인트 적립 / [전월 이용금액별 적립 포인트] 자동이체 건당 적립 포인트 3,000포인트 5,000포인트 7,000포인트 — 40만원 이상 80만원 미만 자동이체 건당 3,000포인트"
+        },
+        {
+          "min_performance_amount": 800000,
+          "monthly_limit": null,
+          "benefit_value": 5000,
+          "_source": "렌탈 10개 렌탈사 자동이체 이용 시 마이신한포인트 적립 / [전월 이용금액별 적립 포인트] 자동이체 건당 적립 포인트 3,000포인트 5,000포인트 7,000포인트 — 80만원 이상 120만원 미만 자동이체 건당 5,000포인트"
+        },
+        {
+          "min_performance_amount": 1200000,
+          "monthly_limit": null,
+          "benefit_value": 7000,
+          "_source": "렌탈 10개 렌탈사 자동이체 이용 시 마이신한포인트 적립 / [전월 이용금액별 적립 포인트] 자동이체 건당 적립 포인트 3,000포인트 5,000포인트 7,000포인트 — 120만원 이상 자동이체 건당 7,000포인트"
+        }
+      ],
+      "exclusions": [],
+      "_source": {
+        "target_merchant_name": "[렌탈 서비스 대상] LG전자 케어솔루션, 웅진코웨이, SK매직, 쿠쿠홈시스, BS렌탈, 웰릭스렌탈, 넥센타이어, 바디프랜드, 교원웰스, 모두렌탈",
+        "min_txn_amount": "※ 건당 이용금액 1만원 이상인 경우에 서비스 적용됩니다.",
+        "max_benefit_per_txn": "10개 렌탈사에서 이용한 자동이체 거래 건수에 대해 전월 이용금액에 따라 건별 최대 7,000포인트, 월 최대 5건까지 적립",
+        "monthly_count_limit": "적립기준 렌탈 업체별 월 1건, 렌탈 서비스 통합 월 5건까지 적립(자동이체 거래승인일 기준 당월 1일~말일 기준)",
+        "count_group_code": "적립기준 렌탈 업체별 월 1건, 렌탈 서비스 통합 월 5건까지 적립(자동이체 거래승인일 기준 당월 1일~말일 기준) — 건별 적립 포인트에는 묶음 금액 한도가 없고 건수만 서비스 단위로 묶이므로 limit_group_code가 아니라 count_group_code로 분리했다.",
+        "require_performance": "신한카드 Deep Once 전월 이용금액 기준 / [전월 이용금액별 적립 포인트] 전월 이용금액 40만원 이상 구간부터 적립 포인트가 있다.",
+        "performance_period": "신한카드 Deep Once 전월 이용금액 기준 — ● 신한카드 Deep Once의 전월 이용금액은 전월(1일~말일)의 거래 시점 이용금액(일시불+할부, 가족카드 포함)을 기준으로 반영됩니다."
+      },
+      "_needs_review": []
+    },
+    {
+      "benefit_name": "렌탈 자동이체 마이신한포인트 적립 - 웅진코웨이",
+      "benefit_kind": "POINT",
+      "calc_method": "FIXED",
+      "benefit_value": null,
+      "step_count": null,
+      "apply_timing": null,
+      "target_type": "MERCHANT",
+      "target_category_code": null,
+      "target_merchant_name": "웅진코웨이",
+      "require_performance": "Y",
+      "performance_period": "MONTH",
+      "require_payment_type": null,
+      "min_txn_amount": 10000,
+      "max_eligible_amount": null,
+      "max_benefit_per_txn": 7000,
+      "monthly_limit": null,
+      "limit_group_code": null,
+      "monthly_count_limit": 5,
+      "daily_count_limit": null,
+      "daily_limit": null,
+      "yearly_count_limit": null,
+      "count_group_code": "RENTAL_AUTO_PAY_5",
+      "use_shared_limit": "N",
+      "exclude_from_performance": "N",
+      "option_group_code": null,
+      "option_key": null,
+      "description": "10개 렌탈사 자동이체 이용 시 마이신한포인트 적립. 전월 이용금액 구간에 따라 건당 3,000/5,000/7,000포인트(건별 최대 7,000포인트). 렌탈 업체별 월 1건, 렌탈 서비스 통합 월 5건까지 적립(자동이체 거래승인일 기준 당월 1일~말일). 매월 정기결제 및 자동결제(자동이체)를 이 카드로 등록하여 발생한 거래에 한하여 적용된다.",
+      "tier_limits": [
+        {
+          "min_performance_amount": 400000,
+          "monthly_limit": null,
+          "benefit_value": 3000,
+          "_source": "렌탈 10개 렌탈사 자동이체 이용 시 마이신한포인트 적립 / [전월 이용금액별 적립 포인트] 자동이체 건당 적립 포인트 3,000포인트 5,000포인트 7,000포인트 — 40만원 이상 80만원 미만 자동이체 건당 3,000포인트"
+        },
+        {
+          "min_performance_amount": 800000,
+          "monthly_limit": null,
+          "benefit_value": 5000,
+          "_source": "렌탈 10개 렌탈사 자동이체 이용 시 마이신한포인트 적립 / [전월 이용금액별 적립 포인트] 자동이체 건당 적립 포인트 3,000포인트 5,000포인트 7,000포인트 — 80만원 이상 120만원 미만 자동이체 건당 5,000포인트"
+        },
+        {
+          "min_performance_amount": 1200000,
+          "monthly_limit": null,
+          "benefit_value": 7000,
+          "_source": "렌탈 10개 렌탈사 자동이체 이용 시 마이신한포인트 적립 / [전월 이용금액별 적립 포인트] 자동이체 건당 적립 포인트 3,000포인트 5,000포인트 7,000포인트 — 120만원 이상 자동이체 건당 7,000포인트"
+        }
+      ],
+      "exclusions": [],
+      "_source": {
+        "target_merchant_name": "[렌탈 서비스 대상] LG전자 케어솔루션, 웅진코웨이, SK매직, 쿠쿠홈시스, BS렌탈, 웰릭스렌탈, 넥센타이어, 바디프랜드, 교원웰스, 모두렌탈",
+        "min_txn_amount": "※ 건당 이용금액 1만원 이상인 경우에 서비스 적용됩니다.",
+        "max_benefit_per_txn": "10개 렌탈사에서 이용한 자동이체 거래 건수에 대해 전월 이용금액에 따라 건별 최대 7,000포인트, 월 최대 5건까지 적립",
+        "monthly_count_limit": "적립기준 렌탈 업체별 월 1건, 렌탈 서비스 통합 월 5건까지 적립(자동이체 거래승인일 기준 당월 1일~말일 기준)",
+        "count_group_code": "적립기준 렌탈 업체별 월 1건, 렌탈 서비스 통합 월 5건까지 적립(자동이체 거래승인일 기준 당월 1일~말일 기준) — 건별 적립 포인트에는 묶음 금액 한도가 없고 건수만 서비스 단위로 묶이므로 limit_group_code가 아니라 count_group_code로 분리했다.",
+        "require_performance": "신한카드 Deep Once 전월 이용금액 기준 / [전월 이용금액별 적립 포인트] 전월 이용금액 40만원 이상 구간부터 적립 포인트가 있다.",
+        "performance_period": "신한카드 Deep Once 전월 이용금액 기준 — ● 신한카드 Deep Once의 전월 이용금액은 전월(1일~말일)의 거래 시점 이용금액(일시불+할부, 가족카드 포함)을 기준으로 반영됩니다."
+      },
+      "_needs_review": []
+    },
+    {
+      "benefit_name": "렌탈 자동이체 마이신한포인트 적립 - SK매직",
+      "benefit_kind": "POINT",
+      "calc_method": "FIXED",
+      "benefit_value": null,
+      "step_count": null,
+      "apply_timing": null,
+      "target_type": "MERCHANT",
+      "target_category_code": null,
+      "target_merchant_name": "SK매직",
+      "require_performance": "Y",
+      "performance_period": "MONTH",
+      "require_payment_type": null,
+      "min_txn_amount": 10000,
+      "max_eligible_amount": null,
+      "max_benefit_per_txn": 7000,
+      "monthly_limit": null,
+      "limit_group_code": null,
+      "monthly_count_limit": 5,
+      "daily_count_limit": null,
+      "daily_limit": null,
+      "yearly_count_limit": null,
+      "count_group_code": "RENTAL_AUTO_PAY_5",
+      "use_shared_limit": "N",
+      "exclude_from_performance": "N",
+      "option_group_code": null,
+      "option_key": null,
+      "description": "10개 렌탈사 자동이체 이용 시 마이신한포인트 적립. 전월 이용금액 구간에 따라 건당 3,000/5,000/7,000포인트(건별 최대 7,000포인트). 렌탈 업체별 월 1건, 렌탈 서비스 통합 월 5건까지 적립(자동이체 거래승인일 기준 당월 1일~말일). 매월 정기결제 및 자동결제(자동이체)를 이 카드로 등록하여 발생한 거래에 한하여 적용된다.",
+      "tier_limits": [
+        {
+          "min_performance_amount": 400000,
+          "monthly_limit": null,
+          "benefit_value": 3000,
+          "_source": "렌탈 10개 렌탈사 자동이체 이용 시 마이신한포인트 적립 / [전월 이용금액별 적립 포인트] 자동이체 건당 적립 포인트 3,000포인트 5,000포인트 7,000포인트 — 40만원 이상 80만원 미만 자동이체 건당 3,000포인트"
+        },
+        {
+          "min_performance_amount": 800000,
+          "monthly_limit": null,
+          "benefit_value": 5000,
+          "_source": "렌탈 10개 렌탈사 자동이체 이용 시 마이신한포인트 적립 / [전월 이용금액별 적립 포인트] 자동이체 건당 적립 포인트 3,000포인트 5,000포인트 7,000포인트 — 80만원 이상 120만원 미만 자동이체 건당 5,000포인트"
+        },
+        {
+          "min_performance_amount": 1200000,
+          "monthly_limit": null,
+          "benefit_value": 7000,
+          "_source": "렌탈 10개 렌탈사 자동이체 이용 시 마이신한포인트 적립 / [전월 이용금액별 적립 포인트] 자동이체 건당 적립 포인트 3,000포인트 5,000포인트 7,000포인트 — 120만원 이상 자동이체 건당 7,000포인트"
+        }
+      ],
+      "exclusions": [],
+      "_source": {
+        "target_merchant_name": "[렌탈 서비스 대상] LG전자 케어솔루션, 웅진코웨이, SK매직, 쿠쿠홈시스, BS렌탈, 웰릭스렌탈, 넥센타이어, 바디프랜드, 교원웰스, 모두렌탈",
+        "min_txn_amount": "※ 건당 이용금액 1만원 이상인 경우에 서비스 적용됩니다.",
+        "max_benefit_per_txn": "10개 렌탈사에서 이용한 자동이체 거래 건수에 대해 전월 이용금액에 따라 건별 최대 7,000포인트, 월 최대 5건까지 적립",
+        "monthly_count_limit": "적립기준 렌탈 업체별 월 1건, 렌탈 서비스 통합 월 5건까지 적립(자동이체 거래승인일 기준 당월 1일~말일 기준)",
+        "count_group_code": "적립기준 렌탈 업체별 월 1건, 렌탈 서비스 통합 월 5건까지 적립(자동이체 거래승인일 기준 당월 1일~말일 기준) — 건별 적립 포인트에는 묶음 금액 한도가 없고 건수만 서비스 단위로 묶이므로 limit_group_code가 아니라 count_group_code로 분리했다.",
+        "require_performance": "신한카드 Deep Once 전월 이용금액 기준 / [전월 이용금액별 적립 포인트] 전월 이용금액 40만원 이상 구간부터 적립 포인트가 있다.",
+        "performance_period": "신한카드 Deep Once 전월 이용금액 기준 — ● 신한카드 Deep Once의 전월 이용금액은 전월(1일~말일)의 거래 시점 이용금액(일시불+할부, 가족카드 포함)을 기준으로 반영됩니다."
+      },
+      "_needs_review": []
+    },
+    {
+      "benefit_name": "렌탈 자동이체 마이신한포인트 적립 - 쿠쿠홈시스",
+      "benefit_kind": "POINT",
+      "calc_method": "FIXED",
+      "benefit_value": null,
+      "step_count": null,
+      "apply_timing": null,
+      "target_type": "MERCHANT",
+      "target_category_code": null,
+      "target_merchant_name": "쿠쿠홈시스",
+      "require_performance": "Y",
+      "performance_period": "MONTH",
+      "require_payment_type": null,
+      "min_txn_amount": 10000,
+      "max_eligible_amount": null,
+      "max_benefit_per_txn": 7000,
+      "monthly_limit": null,
+      "limit_group_code": null,
+      "monthly_count_limit": 5,
+      "daily_count_limit": null,
+      "daily_limit": null,
+      "yearly_count_limit": null,
+      "count_group_code": "RENTAL_AUTO_PAY_5",
+      "use_shared_limit": "N",
+      "exclude_from_performance": "N",
+      "option_group_code": null,
+      "option_key": null,
+      "description": "10개 렌탈사 자동이체 이용 시 마이신한포인트 적립. 전월 이용금액 구간에 따라 건당 3,000/5,000/7,000포인트(건별 최대 7,000포인트). 렌탈 업체별 월 1건, 렌탈 서비스 통합 월 5건까지 적립(자동이체 거래승인일 기준 당월 1일~말일). 매월 정기결제 및 자동결제(자동이체)를 이 카드로 등록하여 발생한 거래에 한하여 적용된다.",
+      "tier_limits": [
+        {
+          "min_performance_amount": 400000,
+          "monthly_limit": null,
+          "benefit_value": 3000,
+          "_source": "렌탈 10개 렌탈사 자동이체 이용 시 마이신한포인트 적립 / [전월 이용금액별 적립 포인트] 자동이체 건당 적립 포인트 3,000포인트 5,000포인트 7,000포인트 — 40만원 이상 80만원 미만 자동이체 건당 3,000포인트"
+        },
+        {
+          "min_performance_amount": 800000,
+          "monthly_limit": null,
+          "benefit_value": 5000,
+          "_source": "렌탈 10개 렌탈사 자동이체 이용 시 마이신한포인트 적립 / [전월 이용금액별 적립 포인트] 자동이체 건당 적립 포인트 3,000포인트 5,000포인트 7,000포인트 — 80만원 이상 120만원 미만 자동이체 건당 5,000포인트"
+        },
+        {
+          "min_performance_amount": 1200000,
+          "monthly_limit": null,
+          "benefit_value": 7000,
+          "_source": "렌탈 10개 렌탈사 자동이체 이용 시 마이신한포인트 적립 / [전월 이용금액별 적립 포인트] 자동이체 건당 적립 포인트 3,000포인트 5,000포인트 7,000포인트 — 120만원 이상 자동이체 건당 7,000포인트"
+        }
+      ],
+      "exclusions": [],
+      "_source": {
+        "target_merchant_name": "[렌탈 서비스 대상] LG전자 케어솔루션, 웅진코웨이, SK매직, 쿠쿠홈시스, BS렌탈, 웰릭스렌탈, 넥센타이어, 바디프랜드, 교원웰스, 모두렌탈",
+        "min_txn_amount": "※ 건당 이용금액 1만원 이상인 경우에 서비스 적용됩니다.",
+        "max_benefit_per_txn": "10개 렌탈사에서 이용한 자동이체 거래 건수에 대해 전월 이용금액에 따라 건별 최대 7,000포인트, 월 최대 5건까지 적립",
+        "monthly_count_limit": "적립기준 렌탈 업체별 월 1건, 렌탈 서비스 통합 월 5건까지 적립(자동이체 거래승인일 기준 당월 1일~말일 기준)",
+        "count_group_code": "적립기준 렌탈 업체별 월 1건, 렌탈 서비스 통합 월 5건까지 적립(자동이체 거래승인일 기준 당월 1일~말일 기준) — 건별 적립 포인트에는 묶음 금액 한도가 없고 건수만 서비스 단위로 묶이므로 limit_group_code가 아니라 count_group_code로 분리했다.",
+        "require_performance": "신한카드 Deep Once 전월 이용금액 기준 / [전월 이용금액별 적립 포인트] 전월 이용금액 40만원 이상 구간부터 적립 포인트가 있다.",
+        "performance_period": "신한카드 Deep Once 전월 이용금액 기준 — ● 신한카드 Deep Once의 전월 이용금액은 전월(1일~말일)의 거래 시점 이용금액(일시불+할부, 가족카드 포함)을 기준으로 반영됩니다."
+      },
+      "_needs_review": []
+    },
+    {
+      "benefit_name": "렌탈 자동이체 마이신한포인트 적립 - BS렌탈",
+      "benefit_kind": "POINT",
+      "calc_method": "FIXED",
+      "benefit_value": null,
+      "step_count": null,
+      "apply_timing": null,
+      "target_type": "MERCHANT",
+      "target_category_code": null,
+      "target_merchant_name": "BS렌탈",
+      "require_performance": "Y",
+      "performance_period": "MONTH",
+      "require_payment_type": null,
+      "min_txn_amount": 10000,
+      "max_eligible_amount": null,
+      "max_benefit_per_txn": 7000,
+      "monthly_limit": null,
+      "limit_group_code": null,
+      "monthly_count_limit": 5,
+      "daily_count_limit": null,
+      "daily_limit": null,
+      "yearly_count_limit": null,
+      "count_group_code": "RENTAL_AUTO_PAY_5",
+      "use_shared_limit": "N",
+      "exclude_from_performance": "N",
+      "option_group_code": null,
+      "option_key": null,
+      "description": "10개 렌탈사 자동이체 이용 시 마이신한포인트 적립. 전월 이용금액 구간에 따라 건당 3,000/5,000/7,000포인트(건별 최대 7,000포인트). 렌탈 업체별 월 1건, 렌탈 서비스 통합 월 5건까지 적립(자동이체 거래승인일 기준 당월 1일~말일). 매월 정기결제 및 자동결제(자동이체)를 이 카드로 등록하여 발생한 거래에 한하여 적용된다.",
+      "tier_limits": [
+        {
+          "min_performance_amount": 400000,
+          "monthly_limit": null,
+          "benefit_value": 3000,
+          "_source": "렌탈 10개 렌탈사 자동이체 이용 시 마이신한포인트 적립 / [전월 이용금액별 적립 포인트] 자동이체 건당 적립 포인트 3,000포인트 5,000포인트 7,000포인트 — 40만원 이상 80만원 미만 자동이체 건당 3,000포인트"
+        },
+        {
+          "min_performance_amount": 800000,
+          "monthly_limit": null,
+          "benefit_value": 5000,
+          "_source": "렌탈 10개 렌탈사 자동이체 이용 시 마이신한포인트 적립 / [전월 이용금액별 적립 포인트] 자동이체 건당 적립 포인트 3,000포인트 5,000포인트 7,000포인트 — 80만원 이상 120만원 미만 자동이체 건당 5,000포인트"
+        },
+        {
+          "min_performance_amount": 1200000,
+          "monthly_limit": null,
+          "benefit_value": 7000,
+          "_source": "렌탈 10개 렌탈사 자동이체 이용 시 마이신한포인트 적립 / [전월 이용금액별 적립 포인트] 자동이체 건당 적립 포인트 3,000포인트 5,000포인트 7,000포인트 — 120만원 이상 자동이체 건당 7,000포인트"
+        }
+      ],
+      "exclusions": [],
+      "_source": {
+        "target_merchant_name": "[렌탈 서비스 대상] LG전자 케어솔루션, 웅진코웨이, SK매직, 쿠쿠홈시스, BS렌탈, 웰릭스렌탈, 넥센타이어, 바디프랜드, 교원웰스, 모두렌탈",
+        "min_txn_amount": "※ 건당 이용금액 1만원 이상인 경우에 서비스 적용됩니다.",
+        "max_benefit_per_txn": "10개 렌탈사에서 이용한 자동이체 거래 건수에 대해 전월 이용금액에 따라 건별 최대 7,000포인트, 월 최대 5건까지 적립",
+        "monthly_count_limit": "적립기준 렌탈 업체별 월 1건, 렌탈 서비스 통합 월 5건까지 적립(자동이체 거래승인일 기준 당월 1일~말일 기준)",
+        "count_group_code": "적립기준 렌탈 업체별 월 1건, 렌탈 서비스 통합 월 5건까지 적립(자동이체 거래승인일 기준 당월 1일~말일 기준) — 건별 적립 포인트에는 묶음 금액 한도가 없고 건수만 서비스 단위로 묶이므로 limit_group_code가 아니라 count_group_code로 분리했다.",
+        "require_performance": "신한카드 Deep Once 전월 이용금액 기준 / [전월 이용금액별 적립 포인트] 전월 이용금액 40만원 이상 구간부터 적립 포인트가 있다.",
+        "performance_period": "신한카드 Deep Once 전월 이용금액 기준 — ● 신한카드 Deep Once의 전월 이용금액은 전월(1일~말일)의 거래 시점 이용금액(일시불+할부, 가족카드 포함)을 기준으로 반영됩니다."
+      },
+      "_needs_review": []
+    },
+    {
+      "benefit_name": "렌탈 자동이체 마이신한포인트 적립 - 웰릭스렌탈",
+      "benefit_kind": "POINT",
+      "calc_method": "FIXED",
+      "benefit_value": null,
+      "step_count": null,
+      "apply_timing": null,
+      "target_type": "MERCHANT",
+      "target_category_code": null,
+      "target_merchant_name": "웰릭스렌탈",
+      "require_performance": "Y",
+      "performance_period": "MONTH",
+      "require_payment_type": null,
+      "min_txn_amount": 10000,
+      "max_eligible_amount": null,
+      "max_benefit_per_txn": 7000,
+      "monthly_limit": null,
+      "limit_group_code": null,
+      "monthly_count_limit": 5,
+      "daily_count_limit": null,
+      "daily_limit": null,
+      "yearly_count_limit": null,
+      "count_group_code": "RENTAL_AUTO_PAY_5",
+      "use_shared_limit": "N",
+      "exclude_from_performance": "N",
+      "option_group_code": null,
+      "option_key": null,
+      "description": "10개 렌탈사 자동이체 이용 시 마이신한포인트 적립. 전월 이용금액 구간에 따라 건당 3,000/5,000/7,000포인트(건별 최대 7,000포인트). 렌탈 업체별 월 1건, 렌탈 서비스 통합 월 5건까지 적립(자동이체 거래승인일 기준 당월 1일~말일). 매월 정기결제 및 자동결제(자동이체)를 이 카드로 등록하여 발생한 거래에 한하여 적용된다.",
+      "tier_limits": [
+        {
+          "min_performance_amount": 400000,
+          "monthly_limit": null,
+          "benefit_value": 3000,
+          "_source": "렌탈 10개 렌탈사 자동이체 이용 시 마이신한포인트 적립 / [전월 이용금액별 적립 포인트] 자동이체 건당 적립 포인트 3,000포인트 5,000포인트 7,000포인트 — 40만원 이상 80만원 미만 자동이체 건당 3,000포인트"
+        },
+        {
+          "min_performance_amount": 800000,
+          "monthly_limit": null,
+          "benefit_value": 5000,
+          "_source": "렌탈 10개 렌탈사 자동이체 이용 시 마이신한포인트 적립 / [전월 이용금액별 적립 포인트] 자동이체 건당 적립 포인트 3,000포인트 5,000포인트 7,000포인트 — 80만원 이상 120만원 미만 자동이체 건당 5,000포인트"
+        },
+        {
+          "min_performance_amount": 1200000,
+          "monthly_limit": null,
+          "benefit_value": 7000,
+          "_source": "렌탈 10개 렌탈사 자동이체 이용 시 마이신한포인트 적립 / [전월 이용금액별 적립 포인트] 자동이체 건당 적립 포인트 3,000포인트 5,000포인트 7,000포인트 — 120만원 이상 자동이체 건당 7,000포인트"
+        }
+      ],
+      "exclusions": [],
+      "_source": {
+        "target_merchant_name": "[렌탈 서비스 대상] LG전자 케어솔루션, 웅진코웨이, SK매직, 쿠쿠홈시스, BS렌탈, 웰릭스렌탈, 넥센타이어, 바디프랜드, 교원웰스, 모두렌탈",
+        "min_txn_amount": "※ 건당 이용금액 1만원 이상인 경우에 서비스 적용됩니다.",
+        "max_benefit_per_txn": "10개 렌탈사에서 이용한 자동이체 거래 건수에 대해 전월 이용금액에 따라 건별 최대 7,000포인트, 월 최대 5건까지 적립",
+        "monthly_count_limit": "적립기준 렌탈 업체별 월 1건, 렌탈 서비스 통합 월 5건까지 적립(자동이체 거래승인일 기준 당월 1일~말일 기준)",
+        "count_group_code": "적립기준 렌탈 업체별 월 1건, 렌탈 서비스 통합 월 5건까지 적립(자동이체 거래승인일 기준 당월 1일~말일 기준) — 건별 적립 포인트에는 묶음 금액 한도가 없고 건수만 서비스 단위로 묶이므로 limit_group_code가 아니라 count_group_code로 분리했다.",
+        "require_performance": "신한카드 Deep Once 전월 이용금액 기준 / [전월 이용금액별 적립 포인트] 전월 이용금액 40만원 이상 구간부터 적립 포인트가 있다.",
+        "performance_period": "신한카드 Deep Once 전월 이용금액 기준 — ● 신한카드 Deep Once의 전월 이용금액은 전월(1일~말일)의 거래 시점 이용금액(일시불+할부, 가족카드 포함)을 기준으로 반영됩니다."
+      },
+      "_needs_review": []
+    },
+    {
+      "benefit_name": "렌탈 자동이체 마이신한포인트 적립 - 넥센타이어",
+      "benefit_kind": "POINT",
+      "calc_method": "FIXED",
+      "benefit_value": null,
+      "step_count": null,
+      "apply_timing": null,
+      "target_type": "MERCHANT",
+      "target_category_code": null,
+      "target_merchant_name": "넥센타이어",
+      "require_performance": "Y",
+      "performance_period": "MONTH",
+      "require_payment_type": null,
+      "min_txn_amount": 10000,
+      "max_eligible_amount": null,
+      "max_benefit_per_txn": 7000,
+      "monthly_limit": null,
+      "limit_group_code": null,
+      "monthly_count_limit": 5,
+      "daily_count_limit": null,
+      "daily_limit": null,
+      "yearly_count_limit": null,
+      "count_group_code": "RENTAL_AUTO_PAY_5",
+      "use_shared_limit": "N",
+      "exclude_from_performance": "N",
+      "option_group_code": null,
+      "option_key": null,
+      "description": "10개 렌탈사 자동이체 이용 시 마이신한포인트 적립. 전월 이용금액 구간에 따라 건당 3,000/5,000/7,000포인트(건별 최대 7,000포인트). 렌탈 업체별 월 1건, 렌탈 서비스 통합 월 5건까지 적립(자동이체 거래승인일 기준 당월 1일~말일). 매월 정기결제 및 자동결제(자동이체)를 이 카드로 등록하여 발생한 거래에 한하여 적용된다.",
+      "tier_limits": [
+        {
+          "min_performance_amount": 400000,
+          "monthly_limit": null,
+          "benefit_value": 3000,
+          "_source": "렌탈 10개 렌탈사 자동이체 이용 시 마이신한포인트 적립 / [전월 이용금액별 적립 포인트] 자동이체 건당 적립 포인트 3,000포인트 5,000포인트 7,000포인트 — 40만원 이상 80만원 미만 자동이체 건당 3,000포인트"
+        },
+        {
+          "min_performance_amount": 800000,
+          "monthly_limit": null,
+          "benefit_value": 5000,
+          "_source": "렌탈 10개 렌탈사 자동이체 이용 시 마이신한포인트 적립 / [전월 이용금액별 적립 포인트] 자동이체 건당 적립 포인트 3,000포인트 5,000포인트 7,000포인트 — 80만원 이상 120만원 미만 자동이체 건당 5,000포인트"
+        },
+        {
+          "min_performance_amount": 1200000,
+          "monthly_limit": null,
+          "benefit_value": 7000,
+          "_source": "렌탈 10개 렌탈사 자동이체 이용 시 마이신한포인트 적립 / [전월 이용금액별 적립 포인트] 자동이체 건당 적립 포인트 3,000포인트 5,000포인트 7,000포인트 — 120만원 이상 자동이체 건당 7,000포인트"
+        }
+      ],
+      "exclusions": [],
+      "_source": {
+        "target_merchant_name": "[렌탈 서비스 대상] LG전자 케어솔루션, 웅진코웨이, SK매직, 쿠쿠홈시스, BS렌탈, 웰릭스렌탈, 넥센타이어, 바디프랜드, 교원웰스, 모두렌탈",
+        "min_txn_amount": "※ 건당 이용금액 1만원 이상인 경우에 서비스 적용됩니다.",
+        "max_benefit_per_txn": "10개 렌탈사에서 이용한 자동이체 거래 건수에 대해 전월 이용금액에 따라 건별 최대 7,000포인트, 월 최대 5건까지 적립",
+        "monthly_count_limit": "적립기준 렌탈 업체별 월 1건, 렌탈 서비스 통합 월 5건까지 적립(자동이체 거래승인일 기준 당월 1일~말일 기준)",
+        "count_group_code": "적립기준 렌탈 업체별 월 1건, 렌탈 서비스 통합 월 5건까지 적립(자동이체 거래승인일 기준 당월 1일~말일 기준) — 건별 적립 포인트에는 묶음 금액 한도가 없고 건수만 서비스 단위로 묶이므로 limit_group_code가 아니라 count_group_code로 분리했다.",
+        "require_performance": "신한카드 Deep Once 전월 이용금액 기준 / [전월 이용금액별 적립 포인트] 전월 이용금액 40만원 이상 구간부터 적립 포인트가 있다.",
+        "performance_period": "신한카드 Deep Once 전월 이용금액 기준 — ● 신한카드 Deep Once의 전월 이용금액은 전월(1일~말일)의 거래 시점 이용금액(일시불+할부, 가족카드 포함)을 기준으로 반영됩니다."
+      },
+      "_needs_review": []
+    },
+    {
+      "benefit_name": "렌탈 자동이체 마이신한포인트 적립 - 바디프랜드",
+      "benefit_kind": "POINT",
+      "calc_method": "FIXED",
+      "benefit_value": null,
+      "step_count": null,
+      "apply_timing": null,
+      "target_type": "MERCHANT",
+      "target_category_code": null,
+      "target_merchant_name": "바디프랜드",
+      "require_performance": "Y",
+      "performance_period": "MONTH",
+      "require_payment_type": null,
+      "min_txn_amount": 10000,
+      "max_eligible_amount": null,
+      "max_benefit_per_txn": 7000,
+      "monthly_limit": null,
+      "limit_group_code": null,
+      "monthly_count_limit": 5,
+      "daily_count_limit": null,
+      "daily_limit": null,
+      "yearly_count_limit": null,
+      "count_group_code": "RENTAL_AUTO_PAY_5",
+      "use_shared_limit": "N",
+      "exclude_from_performance": "N",
+      "option_group_code": null,
+      "option_key": null,
+      "description": "10개 렌탈사 자동이체 이용 시 마이신한포인트 적립. 전월 이용금액 구간에 따라 건당 3,000/5,000/7,000포인트(건별 최대 7,000포인트). 렌탈 업체별 월 1건, 렌탈 서비스 통합 월 5건까지 적립(자동이체 거래승인일 기준 당월 1일~말일). 매월 정기결제 및 자동결제(자동이체)를 이 카드로 등록하여 발생한 거래에 한하여 적용된다.",
+      "tier_limits": [
+        {
+          "min_performance_amount": 400000,
+          "monthly_limit": null,
+          "benefit_value": 3000,
+          "_source": "렌탈 10개 렌탈사 자동이체 이용 시 마이신한포인트 적립 / [전월 이용금액별 적립 포인트] 자동이체 건당 적립 포인트 3,000포인트 5,000포인트 7,000포인트 — 40만원 이상 80만원 미만 자동이체 건당 3,000포인트"
+        },
+        {
+          "min_performance_amount": 800000,
+          "monthly_limit": null,
+          "benefit_value": 5000,
+          "_source": "렌탈 10개 렌탈사 자동이체 이용 시 마이신한포인트 적립 / [전월 이용금액별 적립 포인트] 자동이체 건당 적립 포인트 3,000포인트 5,000포인트 7,000포인트 — 80만원 이상 120만원 미만 자동이체 건당 5,000포인트"
+        },
+        {
+          "min_performance_amount": 1200000,
+          "monthly_limit": null,
+          "benefit_value": 7000,
+          "_source": "렌탈 10개 렌탈사 자동이체 이용 시 마이신한포인트 적립 / [전월 이용금액별 적립 포인트] 자동이체 건당 적립 포인트 3,000포인트 5,000포인트 7,000포인트 — 120만원 이상 자동이체 건당 7,000포인트"
+        }
+      ],
+      "exclusions": [],
+      "_source": {
+        "target_merchant_name": "[렌탈 서비스 대상] LG전자 케어솔루션, 웅진코웨이, SK매직, 쿠쿠홈시스, BS렌탈, 웰릭스렌탈, 넥센타이어, 바디프랜드, 교원웰스, 모두렌탈",
+        "min_txn_amount": "※ 건당 이용금액 1만원 이상인 경우에 서비스 적용됩니다.",
+        "max_benefit_per_txn": "10개 렌탈사에서 이용한 자동이체 거래 건수에 대해 전월 이용금액에 따라 건별 최대 7,000포인트, 월 최대 5건까지 적립",
+        "monthly_count_limit": "적립기준 렌탈 업체별 월 1건, 렌탈 서비스 통합 월 5건까지 적립(자동이체 거래승인일 기준 당월 1일~말일 기준)",
+        "count_group_code": "적립기준 렌탈 업체별 월 1건, 렌탈 서비스 통합 월 5건까지 적립(자동이체 거래승인일 기준 당월 1일~말일 기준) — 건별 적립 포인트에는 묶음 금액 한도가 없고 건수만 서비스 단위로 묶이므로 limit_group_code가 아니라 count_group_code로 분리했다.",
+        "require_performance": "신한카드 Deep Once 전월 이용금액 기준 / [전월 이용금액별 적립 포인트] 전월 이용금액 40만원 이상 구간부터 적립 포인트가 있다.",
+        "performance_period": "신한카드 Deep Once 전월 이용금액 기준 — ● 신한카드 Deep Once의 전월 이용금액은 전월(1일~말일)의 거래 시점 이용금액(일시불+할부, 가족카드 포함)을 기준으로 반영됩니다."
+      },
+      "_needs_review": []
+    },
+    {
+      "benefit_name": "렌탈 자동이체 마이신한포인트 적립 - 교원웰스",
+      "benefit_kind": "POINT",
+      "calc_method": "FIXED",
+      "benefit_value": null,
+      "step_count": null,
+      "apply_timing": null,
+      "target_type": "MERCHANT",
+      "target_category_code": null,
+      "target_merchant_name": "교원웰스",
+      "require_performance": "Y",
+      "performance_period": "MONTH",
+      "require_payment_type": null,
+      "min_txn_amount": 10000,
+      "max_eligible_amount": null,
+      "max_benefit_per_txn": 7000,
+      "monthly_limit": null,
+      "limit_group_code": null,
+      "monthly_count_limit": 5,
+      "daily_count_limit": null,
+      "daily_limit": null,
+      "yearly_count_limit": null,
+      "count_group_code": "RENTAL_AUTO_PAY_5",
+      "use_shared_limit": "N",
+      "exclude_from_performance": "N",
+      "option_group_code": null,
+      "option_key": null,
+      "description": "10개 렌탈사 자동이체 이용 시 마이신한포인트 적립. 전월 이용금액 구간에 따라 건당 3,000/5,000/7,000포인트(건별 최대 7,000포인트). 렌탈 업체별 월 1건, 렌탈 서비스 통합 월 5건까지 적립(자동이체 거래승인일 기준 당월 1일~말일). 매월 정기결제 및 자동결제(자동이체)를 이 카드로 등록하여 발생한 거래에 한하여 적용된다.",
+      "tier_limits": [
+        {
+          "min_performance_amount": 400000,
+          "monthly_limit": null,
+          "benefit_value": 3000,
+          "_source": "렌탈 10개 렌탈사 자동이체 이용 시 마이신한포인트 적립 / [전월 이용금액별 적립 포인트] 자동이체 건당 적립 포인트 3,000포인트 5,000포인트 7,000포인트 — 40만원 이상 80만원 미만 자동이체 건당 3,000포인트"
+        },
+        {
+          "min_performance_amount": 800000,
+          "monthly_limit": null,
+          "benefit_value": 5000,
+          "_source": "렌탈 10개 렌탈사 자동이체 이용 시 마이신한포인트 적립 / [전월 이용금액별 적립 포인트] 자동이체 건당 적립 포인트 3,000포인트 5,000포인트 7,000포인트 — 80만원 이상 120만원 미만 자동이체 건당 5,000포인트"
+        },
+        {
+          "min_performance_amount": 1200000,
+          "monthly_limit": null,
+          "benefit_value": 7000,
+          "_source": "렌탈 10개 렌탈사 자동이체 이용 시 마이신한포인트 적립 / [전월 이용금액별 적립 포인트] 자동이체 건당 적립 포인트 3,000포인트 5,000포인트 7,000포인트 — 120만원 이상 자동이체 건당 7,000포인트"
+        }
+      ],
+      "exclusions": [],
+      "_source": {
+        "target_merchant_name": "[렌탈 서비스 대상] LG전자 케어솔루션, 웅진코웨이, SK매직, 쿠쿠홈시스, BS렌탈, 웰릭스렌탈, 넥센타이어, 바디프랜드, 교원웰스, 모두렌탈",
+        "min_txn_amount": "※ 건당 이용금액 1만원 이상인 경우에 서비스 적용됩니다.",
+        "max_benefit_per_txn": "10개 렌탈사에서 이용한 자동이체 거래 건수에 대해 전월 이용금액에 따라 건별 최대 7,000포인트, 월 최대 5건까지 적립",
+        "monthly_count_limit": "적립기준 렌탈 업체별 월 1건, 렌탈 서비스 통합 월 5건까지 적립(자동이체 거래승인일 기준 당월 1일~말일 기준)",
+        "count_group_code": "적립기준 렌탈 업체별 월 1건, 렌탈 서비스 통합 월 5건까지 적립(자동이체 거래승인일 기준 당월 1일~말일 기준) — 건별 적립 포인트에는 묶음 금액 한도가 없고 건수만 서비스 단위로 묶이므로 limit_group_code가 아니라 count_group_code로 분리했다.",
+        "require_performance": "신한카드 Deep Once 전월 이용금액 기준 / [전월 이용금액별 적립 포인트] 전월 이용금액 40만원 이상 구간부터 적립 포인트가 있다.",
+        "performance_period": "신한카드 Deep Once 전월 이용금액 기준 — ● 신한카드 Deep Once의 전월 이용금액은 전월(1일~말일)의 거래 시점 이용금액(일시불+할부, 가족카드 포함)을 기준으로 반영됩니다."
+      },
+      "_needs_review": []
+    },
+    {
+      "benefit_name": "렌탈 자동이체 마이신한포인트 적립 - 모두렌탈",
+      "benefit_kind": "POINT",
+      "calc_method": "FIXED",
+      "benefit_value": null,
+      "step_count": null,
+      "apply_timing": null,
+      "target_type": "MERCHANT",
+      "target_category_code": null,
+      "target_merchant_name": "모두렌탈",
+      "require_performance": "Y",
+      "performance_period": "MONTH",
+      "require_payment_type": null,
+      "min_txn_amount": 10000,
+      "max_eligible_amount": null,
+      "max_benefit_per_txn": 7000,
+      "monthly_limit": null,
+      "limit_group_code": null,
+      "monthly_count_limit": 5,
+      "daily_count_limit": null,
+      "daily_limit": null,
+      "yearly_count_limit": null,
+      "count_group_code": "RENTAL_AUTO_PAY_5",
+      "use_shared_limit": "N",
+      "exclude_from_performance": "N",
+      "option_group_code": null,
+      "option_key": null,
+      "description": "10개 렌탈사 자동이체 이용 시 마이신한포인트 적립. 전월 이용금액 구간에 따라 건당 3,000/5,000/7,000포인트(건별 최대 7,000포인트). 렌탈 업체별 월 1건, 렌탈 서비스 통합 월 5건까지 적립(자동이체 거래승인일 기준 당월 1일~말일). 매월 정기결제 및 자동결제(자동이체)를 이 카드로 등록하여 발생한 거래에 한하여 적용된다.",
+      "tier_limits": [
+        {
+          "min_performance_amount": 400000,
+          "monthly_limit": null,
+          "benefit_value": 3000,
+          "_source": "렌탈 10개 렌탈사 자동이체 이용 시 마이신한포인트 적립 / [전월 이용금액별 적립 포인트] 자동이체 건당 적립 포인트 3,000포인트 5,000포인트 7,000포인트 — 40만원 이상 80만원 미만 자동이체 건당 3,000포인트"
+        },
+        {
+          "min_performance_amount": 800000,
+          "monthly_limit": null,
+          "benefit_value": 5000,
+          "_source": "렌탈 10개 렌탈사 자동이체 이용 시 마이신한포인트 적립 / [전월 이용금액별 적립 포인트] 자동이체 건당 적립 포인트 3,000포인트 5,000포인트 7,000포인트 — 80만원 이상 120만원 미만 자동이체 건당 5,000포인트"
+        },
+        {
+          "min_performance_amount": 1200000,
+          "monthly_limit": null,
+          "benefit_value": 7000,
+          "_source": "렌탈 10개 렌탈사 자동이체 이용 시 마이신한포인트 적립 / [전월 이용금액별 적립 포인트] 자동이체 건당 적립 포인트 3,000포인트 5,000포인트 7,000포인트 — 120만원 이상 자동이체 건당 7,000포인트"
+        }
+      ],
+      "exclusions": [],
+      "_source": {
+        "target_merchant_name": "[렌탈 서비스 대상] LG전자 케어솔루션, 웅진코웨이, SK매직, 쿠쿠홈시스, BS렌탈, 웰릭스렌탈, 넥센타이어, 바디프랜드, 교원웰스, 모두렌탈",
+        "min_txn_amount": "※ 건당 이용금액 1만원 이상인 경우에 서비스 적용됩니다.",
+        "max_benefit_per_txn": "10개 렌탈사에서 이용한 자동이체 거래 건수에 대해 전월 이용금액에 따라 건별 최대 7,000포인트, 월 최대 5건까지 적립",
+        "monthly_count_limit": "적립기준 렌탈 업체별 월 1건, 렌탈 서비스 통합 월 5건까지 적립(자동이체 거래승인일 기준 당월 1일~말일 기준)",
+        "count_group_code": "적립기준 렌탈 업체별 월 1건, 렌탈 서비스 통합 월 5건까지 적립(자동이체 거래승인일 기준 당월 1일~말일 기준) — 건별 적립 포인트에는 묶음 금액 한도가 없고 건수만 서비스 단위로 묶이므로 limit_group_code가 아니라 count_group_code로 분리했다.",
+        "require_performance": "신한카드 Deep Once 전월 이용금액 기준 / [전월 이용금액별 적립 포인트] 전월 이용금액 40만원 이상 구간부터 적립 포인트가 있다.",
+        "performance_period": "신한카드 Deep Once 전월 이용금액 기준 — ● 신한카드 Deep Once의 전월 이용금액은 전월(1일~말일)의 거래 시점 이용금액(일시불+할부, 가족카드 포함)을 기준으로 반영됩니다."
+      },
+      "_needs_review": []
+    },
+    {
+      "benefit_name": "생활월납 자동이체 마이신한포인트 적립 - 아파트관리비",
+      "benefit_kind": "POINT",
+      "calc_method": "FIXED",
+      "benefit_value": null,
+      "step_count": null,
+      "apply_timing": null,
+      "target_type": "CATEGORY",
+      "target_category_code": "APARTMENT_FEE",
+      "target_merchant_name": null,
+      "require_performance": "Y",
+      "performance_period": "MONTH",
+      "require_payment_type": null,
+      "min_txn_amount": 6000,
+      "max_eligible_amount": null,
+      "max_benefit_per_txn": 6000,
+      "monthly_limit": null,
+      "limit_group_code": null,
+      "monthly_count_limit": 3,
+      "daily_count_limit": null,
+      "daily_limit": null,
+      "yearly_count_limit": null,
+      "count_group_code": "LIVING_MONTHLY_PAY_3",
+      "use_shared_limit": "N",
+      "exclude_from_performance": "N",
+      "option_group_code": null,
+      "option_key": null,
+      "description": "생활월납 자동이체 이용 시 마이신한포인트 적립. 전월 이용금액 구간에 따라 건당 2,000/4,000/6,000포인트(건별 최대 6,000포인트). 생활월납 대상별 월 1건, 생활월납 서비스 통합 월 3건까지 적립(자동이체 거래승인일 기준 당월 1일~말일). 매월 정기결제 및 자동결제(자동이체)를 이 카드로 등록하여 발생한 거래에 한하여 적용된다. 아파트관리비에 도시가스, 전기요금이 포함되어 통합 청구되는 경우는 1건으로 적용된다.",
+      "tier_limits": [
+        {
+          "min_performance_amount": 400000,
+          "monthly_limit": null,
+          "benefit_value": 2000,
+          "_source": "생활월납 7개 생활월납 자동이체 이용 시 마이신한포인트 적립 / [전월 이용금액별 적립 포인트] 자동이체 건당 적립 포인트 2,000포인트 4,000포인트 6,000포인트 — 40만원 이상 80만원 미만 자동이체 건당 2,000포인트"
+        },
+        {
+          "min_performance_amount": 800000,
+          "monthly_limit": null,
+          "benefit_value": 4000,
+          "_source": "생활월납 7개 생활월납 자동이체 이용 시 마이신한포인트 적립 / [전월 이용금액별 적립 포인트] 자동이체 건당 적립 포인트 2,000포인트 4,000포인트 6,000포인트 — 80만원 이상 120만원 미만 자동이체 건당 4,000포인트"
+        },
+        {
+          "min_performance_amount": 1200000,
+          "monthly_limit": null,
+          "benefit_value": 6000,
+          "_source": "생활월납 7개 생활월납 자동이체 이용 시 마이신한포인트 적립 / [전월 이용금액별 적립 포인트] 자동이체 건당 적립 포인트 2,000포인트 4,000포인트 6,000포인트 — 120만원 이상 자동이체 건당 6,000포인트"
+        }
+      ],
+      "exclusions": [],
+      "_source": {
+        "target_category_code": "[생활월납 서비스 대상] 아파트관리비, 이동통신, 도시가스, 전기요금, 한국 야쿠르트, 웅진 씽크빅, 예다함",
+        "min_txn_amount": "※ 건당 이용금액 6천원 이상인 경우에 서비스 적용됩니다.",
+        "max_benefit_per_txn": "생활월납 자동이체 거래 건수에 대해 전월 이용금액에 따라 건별 최대 6,000포인트, 월 최대 3건까지 적립",
+        "monthly_count_limit": "적립기준 생활월납 대상별 월 1건, 생활월납 서비스 통합 월 3건까지 적립(자동이체 거래승인일 기준 당월 1일~말일 기준)",
+        "count_group_code": "적립기준 생활월납 대상별 월 1건, 생활월납 서비스 통합 월 3건까지 적립(자동이체 거래승인일 기준 당월 1일~말일 기준) — 건별 적립 포인트에는 묶음 금액 한도가 없고 건수만 서비스 단위로 묶이므로 limit_group_code가 아니라 count_group_code로 분리했다.",
+        "require_performance": "신한카드 Deep Once 전월 이용금액 기준 / [전월 이용금액별 적립 포인트] 전월 이용금액 40만원 이상 구간부터 적립 포인트가 있다.",
+        "performance_period": "신한카드 Deep Once 전월 이용금액 기준 — ● 신한카드 Deep Once의 전월 이용금액은 전월(1일~말일)의 거래 시점 이용금액(일시불+할부, 가족카드 포함)을 기준으로 반영됩니다."
+      },
+      "_needs_review": []
+    },
+    {
+      "benefit_name": "생활월납 자동이체 마이신한포인트 적립 - 도시가스·전기요금",
+      "benefit_kind": "POINT",
+      "calc_method": "FIXED",
+      "benefit_value": null,
+      "step_count": null,
+      "apply_timing": null,
+      "target_type": "CATEGORY",
+      "target_category_code": "UTILITY",
+      "target_merchant_name": null,
+      "require_performance": "Y",
+      "performance_period": "MONTH",
+      "require_payment_type": null,
+      "min_txn_amount": 6000,
+      "max_eligible_amount": null,
+      "max_benefit_per_txn": 6000,
+      "monthly_limit": null,
+      "limit_group_code": null,
+      "monthly_count_limit": 3,
+      "daily_count_limit": null,
+      "daily_limit": null,
+      "yearly_count_limit": null,
+      "count_group_code": "LIVING_MONTHLY_PAY_3",
+      "use_shared_limit": "N",
+      "exclude_from_performance": "N",
+      "option_group_code": null,
+      "option_key": null,
+      "description": "생활월납 자동이체 이용 시 마이신한포인트 적립. 전월 이용금액 구간에 따라 건당 2,000/4,000/6,000포인트(건별 최대 6,000포인트). 생활월납 대상별 월 1건, 생활월납 서비스 통합 월 3건까지 적립(자동이체 거래승인일 기준 당월 1일~말일). 매월 정기결제 및 자동결제(자동이체)를 이 카드로 등록하여 발생한 거래에 한하여 적용된다. 생활월납 대상 중 도시가스·전기요금에 해당한다. 두 대상 모두 공과금 카테고리로 매핑되어 한 행으로 표현했다.",
+      "tier_limits": [
+        {
+          "min_performance_amount": 400000,
+          "monthly_limit": null,
+          "benefit_value": 2000,
+          "_source": "생활월납 7개 생활월납 자동이체 이용 시 마이신한포인트 적립 / [전월 이용금액별 적립 포인트] 자동이체 건당 적립 포인트 2,000포인트 4,000포인트 6,000포인트 — 40만원 이상 80만원 미만 자동이체 건당 2,000포인트"
+        },
+        {
+          "min_performance_amount": 800000,
+          "monthly_limit": null,
+          "benefit_value": 4000,
+          "_source": "생활월납 7개 생활월납 자동이체 이용 시 마이신한포인트 적립 / [전월 이용금액별 적립 포인트] 자동이체 건당 적립 포인트 2,000포인트 4,000포인트 6,000포인트 — 80만원 이상 120만원 미만 자동이체 건당 4,000포인트"
+        },
+        {
+          "min_performance_amount": 1200000,
+          "monthly_limit": null,
+          "benefit_value": 6000,
+          "_source": "생활월납 7개 생활월납 자동이체 이용 시 마이신한포인트 적립 / [전월 이용금액별 적립 포인트] 자동이체 건당 적립 포인트 2,000포인트 4,000포인트 6,000포인트 — 120만원 이상 자동이체 건당 6,000포인트"
+        }
+      ],
+      "exclusions": [],
+      "_source": {
+        "target_category_code": "[생활월납 서비스 대상] 아파트관리비, 이동통신, 도시가스, 전기요금, 한국 야쿠르트, 웅진 씽크빅, 예다함",
+        "min_txn_amount": "※ 건당 이용금액 6천원 이상인 경우에 서비스 적용됩니다.",
+        "max_benefit_per_txn": "생활월납 자동이체 거래 건수에 대해 전월 이용금액에 따라 건별 최대 6,000포인트, 월 최대 3건까지 적립",
+        "monthly_count_limit": "적립기준 생활월납 대상별 월 1건, 생활월납 서비스 통합 월 3건까지 적립(자동이체 거래승인일 기준 당월 1일~말일 기준)",
+        "count_group_code": "적립기준 생활월납 대상별 월 1건, 생활월납 서비스 통합 월 3건까지 적립(자동이체 거래승인일 기준 당월 1일~말일 기준) — 건별 적립 포인트에는 묶음 금액 한도가 없고 건수만 서비스 단위로 묶이므로 limit_group_code가 아니라 count_group_code로 분리했다.",
+        "require_performance": "신한카드 Deep Once 전월 이용금액 기준 / [전월 이용금액별 적립 포인트] 전월 이용금액 40만원 이상 구간부터 적립 포인트가 있다.",
+        "performance_period": "신한카드 Deep Once 전월 이용금액 기준 — ● 신한카드 Deep Once의 전월 이용금액은 전월(1일~말일)의 거래 시점 이용금액(일시불+할부, 가족카드 포함)을 기준으로 반영됩니다."
+      },
+      "_needs_review": []
+    },
+    {
+      "benefit_name": "생활월납 자동이체 마이신한포인트 적립 - 이동통신(SKT)",
+      "benefit_kind": "POINT",
+      "calc_method": "FIXED",
+      "benefit_value": null,
+      "step_count": null,
+      "apply_timing": null,
+      "target_type": "MERCHANT",
+      "target_category_code": null,
+      "target_merchant_name": "SKT",
+      "require_performance": "Y",
+      "performance_period": "MONTH",
+      "require_payment_type": null,
+      "min_txn_amount": 6000,
+      "max_eligible_amount": null,
+      "max_benefit_per_txn": 6000,
+      "monthly_limit": null,
+      "limit_group_code": null,
+      "monthly_count_limit": 3,
+      "daily_count_limit": null,
+      "daily_limit": null,
+      "yearly_count_limit": null,
+      "count_group_code": "LIVING_MONTHLY_PAY_3",
+      "use_shared_limit": "N",
+      "exclude_from_performance": "N",
+      "option_group_code": null,
+      "option_key": null,
+      "description": "생활월납 자동이체 이용 시 마이신한포인트 적립. 전월 이용금액 구간에 따라 건당 2,000/4,000/6,000포인트(건별 최대 6,000포인트). 생활월납 대상별 월 1건, 생활월납 서비스 통합 월 3건까지 적립(자동이체 거래승인일 기준 당월 1일~말일). 매월 정기결제 및 자동결제(자동이체)를 이 카드로 등록하여 발생한 거래에 한하여 적용된다. 이동통신은 SKT, LG U+, KT 이동통신요금 자동이체(순수 통신요금 결제금액 자동이체)에 한하며, 약정금액 대납, 지점을 통한 월납, 알뜰폰은 제외된다. 대상 통신사 세 곳을 가맹점 행으로 쪼개 표현했다.",
+      "tier_limits": [
+        {
+          "min_performance_amount": 400000,
+          "monthly_limit": null,
+          "benefit_value": 2000,
+          "_source": "생활월납 7개 생활월납 자동이체 이용 시 마이신한포인트 적립 / [전월 이용금액별 적립 포인트] 자동이체 건당 적립 포인트 2,000포인트 4,000포인트 6,000포인트 — 40만원 이상 80만원 미만 자동이체 건당 2,000포인트"
+        },
+        {
+          "min_performance_amount": 800000,
+          "monthly_limit": null,
+          "benefit_value": 4000,
+          "_source": "생활월납 7개 생활월납 자동이체 이용 시 마이신한포인트 적립 / [전월 이용금액별 적립 포인트] 자동이체 건당 적립 포인트 2,000포인트 4,000포인트 6,000포인트 — 80만원 이상 120만원 미만 자동이체 건당 4,000포인트"
+        },
+        {
+          "min_performance_amount": 1200000,
+          "monthly_limit": null,
+          "benefit_value": 6000,
+          "_source": "생활월납 7개 생활월납 자동이체 이용 시 마이신한포인트 적립 / [전월 이용금액별 적립 포인트] 자동이체 건당 적립 포인트 2,000포인트 4,000포인트 6,000포인트 — 120만원 이상 자동이체 건당 6,000포인트"
+        }
+      ],
+      "exclusions": [],
+      "_source": {
+        "target_merchant_name": "[생활월납 서비스 대상] 아파트관리비, 이동통신, 도시가스, 전기요금, 한국 야쿠르트, 웅진 씽크빅, 예다함",
+        "min_txn_amount": "※ 건당 이용금액 6천원 이상인 경우에 서비스 적용됩니다.",
+        "max_benefit_per_txn": "생활월납 자동이체 거래 건수에 대해 전월 이용금액에 따라 건별 최대 6,000포인트, 월 최대 3건까지 적립",
+        "monthly_count_limit": "적립기준 생활월납 대상별 월 1건, 생활월납 서비스 통합 월 3건까지 적립(자동이체 거래승인일 기준 당월 1일~말일 기준)",
+        "count_group_code": "적립기준 생활월납 대상별 월 1건, 생활월납 서비스 통합 월 3건까지 적립(자동이체 거래승인일 기준 당월 1일~말일 기준) — 건별 적립 포인트에는 묶음 금액 한도가 없고 건수만 서비스 단위로 묶이므로 limit_group_code가 아니라 count_group_code로 분리했다.",
+        "require_performance": "신한카드 Deep Once 전월 이용금액 기준 / [전월 이용금액별 적립 포인트] 전월 이용금액 40만원 이상 구간부터 적립 포인트가 있다.",
+        "performance_period": "신한카드 Deep Once 전월 이용금액 기준 — ● 신한카드 Deep Once의 전월 이용금액은 전월(1일~말일)의 거래 시점 이용금액(일시불+할부, 가족카드 포함)을 기준으로 반영됩니다.",
+        "target_merchant_name_note": "※ 이동통신의 경우 SKT, LG U+, KT 이동통신요금 자동이체(순수 통신요금 결제금액 자동이체)에 한하며, 약정금액 대납, 지점을 통한 월납, 알뜰폰은 제외됩니다."
+      },
+      "_needs_review": []
+    },
+    {
+      "benefit_name": "생활월납 자동이체 마이신한포인트 적립 - 이동통신(LG U+)",
+      "benefit_kind": "POINT",
+      "calc_method": "FIXED",
+      "benefit_value": null,
+      "step_count": null,
+      "apply_timing": null,
+      "target_type": "MERCHANT",
+      "target_category_code": null,
+      "target_merchant_name": "LG U+",
+      "require_performance": "Y",
+      "performance_period": "MONTH",
+      "require_payment_type": null,
+      "min_txn_amount": 6000,
+      "max_eligible_amount": null,
+      "max_benefit_per_txn": 6000,
+      "monthly_limit": null,
+      "limit_group_code": null,
+      "monthly_count_limit": 3,
+      "daily_count_limit": null,
+      "daily_limit": null,
+      "yearly_count_limit": null,
+      "count_group_code": "LIVING_MONTHLY_PAY_3",
+      "use_shared_limit": "N",
+      "exclude_from_performance": "N",
+      "option_group_code": null,
+      "option_key": null,
+      "description": "생활월납 자동이체 이용 시 마이신한포인트 적립. 전월 이용금액 구간에 따라 건당 2,000/4,000/6,000포인트(건별 최대 6,000포인트). 생활월납 대상별 월 1건, 생활월납 서비스 통합 월 3건까지 적립(자동이체 거래승인일 기준 당월 1일~말일). 매월 정기결제 및 자동결제(자동이체)를 이 카드로 등록하여 발생한 거래에 한하여 적용된다. 이동통신은 SKT, LG U+, KT 이동통신요금 자동이체(순수 통신요금 결제금액 자동이체)에 한하며, 약정금액 대납, 지점을 통한 월납, 알뜰폰은 제외된다. 대상 통신사 세 곳을 가맹점 행으로 쪼개 표현했다.",
+      "tier_limits": [
+        {
+          "min_performance_amount": 400000,
+          "monthly_limit": null,
+          "benefit_value": 2000,
+          "_source": "생활월납 7개 생활월납 자동이체 이용 시 마이신한포인트 적립 / [전월 이용금액별 적립 포인트] 자동이체 건당 적립 포인트 2,000포인트 4,000포인트 6,000포인트 — 40만원 이상 80만원 미만 자동이체 건당 2,000포인트"
+        },
+        {
+          "min_performance_amount": 800000,
+          "monthly_limit": null,
+          "benefit_value": 4000,
+          "_source": "생활월납 7개 생활월납 자동이체 이용 시 마이신한포인트 적립 / [전월 이용금액별 적립 포인트] 자동이체 건당 적립 포인트 2,000포인트 4,000포인트 6,000포인트 — 80만원 이상 120만원 미만 자동이체 건당 4,000포인트"
+        },
+        {
+          "min_performance_amount": 1200000,
+          "monthly_limit": null,
+          "benefit_value": 6000,
+          "_source": "생활월납 7개 생활월납 자동이체 이용 시 마이신한포인트 적립 / [전월 이용금액별 적립 포인트] 자동이체 건당 적립 포인트 2,000포인트 4,000포인트 6,000포인트 — 120만원 이상 자동이체 건당 6,000포인트"
+        }
+      ],
+      "exclusions": [],
+      "_source": {
+        "target_merchant_name": "[생활월납 서비스 대상] 아파트관리비, 이동통신, 도시가스, 전기요금, 한국 야쿠르트, 웅진 씽크빅, 예다함",
+        "min_txn_amount": "※ 건당 이용금액 6천원 이상인 경우에 서비스 적용됩니다.",
+        "max_benefit_per_txn": "생활월납 자동이체 거래 건수에 대해 전월 이용금액에 따라 건별 최대 6,000포인트, 월 최대 3건까지 적립",
+        "monthly_count_limit": "적립기준 생활월납 대상별 월 1건, 생활월납 서비스 통합 월 3건까지 적립(자동이체 거래승인일 기준 당월 1일~말일 기준)",
+        "count_group_code": "적립기준 생활월납 대상별 월 1건, 생활월납 서비스 통합 월 3건까지 적립(자동이체 거래승인일 기준 당월 1일~말일 기준) — 건별 적립 포인트에는 묶음 금액 한도가 없고 건수만 서비스 단위로 묶이므로 limit_group_code가 아니라 count_group_code로 분리했다.",
+        "require_performance": "신한카드 Deep Once 전월 이용금액 기준 / [전월 이용금액별 적립 포인트] 전월 이용금액 40만원 이상 구간부터 적립 포인트가 있다.",
+        "performance_period": "신한카드 Deep Once 전월 이용금액 기준 — ● 신한카드 Deep Once의 전월 이용금액은 전월(1일~말일)의 거래 시점 이용금액(일시불+할부, 가족카드 포함)을 기준으로 반영됩니다.",
+        "target_merchant_name_note": "※ 이동통신의 경우 SKT, LG U+, KT 이동통신요금 자동이체(순수 통신요금 결제금액 자동이체)에 한하며, 약정금액 대납, 지점을 통한 월납, 알뜰폰은 제외됩니다."
+      },
+      "_needs_review": []
+    },
+    {
+      "benefit_name": "생활월납 자동이체 마이신한포인트 적립 - 이동통신(KT)",
+      "benefit_kind": "POINT",
+      "calc_method": "FIXED",
+      "benefit_value": null,
+      "step_count": null,
+      "apply_timing": null,
+      "target_type": "MERCHANT",
+      "target_category_code": null,
+      "target_merchant_name": "KT",
+      "require_performance": "Y",
+      "performance_period": "MONTH",
+      "require_payment_type": null,
+      "min_txn_amount": 6000,
+      "max_eligible_amount": null,
+      "max_benefit_per_txn": 6000,
+      "monthly_limit": null,
+      "limit_group_code": null,
+      "monthly_count_limit": 3,
+      "daily_count_limit": null,
+      "daily_limit": null,
+      "yearly_count_limit": null,
+      "count_group_code": "LIVING_MONTHLY_PAY_3",
+      "use_shared_limit": "N",
+      "exclude_from_performance": "N",
+      "option_group_code": null,
+      "option_key": null,
+      "description": "생활월납 자동이체 이용 시 마이신한포인트 적립. 전월 이용금액 구간에 따라 건당 2,000/4,000/6,000포인트(건별 최대 6,000포인트). 생활월납 대상별 월 1건, 생활월납 서비스 통합 월 3건까지 적립(자동이체 거래승인일 기준 당월 1일~말일). 매월 정기결제 및 자동결제(자동이체)를 이 카드로 등록하여 발생한 거래에 한하여 적용된다. 이동통신은 SKT, LG U+, KT 이동통신요금 자동이체(순수 통신요금 결제금액 자동이체)에 한하며, 약정금액 대납, 지점을 통한 월납, 알뜰폰은 제외된다. 대상 통신사 세 곳을 가맹점 행으로 쪼개 표현했다.",
+      "tier_limits": [
+        {
+          "min_performance_amount": 400000,
+          "monthly_limit": null,
+          "benefit_value": 2000,
+          "_source": "생활월납 7개 생활월납 자동이체 이용 시 마이신한포인트 적립 / [전월 이용금액별 적립 포인트] 자동이체 건당 적립 포인트 2,000포인트 4,000포인트 6,000포인트 — 40만원 이상 80만원 미만 자동이체 건당 2,000포인트"
+        },
+        {
+          "min_performance_amount": 800000,
+          "monthly_limit": null,
+          "benefit_value": 4000,
+          "_source": "생활월납 7개 생활월납 자동이체 이용 시 마이신한포인트 적립 / [전월 이용금액별 적립 포인트] 자동이체 건당 적립 포인트 2,000포인트 4,000포인트 6,000포인트 — 80만원 이상 120만원 미만 자동이체 건당 4,000포인트"
+        },
+        {
+          "min_performance_amount": 1200000,
+          "monthly_limit": null,
+          "benefit_value": 6000,
+          "_source": "생활월납 7개 생활월납 자동이체 이용 시 마이신한포인트 적립 / [전월 이용금액별 적립 포인트] 자동이체 건당 적립 포인트 2,000포인트 4,000포인트 6,000포인트 — 120만원 이상 자동이체 건당 6,000포인트"
+        }
+      ],
+      "exclusions": [],
+      "_source": {
+        "target_merchant_name": "[생활월납 서비스 대상] 아파트관리비, 이동통신, 도시가스, 전기요금, 한국 야쿠르트, 웅진 씽크빅, 예다함",
+        "min_txn_amount": "※ 건당 이용금액 6천원 이상인 경우에 서비스 적용됩니다.",
+        "max_benefit_per_txn": "생활월납 자동이체 거래 건수에 대해 전월 이용금액에 따라 건별 최대 6,000포인트, 월 최대 3건까지 적립",
+        "monthly_count_limit": "적립기준 생활월납 대상별 월 1건, 생활월납 서비스 통합 월 3건까지 적립(자동이체 거래승인일 기준 당월 1일~말일 기준)",
+        "count_group_code": "적립기준 생활월납 대상별 월 1건, 생활월납 서비스 통합 월 3건까지 적립(자동이체 거래승인일 기준 당월 1일~말일 기준) — 건별 적립 포인트에는 묶음 금액 한도가 없고 건수만 서비스 단위로 묶이므로 limit_group_code가 아니라 count_group_code로 분리했다.",
+        "require_performance": "신한카드 Deep Once 전월 이용금액 기준 / [전월 이용금액별 적립 포인트] 전월 이용금액 40만원 이상 구간부터 적립 포인트가 있다.",
+        "performance_period": "신한카드 Deep Once 전월 이용금액 기준 — ● 신한카드 Deep Once의 전월 이용금액은 전월(1일~말일)의 거래 시점 이용금액(일시불+할부, 가족카드 포함)을 기준으로 반영됩니다.",
+        "target_merchant_name_note": "※ 이동통신의 경우 SKT, LG U+, KT 이동통신요금 자동이체(순수 통신요금 결제금액 자동이체)에 한하며, 약정금액 대납, 지점을 통한 월납, 알뜰폰은 제외됩니다."
+      },
+      "_needs_review": []
+    },
+    {
+      "benefit_name": "생활월납 자동이체 마이신한포인트 적립 - 한국 야쿠르트",
+      "benefit_kind": "POINT",
+      "calc_method": "FIXED",
+      "benefit_value": null,
+      "step_count": null,
+      "apply_timing": null,
+      "target_type": "MERCHANT",
+      "target_category_code": null,
+      "target_merchant_name": "한국 야쿠르트",
+      "require_performance": "Y",
+      "performance_period": "MONTH",
+      "require_payment_type": null,
+      "min_txn_amount": 6000,
+      "max_eligible_amount": null,
+      "max_benefit_per_txn": 6000,
+      "monthly_limit": null,
+      "limit_group_code": null,
+      "monthly_count_limit": 3,
+      "daily_count_limit": null,
+      "daily_limit": null,
+      "yearly_count_limit": null,
+      "count_group_code": "LIVING_MONTHLY_PAY_3",
+      "use_shared_limit": "N",
+      "exclude_from_performance": "N",
+      "option_group_code": null,
+      "option_key": null,
+      "description": "생활월납 자동이체 이용 시 마이신한포인트 적립. 전월 이용금액 구간에 따라 건당 2,000/4,000/6,000포인트(건별 최대 6,000포인트). 생활월납 대상별 월 1건, 생활월납 서비스 통합 월 3건까지 적립(자동이체 거래승인일 기준 당월 1일~말일). 매월 정기결제 및 자동결제(자동이체)를 이 카드로 등록하여 발생한 거래에 한하여 적용된다. 한국 야쿠르트 정기주문 이용 건에 한하여 서비스가 제공된다.",
+      "tier_limits": [
+        {
+          "min_performance_amount": 400000,
+          "monthly_limit": null,
+          "benefit_value": 2000,
+          "_source": "생활월납 7개 생활월납 자동이체 이용 시 마이신한포인트 적립 / [전월 이용금액별 적립 포인트] 자동이체 건당 적립 포인트 2,000포인트 4,000포인트 6,000포인트 — 40만원 이상 80만원 미만 자동이체 건당 2,000포인트"
+        },
+        {
+          "min_performance_amount": 800000,
+          "monthly_limit": null,
+          "benefit_value": 4000,
+          "_source": "생활월납 7개 생활월납 자동이체 이용 시 마이신한포인트 적립 / [전월 이용금액별 적립 포인트] 자동이체 건당 적립 포인트 2,000포인트 4,000포인트 6,000포인트 — 80만원 이상 120만원 미만 자동이체 건당 4,000포인트"
+        },
+        {
+          "min_performance_amount": 1200000,
+          "monthly_limit": null,
+          "benefit_value": 6000,
+          "_source": "생활월납 7개 생활월납 자동이체 이용 시 마이신한포인트 적립 / [전월 이용금액별 적립 포인트] 자동이체 건당 적립 포인트 2,000포인트 4,000포인트 6,000포인트 — 120만원 이상 자동이체 건당 6,000포인트"
+        }
+      ],
+      "exclusions": [
+        {
+          "exclusion_type": "MERCHANT",
+          "exclusion_value": "프레딧(hy Fresh)",
+          "_source": "※ 한국 야쿠르트 정기주문, 웅진 씽크빅 정기결제, 예다함 상조 월 부금 이용 건에 한하여 서비스 제공되며, 한국 야쿠르트의 경우 프레딧(hy Fresh) 이용은 서비스 제외됩니다."
+        }
+      ],
+      "_source": {
+        "target_merchant_name": "[생활월납 서비스 대상] 아파트관리비, 이동통신, 도시가스, 전기요금, 한국 야쿠르트, 웅진 씽크빅, 예다함",
+        "min_txn_amount": "※ 건당 이용금액 6천원 이상인 경우에 서비스 적용됩니다.",
+        "max_benefit_per_txn": "생활월납 자동이체 거래 건수에 대해 전월 이용금액에 따라 건별 최대 6,000포인트, 월 최대 3건까지 적립",
+        "monthly_count_limit": "적립기준 생활월납 대상별 월 1건, 생활월납 서비스 통합 월 3건까지 적립(자동이체 거래승인일 기준 당월 1일~말일 기준)",
+        "count_group_code": "적립기준 생활월납 대상별 월 1건, 생활월납 서비스 통합 월 3건까지 적립(자동이체 거래승인일 기준 당월 1일~말일 기준) — 건별 적립 포인트에는 묶음 금액 한도가 없고 건수만 서비스 단위로 묶이므로 limit_group_code가 아니라 count_group_code로 분리했다.",
+        "require_performance": "신한카드 Deep Once 전월 이용금액 기준 / [전월 이용금액별 적립 포인트] 전월 이용금액 40만원 이상 구간부터 적립 포인트가 있다.",
+        "performance_period": "신한카드 Deep Once 전월 이용금액 기준 — ● 신한카드 Deep Once의 전월 이용금액은 전월(1일~말일)의 거래 시점 이용금액(일시불+할부, 가족카드 포함)을 기준으로 반영됩니다."
+      },
+      "_needs_review": []
+    },
+    {
+      "benefit_name": "생활월납 자동이체 마이신한포인트 적립 - 웅진 씽크빅",
+      "benefit_kind": "POINT",
+      "calc_method": "FIXED",
+      "benefit_value": null,
+      "step_count": null,
+      "apply_timing": null,
+      "target_type": "MERCHANT",
+      "target_category_code": null,
+      "target_merchant_name": "웅진 씽크빅",
+      "require_performance": "Y",
+      "performance_period": "MONTH",
+      "require_payment_type": null,
+      "min_txn_amount": 6000,
+      "max_eligible_amount": null,
+      "max_benefit_per_txn": 6000,
+      "monthly_limit": null,
+      "limit_group_code": null,
+      "monthly_count_limit": 3,
+      "daily_count_limit": null,
+      "daily_limit": null,
+      "yearly_count_limit": null,
+      "count_group_code": "LIVING_MONTHLY_PAY_3",
+      "use_shared_limit": "N",
+      "exclude_from_performance": "N",
+      "option_group_code": null,
+      "option_key": null,
+      "description": "생활월납 자동이체 이용 시 마이신한포인트 적립. 전월 이용금액 구간에 따라 건당 2,000/4,000/6,000포인트(건별 최대 6,000포인트). 생활월납 대상별 월 1건, 생활월납 서비스 통합 월 3건까지 적립(자동이체 거래승인일 기준 당월 1일~말일). 매월 정기결제 및 자동결제(자동이체)를 이 카드로 등록하여 발생한 거래에 한하여 적용된다. 웅진 씽크빅 정기결제 이용 건에 한하여 서비스가 제공된다.",
+      "tier_limits": [
+        {
+          "min_performance_amount": 400000,
+          "monthly_limit": null,
+          "benefit_value": 2000,
+          "_source": "생활월납 7개 생활월납 자동이체 이용 시 마이신한포인트 적립 / [전월 이용금액별 적립 포인트] 자동이체 건당 적립 포인트 2,000포인트 4,000포인트 6,000포인트 — 40만원 이상 80만원 미만 자동이체 건당 2,000포인트"
+        },
+        {
+          "min_performance_amount": 800000,
+          "monthly_limit": null,
+          "benefit_value": 4000,
+          "_source": "생활월납 7개 생활월납 자동이체 이용 시 마이신한포인트 적립 / [전월 이용금액별 적립 포인트] 자동이체 건당 적립 포인트 2,000포인트 4,000포인트 6,000포인트 — 80만원 이상 120만원 미만 자동이체 건당 4,000포인트"
+        },
+        {
+          "min_performance_amount": 1200000,
+          "monthly_limit": null,
+          "benefit_value": 6000,
+          "_source": "생활월납 7개 생활월납 자동이체 이용 시 마이신한포인트 적립 / [전월 이용금액별 적립 포인트] 자동이체 건당 적립 포인트 2,000포인트 4,000포인트 6,000포인트 — 120만원 이상 자동이체 건당 6,000포인트"
+        }
+      ],
+      "exclusions": [],
+      "_source": {
+        "target_merchant_name": "[생활월납 서비스 대상] 아파트관리비, 이동통신, 도시가스, 전기요금, 한국 야쿠르트, 웅진 씽크빅, 예다함",
+        "min_txn_amount": "※ 건당 이용금액 6천원 이상인 경우에 서비스 적용됩니다.",
+        "max_benefit_per_txn": "생활월납 자동이체 거래 건수에 대해 전월 이용금액에 따라 건별 최대 6,000포인트, 월 최대 3건까지 적립",
+        "monthly_count_limit": "적립기준 생활월납 대상별 월 1건, 생활월납 서비스 통합 월 3건까지 적립(자동이체 거래승인일 기준 당월 1일~말일 기준)",
+        "count_group_code": "적립기준 생활월납 대상별 월 1건, 생활월납 서비스 통합 월 3건까지 적립(자동이체 거래승인일 기준 당월 1일~말일 기준) — 건별 적립 포인트에는 묶음 금액 한도가 없고 건수만 서비스 단위로 묶이므로 limit_group_code가 아니라 count_group_code로 분리했다.",
+        "require_performance": "신한카드 Deep Once 전월 이용금액 기준 / [전월 이용금액별 적립 포인트] 전월 이용금액 40만원 이상 구간부터 적립 포인트가 있다.",
+        "performance_period": "신한카드 Deep Once 전월 이용금액 기준 — ● 신한카드 Deep Once의 전월 이용금액은 전월(1일~말일)의 거래 시점 이용금액(일시불+할부, 가족카드 포함)을 기준으로 반영됩니다."
+      },
+      "_needs_review": []
+    },
+    {
+      "benefit_name": "생활월납 자동이체 마이신한포인트 적립 - 예다함",
+      "benefit_kind": "POINT",
+      "calc_method": "FIXED",
+      "benefit_value": null,
+      "step_count": null,
+      "apply_timing": null,
+      "target_type": "MERCHANT",
+      "target_category_code": null,
+      "target_merchant_name": "예다함",
+      "require_performance": "Y",
+      "performance_period": "MONTH",
+      "require_payment_type": null,
+      "min_txn_amount": 6000,
+      "max_eligible_amount": null,
+      "max_benefit_per_txn": 6000,
+      "monthly_limit": null,
+      "limit_group_code": null,
+      "monthly_count_limit": 3,
+      "daily_count_limit": null,
+      "daily_limit": null,
+      "yearly_count_limit": null,
+      "count_group_code": "LIVING_MONTHLY_PAY_3",
+      "use_shared_limit": "N",
+      "exclude_from_performance": "N",
+      "option_group_code": null,
+      "option_key": null,
+      "description": "생활월납 자동이체 이용 시 마이신한포인트 적립. 전월 이용금액 구간에 따라 건당 2,000/4,000/6,000포인트(건별 최대 6,000포인트). 생활월납 대상별 월 1건, 생활월납 서비스 통합 월 3건까지 적립(자동이체 거래승인일 기준 당월 1일~말일). 매월 정기결제 및 자동결제(자동이체)를 이 카드로 등록하여 발생한 거래에 한하여 적용된다. 예다함 상조 월 부금 이용 건에 한하여 서비스가 제공된다.",
+      "tier_limits": [
+        {
+          "min_performance_amount": 400000,
+          "monthly_limit": null,
+          "benefit_value": 2000,
+          "_source": "생활월납 7개 생활월납 자동이체 이용 시 마이신한포인트 적립 / [전월 이용금액별 적립 포인트] 자동이체 건당 적립 포인트 2,000포인트 4,000포인트 6,000포인트 — 40만원 이상 80만원 미만 자동이체 건당 2,000포인트"
+        },
+        {
+          "min_performance_amount": 800000,
+          "monthly_limit": null,
+          "benefit_value": 4000,
+          "_source": "생활월납 7개 생활월납 자동이체 이용 시 마이신한포인트 적립 / [전월 이용금액별 적립 포인트] 자동이체 건당 적립 포인트 2,000포인트 4,000포인트 6,000포인트 — 80만원 이상 120만원 미만 자동이체 건당 4,000포인트"
+        },
+        {
+          "min_performance_amount": 1200000,
+          "monthly_limit": null,
+          "benefit_value": 6000,
+          "_source": "생활월납 7개 생활월납 자동이체 이용 시 마이신한포인트 적립 / [전월 이용금액별 적립 포인트] 자동이체 건당 적립 포인트 2,000포인트 4,000포인트 6,000포인트 — 120만원 이상 자동이체 건당 6,000포인트"
+        }
+      ],
+      "exclusions": [],
+      "_source": {
+        "target_merchant_name": "[생활월납 서비스 대상] 아파트관리비, 이동통신, 도시가스, 전기요금, 한국 야쿠르트, 웅진 씽크빅, 예다함",
+        "min_txn_amount": "※ 건당 이용금액 6천원 이상인 경우에 서비스 적용됩니다.",
+        "max_benefit_per_txn": "생활월납 자동이체 거래 건수에 대해 전월 이용금액에 따라 건별 최대 6,000포인트, 월 최대 3건까지 적립",
+        "monthly_count_limit": "적립기준 생활월납 대상별 월 1건, 생활월납 서비스 통합 월 3건까지 적립(자동이체 거래승인일 기준 당월 1일~말일 기준)",
+        "count_group_code": "적립기준 생활월납 대상별 월 1건, 생활월납 서비스 통합 월 3건까지 적립(자동이체 거래승인일 기준 당월 1일~말일 기준) — 건별 적립 포인트에는 묶음 금액 한도가 없고 건수만 서비스 단위로 묶이므로 limit_group_code가 아니라 count_group_code로 분리했다.",
+        "require_performance": "신한카드 Deep Once 전월 이용금액 기준 / [전월 이용금액별 적립 포인트] 전월 이용금액 40만원 이상 구간부터 적립 포인트가 있다.",
+        "performance_period": "신한카드 Deep Once 전월 이용금액 기준 — ● 신한카드 Deep Once의 전월 이용금액은 전월(1일~말일)의 거래 시점 이용금액(일시불+할부, 가족카드 포함)을 기준으로 반영됩니다."
+      },
+      "_needs_review": []
+    },
+    {
+      "benefit_name": "디지털 구독 정기결제 마이신한포인트 적립 - 넷플릭스",
+      "benefit_kind": "POINT",
+      "calc_method": "FIXED",
+      "benefit_value": null,
+      "step_count": null,
+      "apply_timing": null,
+      "target_type": "MERCHANT",
+      "target_category_code": null,
+      "target_merchant_name": "넷플릭스",
+      "require_performance": "Y",
+      "performance_period": "MONTH",
+      "require_payment_type": null,
+      "min_txn_amount": 6000,
+      "max_eligible_amount": null,
+      "max_benefit_per_txn": 6000,
+      "monthly_limit": null,
+      "limit_group_code": null,
+      "monthly_count_limit": 3,
+      "daily_count_limit": null,
+      "daily_limit": null,
+      "yearly_count_limit": null,
+      "count_group_code": "DIGITAL_SUBSCRIPTION_3",
+      "use_shared_limit": "N",
+      "exclude_from_performance": "N",
+      "option_group_code": null,
+      "option_key": null,
+      "description": "디지털 구독 서비스 정기결제 이용 시 마이신한포인트 적립. 전월 이용금액 구간에 따라 건당 2,000/4,000/6,000포인트(건별 최대 6,000포인트). 디지털구독 대상 업체별 월 1건, 디지털구독 서비스 통합 월 3건까지 적립(자동이체 거래승인일 기준 당월 1일~말일). 서비스 대상 가맹점 공식 홈페이지(앱)를 통해 직접 신청한 정기결제(자동이체) 이용 건에 한한다.",
+      "tier_limits": [
+        {
+          "min_performance_amount": 400000,
+          "monthly_limit": null,
+          "benefit_value": 2000,
+          "_source": "디지털 구독 7개 디지털 구독 서비스 정기결제 이용 시 마이신한포인트 적립 / [전월 이용금액별 적립 포인트] 자동이체 건당 적립 포인트 2,000포인트 4,000포인트 6,000포인트 — 40만원 이상 80만원 미만 자동이체 건당 2,000포인트"
+        },
+        {
+          "min_performance_amount": 800000,
+          "monthly_limit": null,
+          "benefit_value": 4000,
+          "_source": "디지털 구독 7개 디지털 구독 서비스 정기결제 이용 시 마이신한포인트 적립 / [전월 이용금액별 적립 포인트] 자동이체 건당 적립 포인트 2,000포인트 4,000포인트 6,000포인트 — 80만원 이상 120만원 미만 자동이체 건당 4,000포인트"
+        },
+        {
+          "min_performance_amount": 1200000,
+          "monthly_limit": null,
+          "benefit_value": 6000,
+          "_source": "디지털 구독 7개 디지털 구독 서비스 정기결제 이용 시 마이신한포인트 적립 / [전월 이용금액별 적립 포인트] 자동이체 건당 적립 포인트 2,000포인트 4,000포인트 6,000포인트 — 120만원 이상 자동이체 건당 6,000포인트"
+        }
+      ],
+      "exclusions": [],
+      "_source": {
+        "target_merchant_name": "[디지털 구독 서비스 대상] 넷플릭스, 웨이브, 왓챠플레이, 멜론, 지니뮤직, 밀리의 서재, 스타벅스(자동충전에 한함)",
+        "min_txn_amount": "※ 건당 이용금액 6천원 이상인 경우에 서비스 적용됩니다. (정기결제 요금이 6천원 미만인 경우 서비스 제외)",
+        "max_benefit_per_txn": "디지털 구독 서비스 정기결제 거래 건수에 대해 전월 이용금액에 따라 건별 최대 6,000포인트, 월 최대 3건까지 적립",
+        "monthly_count_limit": "적립기준 디지털구독 대상 업체별 월 1건, 디지털구독 서비스 통합 월 3건까지 적립(자동이체 거래승인일 기준 당월 1일~말일 기준)",
+        "count_group_code": "적립기준 디지털구독 대상 업체별 월 1건, 디지털구독 서비스 통합 월 3건까지 적립(자동이체 거래승인일 기준 당월 1일~말일 기준) — 건별 적립 포인트에는 묶음 금액 한도가 없고 건수만 서비스 단위로 묶이므로 limit_group_code가 아니라 count_group_code로 분리했다.",
+        "require_performance": "신한카드 Deep Once 전월 이용금액 기준 / [전월 이용금액별 적립 포인트] 전월 이용금액 40만원 이상 구간부터 적립 포인트가 있다.",
+        "performance_period": "신한카드 Deep Once 전월 이용금액 기준 — ● 신한카드 Deep Once의 전월 이용금액은 전월(1일~말일)의 거래 시점 이용금액(일시불+할부, 가족카드 포함)을 기준으로 반영됩니다."
+      },
+      "_needs_review": []
+    },
+    {
+      "benefit_name": "디지털 구독 정기결제 마이신한포인트 적립 - 웨이브",
+      "benefit_kind": "POINT",
+      "calc_method": "FIXED",
+      "benefit_value": null,
+      "step_count": null,
+      "apply_timing": null,
+      "target_type": "MERCHANT",
+      "target_category_code": null,
+      "target_merchant_name": "웨이브",
+      "require_performance": "Y",
+      "performance_period": "MONTH",
+      "require_payment_type": null,
+      "min_txn_amount": 6000,
+      "max_eligible_amount": null,
+      "max_benefit_per_txn": 6000,
+      "monthly_limit": null,
+      "limit_group_code": null,
+      "monthly_count_limit": 3,
+      "daily_count_limit": null,
+      "daily_limit": null,
+      "yearly_count_limit": null,
+      "count_group_code": "DIGITAL_SUBSCRIPTION_3",
+      "use_shared_limit": "N",
+      "exclude_from_performance": "N",
+      "option_group_code": null,
+      "option_key": null,
+      "description": "디지털 구독 서비스 정기결제 이용 시 마이신한포인트 적립. 전월 이용금액 구간에 따라 건당 2,000/4,000/6,000포인트(건별 최대 6,000포인트). 디지털구독 대상 업체별 월 1건, 디지털구독 서비스 통합 월 3건까지 적립(자동이체 거래승인일 기준 당월 1일~말일). 서비스 대상 가맹점 공식 홈페이지(앱)를 통해 직접 신청한 정기결제(자동이체) 이용 건에 한한다.",
+      "tier_limits": [
+        {
+          "min_performance_amount": 400000,
+          "monthly_limit": null,
+          "benefit_value": 2000,
+          "_source": "디지털 구독 7개 디지털 구독 서비스 정기결제 이용 시 마이신한포인트 적립 / [전월 이용금액별 적립 포인트] 자동이체 건당 적립 포인트 2,000포인트 4,000포인트 6,000포인트 — 40만원 이상 80만원 미만 자동이체 건당 2,000포인트"
+        },
+        {
+          "min_performance_amount": 800000,
+          "monthly_limit": null,
+          "benefit_value": 4000,
+          "_source": "디지털 구독 7개 디지털 구독 서비스 정기결제 이용 시 마이신한포인트 적립 / [전월 이용금액별 적립 포인트] 자동이체 건당 적립 포인트 2,000포인트 4,000포인트 6,000포인트 — 80만원 이상 120만원 미만 자동이체 건당 4,000포인트"
+        },
+        {
+          "min_performance_amount": 1200000,
+          "monthly_limit": null,
+          "benefit_value": 6000,
+          "_source": "디지털 구독 7개 디지털 구독 서비스 정기결제 이용 시 마이신한포인트 적립 / [전월 이용금액별 적립 포인트] 자동이체 건당 적립 포인트 2,000포인트 4,000포인트 6,000포인트 — 120만원 이상 자동이체 건당 6,000포인트"
+        }
+      ],
+      "exclusions": [],
+      "_source": {
+        "target_merchant_name": "[디지털 구독 서비스 대상] 넷플릭스, 웨이브, 왓챠플레이, 멜론, 지니뮤직, 밀리의 서재, 스타벅스(자동충전에 한함)",
+        "min_txn_amount": "※ 건당 이용금액 6천원 이상인 경우에 서비스 적용됩니다. (정기결제 요금이 6천원 미만인 경우 서비스 제외)",
+        "max_benefit_per_txn": "디지털 구독 서비스 정기결제 거래 건수에 대해 전월 이용금액에 따라 건별 최대 6,000포인트, 월 최대 3건까지 적립",
+        "monthly_count_limit": "적립기준 디지털구독 대상 업체별 월 1건, 디지털구독 서비스 통합 월 3건까지 적립(자동이체 거래승인일 기준 당월 1일~말일 기준)",
+        "count_group_code": "적립기준 디지털구독 대상 업체별 월 1건, 디지털구독 서비스 통합 월 3건까지 적립(자동이체 거래승인일 기준 당월 1일~말일 기준) — 건별 적립 포인트에는 묶음 금액 한도가 없고 건수만 서비스 단위로 묶이므로 limit_group_code가 아니라 count_group_code로 분리했다.",
+        "require_performance": "신한카드 Deep Once 전월 이용금액 기준 / [전월 이용금액별 적립 포인트] 전월 이용금액 40만원 이상 구간부터 적립 포인트가 있다.",
+        "performance_period": "신한카드 Deep Once 전월 이용금액 기준 — ● 신한카드 Deep Once의 전월 이용금액은 전월(1일~말일)의 거래 시점 이용금액(일시불+할부, 가족카드 포함)을 기준으로 반영됩니다."
+      },
+      "_needs_review": []
+    },
+    {
+      "benefit_name": "디지털 구독 정기결제 마이신한포인트 적립 - 왓챠플레이",
+      "benefit_kind": "POINT",
+      "calc_method": "FIXED",
+      "benefit_value": null,
+      "step_count": null,
+      "apply_timing": null,
+      "target_type": "MERCHANT",
+      "target_category_code": null,
+      "target_merchant_name": "왓챠플레이",
+      "require_performance": "Y",
+      "performance_period": "MONTH",
+      "require_payment_type": null,
+      "min_txn_amount": 6000,
+      "max_eligible_amount": null,
+      "max_benefit_per_txn": 6000,
+      "monthly_limit": null,
+      "limit_group_code": null,
+      "monthly_count_limit": 3,
+      "daily_count_limit": null,
+      "daily_limit": null,
+      "yearly_count_limit": null,
+      "count_group_code": "DIGITAL_SUBSCRIPTION_3",
+      "use_shared_limit": "N",
+      "exclude_from_performance": "N",
+      "option_group_code": null,
+      "option_key": null,
+      "description": "디지털 구독 서비스 정기결제 이용 시 마이신한포인트 적립. 전월 이용금액 구간에 따라 건당 2,000/4,000/6,000포인트(건별 최대 6,000포인트). 디지털구독 대상 업체별 월 1건, 디지털구독 서비스 통합 월 3건까지 적립(자동이체 거래승인일 기준 당월 1일~말일). 서비스 대상 가맹점 공식 홈페이지(앱)를 통해 직접 신청한 정기결제(자동이체) 이용 건에 한한다.",
+      "tier_limits": [
+        {
+          "min_performance_amount": 400000,
+          "monthly_limit": null,
+          "benefit_value": 2000,
+          "_source": "디지털 구독 7개 디지털 구독 서비스 정기결제 이용 시 마이신한포인트 적립 / [전월 이용금액별 적립 포인트] 자동이체 건당 적립 포인트 2,000포인트 4,000포인트 6,000포인트 — 40만원 이상 80만원 미만 자동이체 건당 2,000포인트"
+        },
+        {
+          "min_performance_amount": 800000,
+          "monthly_limit": null,
+          "benefit_value": 4000,
+          "_source": "디지털 구독 7개 디지털 구독 서비스 정기결제 이용 시 마이신한포인트 적립 / [전월 이용금액별 적립 포인트] 자동이체 건당 적립 포인트 2,000포인트 4,000포인트 6,000포인트 — 80만원 이상 120만원 미만 자동이체 건당 4,000포인트"
+        },
+        {
+          "min_performance_amount": 1200000,
+          "monthly_limit": null,
+          "benefit_value": 6000,
+          "_source": "디지털 구독 7개 디지털 구독 서비스 정기결제 이용 시 마이신한포인트 적립 / [전월 이용금액별 적립 포인트] 자동이체 건당 적립 포인트 2,000포인트 4,000포인트 6,000포인트 — 120만원 이상 자동이체 건당 6,000포인트"
+        }
+      ],
+      "exclusions": [],
+      "_source": {
+        "target_merchant_name": "[디지털 구독 서비스 대상] 넷플릭스, 웨이브, 왓챠플레이, 멜론, 지니뮤직, 밀리의 서재, 스타벅스(자동충전에 한함)",
+        "min_txn_amount": "※ 건당 이용금액 6천원 이상인 경우에 서비스 적용됩니다. (정기결제 요금이 6천원 미만인 경우 서비스 제외)",
+        "max_benefit_per_txn": "디지털 구독 서비스 정기결제 거래 건수에 대해 전월 이용금액에 따라 건별 최대 6,000포인트, 월 최대 3건까지 적립",
+        "monthly_count_limit": "적립기준 디지털구독 대상 업체별 월 1건, 디지털구독 서비스 통합 월 3건까지 적립(자동이체 거래승인일 기준 당월 1일~말일 기준)",
+        "count_group_code": "적립기준 디지털구독 대상 업체별 월 1건, 디지털구독 서비스 통합 월 3건까지 적립(자동이체 거래승인일 기준 당월 1일~말일 기준) — 건별 적립 포인트에는 묶음 금액 한도가 없고 건수만 서비스 단위로 묶이므로 limit_group_code가 아니라 count_group_code로 분리했다.",
+        "require_performance": "신한카드 Deep Once 전월 이용금액 기준 / [전월 이용금액별 적립 포인트] 전월 이용금액 40만원 이상 구간부터 적립 포인트가 있다.",
+        "performance_period": "신한카드 Deep Once 전월 이용금액 기준 — ● 신한카드 Deep Once의 전월 이용금액은 전월(1일~말일)의 거래 시점 이용금액(일시불+할부, 가족카드 포함)을 기준으로 반영됩니다."
+      },
+      "_needs_review": []
+    },
+    {
+      "benefit_name": "디지털 구독 정기결제 마이신한포인트 적립 - 멜론",
+      "benefit_kind": "POINT",
+      "calc_method": "FIXED",
+      "benefit_value": null,
+      "step_count": null,
+      "apply_timing": null,
+      "target_type": "MERCHANT",
+      "target_category_code": null,
+      "target_merchant_name": "멜론",
+      "require_performance": "Y",
+      "performance_period": "MONTH",
+      "require_payment_type": null,
+      "min_txn_amount": 6000,
+      "max_eligible_amount": null,
+      "max_benefit_per_txn": 6000,
+      "monthly_limit": null,
+      "limit_group_code": null,
+      "monthly_count_limit": 3,
+      "daily_count_limit": null,
+      "daily_limit": null,
+      "yearly_count_limit": null,
+      "count_group_code": "DIGITAL_SUBSCRIPTION_3",
+      "use_shared_limit": "N",
+      "exclude_from_performance": "N",
+      "option_group_code": null,
+      "option_key": null,
+      "description": "디지털 구독 서비스 정기결제 이용 시 마이신한포인트 적립. 전월 이용금액 구간에 따라 건당 2,000/4,000/6,000포인트(건별 최대 6,000포인트). 디지털구독 대상 업체별 월 1건, 디지털구독 서비스 통합 월 3건까지 적립(자동이체 거래승인일 기준 당월 1일~말일). 서비스 대상 가맹점 공식 홈페이지(앱)를 통해 직접 신청한 정기결제(자동이체) 이용 건에 한한다.",
+      "tier_limits": [
+        {
+          "min_performance_amount": 400000,
+          "monthly_limit": null,
+          "benefit_value": 2000,
+          "_source": "디지털 구독 7개 디지털 구독 서비스 정기결제 이용 시 마이신한포인트 적립 / [전월 이용금액별 적립 포인트] 자동이체 건당 적립 포인트 2,000포인트 4,000포인트 6,000포인트 — 40만원 이상 80만원 미만 자동이체 건당 2,000포인트"
+        },
+        {
+          "min_performance_amount": 800000,
+          "monthly_limit": null,
+          "benefit_value": 4000,
+          "_source": "디지털 구독 7개 디지털 구독 서비스 정기결제 이용 시 마이신한포인트 적립 / [전월 이용금액별 적립 포인트] 자동이체 건당 적립 포인트 2,000포인트 4,000포인트 6,000포인트 — 80만원 이상 120만원 미만 자동이체 건당 4,000포인트"
+        },
+        {
+          "min_performance_amount": 1200000,
+          "monthly_limit": null,
+          "benefit_value": 6000,
+          "_source": "디지털 구독 7개 디지털 구독 서비스 정기결제 이용 시 마이신한포인트 적립 / [전월 이용금액별 적립 포인트] 자동이체 건당 적립 포인트 2,000포인트 4,000포인트 6,000포인트 — 120만원 이상 자동이체 건당 6,000포인트"
+        }
+      ],
+      "exclusions": [],
+      "_source": {
+        "target_merchant_name": "[디지털 구독 서비스 대상] 넷플릭스, 웨이브, 왓챠플레이, 멜론, 지니뮤직, 밀리의 서재, 스타벅스(자동충전에 한함)",
+        "min_txn_amount": "※ 건당 이용금액 6천원 이상인 경우에 서비스 적용됩니다. (정기결제 요금이 6천원 미만인 경우 서비스 제외)",
+        "max_benefit_per_txn": "디지털 구독 서비스 정기결제 거래 건수에 대해 전월 이용금액에 따라 건별 최대 6,000포인트, 월 최대 3건까지 적립",
+        "monthly_count_limit": "적립기준 디지털구독 대상 업체별 월 1건, 디지털구독 서비스 통합 월 3건까지 적립(자동이체 거래승인일 기준 당월 1일~말일 기준)",
+        "count_group_code": "적립기준 디지털구독 대상 업체별 월 1건, 디지털구독 서비스 통합 월 3건까지 적립(자동이체 거래승인일 기준 당월 1일~말일 기준) — 건별 적립 포인트에는 묶음 금액 한도가 없고 건수만 서비스 단위로 묶이므로 limit_group_code가 아니라 count_group_code로 분리했다.",
+        "require_performance": "신한카드 Deep Once 전월 이용금액 기준 / [전월 이용금액별 적립 포인트] 전월 이용금액 40만원 이상 구간부터 적립 포인트가 있다.",
+        "performance_period": "신한카드 Deep Once 전월 이용금액 기준 — ● 신한카드 Deep Once의 전월 이용금액은 전월(1일~말일)의 거래 시점 이용금액(일시불+할부, 가족카드 포함)을 기준으로 반영됩니다."
+      },
+      "_needs_review": []
+    },
+    {
+      "benefit_name": "디지털 구독 정기결제 마이신한포인트 적립 - 지니뮤직",
+      "benefit_kind": "POINT",
+      "calc_method": "FIXED",
+      "benefit_value": null,
+      "step_count": null,
+      "apply_timing": null,
+      "target_type": "MERCHANT",
+      "target_category_code": null,
+      "target_merchant_name": "지니뮤직",
+      "require_performance": "Y",
+      "performance_period": "MONTH",
+      "require_payment_type": null,
+      "min_txn_amount": 6000,
+      "max_eligible_amount": null,
+      "max_benefit_per_txn": 6000,
+      "monthly_limit": null,
+      "limit_group_code": null,
+      "monthly_count_limit": 3,
+      "daily_count_limit": null,
+      "daily_limit": null,
+      "yearly_count_limit": null,
+      "count_group_code": "DIGITAL_SUBSCRIPTION_3",
+      "use_shared_limit": "N",
+      "exclude_from_performance": "N",
+      "option_group_code": null,
+      "option_key": null,
+      "description": "디지털 구독 서비스 정기결제 이용 시 마이신한포인트 적립. 전월 이용금액 구간에 따라 건당 2,000/4,000/6,000포인트(건별 최대 6,000포인트). 디지털구독 대상 업체별 월 1건, 디지털구독 서비스 통합 월 3건까지 적립(자동이체 거래승인일 기준 당월 1일~말일). 서비스 대상 가맹점 공식 홈페이지(앱)를 통해 직접 신청한 정기결제(자동이체) 이용 건에 한한다.",
+      "tier_limits": [
+        {
+          "min_performance_amount": 400000,
+          "monthly_limit": null,
+          "benefit_value": 2000,
+          "_source": "디지털 구독 7개 디지털 구독 서비스 정기결제 이용 시 마이신한포인트 적립 / [전월 이용금액별 적립 포인트] 자동이체 건당 적립 포인트 2,000포인트 4,000포인트 6,000포인트 — 40만원 이상 80만원 미만 자동이체 건당 2,000포인트"
+        },
+        {
+          "min_performance_amount": 800000,
+          "monthly_limit": null,
+          "benefit_value": 4000,
+          "_source": "디지털 구독 7개 디지털 구독 서비스 정기결제 이용 시 마이신한포인트 적립 / [전월 이용금액별 적립 포인트] 자동이체 건당 적립 포인트 2,000포인트 4,000포인트 6,000포인트 — 80만원 이상 120만원 미만 자동이체 건당 4,000포인트"
+        },
+        {
+          "min_performance_amount": 1200000,
+          "monthly_limit": null,
+          "benefit_value": 6000,
+          "_source": "디지털 구독 7개 디지털 구독 서비스 정기결제 이용 시 마이신한포인트 적립 / [전월 이용금액별 적립 포인트] 자동이체 건당 적립 포인트 2,000포인트 4,000포인트 6,000포인트 — 120만원 이상 자동이체 건당 6,000포인트"
+        }
+      ],
+      "exclusions": [],
+      "_source": {
+        "target_merchant_name": "[디지털 구독 서비스 대상] 넷플릭스, 웨이브, 왓챠플레이, 멜론, 지니뮤직, 밀리의 서재, 스타벅스(자동충전에 한함)",
+        "min_txn_amount": "※ 건당 이용금액 6천원 이상인 경우에 서비스 적용됩니다. (정기결제 요금이 6천원 미만인 경우 서비스 제외)",
+        "max_benefit_per_txn": "디지털 구독 서비스 정기결제 거래 건수에 대해 전월 이용금액에 따라 건별 최대 6,000포인트, 월 최대 3건까지 적립",
+        "monthly_count_limit": "적립기준 디지털구독 대상 업체별 월 1건, 디지털구독 서비스 통합 월 3건까지 적립(자동이체 거래승인일 기준 당월 1일~말일 기준)",
+        "count_group_code": "적립기준 디지털구독 대상 업체별 월 1건, 디지털구독 서비스 통합 월 3건까지 적립(자동이체 거래승인일 기준 당월 1일~말일 기준) — 건별 적립 포인트에는 묶음 금액 한도가 없고 건수만 서비스 단위로 묶이므로 limit_group_code가 아니라 count_group_code로 분리했다.",
+        "require_performance": "신한카드 Deep Once 전월 이용금액 기준 / [전월 이용금액별 적립 포인트] 전월 이용금액 40만원 이상 구간부터 적립 포인트가 있다.",
+        "performance_period": "신한카드 Deep Once 전월 이용금액 기준 — ● 신한카드 Deep Once의 전월 이용금액은 전월(1일~말일)의 거래 시점 이용금액(일시불+할부, 가족카드 포함)을 기준으로 반영됩니다."
+      },
+      "_needs_review": []
+    },
+    {
+      "benefit_name": "디지털 구독 정기결제 마이신한포인트 적립 - 밀리의 서재",
+      "benefit_kind": "POINT",
+      "calc_method": "FIXED",
+      "benefit_value": null,
+      "step_count": null,
+      "apply_timing": null,
+      "target_type": "MERCHANT",
+      "target_category_code": null,
+      "target_merchant_name": "밀리의 서재",
+      "require_performance": "Y",
+      "performance_period": "MONTH",
+      "require_payment_type": null,
+      "min_txn_amount": 6000,
+      "max_eligible_amount": null,
+      "max_benefit_per_txn": 6000,
+      "monthly_limit": null,
+      "limit_group_code": null,
+      "monthly_count_limit": 3,
+      "daily_count_limit": null,
+      "daily_limit": null,
+      "yearly_count_limit": null,
+      "count_group_code": "DIGITAL_SUBSCRIPTION_3",
+      "use_shared_limit": "N",
+      "exclude_from_performance": "N",
+      "option_group_code": null,
+      "option_key": null,
+      "description": "디지털 구독 서비스 정기결제 이용 시 마이신한포인트 적립. 전월 이용금액 구간에 따라 건당 2,000/4,000/6,000포인트(건별 최대 6,000포인트). 디지털구독 대상 업체별 월 1건, 디지털구독 서비스 통합 월 3건까지 적립(자동이체 거래승인일 기준 당월 1일~말일). 서비스 대상 가맹점 공식 홈페이지(앱)를 통해 직접 신청한 정기결제(자동이체) 이용 건에 한한다.",
+      "tier_limits": [
+        {
+          "min_performance_amount": 400000,
+          "monthly_limit": null,
+          "benefit_value": 2000,
+          "_source": "디지털 구독 7개 디지털 구독 서비스 정기결제 이용 시 마이신한포인트 적립 / [전월 이용금액별 적립 포인트] 자동이체 건당 적립 포인트 2,000포인트 4,000포인트 6,000포인트 — 40만원 이상 80만원 미만 자동이체 건당 2,000포인트"
+        },
+        {
+          "min_performance_amount": 800000,
+          "monthly_limit": null,
+          "benefit_value": 4000,
+          "_source": "디지털 구독 7개 디지털 구독 서비스 정기결제 이용 시 마이신한포인트 적립 / [전월 이용금액별 적립 포인트] 자동이체 건당 적립 포인트 2,000포인트 4,000포인트 6,000포인트 — 80만원 이상 120만원 미만 자동이체 건당 4,000포인트"
+        },
+        {
+          "min_performance_amount": 1200000,
+          "monthly_limit": null,
+          "benefit_value": 6000,
+          "_source": "디지털 구독 7개 디지털 구독 서비스 정기결제 이용 시 마이신한포인트 적립 / [전월 이용금액별 적립 포인트] 자동이체 건당 적립 포인트 2,000포인트 4,000포인트 6,000포인트 — 120만원 이상 자동이체 건당 6,000포인트"
+        }
+      ],
+      "exclusions": [],
+      "_source": {
+        "target_merchant_name": "[디지털 구독 서비스 대상] 넷플릭스, 웨이브, 왓챠플레이, 멜론, 지니뮤직, 밀리의 서재, 스타벅스(자동충전에 한함)",
+        "min_txn_amount": "※ 건당 이용금액 6천원 이상인 경우에 서비스 적용됩니다. (정기결제 요금이 6천원 미만인 경우 서비스 제외)",
+        "max_benefit_per_txn": "디지털 구독 서비스 정기결제 거래 건수에 대해 전월 이용금액에 따라 건별 최대 6,000포인트, 월 최대 3건까지 적립",
+        "monthly_count_limit": "적립기준 디지털구독 대상 업체별 월 1건, 디지털구독 서비스 통합 월 3건까지 적립(자동이체 거래승인일 기준 당월 1일~말일 기준)",
+        "count_group_code": "적립기준 디지털구독 대상 업체별 월 1건, 디지털구독 서비스 통합 월 3건까지 적립(자동이체 거래승인일 기준 당월 1일~말일 기준) — 건별 적립 포인트에는 묶음 금액 한도가 없고 건수만 서비스 단위로 묶이므로 limit_group_code가 아니라 count_group_code로 분리했다.",
+        "require_performance": "신한카드 Deep Once 전월 이용금액 기준 / [전월 이용금액별 적립 포인트] 전월 이용금액 40만원 이상 구간부터 적립 포인트가 있다.",
+        "performance_period": "신한카드 Deep Once 전월 이용금액 기준 — ● 신한카드 Deep Once의 전월 이용금액은 전월(1일~말일)의 거래 시점 이용금액(일시불+할부, 가족카드 포함)을 기준으로 반영됩니다."
+      },
+      "_needs_review": []
+    },
+    {
+      "benefit_name": "디지털 구독 정기결제 마이신한포인트 적립 - 스타벅스(카드 자동충전)",
+      "benefit_kind": "POINT",
+      "calc_method": "FIXED",
+      "benefit_value": null,
+      "step_count": null,
+      "apply_timing": null,
+      "target_type": "MERCHANT",
+      "target_category_code": null,
+      "target_merchant_name": "스타벅스",
+      "require_performance": "Y",
+      "performance_period": "MONTH",
+      "require_payment_type": null,
+      "min_txn_amount": 6000,
+      "max_eligible_amount": null,
+      "max_benefit_per_txn": 6000,
+      "monthly_limit": null,
+      "limit_group_code": null,
+      "monthly_count_limit": 3,
+      "daily_count_limit": null,
+      "daily_limit": null,
+      "yearly_count_limit": null,
+      "count_group_code": "DIGITAL_SUBSCRIPTION_3",
+      "use_shared_limit": "N",
+      "exclude_from_performance": "N",
+      "option_group_code": null,
+      "option_key": null,
+      "description": "디지털 구독 서비스 정기결제 이용 시 마이신한포인트 적립. 전월 이용금액 구간에 따라 건당 2,000/4,000/6,000포인트(건별 최대 6,000포인트). 디지털구독 대상 업체별 월 1건, 디지털구독 서비스 통합 월 3건까지 적립(자동이체 거래승인일 기준 당월 1일~말일). 서비스 대상 가맹점 공식 홈페이지(앱)를 통해 직접 신청한 정기결제(자동이체) 이용 건에 한한다. 스타벅스는 스타벅스 카드 자동충전을 이 카드로 이용한 경우에 한하며, 매장 결제(사이렌오더 포함), 해외 스타벅스 이용, 상품권 구입, 선물하기, 선불카드 구입 등은 서비스에서 제외된다.",
+      "tier_limits": [
+        {
+          "min_performance_amount": 400000,
+          "monthly_limit": null,
+          "benefit_value": 2000,
+          "_source": "디지털 구독 7개 디지털 구독 서비스 정기결제 이용 시 마이신한포인트 적립 / [전월 이용금액별 적립 포인트] 자동이체 건당 적립 포인트 2,000포인트 4,000포인트 6,000포인트 — 40만원 이상 80만원 미만 자동이체 건당 2,000포인트"
+        },
+        {
+          "min_performance_amount": 800000,
+          "monthly_limit": null,
+          "benefit_value": 4000,
+          "_source": "디지털 구독 7개 디지털 구독 서비스 정기결제 이용 시 마이신한포인트 적립 / [전월 이용금액별 적립 포인트] 자동이체 건당 적립 포인트 2,000포인트 4,000포인트 6,000포인트 — 80만원 이상 120만원 미만 자동이체 건당 4,000포인트"
+        },
+        {
+          "min_performance_amount": 1200000,
+          "monthly_limit": null,
+          "benefit_value": 6000,
+          "_source": "디지털 구독 7개 디지털 구독 서비스 정기결제 이용 시 마이신한포인트 적립 / [전월 이용금액별 적립 포인트] 자동이체 건당 적립 포인트 2,000포인트 4,000포인트 6,000포인트 — 120만원 이상 자동이체 건당 6,000포인트"
+        }
+      ],
+      "exclusions": [
+        {
+          "exclusion_type": "TRANSACTION_ATTR",
+          "exclusion_value": "OVERSEAS",
+          "_source": "※ 스타벅스는 스타벅스 카드 자동충전을 신한카드 Deep Once로 이용한 경우에 한하며, 매장 결제(사이렌오더 포함), 해외 스타벅스 이용, 상품권 구입, 선물하기, 선불카드 구입 등은 서비스 제외됩니다."
+        },
+        {
+          "exclusion_type": "TRANSACTION_ATTR",
+          "exclusion_value": "GIFT_CARD",
+          "_source": "※ 스타벅스는 스타벅스 카드 자동충전을 신한카드 Deep Once로 이용한 경우에 한하며, 매장 결제(사이렌오더 포함), 해외 스타벅스 이용, 상품권 구입, 선물하기, 선불카드 구입 등은 서비스 제외됩니다."
+        }
+      ],
+      "_source": {
+        "target_merchant_name": "[디지털 구독 서비스 대상] 넷플릭스, 웨이브, 왓챠플레이, 멜론, 지니뮤직, 밀리의 서재, 스타벅스(자동충전에 한함)",
+        "min_txn_amount": "※ 건당 이용금액 6천원 이상인 경우에 서비스 적용됩니다. (정기결제 요금이 6천원 미만인 경우 서비스 제외)",
+        "max_benefit_per_txn": "디지털 구독 서비스 정기결제 거래 건수에 대해 전월 이용금액에 따라 건별 최대 6,000포인트, 월 최대 3건까지 적립",
+        "monthly_count_limit": "적립기준 디지털구독 대상 업체별 월 1건, 디지털구독 서비스 통합 월 3건까지 적립(자동이체 거래승인일 기준 당월 1일~말일 기준)",
+        "count_group_code": "적립기준 디지털구독 대상 업체별 월 1건, 디지털구독 서비스 통합 월 3건까지 적립(자동이체 거래승인일 기준 당월 1일~말일 기준) — 건별 적립 포인트에는 묶음 금액 한도가 없고 건수만 서비스 단위로 묶이므로 limit_group_code가 아니라 count_group_code로 분리했다.",
+        "require_performance": "신한카드 Deep Once 전월 이용금액 기준 / [전월 이용금액별 적립 포인트] 전월 이용금액 40만원 이상 구간부터 적립 포인트가 있다.",
+        "performance_period": "신한카드 Deep Once 전월 이용금액 기준 — ● 신한카드 Deep Once의 전월 이용금액은 전월(1일~말일)의 거래 시점 이용금액(일시불+할부, 가족카드 포함)을 기준으로 반영됩니다."
+      },
+      "_needs_review": []
+    }
+  ],
+  "unmapped": [
+    {
+      "text": "- 교통카드 이용금액은 전전월 이용금액이 반영됩니다.(단, 모바일 후불교통카드 이용금액은 전월 이용금액이 전월 이용 실적에 반영됨)",
+      "why": "전전월 실적은 범위 밖이다. 거래 종류마다 실적 기준월이 다른 것을 담을 자리가 없다."
+    },
+    {
+      "text": "● 전월 이용 실적, 월별 적립건수 및 적립한도는 본인+가족카드 합산 적용됩니다.",
+      "why": "가족카드 합산은 범위 밖이다. 실적·건수·한도가 카드 한 장 단위로만 집계된다."
+    },
+    {
+      "text": "● 신한카드 Deep Once의 전월 이용금액은 전월(1일~말일)의 거래 시점 이용금액(일시불+할부, 가족카드 포함)을 기준으로 반영됩니다. - 해외 이용금액은 매입일자를 기준으로 반영됩니다.",
+      "why": "실적 반영 시점(거래일 기준과 매입일 기준의 차이)을 담을 필드가 없다."
+    },
+    {
+      "text": "※ 온라인 결제가 제공되는 서비스의 경우 해당 업체 사이트(앱)에 직접 접속하여 이용하는 경우에 한하여 서비스 제공됩니다.",
+      "why": "결제 채널 조건은 범위 밖이다."
+    },
+    {
+      "text": "※ 서비스 대상 가맹점 공식 홈페이지(앱)을 통해 직접 신청한 정기결제(자동이체) 이용건에 한하여 서비스 적용됩니다. (1회성 일반구매 결제, 앱 내 결제, 구글플레이/앱스토어 등 앱마켓 결제, 통신요금 포함(합산) 결제인 경우 서비스 제외)",
+      "why": "신청 경로·결제 채널 조건이라 범위 밖이다. 앱마켓 결제나 통신요금 합산 결제를 구분할 속성이 없다."
+    },
+    {
+      "text": "※ 스타벅스는 스타벅스 카드 자동충전을 신한카드 Deep Once로 이용한 경우에 한하며, 매장 결제(사이렌오더 포함), 선물하기 등은 서비스 제외됩니다.",
+      "why": "같은 가맹점 안에서 자동충전·매장결제·선물하기를 구분하는 것은 상품 단위 조건이라 범위 밖이다. 해외 이용분과 상품권·선불카드 구입분만 exclusions로 옮겼다."
+    },
+    {
+      "text": "※ 이동통신의 경우 SKT, LG U+, KT 이동통신요금 자동이체(순수 통신요금 결제금액 자동이체)에 한하며, 약정금액 대납, 지점을 통한 월납, 알뜰폰은 제외됩니다.",
+      "why": "결제 경로(지점을 통한 월납)와 요금 구성(약정금액 대납) 조건은 범위 밖이다. 대상 통신사 세 곳은 가맹점 행으로 쪼개 표현했다."
+    },
+    {
+      "text": "※ 한국 야쿠르트 정기주문, 웅진 씽크빅 정기결제, 예다함 상조 월 부금 이용 건에 한하여 서비스 제공됩니다.",
+      "why": "가맹점 안의 특정 상품(정기주문·상조 월 부금) 조건이라 범위 밖이다. 대상은 가맹점까지만 내려간다."
+    },
+    {
+      "text": "※ 자동이체 거래 승인이 주말/공휴일 등의 사유로 자동이체 청구월의 다음달 초 발생되는 경우 해당 거래의 포인트 적립 및 전월 이용금액 반영은 자동이체 청구월이 아닌 자동이체 거래 승인월로 적용되오니 유의 바랍니다.",
+      "why": "적립과 실적의 귀속월을 승인월로 옮기는 규칙이라 담을 자리가 없다."
+    },
+    {
+      "text": "※ 가족카드 연회비 없음(단, 가족카드 단독발급 시에는 본인카드 발급과 동일하게 연회비 부과됨)",
+      "why": "가족카드는 범위 밖이라 annual_fees에 발급 주체 구분이 없다."
+    },
+    {
+      "text": "신한카드 Deep Once와 신한카드 Deep Once Plus를 모두 발급·이용하는 경우 연회비는 각각 청구되며, 이용실적 및 혜택 제공도 카드별로 각각 산정됩니다.",
+      "why": "다른 카드 상품과의 관계를 적을 자리가 없다."
+    }
+  ],
+  "_schema_gap": [
+    {
+      "text": "※ 신한카드 Deep Once의 적립 서비스는 백화점/할인점 등 입점 매장 이용, 일반상품 구매 등 1회성 결제 시에는 적용되지 않으며 매월 정기결제 및 자동결제(자동이체)를 신한카드 Deep Once로 등록하여 발생한 거래에 한하여 적용됩니다.",
+      "missing": "거래가 정기결제·자동이체 등록 건인지 나타내는 값(TRANSACTION_ATTR 표준값 RECURRING 또는 benefit의 정기결제 요구 조건 컬럼)",
+      "why": "이 카드의 세 서비스 전부가 자동이체·정기결제 거래에만 붙는데 1회성 결제와 구분할 속성이 없다. 그대로 두면 같은 가맹점의 1회성 결제에도 적립이 붙는다."
+    },
+    {
+      "text": "※ 신한카드 Deep Once의 적립 서비스는 백화점/할인점 등 입점 매장 이용, 일반상품 구매 등 1회성 결제 시에는 적용되지 않으며",
+      "missing": "가맹점 안의 입점 위치 조건",
+      "why": "백화점·할인점에 입점한 매장에서의 이용을 제외할 방법이 없다. 대상은 가맹점 단위까지만 표현된다."
+    },
+    {
+      "text": "적립기준 렌탈 업체별 월 1건, 렌탈 서비스 통합 월 5건까지 적립(자동이체 거래승인일 기준 당월 1일~말일 기준) / 적립기준 생활월납 대상별 월 1건, 생활월납 서비스 통합 월 3건까지 적립(자동이체 거래승인일 기준 당월 1일~말일 기준) / 적립기준 디지털구독 대상 업체별 월 1건, 디지털구독 서비스 통합 월 3건까지 적립(자동이체 거래승인일 기준 당월 1일~말일 기준) / ※ 동일한 가맹점에서 여러 건의 자동이체를 등록한 경우 월 1건에 한하여 서비스가 제공됩니다.",
+      "missing": "행 단위 월 건수 한도(묶음 건수 한도와 별개로 쓰는 컬럼)",
+      "why": "count_group_code로 서비스 통합 건수(5·3·3)를 monthly_count_limit에 담으면 대상별·업체별 월 1건을 담을 컬럼이 남지 않는다. 통합 건수를 담고 대상별 1건은 표현하지 못했다. 반대로 대상별 1건을 담으면 대상 수만큼 건수가 새서(렌탈 10개 업체 × 1건 = 월 10건) 통합 한도가 두 배로 어긋난다."
+    },
+    {
+      "text": "● 신한카드 Deep Once 신규 발급회원의 경우 카드사용 등록월의 익월말(등록월+1개월)까지 신한카드 Deep Once 카드 실적이 없는 경우에도 전월 이용금액 “40만원 이상~80만원 미만” 구간의 서비스가 적용됩니다. 단, 해당기간 중에라도 월 80만원 이상 이용할 경우 다음달에 해당 테이블에 상응하는 서비스가 적용됩니다.",
+      "missing": "카드 발급(사용 등록)일과 발급 초기 실적 면제 구간",
+      "why": "발급일 정보가 없어 면제 기간을 판정할 수 없다."
+    },
+    {
+      "text": "※ 아파트관리비에 도시가스, 전기요금이 포함되어 통합 청구되는 경우는 1건으로 적용됩니다.",
+      "missing": "한 거래가 여러 혜택 대상을 동시에 만족할 때의 건수 산정 규칙",
+      "why": "건수를 어느 대상에 귀속시킬지 정의할 자리가 없다."
+    }
+  ]
+}

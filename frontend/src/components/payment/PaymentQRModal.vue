@@ -1,9 +1,24 @@
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, onMounted, onUnmounted, computed } from 'vue';
+
+const props = defineProps({
+  qrImage: {
+    type: String,
+    default: ''
+  },
+  qrSeconds: {
+    type: Number,
+    default: 300
+  },
+  qrLoading: {
+    type: Boolean,
+    default: false
+  }
+});
 
 const emit = defineEmits(['close', 'timeout', 'success']);
 
-const timeRemaining = ref(60);
+const timeRemaining = ref(props.qrSeconds);
 let timerInterval = null;
 let successTimeout = null;
 
@@ -60,12 +75,16 @@ const formatTime = (seconds) => {
       <h2>결제 인증</h2>
 
       <div class="timer">
-        {{ formatTime(timeRemaining) }}
+        {{ formatTime(qrSeconds) }}
       </div>
 
       <div class="qr-container">
-        <div class="qr-code">
-          QR 코드
+        <div class="qr-code" v-if="qrLoading" style="opacity: 0.5;">
+          로딩 중...
+        </div>
+        <img v-else-if="qrImage" :src="qrImage" alt="QR Code" style="width: 200px; height: 200px; border-radius: var(--radius-lg);" />
+        <div v-else class="qr-code">
+          QR 코드 준비 중
         </div>
       </div>
 

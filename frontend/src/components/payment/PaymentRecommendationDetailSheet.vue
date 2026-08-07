@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 ﻿<script setup>
+=======
+<script setup>
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 const props = defineProps({
 
   // 바텀시트 표시 여부
@@ -75,6 +79,10 @@ const selectCard = () => {
       >
 
         <img
+<<<<<<< HEAD
+=======
+          v-if="card.image"
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
           :src="card.image"
           :alt="card.name"
           class="card-image"
@@ -189,6 +197,7 @@ const selectCard = () => {
 
   max-width:430px;
 
+<<<<<<< HEAD
   border-radius: var(--radius-xl) var(--radius-xl) 0 0;
 
   padding: var(--space-xl);
@@ -216,6 +225,13 @@ const selectCard = () => {
   letter-spacing: var(--typo-display-medium-letter-spacing);
   color: var(--color-text-primary);
   margin: 0;
+=======
+  background:#fff;
+
+  border-radius:24px 24px 0 0;
+
+  padding:24px;
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 }
 
@@ -227,9 +243,15 @@ const selectCard = () => {
 
   border-radius:999px;
 
+<<<<<<< HEAD
   background:var(--color-border);
 
   margin:0 auto var(--space-lg);
+=======
+  background:#ddd;
+
+  margin:0 auto 20px;
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 }
 
@@ -237,6 +259,7 @@ const selectCard = () => {
 
   display:flex;
 
+<<<<<<< HEAD
   gap: var(--space-md);
 
   align-items: center;
@@ -280,6 +303,11 @@ const selectCard = () => {
 
   color: var(--color-primary-dark);
   font-weight: var(--font-bold);
+=======
+  gap:16px;
+
+  margin:24px 0;
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 }
 
@@ -287,12 +315,16 @@ const selectCard = () => {
 
   width:72px;
 
+<<<<<<< HEAD
   border-radius: var(--radius-sm);
 
+=======
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 }
 
 .section{
 
+<<<<<<< HEAD
   margin-bottom: var(--space-xl);
 
 }
@@ -303,19 +335,29 @@ const selectCard = () => {
   font-size: var(--font-sm);
   font-weight: var(--font-semibold);
   color: var(--color-text-primary);
+=======
+  margin-bottom:24px;
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 }
 
 .section ul{
 
+<<<<<<< HEAD
   margin-top: var(--space-sm);
 
   padding-left: var(--space-lg);
+=======
+  margin-top:12px;
+
+  padding-left:20px;
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 }
 
 .section li{
 
+<<<<<<< HEAD
   margin-bottom: var(--space-xs);
 
   font-size: var(--font-sm);
@@ -329,6 +371,9 @@ const selectCard = () => {
   font-size: var(--font-sm);
   color: var(--color-text-secondary);
   line-height: 1.5;
+=======
+  margin-bottom:8px;
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 }
 
@@ -342,6 +387,7 @@ const selectCard = () => {
 
   border-radius:12px;
 
+<<<<<<< HEAD
   background:
     linear-gradient(
       90deg,
@@ -366,3 +412,9 @@ const selectCard = () => {
 }
 
 </style>
+=======
+}
+
+</style>
+<!-- 07_25 연동 변경: 추천 API의 상세 계산 결과를 바텀시트에 표시한다. -->
+>>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
