@@ -1,5 +1,6 @@
 package com.wallet.payment.controller;
 
+import com.wallet.common.ApiResponse;
 import com.wallet.payment.dto.PaymentProcessResponse;
 import com.wallet.payment.dto.PaymentRequest;
 import com.wallet.payment.dto.PaymentResultResponse;
@@ -12,8 +13,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import static com.wallet.common.constant.RequestAttributeNames.AUTHENTICATED_MEMBER_ID;
 
@@ -27,7 +26,7 @@ public class PaymentController {
     }
 
     @PostMapping("/api/payments")
-    public ResponseEntity<Map<String, Object>> processPayment(
+    public ResponseEntity<ApiResponse<PaymentProcessResponse>> processPayment(
             HttpServletRequest servletRequest,
             @RequestBody PaymentRequest request
     ) {
@@ -36,17 +35,12 @@ public class PaymentController {
         PaymentProcessResponse data =
                 paymentService.processPayment(userId, request);
 
-        Map<String, Object> response = new LinkedHashMap<>();
-        response.put("success", true);
-        response.put("code", "SUCCESS");
-        response.put("message", "결제가 완료되었습니다.");
-        response.put("data", data);
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(ApiResponse.success("결제가 완료되었습니다.", data));
     }
 
     @GetMapping("/api/payments/{paymentId}")
-    public Map<String, Object> getPaymentResult(
+    public ApiResponse<PaymentResultResponse> getPaymentResult(
             HttpServletRequest request,
             @PathVariable("paymentId") Long paymentId
     ) {
@@ -55,12 +49,6 @@ public class PaymentController {
         PaymentResultResponse data =
                 paymentService.getPaymentResult(userId, paymentId);
 
-        Map<String, Object> response = new LinkedHashMap<>();
-        response.put("success", true);
-        response.put("code", "SUCCESS");
-        response.put("message", "결제 결과 조회에 성공했습니다.");
-        response.put("data", data);
-
-        return response;
+        return ApiResponse.success("결제 결과 조회에 성공했습니다.", data);
     }
 }

@@ -69,6 +69,7 @@
         UPDATE payment_qr
         SET status = 'EXPIRED'
         WHERE qr_token = #{qrToken}
+          AND member_id = #{memberId}
           AND status = 'READY'
     </update>
 
@@ -171,6 +172,7 @@
             failed_at = NOW(),
             fail_reason = #{failReason}
         WHERE qr_token = #{qrToken}
+          AND member_id = #{memberId}
           AND status = 'READY'
 
     </update>

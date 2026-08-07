@@ -44,6 +44,7 @@ public interface PaymentQrMapper {
     );
     int markQrFailed(
             @Param("qrToken") String qrToken,
+            @Param("memberId") Long memberId,
             @Param("failReason") String failReason
     );
 }

@@ -26,10 +26,7 @@ const createQr = async () => {
     }
     qrToken.value = data.qrToken || ''
     expiresAt.value = data.expiresAt || ''
-    const backendImage = data.qrImageBase64 || ''
-    qrImage.value = backendImage
-      ? (backendImage.startsWith('data:image') ? backendImage : `data:image/png;base64,${backendImage}`)
-      : await QRCode.toDataURL(qrToken.value, { width: 240, margin: 2 })
+    qrImage.value = await QRCode.toDataURL(qrToken.value, { width: 240, margin: 2 }) // 07_25 연동 수정: 사용하지 않는 백엔드 이미지 필드를 제거했다.
   } catch (error) {
     errorMessage.value = error.response?.data?.message || error.message || 'QR 생성에 실패했습니다.'
   } finally {

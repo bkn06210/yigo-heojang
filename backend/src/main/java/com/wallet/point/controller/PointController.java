@@ -1,5 +1,6 @@
 package com.wallet.point.controller;
 
+import com.wallet.common.ApiResponse;
 import com.wallet.point.dto.PointHistoryListResponse;
 import com.wallet.point.dto.PointListResponse;
 import com.wallet.point.dto.PointUsagePlaceListResponse;
@@ -9,8 +10,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import static com.wallet.common.constant.RequestAttributeNames.AUTHENTICATED_MEMBER_ID;
 
@@ -24,24 +23,18 @@ public class PointController {
     }
 
     @GetMapping("/api/points")
-    public Map<String, Object> getPointList(HttpServletRequest request) {
+    public ApiResponse<PointListResponse> getPointList(HttpServletRequest request) {
 
         // JWT 인증 필터가 요청 속성에 설정한 회원 ID를 사용한다.
         Long memberId = (Long) request.getAttribute(AUTHENTICATED_MEMBER_ID);
 
         PointListResponse data = pointService.getPointList(memberId);
 
-        Map<String, Object> response = new LinkedHashMap<>();
-        response.put("success", true);
-        response.put("code", "SUCCESS");
-        response.put("message", "포인트 목록 조회에 성공했습니다.");
-        response.put("data", data);
-
-        return response;
+        return ApiResponse.success("포인트 목록 조회에 성공했습니다.", data);
     }
 
     @GetMapping("/api/points/history")
-    public Map<String, Object> getPointHistory(
+    public ApiResponse<PointHistoryListResponse> getPointHistory(
             @RequestParam(value = "pointWalletId", required = false) Long pointWalletId,
             @RequestParam(value = "pointType", required = false) String pointType,
             HttpServletRequest request,
@@ -53,29 +46,17 @@ public class PointController {
         PointHistoryListResponse data =
                 pointService.getPointHistory(memberId, pointWalletId, pointType, yearMonth);
 
-        Map<String, Object> response = new LinkedHashMap<>();
-        response.put("success", true);
-        response.put("code", "SUCCESS");
-        response.put("message", "포인트 내역 조회에 성공했습니다.");
-        response.put("data", data);
-
-        return response;
+        return ApiResponse.success("포인트 내역 조회에 성공했습니다.", data);
     }
 
     @GetMapping("/api/points/{pointProviderId}/usage-places")
-    public Map<String, Object> getPointUsagePlaces(
+    public ApiResponse<PointUsagePlaceListResponse> getPointUsagePlaces(
             @PathVariable("pointProviderId") Long pointProviderId,
             @RequestParam(value = "categoryId", required = false) Long categoryId
     ) {
         PointUsagePlaceListResponse data =
                 pointService.getPointUsagePlaces(pointProviderId, categoryId);
 
-        Map<String, Object> response = new LinkedHashMap<>();
-        response.put("success", true);
-        response.put("code", "SUCCESS");
-        response.put("message", "포인트 사용처 조회에 성공했습니다.");
-        response.put("data", data);
-
-        return response;
+        return ApiResponse.success("포인트 사용처 조회에 성공했습니다.", data);
     }
 }

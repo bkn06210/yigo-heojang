@@ -6,9 +6,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.server.ResponseStatusException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<ApiResponse<Void>> handleBusinessException(BusinessException e) {
@@ -28,5 +33,25 @@ public class GlobalExceptionHandler {
         return ResponseEntity
             .status(errorCode.getStatus())
             .body(ApiResponse.error(errorCode.getCode(), errorMessage));
+    }
+
+    @ExceptionHandler(ResponseStatusException.class)
+    public ResponseEntity<ApiResponse<Void>> handleResponseStatusException(ResponseStatusException e) {
+        String message = e.getReason() == null ? "요청 처리에 실패했습니다." : e.getReason();
+        return ResponseEntity.status(e.getStatus())
+                .body(ApiResponse.error("REQUEST_FAILED", message));
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ApiResponse<Void>> handleIllegalArgumentException(IllegalArgumentException e) {
+        return ResponseEntity.status(ErrorCode.INPUT_INVALID.getStatus())
+                .body(ApiResponse.error(ErrorCode.INPUT_INVALID.getCode(), e.getMessage()));
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ApiResponse<Void>> handleUnexpectedException(Exception e) {
+        log.error("처리되지 않은 서버 오류", e);
+        return ResponseEntity.status(ErrorCode.SERVER_INTERNAL_ERROR.getStatus())
+                .body(ApiResponse.error(ErrorCode.SERVER_INTERNAL_ERROR));
     }
 }

@@ -107,12 +107,10 @@ const issueQr = async () => {
   qrImage.value = '';
   clearInterval(statusTimer);
   try {
-    const data = await createPaymentQr(Number(card.value.id));
+    const data = await createPaymentQr(Number(card.value.id), Number(amount.value)); // 07_25 연동 수정: QR 발급 시 결제금액을 확정한다.
     if (!data?.qrToken) throw new Error('QR 토큰을 발급받지 못했습니다.');
     qrToken.value = data.qrToken;
-    qrImage.value = data.qrImageBase64
-      ? (data.qrImageBase64.startsWith('data:image') ? data.qrImageBase64 : `data:image/png;base64,${data.qrImageBase64}`)
-      : await QRCode.toDataURL(data.qrToken, { width: 220, margin: 2 });
+    qrImage.value = await QRCode.toDataURL(data.qrToken, { width: 220, margin: 2 }); // 07_25 연동 수정: QR 이미지는 프론트에서 직접 생성한다.
     qrSeconds.value = data.expiresAt
       ? Math.max(1, Math.floor((new Date(data.expiresAt).getTime() - Date.now()) / 1000))
       : 300;
