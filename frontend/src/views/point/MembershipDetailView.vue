@@ -1,6 +1,11 @@
 <script setup>
 
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { deleteMembership as removeMembership, getMembership } from '@/api/walletApi'
+import { getOfficialSiteUrl } from '@/utils/partnerSites'
+import { getPartnerUsagePlaces } from '@/utils/partnerUsagePlaces'
+import { getPartnerLogo } from '@/utils/partnerLogos'
 
 
 // 공통 컴포넌트
@@ -10,6 +15,23 @@ import BottomNavigation from '@/components/layout/BottomNavigation.vue'
 
 // 삭제 팝업 상태
 const showDeleteModal = ref(false)
+const route = useRoute()
+const router = useRouter()
+const membership = ref({ providerName: '', registeredAt: '', totalPoint: 0, usagePlaces: [] })
+const errorMessage = ref('')
+
+const loadMembership = async () => {
+  try {
+    const data = await getMembership(route.params.id)
+    membership.value = {
+      ...data,
+      logo: getPartnerLogo(data.providerName, data.logoImageUrl),
+      usagePlaces: getPartnerUsagePlaces(data.providerName, data.usagePlaces),
+    }
+  } catch (error) {
+    errorMessage.value = error?.response?.data?.message || error?.message || '멤버십 상세 정보를 불러오지 못했습니다.'
+  }
+}
 
 
 // 삭제 버튼 클릭
@@ -29,14 +51,23 @@ const closeDeleteModal = () => {
 
 
 // 삭제 처리
-const deleteMembership = () => {
-
-  // 추후 백 연결
-  // DELETE /api/user-memberships/{id}
-
-  showDeleteModal.value = false
-
+const deleteMembership = async () => {
+  try {
+    await removeMembership(route.params.id)
+    router.replace('/points')
+  } catch (error) {
+    errorMessage.value = error?.response?.data?.message || error?.message || '멤버십 삭제에 실패했습니다.'
+  } finally {
+    showDeleteModal.value = false
+  }
 }
+
+const openOfficialSite = () => {
+  const url = getOfficialSiteUrl(membership.value.providerName, membership.value.officialSiteUrl)
+  if (url) window.open(url, '_blank', 'noopener,noreferrer')
+}
+
+onMounted(loadMembership)
 
 
 </script>
@@ -55,12 +86,21 @@ const deleteMembership = () => {
 
     <main class="content">
 
+      <p v-if="errorMessage">{{ errorMessage }}</p>
+
 
       <!-- 멤버십 이름 -->
       <section class="membership-title">
 
+        <img
+          v-if="membership.logo"
+          :src="membership.logo"
+          :alt="`${membership.providerName} 로고`"
+          class="membership-logo"
+        />
+
         <h1>
-          CJ ONE
+          {{ membership.providerName }}
         </h1>
 
       </section>
@@ -76,7 +116,7 @@ const deleteMembership = () => {
 
 
         <p>
-          CJ ONE
+          {{ membership.registeredAt || '등록 정보 없음' }}
         </p>
 
       </section>
@@ -94,16 +134,8 @@ const deleteMembership = () => {
 
         <ul>
 
-          <li>
-            뚜레쥬르
-          </li>
-
-          <li>
-            올리브영
-          </li>
-
-          <li>
-            CGV
+          <li v-for="place in membership.usagePlaces" :key="place.usagePlaceId || place.placeName">
+            {{ place.placeName }}
           </li>
 
         </ul>
@@ -115,7 +147,7 @@ const deleteMembership = () => {
 
 
       <!-- 공식 사이트 -->
-      <button class="official-button">
+      <button class="official-button" @click="openOfficialSite">
 
         공식 사이트 이동
 
@@ -152,12 +184,12 @@ const deleteMembership = () => {
 
 
     <h3>
-      CJ ONE 멤버십을 삭제하시겠어요?
+      {{ membership.providerName }} 멤버십을 삭제하시겠어요?
     </h3>
 
 
     <p>
-      삭제하면 결제 추천에서 CJ ONE 혜택 안내를 받을 수 없습니다.
+      삭제하면 결제 추천에서 {{ membership.providerName }} 혜택 안내를 받을 수 없습니다.
     </p>
 
 
@@ -194,6 +226,21 @@ const deleteMembership = () => {
 
 
 <style scoped>
+
+.membership-title {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.membership-logo {
+  width: 56px;
+  height: 56px;
+  flex: 0 0 56px;
+  border-radius: 14px;
+  object-fit: contain;
+  background: #fff;
+}
 
 .membership-detail-page {
 
@@ -377,3 +424,4 @@ const deleteMembership = () => {
 
 
 </style>
+<!-- 07_25 연동 변경: 멤버십 상세 API와 공식 사이트·주요 사용처 정보를 연결한다. -->

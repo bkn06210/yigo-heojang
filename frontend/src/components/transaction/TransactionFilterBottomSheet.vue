@@ -1,7 +1,7 @@
 <!-- src/components/transaction/TransactionFilterBottomSheet.vue -->
 
 <script setup>
-import { ref, watch } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 
 
 // 부모 전달값
@@ -13,6 +13,11 @@ const props = defineProps({
 
     default: () => [],
 
+  },
+
+  categories: {
+    type: Array,
+    default: () => [],
   },
 
   
@@ -52,17 +57,21 @@ const showCardList = ref(false);
 // 조회 조건
 const filter = ref({
 
-  approval: '승인',
+  approval: '전체',
 
   cardType: '전체',
 
   card: '전체',
 
+  userCardId: null,
+
+  categoryId: null,
+
   region: '전체',
 
   transactionType: '전체',
 
-  period: '이번달',
+  period: '전체',
 
   startDate: '',
 
@@ -84,10 +93,15 @@ watch(
 
     filter.value.endDate = value.endDate;
 
+    if (value.startDate || value.endDate) {
+      filter.value.period = '직접 선택';
+    }
+
   },
 
   {
-    deep:true
+    deep:true,
+    immediate:true,
   }
 
 );
@@ -134,6 +148,8 @@ const transactionTypes = [
 
 const periods = [
 
+  '전체',
+
   '이번달',
 
   '1개월',
@@ -159,6 +175,8 @@ const selectCard = (card) => {
 
   filter.value.card = card.name;
 
+  filter.value.userCardId = card.id;
+
 
   filter.value.cardType = card.type;
 
@@ -182,8 +200,31 @@ const selectPeriod = (item) => {
   filter.value.period = item;
 
 
+  const today = new Date();
+  const formatDate = (date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
 
-  if(item === '직접 선택') {
+  if (item === '전체') {
+    filter.value.startDate = '';
+    filter.value.endDate = '';
+  } else if (item === '이번달') {
+    filter.value.startDate = formatDate(new Date(today.getFullYear(), today.getMonth(), 1));
+    filter.value.endDate = formatDate(today);
+  } else if (item === '1개월' || item === '3개월') {
+    const months = item === '1개월' ? 1 : 3;
+    const start = new Date(today);
+    start.setMonth(start.getMonth() - months);
+    filter.value.startDate = formatDate(start);
+    filter.value.endDate = formatDate(today);
+  }
+
+
+
+  if(item === '직접 선택' || item === '월별 선택') {
 
 
     emit(
@@ -251,17 +292,21 @@ const reset = () => {
   filter.value = {
 
 
-    approval:'승인',
+    approval:'전체',
 
     cardType:'전체',
 
     card:'전체',
 
+    userCardId:null,
+
+    categoryId:null,
+
     region:'전체',
 
     transactionType:'전체',
 
-    period:'이번달',
+    period:'전체',
 
     startDate:'',
 
@@ -270,8 +315,16 @@ const reset = () => {
 
   };
 
+  selectPeriod('전체');
+
 
 };
+
+onMounted(() => {
+  if (!props.selectedDate.startDate && !props.selectedDate.endDate) {
+    selectPeriod('전체');
+  }
+});
 
 </script>
 
@@ -335,6 +388,19 @@ class="overlay"
 
 
 <div class="chips">
+
+
+<button
+
+:class="{
+active:filter.approval==='전체'
+}"
+
+@click="filter.approval='전체'"
+
+>
+전체
+</button>
 
 
 <button
@@ -525,6 +591,24 @@ class="card-item"
 
 
 
+
+<!-- 지역 -->
+
+<div class="filter-item">
+  <h3>소비 카테고리</h3>
+  <div class="chips wrap">
+    <button
+      :class="{ active: filter.categoryId === null }"
+      @click="filter.categoryId = null"
+    >전체</button>
+    <button
+      v-for="category in props.categories"
+      :key="category.categoryId"
+      :class="{ active: filter.categoryId === category.categoryId }"
+      @click="filter.categoryId = category.categoryId"
+    >{{ category.categoryName }}</button>
+  </div>
+</div>
 
 <!-- 지역 -->
 
@@ -1014,3 +1098,4 @@ color:white;
 }
 
 </style>
+<!-- 07_25 연동 변경: 조회조건을 소비내역 API 쿼리 파라미터로 전달한다. -->

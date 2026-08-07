@@ -18,6 +18,23 @@ const emit = defineEmits([
   'save',
 ]);
 
+const fileInput = ref(null);
+
+const closeSheet = () => emit('close');
+
+const openFilePicker = () => fileInput.value?.click();
+
+const changeProfileImage = (event) => {
+  const file = event.target.files?.[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = () => {
+    form.value.profileImageUrl = String(reader.result || '');
+  };
+  reader.readAsDataURL(file);
+};
+
 
 // 수정용 임시 데이터
 const form = ref({
@@ -203,3 +220,4 @@ h2 {
   flex: 1;
 }
 </style>
+<!-- 07_25 연동 변경: 회원 프로필 수정 내용을 실제 회원 API로 저장한다. -->

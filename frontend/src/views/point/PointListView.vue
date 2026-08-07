@@ -1,6 +1,6 @@
 <script setup>
 
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/authStore';
 
@@ -20,6 +20,8 @@ import MembershipCard from '@/components/point/MembershipCard.vue';
 
 import BenefitReportCard from '@/components/point/BenefitReportCard.vue';
 import BenefitReportBottomSheet from '@/components/point/BenefitReportBottomSheet.vue';
+import { getMemberships, getPointHistory, getPoints } from '@/api/walletApi';
+import { getPartnerLogo } from '@/utils/partnerLogos';
 
 const router = useRouter();
 
@@ -27,7 +29,7 @@ const authStore = useAuthStore();
 
 
 // 로그인 상태
-const isLogin = computed(() => authStore.isLogin);
+const isLogin = computed(() => authStore.isLogin());
 
 
 // TODO: 카드 조회 API 연결
@@ -37,6 +39,8 @@ const isLogin = computed(() => authStore.isLogin);
 // 카드 있음 -> 카드 데이터 배열
 
 const cardList = ref([]);
+const financialPointList = ref([]);
+const errorMessage = ref('');
 
 
 
@@ -177,13 +181,57 @@ const closePointSheet = () => {
 
 
 
-// 새로고침
-// TODO: API 연결 시 실제 데이터 재조회
-
+// 07_25 연동 수정: 포인트·멤버십 중 한 API가 실패해도 성공한 목록은 화면에 유지한다.
 const refreshPoint = async () => {
+  errorMessage.value = '';
+  if (!isLogin.value) return;
 
-  console.log('혜택 데이터 갱신');
+  const [pointResult, membershipResult, historyResult] = await Promise.allSettled([
+    getPoints(),
+    getMemberships(),
+    getPointHistory(),
+  ]);
 
+  // 07_25 연동 수정: 정상 응답만 반영하고 실패한 영역은 기존 목록을 유지한다.
+  if (pointResult.status === 'fulfilled') {
+    const pointData = pointResult.value;
+    const histories = historyResult.status === 'fulfilled'
+      ? historyResult.value?.histories || []
+      : [];
+    financialPointList.value = (pointData?.points || [])
+      .filter((point) => point.providerType !== 'MEMBERSHIP')
+      .map((point) => ({
+        id: Number(point.pointProviderId),
+        name: point.providerName,
+        point: Number(point.totalPoint || 0),
+        walletId: point.pointWalletId,
+        logo: getPartnerLogo(point.providerName, point.logoImage),
+        histories: histories.filter((history) =>
+          Number(history.pointWalletId) === Number(point.pointWalletId)
+        ),
+      }));
+    cardList.value = financialPointList.value.length ? [{}] : [];
+  }
+
+  if (membershipResult.status === 'fulfilled') {
+    const membershipData = membershipResult.value;
+    membershipList.value = (membershipData?.memberships || []).map((membership) => ({
+      id: Number(membership.membershipRegisterId),
+      providerId: membership.pointProviderId,
+      name: membership.providerName,
+      point: Number(membership.totalPoint || 0),
+      logo: getPartnerLogo(membership.providerName, membership.logoImageUrl),
+    }));
+  }
+
+  const failedResults = [pointResult, membershipResult, historyResult]
+    .filter((result) => result.status === 'rejected');
+  if (failedResults.length > 0) {
+    const error = failedResults[0].reason;
+    errorMessage.value = error?.response?.data?.message
+      || error?.message
+      || '일부 혜택 정보를 불러오지 못했습니다.';
+  }
 };
 
 
@@ -242,6 +290,8 @@ const showMoreMembership = () => {
 
 };
 
+onMounted(refreshPoint);
+
 
 
 </script>
@@ -254,6 +304,8 @@ const showMoreMembership = () => {
       <PageHeader title="혜택" />
 
       <main class="content">
+
+        <p v-if="errorMessage" class="notice">{{ errorMessage }}</p>
 
         <!-- 혜택 리포트 -->
         <section class="benefit-report-section">
@@ -325,7 +377,8 @@ const showMoreMembership = () => {
           <!-- 카드 있음 -->
           <FinancialPointCard
             v-else
-            @click="openPointSheet"
+            :point-list="financialPointList"
+            @select-point="openPointSheet"
           />
 
 
@@ -781,3 +834,4 @@ h2 {
 
 </style>
 
+<!-- 07_25 연동 변경: 전체 포인트 현황과 적립·사용 이력을 실제 API로 조회한다. -->

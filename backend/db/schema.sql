@@ -37,6 +37,8 @@ DROP TABLE IF EXISTS notification_setting;
 DROP TABLE IF EXISTS notification;
 DROP TABLE IF EXISTS member_preferred_merchant;
 DROP TABLE IF EXISTS member_preferred_category;
+DROP TABLE IF EXISTS member_personalization_brand;
+DROP TABLE IF EXISTS member_personalization_category;
 DROP TABLE IF EXISTS membership_register;
 DROP TABLE IF EXISTS point_usage_place;
 DROP TABLE IF EXISTS point_history;
@@ -46,6 +48,7 @@ DROP TABLE IF EXISTS user_benefit_usage;
 DROP TABLE IF EXISTS user_card_benefit_selection;
 DROP TABLE IF EXISTS user_card_monthly_state;
 DROP TABLE IF EXISTS recommend_input;
+DROP TABLE IF EXISTS payment_qr;
 DROP TABLE IF EXISTS payment;
 DROP TABLE IF EXISTS expense;
 DROP TABLE IF EXISTS card_benefit_exclusion;
@@ -679,6 +682,9 @@ CREATE TABLE expense (
     -- 취소 건은 실적·혜택 계산에서 제외한다(약관의 실적 제외 대상에 '취소금액'이 있다).
     -- 물리 삭제하지 않고 상태만 바꾸므로 엔진이 이 값을 보고 걸러야 한다.
     payment_status     VARCHAR(20)  NOT NULL DEFAULT 'APPROVED' COMMENT '결제 상태: APPROVED | CANCELED',
+    approval_status    VARCHAR(20)  NOT NULL DEFAULT 'APPROVED' COMMENT '승인 단계: APPROVED | CONFIRMED',
+    transaction_type   VARCHAR(30)  NOT NULL DEFAULT 'LUMP_SUM' COMMENT '거래 구분: LUMP_SUM | INSTALLMENT | CASH_ADVANCE',
+    region             VARCHAR(20)  NOT NULL DEFAULT 'DOMESTIC' COMMENT '이용 지역: DOMESTIC | OVERSEAS',
     applied_benefit_id BIGINT       NULL COMMENT '적용된 혜택 ID. 엔진이 채운다. 카드당 1개만 적용되므로 단수',
     discount_amount    BIGINT       NOT NULL DEFAULT 0 COMMENT '실제 받은 할인/적립액. 엔진이 채운다',
     -- 전월실적 계산에 필요하다. 카드 약관은 특정 결제수단과 무이자할부를
@@ -688,6 +694,7 @@ CREATE TABLE expense (
     created_at         DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '등록일시',
     PRIMARY KEY (expense_id),
     KEY idx_expense_member_date (member_id, payment_date),
+    KEY idx_expense_member_filters (member_id, payment_date, payment_status, approval_status, region),
     KEY idx_expense_card_date (user_card_id, payment_date),
     KEY idx_expense_merchant (merchant_id),
     KEY idx_expense_benefit (applied_benefit_id),
@@ -727,6 +734,31 @@ CREATE TABLE payment (
 -- 사용자가 추천을 요청하며 입력한 값의 기록.
 -- 추천 "결과"는 저장하지 않는다 — 카드 한도 소진 상태에 따라 매번 달라져
 -- 저장하는 순간 낡은 값이 된다. 엔진이 실시간 계산해 응답으로 내려준다.
+-- QR 결제 요청의 발급·만료·사용·실패 상태를 저장한다.
+CREATE TABLE payment_qr (
+    payment_qr_id BIGINT       NOT NULL AUTO_INCREMENT COMMENT 'QR 결제 ID',
+    qr_token      VARCHAR(100) NOT NULL COMMENT '외부에 노출하는 QR 식별 토큰',
+    member_id     BIGINT       NOT NULL COMMENT '회원 ID',
+    user_card_id  BIGINT       NOT NULL COMMENT '결제에 사용할 보유카드 ID',
+    payment_amount BIGINT      NOT NULL COMMENT 'QR 발급 시 확정한 결제금액',
+    status        VARCHAR(20)  NOT NULL DEFAULT 'READY' COMMENT 'QR 상태: READY | USED | EXPIRED | FAILED',
+    expires_at    DATETIME     NOT NULL COMMENT 'QR 만료 일시',
+    used_at       DATETIME     NULL COMMENT 'QR 사용 일시',
+    failed_at     DATETIME     NULL COMMENT '결제 실패 일시',
+    fail_reason   VARCHAR(255) NULL COMMENT '결제 실패 사유',
+    payment_id    BIGINT       NULL COMMENT '완료된 결제 ID',
+    created_at    DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '생성 일시',
+    PRIMARY KEY (payment_qr_id),
+    UNIQUE KEY uk_payment_qr_token (qr_token),
+    KEY idx_payment_qr_token (qr_token),
+    KEY idx_payment_qr_member_status (member_id, status),
+    KEY idx_payment_qr_card (user_card_id),
+    KEY idx_payment_qr_payment (payment_id),
+    CONSTRAINT fk_payment_qr_member  FOREIGN KEY (member_id)    REFERENCES member (member_id),
+    CONSTRAINT fk_payment_qr_card    FOREIGN KEY (user_card_id) REFERENCES user_card (user_card_id),
+    CONSTRAINT fk_payment_qr_payment FOREIGN KEY (payment_id)   REFERENCES payment (payment_id)
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT 'QR 결제 상태';
+
 CREATE TABLE recommend_input (
     recommend_input_id BIGINT       NOT NULL AUTO_INCREMENT COMMENT '추천입력 ID',
     member_id          BIGINT       NOT NULL COMMENT '회원 ID',
@@ -896,6 +928,30 @@ CREATE TABLE member_preferred_merchant (
 -- ════════════════════════════════════════════════════════════
 -- 11. 알림
 -- ════════════════════════════════════════════════════════════
+
+-- 개인화 설정 화면에서 직접 입력한 브랜드 문자열을 저장한다.
+CREATE TABLE member_personalization_category (
+    member_id    BIGINT      NOT NULL COMMENT '회원 ID',
+    category_key VARCHAR(30) NOT NULL COMMENT '프론트 개인화 카테고리 키',
+    created_at   DATETIME    NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '생성 일시',
+    PRIMARY KEY (member_id, category_key),
+    CONSTRAINT fk_personalization_category_member
+        FOREIGN KEY (member_id) REFERENCES member (member_id)
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT '회원 개인화 카테고리';
+
+CREATE TABLE member_personalization_brand (
+    member_id    BIGINT       NOT NULL COMMENT '회원 ID',
+    category_key VARCHAR(30)  NOT NULL COMMENT '프론트 개인화 카테고리 키',
+    priority     TINYINT      NOT NULL COMMENT '브랜드 표시 순서 1~3',
+    brand_name   VARCHAR(100) NOT NULL COMMENT '관심 브랜드명',
+    created_at   DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '생성 일시',
+    PRIMARY KEY (member_id, category_key, priority),
+    UNIQUE KEY uk_personalization_brand_name (member_id, category_key, brand_name),
+    CONSTRAINT fk_personalization_brand_category
+        FOREIGN KEY (member_id, category_key)
+        REFERENCES member_personalization_category (member_id, category_key)
+        ON DELETE CASCADE
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT '회원 개인화 관심 브랜드';
 
 CREATE TABLE notification (
     notification_id     BIGINT        NOT NULL AUTO_INCREMENT COMMENT '알림 ID',

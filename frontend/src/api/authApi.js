@@ -1,5 +1,7 @@
 import api from './axios'
 
+export const getTerms = () => api.get('/api/terms')
+
 
 // 회원가입 요청
 // POST /api/auth/signup
@@ -58,3 +60,26 @@ export const verifySignupEmailVerification = (
   )
 
 }
+
+// Access Token 재발급 요청
+export const reissueAccessToken = () => {
+  return api.post('/api/auth/token')
+}
+
+// 로그아웃 요청
+export const logout = () => {
+  return api.post('/api/auth/logout')
+}
+
+export const requestPasswordResetCode = (email) => (
+  api.post('/api/auth/password/reset-link', { email })
+)
+
+export const verifyPasswordResetCode = (email, verificationCode) => (
+  api.post('/api/auth/password/verify-code', { email, verificationCode })
+)
+
+export const resetPassword = (passwordResetToken, newPassword) => (
+  api.post('/api/auth/password/resets', { passwordResetToken, newPassword })
+)
+// 07_25 연동 변경: develop 프론트 대비 인증 백엔드 API 연결을 보완한 파일이다.

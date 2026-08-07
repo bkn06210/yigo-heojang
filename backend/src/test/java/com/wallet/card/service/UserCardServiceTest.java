@@ -818,7 +818,6 @@ class UserCardServiceTest {
         verify(userCardMapper)
             .softDeleteByIdAndMemberId(userCardId, memberId);
     }
-
     @Test
     @DisplayName("대표 카드 설정 성공 - 대표 카드가 3개 미만이면 일반 카드를 대표 카드로 설정한다")
     void updateRepresentative_success_setRepresentative() {

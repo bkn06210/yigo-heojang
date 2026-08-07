@@ -1,6 +1,7 @@
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { getTerms } from '@/api/authApi'
 
 const router = useRouter()
 
@@ -9,28 +10,24 @@ const router = useRouter()
 const agreeAll = ref(false)
 
 
-// 약관 목록
-// 추후 백 API 응답 데이터로 교체
-const terms = ref([
-  {
-    id: 1,
-    title: '서비스 이용약관',
-    required: true,
-    checked: false
-  },
-  {
-    id: 2,
-    title: '개인정보 수집 및 이용',
-    required: true,
-    checked: false
-  },
-  {
-    id: 3,
-    title: '마케팅 정보 수신',
-    required: false,
-    checked: false
+const terms = ref([])
+const errorMessage = ref('')
+
+const loadTerms = async () => {
+  try {
+    const response = await getTerms()
+    terms.value = (response.data?.data?.terms || []).map((term) => ({
+      id: term.termsId,
+      versionId: term.termsVersionId,
+      title: term.termsName,
+      content: term.content,
+      required: Boolean(term.required),
+      checked: false,
+    }))
+  } catch (error) {
+    errorMessage.value = error.response?.data?.message || '약관을 불러오지 못했습니다.'
   }
-])
+}
 
 
 // 전체 동의 클릭
@@ -63,12 +60,8 @@ const canNext = computed(() => {
 })
 
 
-// 상세보기
-// 추후 백 API 연결 위치
 const openDetail = (term) => {
-
-  console.log('약관 상세:', term.id)
-
+  alert(term.content || '약관 내용이 없습니다.')
 }
 
 
@@ -81,9 +74,18 @@ const goSignup = () => {
   }
 
 
+  sessionStorage.setItem('termsAgreements', JSON.stringify(
+    terms.value.map((term) => ({
+      termsVersionId: term.versionId,
+      agreed: term.checked,
+    }))
+  ))
+
   router.push('/auth/signup')
 
 }
+
+onMounted(loadTerms)
 
 </script>
 
@@ -92,6 +94,8 @@ const goSignup = () => {
   <div class="terms">
 
     <h1>약관 동의</h1>
+
+    <p v-if="errorMessage">{{ errorMessage }}</p>
 
 
     <label>
@@ -170,3 +174,4 @@ button {
 }
 
 </style>
+<!-- 07_25 연동 변경: 약관 동의 결과를 회원가입 API 입력에 포함하도록 보완했다. -->

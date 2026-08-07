@@ -225,13 +225,26 @@ INSERT INTO point_provider (
      'https://example.com/images/points/shinhan-point.png',
      'Y', 'Y', 2, '마이신한포인트 사용 가능 여부를 확인하세요.'),
 
-    (3, 'CJ ONE', 'MEMBERSHIP',
-     'https://example.com/images/points/cj-one.png',
-     'Y', 'N', NULL, NULL),
-
-    (4, '해피포인트', 'MEMBERSHIP',
-     'https://example.com/images/points/happy-point.png',
-     'Y', 'N', NULL, NULL);
+    (3, 'CJ ONE', 'MEMBERSHIP', '/images/cj-one.png', 'Y', 'Y', 3, 'CJ 계열 제휴 멤버십'),
+    (4, '해피포인트', 'MEMBERSHIP', '/images/happypoint.png', 'Y', 'Y', 1, 'SPC 계열 제휴 멤버십'),
+    (5, 'L.POINT', 'MEMBERSHIP', '/images/lpoint.png', 'Y', 'Y', 2, '롯데 계열 제휴 멤버십'),
+    (6, '신세계포인트', 'MEMBERSHIP', '/images/ssg-point.png', 'Y', 'N', NULL, '신세계 계열 제휴 멤버십'),
+    (7, 'H.Point', 'MEMBERSHIP', '/images/h-point.png', 'Y', 'N', NULL, '현대백화점 그룹 제휴 멤버십'),
+    (8, 'OK캐쉬백', 'MEMBERSHIP', '/images/okcashbag.png', 'Y', 'N', NULL, '포인트 적립·사용 멤버십'),
+    (9, 'GS ALL 멤버십', 'MEMBERSHIP', '/images/gs-all.png', 'Y', 'N', NULL, 'GS 계열 통합 멤버십'),
+    (10, 'E.POINT', 'MEMBERSHIP', '/images/e-point.png', 'Y', 'N', NULL, '이랜드 계열 제휴 멤버십'),
+    (11, 'NH멤버스', 'MEMBERSHIP', '/images/nh-members.png', 'Y', 'N', NULL, '농협 포인트 멤버십'),
+    (12, '뷰티포인트', 'MEMBERSHIP', '/images/beauty-point.png', 'Y', 'N', NULL, '아모레퍼시픽 뷰티 멤버십'),
+    (13, 'T 멤버십', 'MEMBERSHIP', '/images/t-membership.png', 'Y', 'N', NULL, 'SKT 통신사 멤버십'),
+    (14, 'KT 멤버십', 'MEMBERSHIP', '/images/kt-membership.png', 'Y', 'N', NULL, 'KT 통신사 멤버십'),
+    (15, 'U+ 멤버십', 'MEMBERSHIP', '/images/uplus-membership.png', 'Y', 'N', NULL, 'LG U+ 통신사 멤버십'),
+    (16, '네이버플러스 멤버십', 'MEMBERSHIP', '/images/naver-plus.png', 'Y', 'N', NULL, '네이버 구독형 멤버십'),
+    (17, 'PAYCO 포인트', 'MEMBERSHIP', '/images/payco-point.png', 'Y', 'N', NULL, 'PAYCO 포인트 멤버십'),
+    (18, '삼성패션 멤버십', 'MEMBERSHIP', NULL, 'Y', 'N', NULL, '삼성물산 패션 멤버십'),
+    (19, 'LF Members', 'MEMBERSHIP', '/images/lf-members.png', 'Y', 'N', NULL, 'LF 패션 멤버십'),
+    (20, '한섬 THE 클럽', 'MEMBERSHIP', '/images/handsome-club.png', 'Y', 'N', NULL, '한섬 패션 멤버십'),
+    (21, '블루멤버스', 'MEMBERSHIP', '/images/blue-members.png', 'Y', 'N', NULL, '현대자동차 멤버십'),
+    (22, '기아멤버스', 'MEMBERSHIP', '/images/kia-members.png', 'Y', 'N', NULL, '기아자동차 멤버십');
 
 INSERT INTO point_wallet (
     point_wallet_id, member_id, point_provider_id,

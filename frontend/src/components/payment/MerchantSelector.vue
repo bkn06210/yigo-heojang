@@ -34,6 +34,7 @@ const merchants = {
 
 
 const selectedCategory = ref(null);
+const selectedMerchant = ref(null);
 
 
 
@@ -48,6 +49,7 @@ const selectCategory = (category) => {
     'update:merchant',
     null
   );
+  selectedMerchant.value = null;
 
 
   emit(
@@ -61,6 +63,8 @@ const selectCategory = (category) => {
 
 // 가맹점 선택
 const selectMerchant = (merchant) => {
+
+  selectedMerchant.value = merchant;
 
   emit(
     'update:merchant',
@@ -126,3 +130,4 @@ const selectMerchant = (merchant) => {
 </section>
 
 </template>
+<!-- 07_25 연동 변경: 결제 추천 API가 요구하는 가맹점 정보를 선택 결과로 전달한다. -->

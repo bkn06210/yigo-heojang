@@ -27,7 +27,8 @@ const scanStep = ref('');
 // 실제 서비스에서는 OCR API 결과
 const scanResult = ref({
   cardName: 'KB My WE:SH 카드',
-  cardNumber: '1234567890121123',
+  // PR #29 연동: 업로드 목 결과도 서버 BIN/Luhn 검증을 통과하는 시연용 KB 카드번호를 사용한다.
+  cardNumber: '2228790000000008',
   expiryDate: '12/28',
 });
 
@@ -494,3 +495,4 @@ color:white;
 }
 
 </style>
+<!-- 07_25 연동 변경: 카드 이미지 인식 결과를 카드등록 흐름에 전달하도록 보완했다. -->

@@ -149,9 +149,10 @@
         INNER JOIN card_company cc ON cc.card_company_id = c.card_company_id
         WHERE uc.user_card_id = #{userCardId}
           AND uc.member_id = #{memberId}
-          AND uc.card_status = 'ACTIVE'
+           AND uc.card_status = 'ACTIVE'
     </select>
 
+    <!-- 본인 소유이면서 ACTIVE 상태인 카드만 이력 보존을 위해 소프트 삭제한다. -->
     <!--
     대표 카드 상태 변경 전에 대상 보유 카드를 조회한다.
 

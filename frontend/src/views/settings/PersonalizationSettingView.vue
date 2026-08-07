@@ -1,6 +1,10 @@
 <script setup>
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
+import {
+  getPersonalization,
+  updatePersonalization,
+} from '@/api/personalizationApi';
 
 import PageHeader from '@/components/common/PageHeader.vue';
 import AppButton from '@/components/common/AppButton.vue';
@@ -8,99 +12,10 @@ import AppCheckbox from '@/components/common/AppCheckbox.vue';
 import AppInput from '@/components/common/AppInput.vue';
 
 const router = useRouter();
+const isSaving = ref(false);
 
-/**
- * 개인화 설정 카테고리 상태
- * - checked : 관심 영역 선택 여부
- * - tags : 세부 브랜드/키워드
- * - hasTags : 직접 입력 가능한 카테고리 여부
- *
- */
-
-// 브랜드 검색 목업 데이터
-const brandList = {
-  cafe: [
-    {
-      name: '스타벅스',
-      alias: ['스타벅스', 'starbucks'],
-    },
-    {
-      name: '투썸플레이스',
-      alias: ['투썸플레이스', 'twosome', 'twosomeplace'],
-    },
-    {
-      name: '메가커피',
-      alias: ['메가커피', 'mega coffee'],
-    },
-    {
-      name: '이디야',
-      alias: ['이디야', 'ediya'],
-    },
-  ],
-
-  convenience: [
-    {
-      name: 'GS25',
-      alias: ['gs25'],
-    },
-    {
-      name: 'CU',
-      alias: ['cu'],
-    },
-    {
-      name: '이마트24',
-      alias: ['이마트24', 'emart24'],
-    },
-  ],
-
-  food: [
-    {
-      name: '맥도날드',
-      alias: ['맥도날드', 'mcdonald', 'mcd'],
-    },
-    {
-      name: '롯데리아',
-      alias: ['롯데리아', 'lotteria'],
-    },
-    {
-      name: '버거킹',
-      alias: ['버거킹', 'burgerking'],
-    },
-  ],
-
-  mart: [
-    {
-      name: '이마트',
-      alias: ['이마트', 'emart'],
-    },
-    {
-      name: '홈플러스',
-      alias: ['홈플러스', 'homeplus'],
-    },
-    {
-      name: '롯데마트',
-      alias: ['롯데마트', 'lottemart'],
-    },
-  ],
-
-  beauty: [
-    {
-      name: '올리브영',
-      alias: ['올리브영', 'oliveyoung'],
-    },
-  ],
-
-  culture: [
-    {
-      name: 'CGV',
-      alias: ['cgv'],
-    },
-    {
-      name: '롯데시네마',
-      alias: ['롯데시네마', 'lottecinema'],
-    },
-  ],
-};
+// 기존 category 테이블의 대분류·소분류·가맹점 계층을 API 응답 그대로 보관한다.
+const categoryGroups = ref([]);
 
 // 검색 결과
 const getSuggestions = (category) => {
@@ -108,21 +23,11 @@ const getSuggestions = (category) => {
 
   if (!keyword) return [];
 
-  return (brandList[category.key] || []).filter((brand) => {
-    return brand.alias.some((word) => word.toLowerCase().includes(keyword));
+  // [개인화 API 연동] DB merchant는 추천어로만 사용하고 직접 입력 문자열과 중복되지 않게 표시한다.
+  return category.merchants.filter((brand) => {
+    const alreadyAdded = category.brands.some((name) => name.toLowerCase() === brand.name.toLowerCase());
+    return !alreadyAdded && brand.alias.some((word) => word.toLowerCase().includes(keyword));
   });
-};
-
-// 브랜드 선택
-const selectBrand = (category, brand) => {
-  if (category.tags.length >= 3) {
-    alert('최대 3개까지만 입력할 수 있습니다.');
-    return;
-  }
-
-  category.tags.push(brand.name);
-
-  category.inputTag = '';
 };
 
 /**
@@ -135,15 +40,10 @@ const selectBrand = (category, brand) => {
 const highlightAlias = (alias, keyword) => {
   if (!alias || !keyword) return alias;
 
-  // 검색어와 매칭되는 alias 반환
-const getMatchedAlias = (brand, keyword) => {
-  return brand.alias.find((a) =>
-    a.toLowerCase().includes(keyword.toLowerCase())
-  );
-};
-
+  // [직접 입력 복구] 정규식 특수문자를 브랜드 검색어로 입력해도 화면이 깨지지 않게 이스케이프한다.
+  const escapedKeyword = keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   const regex = new RegExp(
-    `(${keyword})`,
+    `(${escapedKeyword})`,
     'gi'
   );
 
@@ -153,78 +53,12 @@ const getMatchedAlias = (brand, keyword) => {
   );
 };
 
-const categories = ref([
-  {
-    key: 'cafe',
-    label: '카페',
-    checked: true,
-    tags: ['스타벅스'],
-    inputTag: '',
-  },
-  {
-    key: 'convenience',
-    label: '편의점',
-    checked: true,
-    tags: ['GS25', 'CU', '이마트24'],
-    inputTag: '',
-  },
-  {
-    key: 'food',
-    label: '음식점',
-    checked: false,
-    tags: [],
-    inputTag: '',
-  },
-  {
-    key: 'restaurant',
-    label: '외식/배달',
-    checked: false,
-    tags: [],
-    inputTag: '',
-  },
-  {
-    key: 'mart',
-    label: '마트',
-    checked: false,
-    tags: [],
-    inputTag: '',
-  },
-  {
-    key: 'department',
-    label: '백화점/쇼핑몰',
-    checked: false,
-    tags: [],
-    inputTag: '',
-  },
-  {
-    key: 'beauty',
-    label: '뷰티/화장품',
-    checked: false,
-    tags: [],
-    inputTag: '',
-  },
-  {
-    key: 'culture',
-    label: '문화/여가',
-    checked: false,
-    tags: [],
-    inputTag: '',
-  },
-  {
-    key: 'transport',
-    label: '교통',
-    checked: false,
-    tags: [],
-    inputTag: '',
-  },
-  {
-    key: 'gas',
-    label: '주유',
-    checked: false,
-    tags: [],
-    inputTag: '',
-  },
-]);
+// 검색어와 매칭되는 alias 반환
+const getMatchedAlias = (brand, keyword) => {
+  return brand.alias.find((alias) =>
+    alias.toLowerCase().includes(keyword.toLowerCase())
+  ) || brand.name;
+};
 
 /**
  * 뒤로가기
@@ -234,39 +68,90 @@ const goBack = () => {
 };
 
 /**
- * 태그 추가
+ * 저장된 개인화 설정 조회
  */
-const addTag = (category) => {
-  const value = category.inputTag.trim();
-
-  if (!value) return;
-
-  if (category.tags.length >= 3) {
-    alert('최대 3개까지만 입력할 수 있습니다.');
-    return;
+const loadPersonalization = async () => {
+  try {
+    const response = await getPersonalization();
+    // 프론트 하드코딩 대신 DB category/merchant와 회원 선택 상태를 화면 모델로 변환한다.
+    categoryGroups.value = (response?.groups || []).map((group) => ({
+      ...group,
+      children: (group.children || []).map((category, index) => ({
+        ...category,
+        groupName: group.categoryName,
+        isFirstInGroup: index === 0,
+        selected: Boolean(category.selected),
+        inputTag: '',
+        // [개인화 API 연동] member_personalization_brand에서 조회한 문자열을 태그로 복원한다.
+        brands: [...(category.brands || [])],
+        merchants: (category.merchants || []).map((merchant) => ({
+          ...merchant,
+          name: merchant.merchantName,
+          alias: [merchant.merchantName],
+        })),
+      })),
+    }));
+  } catch (error) {
+    alert(error.response?.data?.message || '개인화 설정을 불러오지 못했습니다.');
   }
-
-  category.tags.push(value);
-  category.inputTag = '';
-};
-
-/**
- * 태그 삭제
- */
-const removeTag = (category, index) => {
-  category.tags.splice(index, 1);
 };
 
 /**
  * 개인화 설정 저장
- * TODO: 백엔드 API 연결 예정
  */
-const savePersonalization = () => {
-  console.log('개인화 설정 저장:', categories.value);
+const savePersonalization = async () => {
+  if (isSaving.value) return;
 
-  router.go(-1);
+  isSaving.value = true;
+  try {
+    // [개인화 API 연동] 선택 카테고리 ID와 직접 입력 브랜드 문자열을 함께 저장한다.
+    const selectedCategories = categoryGroups.value
+      .flatMap((group) => group.children)
+      .filter((category) => category.selected);
+    await updatePersonalization({
+      categoryIds: selectedCategories.map((category) => category.categoryId),
+      brands: selectedCategories.flatMap((category) => category.brands.map((brandName) => ({
+        categoryId: category.categoryId,
+        brandName,
+      }))),
+    });
+
+    router.go(-1);
+  } catch (error) {
+    alert(error.response?.data?.message || '개인화 설정을 저장하지 못했습니다.');
+  } finally {
+    isSaving.value = false;
+  }
 };
 
+// [개인화 API 연동] 입력값은 merchant 등록 여부와 관계없이 문자열 브랜드로 최대 3개까지 추가한다.
+const addBrand = (category, value = category.inputTag) => {
+  if (!category.selected || category.brands.length >= 3) return;
+  const brandName = String(value || '').trim();
+  if (!brandName) return;
+  if (brandName.length > 100) {
+    alert('브랜드명은 100자 이하로 입력해주세요.');
+    return;
+  }
+  if (category.brands.some((name) => name.toLowerCase() === brandName.toLowerCase())) {
+    alert('이미 추가한 브랜드입니다.');
+    return;
+  }
+  category.brands.push(brandName);
+  category.inputTag = '';
+};
+
+// [개인화 API 연동] 추천 브랜드를 눌러도 동일한 문자열 저장 목록에 추가한다.
+const selectSuggestedBrand = (category, merchant) => {
+  addBrand(category, merchant.name);
+};
+
+// [개인화 API 연동] 직접 입력 브랜드 태그를 화면과 저장 요청에서 제거한다.
+const removeBrand = (category, index) => {
+  category.brands.splice(index, 1);
+};
+
+onMounted(loadPersonalization);
 
 </script>
 
@@ -284,33 +169,39 @@ const savePersonalization = () => {
       <!-- 카테고리 리스트 -->
       <div class="category-list">
         <div
-          v-for="category in categories"
-          :key="category.key"
+          v-for="category in categoryGroups.flatMap((group) => group.children)"
+          :key="category.categoryId"
           class="category-item"
         >
+          <!-- 대분류명은 각 그룹의 첫 소분류 앞에 표시한다. -->
+          <h2 v-if="category.isFirstInGroup">{{ category.groupName }}</h2>
+
           <!-- 카테고리 헤더 -->
           <div class="category-header">
-            <AppCheckbox v-model="category.checked" :label="category.label" />
+            <AppCheckbox
+              v-model="category.selected"
+              :label="category.categoryName"
+            />
 
             <span class="limit-text">
-              3개 중 {{ category.tags.length }}개 사용 중
+              브랜드 3개 중 {{ category.brands.length }}개 사용 중
             </span>
           </div>
 
           <!-- 체크한 카테고리만 상세 영역 표시 -->
-          <div v-if="category.checked" class="tag-input-section">
+          <div v-if="category.selected" class="tag-input-section">
             <!-- 등록 브랜드 -->
             <div class="tag-chips">
               <span
-                v-for="(tag, index) in category.tags"
-                :key="index"
+                v-for="(tag, index) in category.brands"
+                :key="`${category.categoryId}-${tag}`"
                 class="tag-chip"
               >
                 {{ tag }}
 
                 <span
                   class="material-icons remove-tag"
-                  @click="removeTag(category, index)"
+                  @click="removeBrand(category, index)"
                 >
                   close
                 </span>
@@ -319,12 +210,14 @@ const savePersonalization = () => {
 
            <!-- 브랜드 검색 -->
 <div
-  v-if="category.tags.length < 3"
+  v-if="category.brands.length < 3"
   class="brand-search-area"
 >
+  <!-- [개인화 API 연동] Enter 입력으로 merchant에 없는 브랜드도 문자열 태그로 추가한다. -->
   <AppInput
     v-model="category.inputTag"
     placeholder="브랜드 입력"
+    @keyup.enter="addBrand(category)"
   />
 
 <!-- 자동완성 -->
@@ -337,7 +230,7 @@ const savePersonalization = () => {
     v-for="brand in getSuggestions(category)"
     :key="brand.name"
     class="suggestion-item"
-    @click="selectBrand(category, brand)"
+    @click="selectSuggestedBrand(category, brand)"
   >
 
     <!-- 실제 브랜드명 -->
@@ -384,7 +277,11 @@ const savePersonalization = () => {
 
       <!-- 완료 버튼 -->
       <div class="footer-button-area">
-        <AppButton text="개인화 설정 완료" @click="savePersonalization" />
+        <AppButton
+          text="개인화 설정 완료"
+          :disabled="isSaving"
+          @click="savePersonalization"
+        />
       </div>
     </div>
   </div>
@@ -628,3 +525,4 @@ const savePersonalization = () => {
   font-weight: 700;
 }
 </style>
+<!-- 07_25 연동 변경: 기존 개인화 UI를 유지하면서 설정 조회·저장 API를 연결한다. -->

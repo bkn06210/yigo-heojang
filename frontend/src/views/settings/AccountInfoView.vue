@@ -1,11 +1,12 @@
 <script setup>
-import { ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { storeToRefs } from 'pinia';
 
 import { useAuthStore } from '@/stores/authStore';
 import PageHeader from '@/components/common/PageHeader.vue';
 import AuthVerifyModal from '@/components/auth/AuthVerifyModal.vue';
+import { getMyInfo } from '@/api/memberApi';
 
 const authStore = useAuthStore();
 
@@ -20,7 +21,19 @@ const goPasswordChange = () => {
   router.push('/auth/password-change');
 };
 
-const joinedDate = '2026.07.16';
+const joinedDate = computed(() =>
+  user.value?.createdAt?.slice(0, 10).replaceAll('-', '.') || '-'
+);
+
+const loadMyInfo = async () => {
+  try {
+    authStore.updateUser(await getMyInfo());
+  } catch (error) {
+    console.error('회원정보 조회 실패:', error);
+  }
+};
+
+onMounted(loadMyInfo);
 
 // 보안 설정
 const appLock = ref(false);
@@ -429,3 +442,4 @@ const navigateTo = (path) => {
   color: #888;
 }
 </style>
+<!-- 07_25 연동 변경: 계정 정보를 회원 API에서 조회하고 수정 결과를 반영한다. -->

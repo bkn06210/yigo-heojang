@@ -5,8 +5,7 @@ import { useRouter } from 'vue-router';
 import { usePaymentStore } from '@/stores/payment';
 import { useAuthStore } from '@/stores/authStore';
 
-import { storeToRefs } from 'pinia';
-import { useCardStore } from '@/stores/cardStore';
+import { getCardRecommendations } from '@/api/walletApi';
 
 import PageHeader from '@/components/common/PageHeader.vue';
 
@@ -24,11 +23,6 @@ import EmptyStateCard from '@/components/common/EmptyStateCard.vue';
 // 라우터
 const router = useRouter();
 
-const cardStore = useCardStore();
-
-const { cards } = storeToRefs(cardStore);
-
-
 // Store
 const paymentStore = usePaymentStore();
 const authStore = useAuthStore();
@@ -45,6 +39,7 @@ const showLoginModal = ref(false);
 
 // 카드 등록 안내 모달
 const showCardRegisterModal = ref(false);
+const hasRegisteredCards = ref(true);
 
 
 
@@ -81,101 +76,16 @@ const detailCard = ref(null);
 
 
 
-// 추천 결과 멤버십 정보
-// TODO : 추천 API 응답 데이터로 교체
-const membershipBenefit = ref({
+const membershipBenefit = ref(null);
+const recommendedCards = ref([]);
 
-  name: 'CJ ONE',
-
-  route: '/point/cj-one',
-
-});
-
-
-
-// 추천 카드 데이터
-// TODO : POST /api/payment/recommend 연결 후 교체
-const recommendedCards = ref([
-
-  {
-    id: 1,
-
-    name: 'KB My WE:SH 카드',
-
-    image: '/images/cards/kb-wesh.png',
-
-    benefit: 7000,
-
-
-    reasons: [
-      '카페 할인 혜택 적용',
-      '올리브영 결제 혜택',
-      '생활 영역 할인 가능',
-    ],
-
-
-    membershipBenefit: {
-
-      matched: true,
-
-      name: 'CJ ONE',
-
-      message:
-        'CJ ONE 멤버십이 등록되어 있어 올리브영 이용 시 포인트 적립이 가능합니다.',
-
-    },
-
-  },
-
-
-  {
-    id: 2,
-
-    name: '신한 SOL Pay 카드',
-
-    image: '/images/cards/shinhan.png',
-
-    benefit: 5000,
-
-
-    reasons: [
-
-      '온라인 결제 할인',
-
-      '편의점 할인',
-
-    ],
-
-
-    membershipBenefit: null,
-
-  },
-
-
-  {
-    id: 3,
-
-    name: '삼성 iD 카드',
-
-    image: '/images/cards/samsung.png',
-
-    benefit: 3000,
-
-
-    reasons: [
-
-      '간편결제 할인',
-
-      '커피 할인',
-
-    ],
-
-
-    membershipBenefit: null,
-
-  },
-
-]);
+const categoryIds = {
+  카페: 102,
+  음식점: 101,
+  쇼핑: 2,
+  교통: 3,
+  문화: 5,
+};
 
 
 
@@ -227,7 +137,7 @@ const goHome = () => {
 
 
 // 추천 실행
-const recommendCard = () => {
+const recommendCard = async () => {
 
 
   // 비로그인
@@ -241,17 +151,6 @@ const recommendCard = () => {
 
 
 
-  // 카드 없음
-  if (cards.value.length === 0) {
-
-  showCardRegisterModal.value = true;
-
-  return;
-
-}
-
-
-
   selectedCard.value = null;
 
 
@@ -259,22 +158,33 @@ const recommendCard = () => {
 
 
 
-  // TODO
-  // POST /api/payment/recommend
+  try {
+    const response = await getCardRecommendations({
+      expectedAmount: Number(paymentAmount.value),
+      categoryId: categoryIds[selectedCategory.value] || undefined,
+      paymentType: 'CARD',
+    });
 
-
-  setTimeout(() => {
-
-
-    isLoading.value = false;
-
-
+    recommendedCards.value = (response.recommendations || []).map((item) => ({
+      id: Number(item.userCardId),
+      name: item.cardName,
+      image: '',
+      benefit: Number(item.expectedBenefit || 0),
+      benefitAmount: Number(item.expectedBenefit || 0),
+      reasons: item.reason ? [item.reason] : [],
+      membershipBenefit: null,
+    }));
+    membershipBenefit.value = response.membershipEarn?.[0] || null;
     isRecommended.value = true;
-
-
-  }, 500);
-
-
+    if (recommendedCards.value.length === 0) {
+      hasRegisteredCards.value = false;
+      showCardRegisterModal.value = true;
+    }
+  } catch (error) {
+    alert(error.response?.data?.message || error.message || '카드 추천에 실패했습니다.');
+  } finally {
+    isLoading.value = false;
+  }
 };
 
 
@@ -324,16 +234,6 @@ const clickPayment = () => {
 
 
 
-  if (cards.value.length === 0) {
-
-  showCardRegisterModal.value = true;
-
-  return;
-
-}
-
-
-
   showPasswordModal.value = true;
 
 
@@ -357,7 +257,11 @@ const onPasswordSuccess = () => {
 
     paymentAmount.value,
 
-    membershipBenefit.value
+    membershipBenefit.value,
+    {
+      categoryId: categoryIds[selectedCategory.value] || 1,
+      merchantName: selectedMerchant.value || selectedCategory.value || '일반 가맹점',
+    }
 
   );
 
@@ -430,7 +334,7 @@ const refreshPayment = async () => {
 
     <EmptyStateCard
 
-      v-if="cards.length === 0"
+      v-if="!hasRegisteredCards"
 
       title="등록된 카드가 없어요"
 
@@ -555,7 +459,7 @@ const refreshPayment = async () => {
 
   <button
 
-    v-if="isLogin && cards.length > 0"
+    v-if="isLogin && hasRegisteredCards"
 
     class="payment-button"
 
@@ -1129,3 +1033,4 @@ main {
 
 
 </style>
+<!-- 07_25 연동 변경: 기존 추천 UI를 유지하면서 실제 카드 추천 API를 호출한다. -->

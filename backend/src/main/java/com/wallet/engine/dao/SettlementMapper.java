@@ -48,6 +48,8 @@ public interface SettlementMapper {
      */
     int markExpenseCanceled(@Param("expenseId") long expenseId);
 
+    int markPaymentCanceledByExpense(@Param("expenseId") long expenseId);
+
     // ─────────────────────────────────────────────────────────────────────────
     // 엔진 자기 상태 테이블 쓰기
     // ─────────────────────────────────────────────────────────────────────────

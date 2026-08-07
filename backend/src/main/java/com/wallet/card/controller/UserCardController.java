@@ -113,10 +113,8 @@ public class UserCardController {
         @PathVariable Long userCardId
     ) {
         userCardService.deleteUserCard(memberId, userCardId);
-
         return ResponseEntity.noContent().build();
     }
-
     /**
      * 로그인 회원이 소유한 보유 카드의 대표 카드 여부를 변경한다.
      * <p>

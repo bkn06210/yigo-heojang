@@ -206,6 +206,7 @@ public class SettlementService {
         if (settlementMapper.markExpenseCanceled(expenseId) == 0) {
             throw new BusinessException(ErrorCode.ALREADY_CANCELED);
         }
+        settlementMapper.markPaymentCanceledByExpense(expenseId);
 
         deductContributions(expense, baseYearMonth);
 

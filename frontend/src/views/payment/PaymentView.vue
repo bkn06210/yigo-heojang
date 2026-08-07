@@ -13,6 +13,9 @@ import PaymentSecurity from '@/components/payment/PaymentSecurity.vue';
 
 import PaymentResultModal from '@/components/payment/PaymentResultModal.vue';
 import PaymentExpireModal from '@/components/payment/PaymentExpireModal.vue';
+import QRCode from 'qrcode';
+import { createPaymentQr, getPaymentQr } from '@/api/paymentQrApi';
+import { getPayment } from '@/api/walletApi';
 
 
 const paymentStore = usePaymentStore();
@@ -28,8 +31,12 @@ const membershipBenefit = computed(() => paymentStore.membershipBenefit);
 // 결제 결과 모달 상태
 const showResult = ref(false);
 
-const qrSeconds = ref(60);
+const qrSeconds = ref(300);
 let qrTimer = null;
+let statusTimer = null;
+const qrImage = ref('');
+const qrToken = ref('');
+const qrLoading = ref(false);
 
 const showExpireModal = ref(false);
 
@@ -57,6 +64,7 @@ const startQRTimer = () => {
 
 
       clearInterval(qrTimer);
+      clearInterval(statusTimer);
 
 
       showExpireModal.value = true;
@@ -69,28 +77,51 @@ const startQRTimer = () => {
 };
 
 
-// 결제 처리
-//
-// 현재는 테스트용
-// 실제 연결 시:
-// 결제 API 호출
-// ↓
-// 응답 성공/실패 처리
-const payment = ()=>{
+const checkQrStatus = async () => {
+  if (!qrToken.value) return;
+  try {
+    const status = await getPaymentQr(qrToken.value);
+    if (status.status === 'USED') {
+      clearInterval(statusTimer);
+      clearInterval(qrTimer);
+      if (status.paymentId) await getPayment(status.paymentId);
+      success.value = true;
+      showResult.value = true;
+    } else if (status.status === 'EXPIRED' || status.status === 'FAILED') {
+      clearInterval(statusTimer);
+      clearInterval(qrTimer);
+      showExpireModal.value = true;
+    }
+  } catch (error) {
+    console.error('QR 상태 조회 실패', error);
+  }
+};
 
+const issueQr = async () => {
+  if (!card.value?.id) {
+    router.replace('/payment/recommend');
+    return;
+  }
 
-  setTimeout(()=>{
-
-
-    success.value = true;
-
-
-    showResult.value = true;
-
-
-  },1000);
-
-
+  qrLoading.value = true;
+  qrImage.value = '';
+  clearInterval(statusTimer);
+  try {
+    const data = await createPaymentQr(Number(card.value.id), Number(amount.value)); // 07_25 연동 수정: QR 발급 시 결제금액을 확정한다.
+    if (!data?.qrToken) throw new Error('QR 토큰을 발급받지 못했습니다.');
+    qrToken.value = data.qrToken;
+    qrImage.value = await QRCode.toDataURL(data.qrToken, { width: 220, margin: 2 }); // 07_25 연동 수정: QR 이미지는 프론트에서 직접 생성한다.
+    qrSeconds.value = data.expiresAt
+      ? Math.max(1, Math.floor((new Date(data.expiresAt).getTime() - Date.now()) / 1000))
+      : 300;
+    startQRTimer();
+    statusTimer = setInterval(checkQrStatus, 2000);
+  } catch (error) {
+    alert(error.response?.data?.message || error.message || 'QR 생성에 실패했습니다.');
+    router.replace('/payment/recommend');
+  } finally {
+    qrLoading.value = false;
+  }
 };
 
 /*
@@ -105,24 +136,18 @@ const cancelPayment = () => {
 };
 
 // QR 재발급
-const refreshQR = () => {
+const refreshQR = async () => {
 
   showExpireModal.value = false;
 
-  qrSeconds.value = 60;
-
-  startQRTimer();
+  await issueQr();
 
 };
 
 /*
 | 페이지 진입 시 QR 타이머 시작
 */
-onMounted(()=>{
-
-  startQRTimer();
-
-});
+onMounted(issueQr);
 
 /*
 | 페이지 종료 시 타이머 제거
@@ -130,6 +155,7 @@ onMounted(()=>{
 onUnmounted(()=>{
 
   clearInterval(qrTimer);
+  clearInterval(statusTimer);
 
 });
 
@@ -174,6 +200,7 @@ onUnmounted(()=>{
 >
 
   <img
+    v-if="card.image"
     :src="card.image"
     :alt="card.name"
   />
@@ -185,7 +212,7 @@ onUnmounted(()=>{
 </section>
 
 
-<PaymentQR />
+<PaymentQR :image="qrImage" :loading="qrLoading" />
 
 
 <PaymentTimer
@@ -256,3 +283,4 @@ class="cancel"
 
 
 </template> 
+<!-- 07_25 연동 변경: 결제 요청·추천·결과 정산 API를 기존 결제 UI에 연결한다. -->

@@ -27,6 +27,7 @@ class="card"
 
 
 <img
+v-if="card.image"
 :src="card.image"
 />
 
@@ -88,3 +89,4 @@ height:100px;
 
 
 </style>
+<!-- 07_25 연동 변경: 추천 API가 반환한 카드·예상 혜택 정보를 표시한다. -->
