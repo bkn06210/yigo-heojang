@@ -80,6 +80,27 @@ public class UserCardController {
     }
 
     /**
+     * 로그인 회원이 대표 카드로 설정한 활성 보유 카드 목록을 조회한다.
+     * <p>
+     * 대표 카드 목록은 기존 보유 카드 목록과 같은 응답 구조를 사용한다.
+     * 차이는 전체 보유 카드가 아니라 is_representative = 1인 카드만 반환한다는 점이다.
+     * <p>
+     * 대표 카드가 하나도 없어도 예외가 아니라 정상 상태이므로,
+     * 빈 목록과 totalCount = 0을 반환한다.
+     */
+    @GetMapping("/representative")
+    public ResponseEntity<ApiResponse<UserCardListResponse>> getRepresentativeUserCards(
+        @RequestAttribute(RequestAttributeNames.AUTHENTICATED_MEMBER_ID) Long memberId
+    ) {
+        UserCardListResponse response =
+            userCardService.getRepresentativeUserCards(memberId);
+
+        return ResponseEntity.ok(
+            ApiResponse.success("대표 카드 목록 조회에 성공했습니다.", response)
+        );
+    }
+
+    /**
      * 로그인한 회원이 보유한 특정 카드의 상세 기본 정보를 조회한다.
      * <p>
      * memberId는 클라이언트가 직접 보내는 값이 아니라,

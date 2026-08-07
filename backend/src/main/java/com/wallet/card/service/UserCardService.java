@@ -75,6 +75,25 @@ public class UserCardService {
         return toResponse(result);
     }
 
+    /**
+     * 로그인 회원이 대표 카드로 설정한 활성 보유 카드 목록을 조회한다.
+     * <p>
+     * 대표 카드 목록도 기존 보유 카드 목록과 응답 구조가 같다.
+     * 차이는 전체 활성 보유 카드가 아니라,
+     * is_representative = 1인 카드만 조회한다는 점이다.
+     */
+    @Transactional(readOnly = true)
+    public UserCardListResponse getRepresentativeUserCards(Long memberId) {
+        List<UserCardListResult> results =
+            userCardMapper.findActiveRepresentativeUserCardsByMemberId(memberId);
+
+        List<UserCardListItemResponse> representativeUserCards = results.stream()
+            .map(this::toListItemResponse)
+            .toList();
+
+        return UserCardListResponse.from(representativeUserCards);
+    }
+
     // 로그인 회원이 보유한 활성 카드 목록을 조회한다.
     @Transactional(readOnly = true)
     public UserCardListResponse getUserCards(Long memberId) {

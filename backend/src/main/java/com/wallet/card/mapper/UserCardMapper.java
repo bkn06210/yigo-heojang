@@ -84,6 +84,17 @@ public interface UserCardMapper {
     );
 
     /**
+     * 로그인 회원이 대표 카드로 설정한 활성 보유 카드 목록을 조회한다.
+     * <p>
+     * 대표 카드는 user_card 테이블의 is_representative 값으로 판단한다.
+     * 이 기능은 전체 보유 카드 목록에서 프론트가 필터링하는 방식이 아니라,
+     * DB 조회 단계에서 대표 카드만 골라서 내려주기 위한 조회 메서드다.
+     */
+    List<UserCardListResult> findActiveRepresentativeUserCardsByMemberId(
+        @Param("memberId") Long memberId
+    );
+
+    /**
      * 대표 카드 상태를 변경할 대상 보유 카드를 조회한다.
      * <p>
      * Service에서는 이 조회 결과를 이용해서
