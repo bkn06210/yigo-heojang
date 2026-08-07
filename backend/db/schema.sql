@@ -348,8 +348,9 @@ CREATE TABLE card_term_document (
 --    엔진의 상태 테이블은 전부 user_card_id 기준이다 (card_id 아님).
 -- ════════════════════════════════════════════════════════════
 
--- 대표 카드는 회원당 최대 1개. 생성 컬럼 + UNIQUE로 DB가 강제한다.
--- (활성 대표 카드일 때만 member_id가 채워지고, 그 컬럼에 UNIQUE가 걸려 있다)
+-- 대표 카드는 회원당 최대 3개까지 허용한다.
+-- DB에서는 대표 카드 여부만 저장하고, "최대 3개" 규칙은 서비스 트랜잭션에서 검증한다.
+-- 이유: 일반적인 UNIQUE 제약만으로 "회원당 최대 3개" 같은 개수 제한을 표현하기 어렵기 때문이다.
 CREATE TABLE user_card (
     user_card_id             BIGINT      NOT NULL AUTO_INCREMENT COMMENT '보유카드 ID',
     member_id                BIGINT      NOT NULL COMMENT '회원 ID',
@@ -358,13 +359,15 @@ CREATE TABLE user_card (
     is_representative        TINYINT(1)  NOT NULL DEFAULT 0 COMMENT '대표카드 여부',
     registered_at            DATETIME    NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '등록일시',
     card_status              ENUM('ACTIVE','DELETED') NOT NULL DEFAULT 'ACTIVE' COMMENT '카드 상태',
-    representative_member_id BIGINT      GENERATED ALWAYS AS (
-        CASE WHEN is_representative = 1 AND card_status = 'ACTIVE' THEN member_id ELSE NULL END
-    ) STORED COMMENT '대표카드 유일성 보장용 생성 컬럼',
     PRIMARY KEY (user_card_id),
+
     UNIQUE KEY uk_user_card_member_card (member_id, card_id),
-    UNIQUE KEY uk_user_card_representative (representative_member_id),
-    KEY idx_user_card_member_status (member_id, card_status),
+
+    -- 보유 카드 목록 조회와 대표 카드 개수 조회에서 함께 사용할 인덱스다.
+    -- member_id, card_status 조건만 사용하는 기존 목록 조회도 이 인덱스를 활용할 수 있다.
+    -- 대표 카드 설정 시에는 member_id + ACTIVE + is_representative = 1 조건으로 현재 개수를 빠르게 조회한다.
+    KEY idx_user_card_member_status_representative (member_id, card_status, is_representative),
+
     CONSTRAINT fk_user_card_member FOREIGN KEY (member_id) REFERENCES member (member_id),
     CONSTRAINT fk_user_card_card FOREIGN KEY (card_id) REFERENCES card (card_id)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT '보유카드';

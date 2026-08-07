@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestAttribute;
@@ -22,6 +23,7 @@ import com.wallet.card.dto.UserCardDetailResponse;
 import com.wallet.card.dto.UserCardListResponse;
 import com.wallet.card.dto.UserCardRegisterRequest;
 import com.wallet.card.dto.UserCardRegisterResponse;
+import com.wallet.card.dto.UserCardRepresentativeUpdateRequest;
 import com.wallet.card.service.UserCardService;
 import com.wallet.common.ApiResponse;
 import com.wallet.common.constant.RequestAttributeNames;
@@ -115,5 +117,31 @@ public class UserCardController {
         return ResponseEntity.noContent().build();
     }
 
+    /**
+     * 로그인 회원이 소유한 보유 카드의 대표 카드 여부를 변경한다.
+     * <p>
+     * 이 API는 서버가 현재 상태를 반대로 뒤집는 토글 API가 아니다.
+     * 프론트가 원하는 최종 상태를 representative 값으로 보내면,
+     * 서버는 해당 상태가 되도록 처리한다.
+     * <p>
+     * e.g.
+     * - representative = true  : 대표 카드로 설정
+     * - representative = false : 대표 카드에서 제외
+     * <p>
+     * 이미 요청한 상태와 같은 경우에는 Service에서 변경 없이 성공 처리한다.
+     */
+    @PatchMapping("/{userCardId}/representative")
+    public ResponseEntity<Void> updateRepresentative(
+        @RequestAttribute(AUTHENTICATED_MEMBER_ID) Long memberId,
+        @PathVariable Long userCardId,
+        @Valid @RequestBody UserCardRepresentativeUpdateRequest request
+    ) {
+        userCardService.updateRepresentative(
+            memberId,
+            userCardId,
+            request.representative()
+        );
 
+        return ResponseEntity.noContent().build();
+    }
 }
