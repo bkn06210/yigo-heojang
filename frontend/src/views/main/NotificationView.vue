@@ -190,7 +190,7 @@ const deleteNotification = (id) => {
       class="back-button"
       @click="goBack"
     >
-      ←
+      ‹
     </button>
 
 

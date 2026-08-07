@@ -1,10 +1,13 @@
 <script setup>
 import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 
 import PageHeader from '@/components/common/PageHeader.vue';
 import ChatMessage from '@/components/chat/ChatMessage.vue';
 import QuickQuestion from '@/components/chat/QuickQuestion.vue';
 import Icon from '@/components/common/Icon.vue';
+
+const router = useRouter();
 
 // TODO
 // POST /ai/chat

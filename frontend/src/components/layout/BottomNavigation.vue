@@ -100,7 +100,7 @@ import Icon from '@/components/common/Icon.vue';
 
 .bottom-nav .router-link-active {
 
-  color: var(--color-gold-text);
+  color: var(--color-nav-active);
 
   font-weight: var(--font-bold);
 

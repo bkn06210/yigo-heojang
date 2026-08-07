@@ -65,6 +65,12 @@ html {
   --color-accent-orange: #B8A03A;
   --color-accent-green: #3D6B52;
 
+  /* Card Donut Chart Color */
+  --color-card-donut: #7AB88A;
+  --color-donut-text: #000000;
+
+  /* Navigation */
+  --color-nav-active: #7AB88A;
 
   /* Text (WCAG AA 기준, 쿨톤) */
   --color-text-primary: #24242A;
@@ -292,6 +298,12 @@ html {
   --color-gold-text: #4B8B70;
   --color-gold-nav: #4B8B70;
 
+  /* Card Donut Chart Color */
+  --color-card-donut: #3D6B52;
+  --color-donut-text: #FFFFFF;
+
+  /* Navigation */
+  --color-nav-active: #4B8B70;
 
   --color-coral: #D17B93;
 

@@ -31,7 +31,7 @@ const emit = defineEmits(['click-item'])
 
     <div v-else class="point-list" :class="{ multiple: props.points.length > 1 }">
       <article
-        v-for="point in props.points.slice(0, 2)"
+        v-for="point in props.points.slice(0, 3)"
         :key="point.id"
         class="point-item"
         @click="emit('click-item', point)"
