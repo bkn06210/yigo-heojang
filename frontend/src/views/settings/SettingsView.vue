@@ -1,4 +1,4 @@
-﻿<script setup>
+<script setup>
 import { ref, watch, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { storeToRefs } from 'pinia';
@@ -6,6 +6,7 @@ import { storeToRefs } from 'pinia';
 import { useAuthStore } from '@/stores/authStore';
 
 import PageHeader from '@/components/common/PageHeader.vue';
+import Icon from '@/components/common/Icon.vue';
 import BottomNavigation from '@/components/layout/BottomNavigation.vue';
 import ProfileEditBottomSheet from '@/components/settings/ProfileEditBottomSheet.vue';
 
@@ -213,9 +214,7 @@ const logout = () => {
               @click="openProfileEdit"
             >
 
-              <span class="material-icons">
-                edit
-              </span>
+              <Icon name="edit" size="md" />
 
             </button>
 
@@ -257,7 +256,6 @@ const logout = () => {
 
 
 
-
       <!-- 설정 메뉴 -->
 
       <section class="menu-list">
@@ -286,7 +284,6 @@ const logout = () => {
 
 
 
-
         <!-- 알림 -->
 
         <div
@@ -305,7 +302,6 @@ const logout = () => {
 
 
         </div>
-
 
 
 
@@ -350,7 +346,6 @@ const logout = () => {
 
 
 
-
         <!-- 계정 및 보안 -->
 
         <div
@@ -373,7 +368,6 @@ const logout = () => {
 
 
       </section>
-
 
 
 
@@ -406,7 +400,6 @@ const logout = () => {
 
 
 
-
     <!-- 프로필 수정 바텀시트 -->
 
     <ProfileEditBottomSheet
@@ -424,7 +417,6 @@ const logout = () => {
 
 
 
-
     <!-- 하단 네비게이션 -->
 
     <BottomNavigation />
@@ -436,66 +428,35 @@ const logout = () => {
 </template>
 
 <style scoped>
-
 .settings-view {
-
   min-height: 100vh;
-
   background: var(--color-bg);
-
-  display:flex;
-
-  flex-direction:column;
-
+  display: flex;
+  flex-direction: column;
   padding: var(--space-md);
   padding-bottom: calc(var(--space-xl) + var(--space-2xl) + var(--space-xl));
-
   margin: 0 auto;
-
   max-width: 480px;
-
   box-sizing: border-box;
-
-  overflow: hidden visible;
-
 }
-
-
-
-/* 본문 */
 
 .settings-content {
-
-  flex:1;
-
+  flex: 1;
   padding-bottom: calc(var(--space-xl) + var(--space-2xl) + var(--space-xl));
-
 }
 
-
-
-/* 프로필 (Bento: 강조 셀 + Soft Glassmorphism) */
-
 .profile-section {
-
   border-radius: var(--radius-xl);
-
   padding: var(--space-2xl) var(--space-lg);
-
-  display:flex;
-
-  flex-direction:column;
-
-  align-items:center;
-
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   margin-bottom: var(--space-lg);
-
   background: linear-gradient(135deg, rgba(var(--color-primary-dark-rgb), 0.12) 0%, rgba(var(--color-primary-dark-rgb), 0.04) 100%);
   border: 1px solid rgba(var(--color-primary-dark-rgb), 0.2);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.4);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-
 }
 
 [data-theme="dark"] .profile-section {
@@ -504,253 +465,125 @@ const logout = () => {
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.06);
 }
 
-
-
 .guest-profile {
-
   gap: var(--space-md);
-
 }
-
-
 
 .guest-profile p {
-
-  margin:0;
-
+  margin: 0;
   color: var(--color-text-secondary);
-
   font-size: var(--font-sm);
-
 }
 
-
-
 .login-button {
-
-  border:none;
-
+  border: none;
   background: linear-gradient(90deg, var(--color-btn-primary-start), var(--color-btn-primary-end));
-
   color: var(--color-btn-primary-text);
-
   padding: var(--space-xs) var(--space-xl);
-
   border-radius: var(--radius-lg);
-
   font-size: var(--font-sm);
-
   font-weight: var(--font-semibold);
-
-  cursor:pointer;
-
+  cursor: pointer;
   transition: var(--transition-fast);
-
 }
 
 .login-button:hover {
-
   opacity: 0.9;
-
 }
-
-
-
-
 
 .profile-image-wrapper {
-
-  width:88px;
-
-  height:88px;
-
+  width: 88px;
+  height: 88px;
 }
-
-
 
 .profile-image {
-
-  width:100%;
-
-  height:100%;
-
+  width: 100%;
+  height: 100%;
   border-radius: var(--radius-full);
-
-  object-fit:cover;
-
+  object-fit: cover;
 }
-
-
 
 .default-image {
-
   background: var(--color-border);
-
 }
-
-
 
 .profile-info {
-
   margin-top: var(--space-sm);
-
 }
-
-
 
 .nickname-area {
-
-  display:flex;
-
-  align-items:center;
-
+  display: flex;
+  align-items: center;
   gap: var(--space-xs);
-
 }
-
-
 
 .nickname {
-
   font-size: var(--font-2xl);
-
   font-weight: var(--font-bold);
-
   letter-spacing: -0.3px;
-
   color: var(--color-text-primary);
-
 }
 
-
-
 .edit-profile-button {
-
-  width:28px;
-
-  height:28px;
-
-  border:none;
-
+  width: 36px;
+  height: 36px;
+  border: none;
   background: rgba(255, 255, 255, 0.4);
-
   border-radius: var(--radius-full);
-
-  display:flex;
-
-  align-items:center;
-
-  justify-content:center;
-
-  cursor:pointer;
-
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
   transition: var(--transition-fast);
-
+  color: var(--color-text-secondary);
 }
 
 .edit-profile-button:hover {
-
   background: rgba(255, 255, 255, 0.6);
-
 }
 
 [data-theme="dark"] .edit-profile-button {
-
   background: rgba(255, 255, 255, 0.08);
-
+  color: white;
 }
 
 [data-theme="dark"] .edit-profile-button:hover {
-
   background: rgba(255, 255, 255, 0.14);
-
 }
-
-
-
-.edit-profile-button .material-icons {
-
-  font-size: var(--font-md);
-
-  color: var(--color-text-secondary);
-
-}
-
-
-
-
-
-/* 설정 메뉴 */
 
 .menu-list {
-
   background: var(--color-surface);
-
   border-radius: var(--radius-lg);
-
   overflow: visible;
-
   box-shadow: var(--shadow-card);
-
   position: relative;
-
 }
 
-
-
 .menu-item {
-
-  min-height:56px;
-
+  min-height: 56px;
   padding: 0 var(--space-md);
-
-  display:flex;
-
-  justify-content:space-between;
-
-  align-items:center;
-
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   border-bottom: 1px solid var(--color-bg);
-
   font-size: var(--font-sm);
-
   color: var(--color-text-primary);
-
-  cursor:pointer;
-
+  cursor: pointer;
   transition: var(--transition-fast);
-
 }
 
 .menu-item:hover {
-
   background: var(--color-bg);
-
 }
-
-
 
 .menu-item:last-child {
-
-  border-bottom:none;
-
+  border-bottom: none;
 }
-
-
 
 .menu-item span:last-child {
-
   color: var(--color-text-tertiary);
-
   font-size: var(--font-2xl);
-
 }
-
-
-
-
-
-/* 보기 설정 */
 
 .dropdown-item {
   cursor: default;
@@ -765,21 +598,16 @@ const logout = () => {
   display: flex;
   align-items: center;
   gap: var(--space-sm);
-
   border: 1.5px solid var(--color-border);
   background: var(--color-bg);
   color: var(--color-text-primary);
-
   height: 36px;
   min-width: 120px;
   padding: var(--space-xs) var(--space-md);
-
   border-radius: var(--radius-md);
-
   font-size: var(--font-sm);
   font-weight: var(--font-medium);
   cursor: pointer;
-
   transition: all var(--transition-fast);
 }
 
@@ -817,15 +645,12 @@ const logout = () => {
   position: absolute;
   top: calc(100% + 8px);
   right: 0;
-
   min-width: 140px;
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
-
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
   overflow: hidden;
-
   z-index: 1000;
 }
 
@@ -836,15 +661,12 @@ const logout = () => {
 .dropdown-option {
   width: 100%;
   text-align: left;
-
   border: none;
   background: transparent;
   color: var(--color-text-primary);
-
   padding: var(--space-sm) var(--space-md);
   font-size: var(--font-sm);
   cursor: pointer;
-
   transition: all var(--transition-fast);
 }
 
@@ -862,52 +684,22 @@ const logout = () => {
   background: linear-gradient(135deg, rgba(var(--color-primary-dark-rgb), 0.12) 0%, rgba(var(--color-primary-dark-rgb), 0.04) 100%);
 }
 
-
-
-
-
-/* 로그아웃 */
-
 .logout-section {
-
   margin-top: var(--space-2xl);
-
-  display:flex;
-
-  justify-content:center;
-
+  display: flex;
+  justify-content: center;
 }
-
-
 
 .logout-button {
-
   border: none;
-
   background: transparent;
-
-
-  width:100%;
-
-  height:52px;
-
-
+  width: 100%;
+  height: 52px;
   border-radius: var(--radius-md);
-
-
   color: var(--color-coral);
-
-
   font-size: var(--font-sm);
-
   font-weight: var(--font-semibold);
-
-
-  cursor:pointer;
-
+  cursor: pointer;
   transition: var(--transition-fast);
-
 }
-
-
 </style>

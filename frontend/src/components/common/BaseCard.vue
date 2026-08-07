@@ -40,34 +40,26 @@ defineEmits([
 .base-card {
   width: 100%;
   padding: var(--space-lg);
-
   background: var(--color-surface);
-
-  border: 1px solid var(--color-border);
-
-  border-radius: var(--radius-lg);
-
-  box-shadow: var(--shadow-md);
-
+  border: 2px solid var(--color-border);
+  border-radius: 28px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   transition: var(--transition-fast);
-
   overflow: hidden;
-
   word-break: break-word;
-
   box-sizing: border-box;
 }
 
 .base-card.shadow-sm {
-  box-shadow: var(--shadow-sm);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 }
 
 .base-card.shadow-md {
-  box-shadow: var(--shadow-md);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 .base-card.shadow-lg {
-  box-shadow: var(--shadow-lg);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
 }
 
 

@@ -3,6 +3,7 @@ import { ref, watch } from 'vue';
 
 import AppButton from '@/components/common/AppButton.vue';
 import AppInput from '@/components/common/AppInput.vue';
+import Icon from '@/components/common/Icon.vue';
 
 
 const props = defineProps({
@@ -105,7 +106,7 @@ const changeProfileImage = (event) => {
           <div v-else class="profile-image default-image"></div>
 
           <button class="camera-button" type="button" @click="openFilePicker">
-            <span class="material-icons"> photo_camera </span>
+            <Icon name="camera" size="sm" />
           </button>
         </div>
       </div>
@@ -152,7 +153,7 @@ const changeProfileImage = (event) => {
 
   padding: var(--space-xl);
 
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.6) 0%, var(--color-surface) 30%);
+  background: var(--color-surface);
   border-top: 1px solid rgba(255, 255, 255, 0.35);
   box-shadow: 0 -16px 40px rgba(0, 0, 0, 0.12);
   backdrop-filter: blur(14px);
@@ -160,7 +161,7 @@ const changeProfileImage = (event) => {
 }
 
 [data-theme="dark"] .bottom-sheet {
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.06) 0%, var(--color-surface) 30%);
+  background: var(--color-surface);
   border-top: 1px solid rgba(255, 255, 255, 0.08);
   box-shadow: 0 -16px 40px rgba(0, 0, 0, 0.35);
 }
@@ -229,9 +230,9 @@ h2 {
 
   bottom: -5px;
 
-  width: 34px;
+  width: 36px;
 
-  height: 34px;
+  height: 36px;
 
   border-radius: 50%;
 
@@ -239,17 +240,24 @@ h2 {
   align-items: center;
   justify-content: center;
 
-  background: linear-gradient(135deg, var(--color-btn-primary-start), var(--color-btn-primary-end));
+  background: var(--color-primary);
 
-  border: 2px solid var(--color-surface);
+  border: none;
 
-  color: var(--color-btn-primary-text);
+  color: white;
 
   cursor: pointer;
+  transition: var(--transition-fast);
+  padding: 0;
 }
 
-.camera-button .material-icons {
-  font-size: 16px;
+.camera-button:hover {
+  opacity: 0.8;
+}
+
+[data-theme="dark"] .camera-button {
+  background: white;
+  color: #333;
 }
 
 .button-area {

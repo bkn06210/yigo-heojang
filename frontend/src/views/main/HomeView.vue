@@ -7,6 +7,7 @@ import { useAuthStore } from '@/stores/authStore';
 import { useCardStore } from '@/stores/cardStore';
 
 import HomeHeader from '@/components/home/HomeHeader.vue';
+import Icon from '@/components/common/Icon.vue';
 import AIBriefingCard from '@/components/common/AIBriefingCard.vue';
 import MyCardSummaryCard from '@/components/home/MyCardSummaryCard.vue';
 import PointSummaryCard from '@/components/home/PointSummaryCard.vue';
@@ -62,6 +63,29 @@ const hasUnreadNotification = computed(() => {
 // 홈 "내 카드"에는 카드 목록에서 고정(pinned)한 카드만 노출 (최대 3개까지 고정 가능)
 const pinnedCards = computed(() => cards.value.filter((card) => card.pinned));
 const hasPinnedCard = computed(() => pinnedCards.value.length > 0);
+
+// 시간대별 인삿말
+const timeGreeting = computed(() => {
+  const hour = new Date().getHours();
+  const nickname = user.value?.nickname || user.value?.name || '사용자';
+
+  if (hour >= 6 && hour < 12) {
+    return { message: `좋은 아침이에요, ${nickname}님! ☀️`, emoji: '☀️' };
+  } else if (hour >= 12 && hour < 18) {
+    return { message: `좋은 오후예요, ${nickname}님! 🌤️`, emoji: '🌤️' };
+  } else if (hour >= 18 && hour < 22) {
+    return { message: `좋은 저녁이에요, ${nickname}님! 🌙`, emoji: '🌙' };
+  } else {
+    return { message: `늦은 시간이네요, 푹 쉬세요! 😴`, emoji: '😴' };
+  }
+});
+
+// 현재 날짜 포맷
+const currentDate = computed(() => {
+  const today = new Date();
+  const options = { year: 'numeric', month: 'long', day: 'numeric' };
+  return today.toLocaleDateString('ko-KR', options);
+});
 
 // 두리 브리핑 메시지 - 동적 생성
 const briefingMessage = computed(() => {
@@ -260,78 +284,28 @@ onMounted(async () => {
     />
 
     <main class="home-content">
-      <!-- Phase 3 테스트 버튼 -->
-      <div
-        style="display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap"
-      >
-        <button
-          @click="showNotification('success', '인증이 완료되었습니다')"
-          style="
-            padding: 8px 12px;
-            background: var(--color-accent-green);
-            color: white;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 12px;
-          "
-        >
-          Success
-        </button>
-        <button
-          @click="showNotification('error', '작업을 완료할 수 없습니다')"
-          style="
-            padding: 8px 12px;
-            background: var(--color-accent-coral);
-            color: white;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 12px;
-          "
-        >
-          Error
-        </button>
-        <button
-          @click="showNotification('info', '새로운 알림 1개가 있습니다')"
-          style="
-            padding: 8px 12px;
-            background: var(--color-accent-green);
-            color: white;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 12px;
-          "
-        >
-          Info
-        </button>
-        <button
-          @click="showNotification('warning', '이 작업은 되돌릴 수 없습니다')"
-          style="
-            padding: 8px 12px;
-            background: var(--color-primary);
-            color: var(--color-text-primary);
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 12px;
-          "
-        >
-          Warning
-        </button>
+      <!-- 프로필 섹션 -->
+      <div class="profile-briefing-section">
+        <!-- 프로필 헤더 섹션 -->
+        <section v-if="user" class="profile-header-section">
+          <div class="profile-avatar-large" @click="goProfile">{{ user.nickname?.charAt(0) || '👤' }}</div>
+          <p class="profile-date-text">{{ currentDate }}</p>
+          <p class="greeting-text">{{ timeGreeting.message }}</p>
+        </section>
+
+        <!-- 우측 상단 버튼들 -->
+        <div class="profile-header-buttons">
+          <button @click="goChatBot" class="header-btn" title="채팅">
+            <Icon name="chat" size="md" />
+          </button>
+          <button @click="goNotification" class="header-btn notification-btn" :class="{ 'has-notification': hasUnreadNotification }" title="알림">
+            <Icon name="bell" size="md" />
+            <span v-if="hasUnreadNotification" class="notification-dot" />
+          </button>
+        </div>
       </div>
 
-      <HomeHeader
-        :has-unread-notification="hasUnreadNotification"
-        :user="user"
-        @chat="goChatBot"
-        @click-notification="goNotification"
-        @profile="goProfile"
-      />
-
       <!-- AI 브리핑 -->
-
       <AIBriefingCard v-if="user" :is-login="true" :message="briefingMessage" />
 
       <AIBriefingCard v-else :is-login="false" :message="briefingMessage" />
@@ -598,6 +572,118 @@ onMounted(async () => {
   display: flex;
   align-items: center;
   margin-top: calc(var(--font-lg) * -0.3);
+}
+
+/* 프로필 섹션 */
+.profile-briefing-section {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-lg);
+  margin: 0;
+  padding: var(--space-lg) var(--space-md) var(--space-md);
+  background: transparent;
+}
+
+/* 브리핑 카드 - 위로 올리고 크기 증가 */
+.home-content > :deep(.ai-briefing-card) {
+  margin-top: calc(var(--space-lg) * 1);
+  margin-bottom: var(--space-lg);
+  padding: calc(var(--space-lg) * 1.7) !important;
+  min-height: 110px;
+}
+
+/* 프로필 헤더 섹션 */
+.profile-header-section {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-sm);
+  margin-bottom: 0;
+  padding: 0;
+  background: transparent;
+  border-radius: 0;
+  border: none;
+  box-shadow: none;
+}
+
+/* 프로필 사진 */
+.profile-avatar-large {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  font-weight: var(--font-bold);
+  color: white;
+  flex-shrink: 0;
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
+
+.profile-avatar-large:hover {
+  opacity: 0.8;
+  transform: scale(1.05);
+}
+
+/* 프로필 헤더 우측 버튼들 */
+.profile-header-buttons {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-left: auto;
+}
+
+.header-btn {
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition-fast);
+  color: var(--color-text-primary);
+  padding: 0;
+}
+
+.header-btn:hover {
+  opacity: 0.7;
+}
+
+.header-btn.notification-btn {
+  position: relative;
+}
+
+.notification-dot {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-danger);
+}
+
+/* 날짜 */
+.profile-date-text {
+  margin: 0;
+  font-size: var(--font-sm);
+  color: var(--color-text-secondary);
+}
+
+/* 인사말 */
+.greeting-text {
+  margin: 0;
+  font-size: var(--font-xl);
+  font-weight: var(--font-bold);
+  color: var(--color-text-primary);
+  line-height: 1.3;
 }
 
 /* Empty 버튼 영역 */
