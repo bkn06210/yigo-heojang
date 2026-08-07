@@ -7,6 +7,9 @@ db.url=jdbc:mysql://localhost:3306/wallet?serverTimezone=Asia/Seoul&characterEnc
 db.username=root
 db.password=변경하세요
 
+# CORS 허용 도메인 (로컬: http://localhost:5173, 운영: 실제 운영 도메인)
+cors.allowed-origin=http://localhost:5173
+
 # --- SMTP server settings ---
 mail.host=smtp.gmail.com
 mail.port=587

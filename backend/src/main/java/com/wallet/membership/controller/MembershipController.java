@@ -1,24 +1,28 @@
 package com.wallet.membership.controller;
 
+import static com.wallet.common.constant.RequestAttributeNames.AUTHENTICATED_MEMBER_ID;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+
+import com.wallet.common.ApiResponse;
 import com.wallet.membership.dto.MembershipCancelResponse;
 import com.wallet.membership.dto.MembershipDetailResponse;
 import com.wallet.membership.dto.MembershipProviderListResponse;
 import com.wallet.membership.dto.MembershipRegisterRequest;
 import com.wallet.membership.dto.MembershipRegisterResponse;
+import com.wallet.membership.dto.MyMembershipListResponse;
 import com.wallet.membership.service.MembershipService;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import com.wallet.membership.dto.MyMembershipListResponse;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import javax.servlet.http.HttpServletRequest;
-import static com.wallet.common.constant.RequestAttributeNames.AUTHENTICATED_MEMBER_ID;
 
 @RestController
+@RequestMapping("/api/memberships")
 public class MembershipController {
 
     private final MembershipService membershipService;
@@ -26,92 +30,52 @@ public class MembershipController {
     public MembershipController(MembershipService membershipService) {
         this.membershipService = membershipService;
     }
-    @GetMapping("/api/memberships")
-    public Map<String, Object> getMyMemberships(HttpServletRequest request) {
-        Long memberId = (Long) request.getAttribute(AUTHENTICATED_MEMBER_ID);
 
-        MyMembershipListResponse data =
-                membershipService.getMyMemberships(memberId);
-
-        Map<String, Object> response = new LinkedHashMap<>();
-        response.put("success", true);
-        response.put("code", "SUCCESS");
-        response.put("message", "내 멤버십 목록 조회에 성공했습니다.");
-        response.put("data", data);
-
-        return response;
-    }
-    @GetMapping("/api/memberships/providers")
-    public Map<String, Object> getMembershipProviders(HttpServletRequest request) {
-        Long memberId = (Long) request.getAttribute(AUTHENTICATED_MEMBER_ID);
-
-        MembershipProviderListResponse data =
-                membershipService.getMembershipProviders(memberId);
-
-        Map<String, Object> response = new LinkedHashMap<>();
-        response.put("success", true);
-        response.put("code", "SUCCESS");
-        response.put("message", "멤버십 등록 가능 목록 조회에 성공했습니다.");
-        response.put("data", data);
-
-        return response;
+    @GetMapping
+    public ApiResponse<MyMembershipListResponse> getMyMemberships(HttpServletRequest request) {
+        Long memberId = authenticatedMemberId(request);
+        MyMembershipListResponse data = membershipService.getMyMemberships(memberId);
+        return ApiResponse.success("내 멤버십 목록 조회에 성공했습니다.", data);
     }
 
-    @PostMapping("/api/memberships")
-    public Map<String, Object> registerMembership(
-            HttpServletRequest servletRequest,
-            @RequestBody MembershipRegisterRequest request
-    ) {
-        Long memberId = (Long) servletRequest.getAttribute(AUTHENTICATED_MEMBER_ID);
-
-        MembershipRegisterResponse data =
-                membershipService.registerMembership(memberId, request);
-
-        Map<String, Object> response = new LinkedHashMap<>();
-        response.put("success", true);
-        response.put("code", "SUCCESS");
-        response.put("message", "멤버십 등록에 성공했습니다.");
-        response.put("data", data);
-
-        return response;
+    @GetMapping("/providers")
+    public ApiResponse<MembershipProviderListResponse> getMembershipProviders(HttpServletRequest request) {
+        Long memberId = authenticatedMemberId(request);
+        MembershipProviderListResponse data = membershipService.getMembershipProviders(memberId);
+        return ApiResponse.success("멤버십 등록 가능 목록 조회에 성공했습니다.", data);
     }
 
-    @DeleteMapping("/api/memberships/{membershipRegisterId}")
-    public Map<String, Object> cancelMembership(
+    @PostMapping
+    public ApiResponse<MembershipRegisterResponse> registerMembership(
             HttpServletRequest request,
-            @PathVariable("membershipRegisterId") Long membershipRegisterId
+            @Valid @RequestBody MembershipRegisterRequest registerRequest
     ) {
-        Long memberId = (Long) request.getAttribute(AUTHENTICATED_MEMBER_ID);
-
-        MembershipCancelResponse data =
-                membershipService.cancelMembership(memberId, membershipRegisterId);
-
-        Map<String, Object> response = new LinkedHashMap<>();
-        response.put("success", true);
-        response.put("code", "SUCCESS");
-        response.put("message", "멤버십 등록 해제에 성공했습니다.");
-        response.put("data", data);
-
-        return response;
+        Long memberId = authenticatedMemberId(request);
+        MembershipRegisterResponse data = membershipService.registerMembership(memberId, registerRequest);
+        return ApiResponse.success("멤버십 등록에 성공했습니다.", data);
     }
 
-    @GetMapping("/api/memberships/{membershipRegisterId}")
-    public Map<String, Object> getMembershipDetail(
+    @DeleteMapping("/{membershipRegisterId}")
+    public ApiResponse<MembershipCancelResponse> cancelMembership(
             HttpServletRequest request,
-            @PathVariable("membershipRegisterId") Long membershipRegisterId
+            @PathVariable Long membershipRegisterId
     ) {
-        Long memberId = (Long) request.getAttribute(AUTHENTICATED_MEMBER_ID);
-
-        MembershipDetailResponse data =
-                membershipService.getMembershipDetail(memberId, membershipRegisterId);
-
-        Map<String, Object> response = new LinkedHashMap<>();
-        response.put("success", true);
-        response.put("code", "SUCCESS");
-        response.put("message", "멤버십 상세 조회에 성공했습니다.");
-        response.put("data", data);
-
-        return response;
+        Long memberId = authenticatedMemberId(request);
+        MembershipCancelResponse data = membershipService.cancelMembership(memberId, membershipRegisterId);
+        return ApiResponse.success("멤버십 등록 해제에 성공했습니다.", data);
     }
 
+    @GetMapping("/{membershipRegisterId}")
+    public ApiResponse<MembershipDetailResponse> getMembershipDetail(
+            HttpServletRequest request,
+            @PathVariable Long membershipRegisterId
+    ) {
+        Long memberId = authenticatedMemberId(request);
+        MembershipDetailResponse data = membershipService.getMembershipDetail(memberId, membershipRegisterId);
+        return ApiResponse.success("멤버십 상세 조회에 성공했습니다.", data);
+    }
+
+    private Long authenticatedMemberId(HttpServletRequest request) {
+        return (Long) request.getAttribute(AUTHENTICATED_MEMBER_ID);
+    }
 }

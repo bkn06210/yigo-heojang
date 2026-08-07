@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import org.springframework.lang.NonNull;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -29,7 +30,6 @@ import com.wallet.common.ErrorCode;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private static final String AUTHORIZATION_HEADER = "Authorization";
     private static final String BEARER_PREFIX = "Bearer ";
-    private static final String FRONTEND_ORIGIN = "http://localhost:5173";
 
     // CORS preflight 요청은 브라우저의 사전 확인용이므로, Access Token이 없어도 인증 필터를 통과시켜야 한다.
     private static final String OPTIONS_METHOD = "OPTIONS";
@@ -50,6 +50,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtTokenProvider jwtTokenProvider;
     private final ObjectMapper objectMapper;
+
+    @Value("${cors.allowed-origin}")
+    private String frontendOrigin;
 
     @Override
     protected void doFilterInternal(
@@ -135,8 +138,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         ErrorCode errorCode
     ) throws IOException {
         String origin = request.getHeader("Origin");
-        if (FRONTEND_ORIGIN.equals(origin)) {
-            response.setHeader("Access-Control-Allow-Origin", FRONTEND_ORIGIN);
+        if (frontendOrigin != null && frontendOrigin.equals(origin)) {
+            response.setHeader("Access-Control-Allow-Origin", frontendOrigin);
             response.setHeader("Access-Control-Allow-Credentials", "true");
             response.setHeader("Vary", "Origin");
         }
