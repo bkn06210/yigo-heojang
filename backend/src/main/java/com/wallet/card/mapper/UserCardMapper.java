@@ -83,6 +83,39 @@ public interface UserCardMapper {
         @Param("userCardId") Long userCardId
     );
 
+    /**
+     * 대표 카드 상태를 변경할 대상 보유 카드를 조회한다.
+     * <p>
+     * Service에서는 이 조회 결과를 이용해서
+     * 요청한 카드가 로그인 회원의 카드인지,
+     * 현재 대표 카드인지 아닌지를 판단한다.
+     */
+    UserCard findActiveByIdAndMemberId(
+        @Param("memberId") Long memberId,
+        @Param("userCardId") Long userCardId
+    );
+
+    /**
+     * 로그인 회원이 현재 대표 카드로 설정한 활성 카드 개수를 조회한다.
+     * <p>
+     * 대표 카드는 최대 3개까지만 허용하므로,
+     * 대표 카드로 새로 설정하기 전에 이 개수를 확인해야 한다.
+     */
+    int countActiveRepresentativeCards(
+        @Param("memberId") Long memberId
+    );
+
+    /**
+     * 로그인 회원이 소유한 활성 보유 카드의 대표 카드 여부를 변경한다.
+     * <p>
+     * memberId 조건을 함께 사용해서,
+     * 다른 회원의 보유 카드가 실수로 변경되지 않도록 방어한다.
+     */
+    int updateRepresentative(
+        @Param("memberId") Long memberId,
+        @Param("userCardId") Long userCardId,
+        @Param("representative") boolean representative
+    );
 
     /**
      * 로그인 회원이 소유한 활성 보유 카드를 삭제 상태로 변경한다.

@@ -32,11 +32,13 @@ import com.wallet.card.mapper.UserCardMapper;
 import com.wallet.card.support.CardBinFinder;
 import com.wallet.common.ErrorCode;
 import com.wallet.common.exception.BusinessException;
+import com.wallet.member.mapper.MemberMapper;
 
 class UserCardServiceTest {
     private CardMapper cardMapper;
     private UserCardMapper userCardMapper;
     private CardBinFinder cardBinFinder;
+    private MemberMapper memberMapper;
     private UserCardService userCardService;
 
     @BeforeEach
@@ -44,11 +46,13 @@ class UserCardServiceTest {
         cardMapper = mock(CardMapper.class);
         userCardMapper = mock(UserCardMapper.class);
         cardBinFinder = mock(CardBinFinder.class);
+        memberMapper = mock(MemberMapper.class);
 
         userCardService = new UserCardService(
             cardMapper,
             userCardMapper,
-            cardBinFinder
+            cardBinFinder,
+            memberMapper
         );
     }
 
@@ -814,4 +818,294 @@ class UserCardServiceTest {
         verify(userCardMapper)
             .softDeleteByIdAndMemberId(userCardId, memberId);
     }
+    @Test
+    @DisplayName("대표 카드 설정 성공 - 대표 카드가 3개 미만이면 일반 카드를 대표 카드로 설정한다")
+    void updateRepresentative_success_setRepresentative() {
+        // given
+        Long memberId = 1L;
+        Long userCardId = 50L;
+
+        UserCard userCard = new UserCard(
+            userCardId,
+            memberId,
+            10L,
+            "****-****-****-0006",
+            false,
+            UserCardStatus.ACTIVE
+        );
+
+        when(memberMapper.lockActiveMemberById(memberId))
+            .thenReturn(memberId);
+
+        when(userCardMapper.findActiveByIdAndMemberId(memberId, userCardId))
+            .thenReturn(userCard);
+
+        when(userCardMapper.countActiveRepresentativeCards(memberId))
+            .thenReturn(2);
+
+        when(userCardMapper.updateRepresentative(
+            memberId,
+            userCardId,
+            true
+        )).thenReturn(1);
+
+        // when
+        userCardService.updateRepresentative(memberId, userCardId, true);
+
+        // then
+        verify(memberMapper).lockActiveMemberById(memberId);
+        verify(userCardMapper).findActiveByIdAndMemberId(memberId, userCardId);
+        verify(userCardMapper).countActiveRepresentativeCards(memberId);
+        verify(userCardMapper).updateRepresentative(memberId, userCardId, true);
+    }
+
+    @Test
+    @DisplayName("대표 카드 설정 실패 - 이미 대표 카드가 3개이면 추가 설정할 수 없다")
+    void updateRepresentative_fail_representativeLimitExceeded() {
+        // given
+        Long memberId = 1L;
+        Long userCardId = 50L;
+
+        UserCard userCard = new UserCard(
+            userCardId,
+            memberId,
+            10L,
+            "****-****-****-0006",
+            false,
+            UserCardStatus.ACTIVE
+        );
+
+        when(memberMapper.lockActiveMemberById(memberId))
+            .thenReturn(memberId);
+
+        when(userCardMapper.findActiveByIdAndMemberId(memberId, userCardId))
+            .thenReturn(userCard);
+
+        when(userCardMapper.countActiveRepresentativeCards(memberId))
+            .thenReturn(3);
+
+        // when
+        BusinessException exception = assertThrows(
+            BusinessException.class,
+            () -> userCardService.updateRepresentative(memberId, userCardId, true)
+        );
+
+        // then
+        assertThat(exception.getErrorCode())
+            .isEqualTo(ErrorCode.REPRESENTATIVE_CARD_LIMIT_EXCEEDED);
+
+        verify(userCardMapper, never())
+            .updateRepresentative(memberId, userCardId, true);
+    }
+
+    @Test
+    @DisplayName("대표 카드 설정 성공 - 이미 대표 카드이면 변경 없이 성공 처리한다")
+    void updateRepresentative_success_alreadyRepresentative() {
+        // given
+        Long memberId = 1L;
+        Long userCardId = 50L;
+
+        UserCard userCard = new UserCard(
+            userCardId,
+            memberId,
+            10L,
+            "****-****-****-0006",
+            true,
+            UserCardStatus.ACTIVE
+        );
+
+        when(memberMapper.lockActiveMemberById(memberId))
+            .thenReturn(memberId);
+
+        when(userCardMapper.findActiveByIdAndMemberId(memberId, userCardId))
+            .thenReturn(userCard);
+
+        // when
+        userCardService.updateRepresentative(memberId, userCardId, true);
+
+        // then
+        verify(userCardMapper, never())
+            .countActiveRepresentativeCards(memberId);
+
+        verify(userCardMapper, never())
+            .updateRepresentative(memberId, userCardId, true);
+    }
+
+    @Test
+    @DisplayName("대표 카드 해제 성공 - 대표 카드를 일반 카드로 변경한다")
+    void updateRepresentative_success_unsetRepresentative() {
+        // given
+        Long memberId = 1L;
+        Long userCardId = 50L;
+
+        UserCard userCard = new UserCard(
+            userCardId,
+            memberId,
+            10L,
+            "****-****-****-0006",
+            true,
+            UserCardStatus.ACTIVE
+        );
+
+        when(memberMapper.lockActiveMemberById(memberId))
+            .thenReturn(memberId);
+
+        when(userCardMapper.findActiveByIdAndMemberId(memberId, userCardId))
+            .thenReturn(userCard);
+
+        when(userCardMapper.updateRepresentative(
+            memberId,
+            userCardId,
+            false
+        )).thenReturn(1);
+
+        // when
+        userCardService.updateRepresentative(memberId, userCardId, false);
+
+        // then
+        verify(userCardMapper, never())
+            .countActiveRepresentativeCards(memberId);
+
+        verify(userCardMapper)
+            .updateRepresentative(memberId, userCardId, false);
+    }
+
+    @Test
+    @DisplayName("대표 카드 해제 성공 - 이미 일반 카드이면 변경 없이 성공 처리한다")
+    void updateRepresentative_success_alreadyNotRepresentative() {
+        // given
+        Long memberId = 1L;
+        Long userCardId = 50L;
+
+        UserCard userCard = new UserCard(
+            userCardId,
+            memberId,
+            10L,
+            "****-****-****-0006",
+            false,
+            UserCardStatus.ACTIVE
+        );
+
+        when(memberMapper.lockActiveMemberById(memberId))
+            .thenReturn(memberId);
+
+        when(userCardMapper.findActiveByIdAndMemberId(memberId, userCardId))
+            .thenReturn(userCard);
+
+        // when
+        userCardService.updateRepresentative(memberId, userCardId, false);
+
+        // then
+        verify(userCardMapper, never())
+            .countActiveRepresentativeCards(memberId);
+
+        verify(userCardMapper, never())
+            .updateRepresentative(memberId, userCardId, false);
+    }
+
+    @Test
+    @DisplayName("대표 카드 변경 실패 - 로그인 회원의 활성 보유 카드를 찾지 못하면 예외가 발생한다")
+    void updateRepresentative_fail_userCardNotFound() {
+        // given
+        Long memberId = 1L;
+        Long userCardId = 999L;
+
+        when(memberMapper.lockActiveMemberById(memberId))
+            .thenReturn(memberId);
+
+        when(userCardMapper.findActiveByIdAndMemberId(memberId, userCardId))
+            .thenReturn(null);
+
+        // when
+        BusinessException exception = assertThrows(
+            BusinessException.class,
+            () -> userCardService.updateRepresentative(memberId, userCardId, true)
+        );
+
+        // then
+        assertThat(exception.getErrorCode())
+            .isEqualTo(ErrorCode.USER_CARD_NOT_FOUND);
+
+        verify(userCardMapper, never())
+            .countActiveRepresentativeCards(memberId);
+
+        verify(userCardMapper, never())
+            .updateRepresentative(memberId, userCardId, true);
+    }
+
+    @Test
+    @DisplayName("대표 카드 변경 실패 - 활성 회원을 찾지 못하면 예외가 발생한다")
+    void updateRepresentative_fail_memberNotFound() {
+        // given
+        Long memberId = 1L;
+        Long userCardId = 50L;
+
+        when(memberMapper.lockActiveMemberById(memberId))
+            .thenReturn(null);
+
+        // when
+        BusinessException exception = assertThrows(
+            BusinessException.class,
+            () -> userCardService.updateRepresentative(memberId, userCardId, true)
+        );
+
+        // then
+        assertThat(exception.getErrorCode())
+            .isEqualTo(ErrorCode.MEMBER_NOT_FOUND);
+
+        verify(userCardMapper, never())
+            .findActiveByIdAndMemberId(memberId, userCardId);
+
+        verify(userCardMapper, never())
+            .countActiveRepresentativeCards(memberId);
+
+        verify(userCardMapper, never())
+            .updateRepresentative(memberId, userCardId, true);
+    }
+
+    @Test
+    @DisplayName("대표 카드 변경 실패 - 대표 카드 상태 변경 결과가 1건이 아니면 예외가 발생한다")
+    void updateRepresentative_fail_updateCountNotOne() {
+        // given
+        Long memberId = 1L;
+        Long userCardId = 50L;
+
+        UserCard userCard = new UserCard(
+            userCardId,
+            memberId,
+            10L,
+            "****-****-****-0006",
+            false,
+            UserCardStatus.ACTIVE
+        );
+
+        when(memberMapper.lockActiveMemberById(memberId))
+            .thenReturn(memberId);
+
+        when(userCardMapper.findActiveByIdAndMemberId(memberId, userCardId))
+            .thenReturn(userCard);
+
+        when(userCardMapper.countActiveRepresentativeCards(memberId))
+            .thenReturn(2);
+
+        when(userCardMapper.updateRepresentative(
+            memberId,
+            userCardId,
+            true
+        )).thenReturn(0);
+
+        // when
+        BusinessException exception = assertThrows(
+            BusinessException.class,
+            () -> userCardService.updateRepresentative(memberId, userCardId, true)
+        );
+
+        // then
+        assertThat(exception.getErrorCode())
+            .isEqualTo(ErrorCode.USER_CARD_NOT_FOUND);
+
+        verify(userCardMapper)
+            .updateRepresentative(memberId, userCardId, true);
+    }
+
 }
