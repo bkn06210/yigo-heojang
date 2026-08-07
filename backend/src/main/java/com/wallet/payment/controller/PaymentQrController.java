@@ -45,15 +45,15 @@ public class PaymentQrController {
 
     @GetMapping("/api/payments/qr/{qrToken}")
     public Map<String, Object> getPaymentQr(
+            HttpServletRequest servletRequest,
             @PathVariable("qrToken") String qrToken
     ) {
         try {
-            PaymentQrRecord qr = paymentQrService.getPaymentQr(qrToken);
+            Long memberId = (Long) servletRequest.getAttribute(AUTHENTICATED_MEMBER_ID);
+            PaymentQrRecord qr = paymentQrService.getPaymentQr(memberId, qrToken);
 
             Map<String, Object> data = new LinkedHashMap<>();
             data.put("qrToken", qr.getQrToken());
-            data.put("memberId", qr.getMemberId());
-            data.put("userCardId", qr.getUserCardId());
             data.put("status", qr.getStatus());
             data.put("expiresAt", qr.getExpiresAt().toLocalDateTime()
                     .format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
@@ -70,11 +70,13 @@ public class PaymentQrController {
 
     @PostMapping("/api/payments/qr/{qrToken}/pay")
     public Map<String, Object> payWithQr(
+            HttpServletRequest servletRequest,
             @PathVariable("qrToken") String qrToken,
             @RequestBody PaymentQrPayRequest request
     ) {
         try {
-            Object data = paymentQrService.payWithQr(qrToken, request);
+            Long memberId = (Long) servletRequest.getAttribute(AUTHENTICATED_MEMBER_ID);
+            Object data = paymentQrService.payWithQr(memberId, qrToken, request);
 
             return success(
                     "QR 결제에 성공했습니다.",

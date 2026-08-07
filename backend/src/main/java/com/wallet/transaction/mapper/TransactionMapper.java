@@ -30,9 +30,5 @@ public interface TransactionMapper {
             @Param("expenseId") Long expenseId
     );
 
-    List<TransactionDetailResponse> selectTransactionsByMemberId(
-            @Param("memberId") Long memberId
-    );
-
     List<ExpenseCategoryResponse> selectExpenseCategories();
 }

@@ -20,6 +20,12 @@ public interface PaymentMapper {
 
     int insertPayment(PaymentCommand command);
 
+    Long selectCardIdByUserCardId(@Param("userCardId") Long userCardId);
+
+    int updateExpenseSettlement(@Param("expenseId") Long expenseId,
+                                @Param("appliedBenefitId") Long appliedBenefitId,
+                                @Param("discountAmount") Long discountAmount);
+
     PaymentPointWalletResponse selectDefaultPointWallet(@Param("userId") Long userId);
 
     int updatePointWallet(

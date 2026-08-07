@@ -32,5 +32,4 @@ public interface TransactionService {
 
     ExpenseCategoryListResponse getExpenseCategories();
 
-    List<TransactionDetailResponse> getTransactionsByMemberId(Long memberId);
 }

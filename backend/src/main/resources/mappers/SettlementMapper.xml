@@ -50,6 +50,12 @@
           AND payment_status = 'APPROVED'
     </update>
 
+    <update id="markPaymentCanceledByExpense">
+        UPDATE payment
+        SET payment_status = 'CANCELED', completed_at = NOW()
+        WHERE expense_id = #{expenseId} AND payment_status = 'SUCCESS'
+    </update>
+
     <!-- 당월누적실적·통합한도사용 가감. 결제면 양수, 취소면 음수 델타. -->
     <update id="applyStateDelta">
         UPDATE user_card_monthly_state

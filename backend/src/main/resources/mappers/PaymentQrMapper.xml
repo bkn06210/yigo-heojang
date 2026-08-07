@@ -19,6 +19,7 @@
             qr_token,
             member_id,
             user_card_id,
+            payment_amount,
             status,
             expires_at,
             created_at
@@ -26,6 +27,7 @@
                      #{qrToken},
                      #{memberId},
                      #{userCardId},
+                     #{paymentAmount},
                      #{status},
                      #{expiresAt},
                      NOW()
@@ -38,6 +40,7 @@
             qr_token AS qrToken,
             member_id AS memberId,
             user_card_id AS userCardId,
+            payment_amount AS paymentAmount,
             status AS status,
             expires_at AS expiresAt,
             used_at AS usedAt,
@@ -52,6 +55,7 @@
             qr_token AS qrToken,
             member_id AS memberId,
             user_card_id AS userCardId,
+            payment_amount AS paymentAmount,
             status AS status,
             expires_at AS expiresAt,
             used_at AS usedAt,
@@ -66,6 +70,16 @@
         SET status = 'EXPIRED'
         WHERE qr_token = #{qrToken}
           AND status = 'READY'
+    </update>
+
+    <select id="selectCardIdByUserCardId" resultType="long">
+        SELECT card_id FROM user_card WHERE user_card_id = #{userCardId}
+    </select>
+
+    <update id="updateExpenseSettlement">
+        UPDATE expense
+        SET applied_benefit_id = #{appliedBenefitId}, discount_amount = #{discountAmount}
+        WHERE expense_id = #{expenseId}
     </update>
 
     <insert id="insertExpenseByQr"

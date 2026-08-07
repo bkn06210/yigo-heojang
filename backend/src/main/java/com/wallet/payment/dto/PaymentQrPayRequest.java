@@ -5,7 +5,6 @@ public class PaymentQrPayRequest {
     private Long merchantId;
     private String merchantName;
     private Long categoryId;
-    private Long paymentAmount;
 
     public Long getMerchantId() {
         return merchantId;
@@ -31,11 +30,4 @@ public class PaymentQrPayRequest {
         this.categoryId = categoryId;
     }
 
-    public Long getPaymentAmount() {
-        return paymentAmount;
-    }
-
-    public void setPaymentAmount(Long paymentAmount) {
-        this.paymentAmount = paymentAmount;
-    }
 }

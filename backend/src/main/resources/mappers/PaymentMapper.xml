@@ -35,6 +35,8 @@
             input_type,
             payment_status,
             approval_status,
+            transaction_type,
+            region,
             discount_amount,
             payment_type,
             is_interest_free
@@ -50,12 +52,24 @@
                    'PAYMENT',
                    'APPROVED',
                    'CONFIRMED',
+                   #{transactionType},
+                   #{region},
                    0,
                    #{paymentType},
                    #{interestFreeYn}
                )
 
     </insert>
+
+    <select id="selectCardIdByUserCardId" resultType="long">
+        SELECT card_id FROM user_card WHERE user_card_id = #{userCardId}
+    </select>
+
+    <update id="updateExpenseSettlement">
+        UPDATE expense
+        SET applied_benefit_id = #{appliedBenefitId}, discount_amount = #{discountAmount}
+        WHERE expense_id = #{expenseId}
+    </update>
 
     <insert id="insertPayment"
             parameterType="com.wallet.payment.dto.PaymentCommand"

@@ -1,7 +1,9 @@
 package com.wallet.payment.service;
 
 import com.wallet.payment.dto.PaymentCommand;
-import com.wallet.payment.dto.PaymentPointWalletResponse;
+import com.wallet.engine.dto.PaymentSettlementResult;
+import com.wallet.engine.dto.SettlementCommand;
+import com.wallet.engine.service.SettlementService;
 import com.wallet.payment.dto.PaymentProcessResponse;
 import com.wallet.payment.dto.PaymentRequest;
 import com.wallet.payment.dto.PaymentResultResponse;
@@ -10,14 +12,18 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
+import java.time.LocalDateTime;
+import java.util.Set;
 
 @Service
 public class PaymentServiceImpl implements PaymentService {
 
     private final PaymentMapper paymentMapper;
+    private final SettlementService settlementService;
 
-    public PaymentServiceImpl(PaymentMapper paymentMapper) {
+    public PaymentServiceImpl(PaymentMapper paymentMapper, SettlementService settlementService) {
         this.paymentMapper = paymentMapper;
+        this.settlementService = settlementService;
     }
 
     @Override
@@ -49,48 +55,31 @@ public class PaymentServiceImpl implements PaymentService {
         command.setPaymentChannel("MOCK");
         command.setIsRecommendBased(Boolean.TRUE.equals(request.getIsRecommendBased()) ? "Y" : "N");
         command.setPaymentType(defaultValue(request.getPaymentType(), "CARD"));
-        command.setInterestFreeYn(defaultValue(request.getInterestFreeYn(), "N"));
+        command.setTransactionType(defaultValue(request.getTransactionType(), "LUMP_SUM"));
+        command.setRegion(defaultValue(request.getRegion(), "DOMESTIC"));
+        command.setInterestFreeYn("INSTALLMENT".equals(command.getTransactionType())
+                ? defaultValue(request.getInterestFreeYn(), "N") : "N");
 
-        /*
-         * 1. 결제 성공 시 소비내역 생성
-         * 2. 결제 이력 저장
-         * 3. 포인트 임시 적립
-         *
-         * 혜택 엔진 연동 전이므로 appliedBenefitId와 discountAmount는 0/null로 처리한다.
-         */
         paymentMapper.insertExpense(command);
+        Long cardId = paymentMapper.selectCardIdByUserCardId(command.getUserCardId());
+        PaymentSettlementResult settlement = settlementService.applyPayment(new SettlementCommand(
+                command.getUserCardId(), cardId, command.getCategoryId(), command.getMerchantId(),
+                command.getPaymentAmount(), command.getPaymentType(),
+                "Y".equals(command.getInterestFreeYn()), LocalDateTime.now()));
+        paymentMapper.updateExpenseSettlement(
+                command.getExpenseId(), settlement.appliedBenefitId(), settlement.discountAmount());
         paymentMapper.insertPayment(command);
-
-        Long savedPoint = calculateSavedPoint(request.getPaymentAmount());
-        Long totalPoint = 0L;
-
-        PaymentPointWalletResponse wallet = paymentMapper.selectDefaultPointWallet(userId);
-
-        if (wallet != null && savedPoint > 0) {
-            paymentMapper.updatePointWallet(wallet.getPointWalletId(), savedPoint);
-
-            String content = command.getMerchantName() + " 결제로 포인트 적립";
-            paymentMapper.insertPointHistory(
-                    userId,
-                    wallet.getPointWalletId(),
-                    command.getExpenseId(),
-                    savedPoint,
-                    content
-            );
-
-            totalPoint = wallet.getTotalPoint() + savedPoint;
-        }
 
         PaymentProcessResponse response = new PaymentProcessResponse();
         response.setPaymentId(command.getPaymentId());
         response.setExpenseId(command.getExpenseId());
         response.setPaymentStatus("SUCCESS");
         response.setPaymentChannel("MOCK");
-        response.setAppliedBenefitId(null);
+        response.setAppliedBenefitId(settlement.appliedBenefitId());
         response.setAppliedBenefitName(null);
-        response.setDiscountAmount(0L);
-        response.setSavedPoint(savedPoint);
-        response.setTotalPoint(totalPoint);
+        response.setDiscountAmount(settlement.discountAmount());
+        response.setSavedPoint(0L);
+        response.setTotalPoint(0L);
         response.setCompletedAt(null);
 
         PaymentResultResponse result =
@@ -144,15 +133,15 @@ public class PaymentServiceImpl implements PaymentService {
         if (request.getMerchantName() == null || request.getMerchantName().trim().isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "merchantName은 필수입니다.");
         }
+        validateEnum(request.getTransactionType(), Set.of("LUMP_SUM", "INSTALLMENT", "CASH_ADVANCE"), "transactionType");
+        validateEnum(request.getRegion(), Set.of("DOMESTIC", "OVERSEAS"), "region");
+        validateEnum(request.getInterestFreeYn(), Set.of("Y", "N"), "interestFreeYn");
     }
 
-    private Long calculateSavedPoint(Long paymentAmount) {
-        /*
-         * 임시 정책:
-         * 혜택/포인트 엔진 연결 전까지 결제금액의 1%를 적립 처리한다.
-         * 예: 10,000원 결제 시 100포인트
-         */
-        return paymentAmount / 100;
+    private void validateEnum(String value, Set<String> allowed, String field) {
+        if (value != null && !value.isBlank() && !allowed.contains(value)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, field + " 값이 올바르지 않습니다.");
+        }
     }
 
     private String defaultValue(String value, String defaultValue) {

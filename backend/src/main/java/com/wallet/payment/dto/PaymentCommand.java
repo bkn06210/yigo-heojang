@@ -15,6 +15,8 @@ public class PaymentCommand {
     private String isRecommendBased;
     private String paymentType;
     private String interestFreeYn;
+    private String transactionType;
+    private String region;
 
     public Long getPaymentId() { return paymentId; }
     public void setPaymentId(Long paymentId) { this.paymentId = paymentId; }
@@ -54,4 +56,8 @@ public class PaymentCommand {
 
     public String getInterestFreeYn() { return interestFreeYn; }
     public void setInterestFreeYn(String interestFreeYn) { this.interestFreeYn = interestFreeYn; }
+    public String getTransactionType() { return transactionType; }
+    public void setTransactionType(String transactionType) { this.transactionType = transactionType; }
+    public String getRegion() { return region; }
+    public void setRegion(String region) { this.region = region; }
 }

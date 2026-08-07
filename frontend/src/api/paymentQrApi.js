@@ -10,8 +10,8 @@ const data = (response) => {
   return body?.data ?? body
 }
 
-export const createPaymentQr = (userCardId) =>
-  api.post('/api/payments/qr', { userCardId }).then(data)
+export const createPaymentQr = (userCardId, paymentAmount) =>
+  api.post('/api/payments/qr', { userCardId, paymentAmount }).then(data) // 07_25 연동 수정: QR 발급 시 결제금액을 확정해 위변조를 막는다.
 
 export const getPaymentQr = (qrToken) =>
   api.get(`/api/payments/qr/${qrToken}`).then(data)

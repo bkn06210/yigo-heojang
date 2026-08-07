@@ -130,32 +130,4 @@
         ORDER BY category_id ASC
 
     </select>
-    <select id="selectTransactionsByMemberId"
-            resultType="com.wallet.transaction.dto.TransactionDetailResponse">
-
-        SELECT
-            e.expense_id AS expenseId,
-            e.user_card_id AS userCardId,
-            NULL AS cardName,
-            e.category_id AS categoryId,
-            c.category_name AS categoryName,
-            e.merchant_id AS merchantId,
-            e.merchant_name AS merchantName,
-            e.amount AS paymentAmount,
-            e.applied_benefit_id AS appliedBenefitId,
-            NULL AS appliedBenefitName,
-            e.discount_amount AS discountAmount,
-            e.payment_type AS paymentType,
-            e.is_interest_free AS interestFreeYn,
-            DATE_FORMAT(e.payment_date, '%Y-%m-%dT%H:%i:%s') AS paymentDate,
-            e.payment_status AS paymentStatus,
-            e.input_type AS inputType,
-            DATE_FORMAT(e.created_at, '%Y-%m-%dT%H:%i:%s') AS createdAt
-        FROM expense e
-                 LEFT JOIN category c
-                           ON e.category_id = c.category_id
-        WHERE e.member_id = #{memberId}
-        ORDER BY e.payment_date DESC
-
-    </select>
 </mapper>

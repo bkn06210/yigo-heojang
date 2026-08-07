@@ -7,13 +7,15 @@ public class PaymentQrInsertParam {
     private String qrToken;
     private Long memberId;
     private Long userCardId;
+    private Long paymentAmount;
     private String status;
     private Timestamp expiresAt;
 
-    public PaymentQrInsertParam(String qrToken, Long memberId, Long userCardId, String status, Timestamp expiresAt) {
+    public PaymentQrInsertParam(String qrToken, Long memberId, Long userCardId, Long paymentAmount, String status, Timestamp expiresAt) {
         this.qrToken = qrToken;
         this.memberId = memberId;
         this.userCardId = userCardId;
+        this.paymentAmount = paymentAmount;
         this.status = status;
         this.expiresAt = expiresAt;
     }
@@ -29,6 +31,8 @@ public class PaymentQrInsertParam {
     public Long getUserCardId() {
         return userCardId;
     }
+
+    public Long getPaymentAmount() { return paymentAmount; }
 
     public String getStatus() {
         return status;

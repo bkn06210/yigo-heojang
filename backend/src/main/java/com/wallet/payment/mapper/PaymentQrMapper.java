@@ -28,6 +28,12 @@ public interface PaymentQrMapper {
             @Param("qrToken") String qrToken
     );
 
+    Long selectCardIdByUserCardId(@Param("userCardId") Long userCardId);
+
+    int updateExpenseSettlement(@Param("expenseId") Long expenseId,
+                                @Param("appliedBenefitId") Long appliedBenefitId,
+                                @Param("discountAmount") Long discountAmount);
+
     void insertExpenseByQr(PaymentQrPayParam param);
 
     void insertPaymentByQr(PaymentQrPayParam param);

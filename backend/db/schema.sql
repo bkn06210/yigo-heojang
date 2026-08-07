@@ -737,6 +737,7 @@ CREATE TABLE payment_qr (
     qr_token      VARCHAR(100) NOT NULL COMMENT '외부에 노출하는 QR 식별 토큰',
     member_id     BIGINT       NOT NULL COMMENT '회원 ID',
     user_card_id  BIGINT       NOT NULL COMMENT '결제에 사용할 보유카드 ID',
+    payment_amount BIGINT      NOT NULL COMMENT 'QR 발급 시 확정한 결제금액',
     status        VARCHAR(20)  NOT NULL DEFAULT 'READY' COMMENT 'QR 상태: READY | USED | EXPIRED | FAILED',
     expires_at    DATETIME     NOT NULL COMMENT 'QR 만료 일시',
     used_at       DATETIME     NULL COMMENT 'QR 사용 일시',

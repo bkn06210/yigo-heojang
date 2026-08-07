@@ -7,6 +7,7 @@ public class PaymentQrRecord {
     private String qrToken;
     private Long memberId;
     private Long userCardId;
+    private Long paymentAmount;
     private String status;
     private Timestamp expiresAt;
     private Timestamp usedAt;
@@ -35,6 +36,9 @@ public class PaymentQrRecord {
     public void setUserCardId(Long userCardId) {
         this.userCardId = userCardId;
     }
+
+    public Long getPaymentAmount() { return paymentAmount; }
+    public void setPaymentAmount(Long paymentAmount) { this.paymentAmount = paymentAmount; }
 
     public String getStatus() {
         return status;

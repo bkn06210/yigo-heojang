@@ -10,10 +10,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import com.wallet.common.ApiResponse;
-import com.wallet.transaction.dto.TransactionDetailResponse;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 import java.util.LinkedHashMap;
@@ -117,17 +113,5 @@ public class TransactionController {
         response.put("data", data);
 
         return response;
-    }
-    @GetMapping("/api/transactions/members/{memberId}")
-    public ApiResponse<List<TransactionDetailResponse>> getTransactionsByMemberId(
-            @PathVariable Long memberId
-    ) {
-        List<TransactionDetailResponse> transactions =
-                transactionService.getTransactionsByMemberId(memberId);
-
-        return ApiResponse.success(
-                "사용자 소비내역 목록 조회에 성공했습니다.",
-                transactions
-        );
     }
 }

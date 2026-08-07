@@ -6,6 +6,7 @@ import PageHeader from '@/components/common/PageHeader.vue'
 import BottomNavigation from '@/components/layout/BottomNavigation.vue'
 
 const userCardId = ref(1)
+const paymentAmount = ref(10000) // 07_25 연동 수정: QR에 고정할 시연 결제금액이다.
 const loading = ref(false)
 const errorMessage = ref('')
 const qrToken = ref('')
@@ -19,7 +20,7 @@ const createQr = async () => {
   qrToken.value = ''
   qrImage.value = ''
   try {
-    const data = await createPaymentQr(Number(userCardId.value))
+    const data = await createPaymentQr(Number(userCardId.value), Number(paymentAmount.value)) // 07_25 연동 수정: 발급 이후 금액 변경을 차단한다.
     if (!data?.qrToken) {
       throw new Error('QR 토큰을 발급받지 못했습니다.')
     }
@@ -43,8 +44,9 @@ const createQr = async () => {
     <main class="content">
       <section class="qr-section">
         <h1>결제 QR 생성</h1>
-        <p class="description">결제에 사용할 보유 카드 ID를 입력해주세요.</p>
+        <p class="description">결제에 사용할 보유 카드 ID와 금액을 입력해주세요.</p>
         <input v-model="userCardId" type="number" min="1" class="card-input" aria-label="보유 카드 ID">
+        <input v-model="paymentAmount" type="number" min="1" class="card-input" aria-label="결제 금액"> <!-- 07_25 연동 수정: QR 발급 시 금액을 고정한다. -->
         <button class="create-button" :disabled="loading" @click="createQr">
           {{ loading ? 'QR 생성 중...' : 'QR 생성하기' }}
         </button>

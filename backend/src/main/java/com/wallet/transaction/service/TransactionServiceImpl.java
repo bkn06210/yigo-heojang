@@ -103,11 +103,6 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public List<TransactionDetailResponse> getTransactionsByMemberId(Long memberId) {
-        return transactionMapper.selectTransactionsByMemberId(memberId);
-    }
-
-    @Override
     public TransactionSyncResponse syncTransactions(Long userId) {
 
         /*
