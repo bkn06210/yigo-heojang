@@ -51,7 +51,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtTokenProvider jwtTokenProvider;
     private final ObjectMapper objectMapper;
 
-    @Value("${cors.allowed-origin}")
+    @Value("${cors.allowed-origin:http://localhost:5173}")
     private String frontendOrigin;
 
     @Override
