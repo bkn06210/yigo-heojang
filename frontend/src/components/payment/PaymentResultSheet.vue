@@ -102,9 +102,12 @@ const openDetail = (card) => {
 {{card.name}}
 </h3>
 
+<p class="benefit-amount">
+{{card.benefit.toLocaleString()}}원
+</p>
 
-<p>
-{{card.benefit}}
+<p v-if="card.reasons?.length" class="benefit-reason">
+{{card.reasons[0]}}
 </p>
 
 <button
@@ -243,6 +246,21 @@ color: var(--color-text-primary);
 margin: 0 0 var(--space-sm);
 font-size: var(--font-sm);
 color: var(--color-text-secondary);
+
+}
+
+.benefit-amount{
+
+font-size: var(--font-md);
+font-weight: var(--font-bold);
+color: var(--color-primary-dark);
+
+}
+
+.benefit-reason{
+
+font-size: var(--font-xs);
+color: var(--color-text-tertiary);
 
 }
 

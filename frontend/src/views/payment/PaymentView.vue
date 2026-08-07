@@ -372,7 +372,7 @@ const closeModal = () => {
       <div v-if="hasCards && currentBenefits.length > 0" class="benefits-section">
         <h3 class="benefits-title">{{ currentCard?.name }} 주요 혜택</h3>
         <ul class="benefits-list">
-          <li v-for="(benefit, idx) in currentBenefits" :key="idx" class="benefits-item">• {{ benefit }}</li>
+          <li v-for="(benefit, idx) in currentBenefits" :key="idx" class="benefits-item">• {{ typeof benefit === 'string' ? benefit : benefit.benefitName }}</li>
         </ul>
       </div>
 
@@ -585,8 +585,8 @@ main {
 }
 
 .benefits-section {
-  /* 작업 관리자에서는 250px가 낫고(모바일용)/vs code에서는 65 */
-  margin-top: 65px;  
+  /* 작업 관리자에서는 180px가 낫고(모바일용)/vs code에서는 65 */
+  margin-top: 180px;  
   margin-bottom: var(--space-md);
   flex-shrink: 0;
 }

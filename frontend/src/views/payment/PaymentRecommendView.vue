@@ -1,6 +1,7 @@
 ﻿<script setup>
 import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
+import { getCardRecommendations } from '@/api/walletApi';
 
 import { usePaymentStore } from '@/stores/payment';
 import { useAuthStore } from '@/stores/authStore';
@@ -36,6 +37,29 @@ const router = useRouter();
 const cardStore = useCardStore();
 
 const { cards } = storeToRefs(cardStore);
+
+// 카테고리 ID 매핑
+const categoryIds = {
+  '카페': 102,
+  '편의점': 103,
+  '음식점': 101,
+  '마트': 104,
+  '쇼핑': 2,
+  '뷰티': 105,
+  '문화/여가': 5,
+  '교통': 3,
+  '의료': 106,
+};
+
+// 혜택 종류 매핑
+const benefitKindMap = {
+  'DISCOUNT': '할인',
+  'POINT': '적립',
+  'CASHBACK': '캐시백',
+  'SPECIAL_PRICE': '특가',
+  'GIFT': '선물',
+  'RETROACTIVE': '후적립'
+};
 
 
 // Store
@@ -169,70 +193,7 @@ const membershipBenefit = computed(() => {
 
 
 // 추천 카드 데이터
-// TODO : POST /api/payment/recommend 연결 후 교체
-const recommendedCards = ref([
-
-  {
-    id: 1,
-
-    name: 'KB My WE:SH 카드',
-
-    image: '/images/cards/kb-wesh.png',
-
-    benefit: 7000,
-
-
-    reasons: [
-      '카페 할인 혜택 적용',
-      '올리브영 결제 혜택',
-      '생활 영역 할인 가능',
-    ],
-
-  },
-
-
-  {
-    id: 2,
-
-    name: '신한 SOL Pay 카드',
-
-    image: '/images/cards/shinhan.png',
-
-    benefit: 5000,
-
-
-    reasons: [
-
-      '온라인 결제 할인',
-
-      '편의점 할인',
-
-    ],
-
-  },
-
-
-  {
-    id: 3,
-
-    name: '삼성 iD 카드',
-
-    image: '/images/cards/samsung.png',
-
-    benefit: 3000,
-
-
-    reasons: [
-
-      '간편결제 할인',
-
-      '커피 할인',
-
-    ],
-
-  },
-
-]);
+const recommendedCards = ref([]);
 
 
 
@@ -274,54 +235,49 @@ const goHome = () => {
 
 
 // 추천 실행
-const recommendCard = () => {
-
-
+const recommendCard = async () => {
   // 비로그인
   if (!isLogin.value) {
-
     showLoginModal.value = true;
-
     return;
-
   }
-
-
 
   // 카드 없음
   if (cards.value.length === 0) {
-
-  showCardRegisterModal.value = true;
-
-  return;
-
-}
-
-
+    showCardRegisterModal.value = true;
+    return;
+  }
 
   selectedCard.value = null;
-
-
   isLoading.value = true;
 
+  try {
+    const payload = {
+      expectedAmount: Number(paymentAmount.value),
+      categoryId: categoryIds[selectedCategory.value] || undefined,
+      paymentType: 'CARD',
+    };
+    console.log('카드 추천 payload:', payload);
+    const response = await getCardRecommendations(payload);
+    console.log('API 응답:', response);
 
-
-  // TODO
-  // POST /api/payment/recommend
-
-
-  setTimeout(() => {
-
-
-    isLoading.value = false;
-
-
+    // API 응답 필드 매핑
+    recommendedCards.value = (response.recommendations || []).map((card) => ({
+      id: Number(card.userCardId),
+      name: card.cardName,
+      image: '',
+      benefit: Number(card.expectedBenefit || 0),
+      benefitKind: benefitKindMap[card.benefitKind] || card.benefitKind,
+      reasons: card.reason ? [card.reason] : [],
+    }));
+    console.log('매핑된 카드:', recommendedCards.value);
     isRecommended.value = true;
-
-
-  }, 500);
-
-
+  } catch (error) {
+    console.error('카드 추천 실패:', error);
+    alert(error.response?.data?.message || error.message || '카드 추천에 실패했습니다.');
+  } finally {
+    isLoading.value = false;
+  }
 };
 
 
@@ -697,6 +653,10 @@ const refreshPayment = async () => {
 
               <span>{{ card.name }}</span>
 
+              <span v-if="card.reasons?.length" class="benefit-reason">
+                {{ card.reasons[0].split(',')[0] }}
+              </span>
+
               <span class="quick-card-detail-link" @click.stop="openDetail(card)">
                 상세보기
               </span>
@@ -727,7 +687,12 @@ const refreshPayment = async () => {
               :alt="card.name"
             />
 
-            <span>{{ card.name }}</span>
+            <div class="card-info">
+              <span class="card-name">{{ card.name }}</span>
+              <span v-if="card.reasons?.length" class="benefit-reason">
+                {{ card.reasons[0].split(',')[0] }}
+              </span>
+            </div>
 
             <span class="quick-card-detail-link" @click.stop="openDetail(card)">
               상세보기
@@ -1356,12 +1321,30 @@ main {
 
 }
 
-.quick-card-item span {
+.card-info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  flex: 1;
+  min-width: 0;
+}
 
+.card-name {
   font-size: var(--font-sm);
   font-weight: var(--font-semibold);
   color: var(--color-text-primary);
+}
 
+.benefit-amount {
+  font-size: var(--font-xs);
+  font-weight: var(--font-bold);
+  color: var(--color-primary-dark);
+}
+
+.benefit-reason {
+  font-size: var(--font-xs);
+  color: var(--color-text-tertiary);
+  line-height: 1.4;
 }
 
 .quick-card-item .quick-card-detail-link {
