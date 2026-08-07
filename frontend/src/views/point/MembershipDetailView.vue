@@ -1,11 +1,6 @@
-<script setup>
+﻿<script setup>
 
-import { onMounted, ref } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-import { deleteMembership as removeMembership, getMembership } from '@/api/walletApi'
-import { getOfficialSiteUrl } from '@/utils/partnerSites'
-import { getPartnerUsagePlaces } from '@/utils/partnerUsagePlaces'
-import { getPartnerLogo } from '@/utils/partnerLogos'
+import { ref } from 'vue'
 
 
 // 공통 컴포넌트
@@ -15,23 +10,6 @@ import BottomNavigation from '@/components/layout/BottomNavigation.vue'
 
 // 삭제 팝업 상태
 const showDeleteModal = ref(false)
-const route = useRoute()
-const router = useRouter()
-const membership = ref({ providerName: '', registeredAt: '', totalPoint: 0, usagePlaces: [] })
-const errorMessage = ref('')
-
-const loadMembership = async () => {
-  try {
-    const data = await getMembership(route.params.id)
-    membership.value = {
-      ...data,
-      logo: getPartnerLogo(data.providerName, data.logoImageUrl),
-      usagePlaces: getPartnerUsagePlaces(data.providerName, data.usagePlaces),
-    }
-  } catch (error) {
-    errorMessage.value = error?.response?.data?.message || error?.message || '멤버십 상세 정보를 불러오지 못했습니다.'
-  }
-}
 
 
 // 삭제 버튼 클릭
@@ -51,23 +29,14 @@ const closeDeleteModal = () => {
 
 
 // 삭제 처리
-const deleteMembership = async () => {
-  try {
-    await removeMembership(route.params.id)
-    router.replace('/points')
-  } catch (error) {
-    errorMessage.value = error?.response?.data?.message || error?.message || '멤버십 삭제에 실패했습니다.'
-  } finally {
-    showDeleteModal.value = false
-  }
-}
+const deleteMembership = () => {
 
-const openOfficialSite = () => {
-  const url = getOfficialSiteUrl(membership.value.providerName, membership.value.officialSiteUrl)
-  if (url) window.open(url, '_blank', 'noopener,noreferrer')
-}
+  // 추후 백 연결
+  // DELETE /api/user-memberships/{id}
 
-onMounted(loadMembership)
+  showDeleteModal.value = false
+
+}
 
 
 </script>
@@ -80,27 +49,18 @@ onMounted(loadMembership)
 
 
     <!-- 헤더 -->
-    <PageHeader title="멤버십 상세" />
+    <PageHeader title="멤버십 상세" @back="router.back()" />
 
 
 
     <main class="content">
 
-      <p v-if="errorMessage">{{ errorMessage }}</p>
-
 
       <!-- 멤버십 이름 -->
       <section class="membership-title">
 
-        <img
-          v-if="membership.logo"
-          :src="membership.logo"
-          :alt="`${membership.providerName} 로고`"
-          class="membership-logo"
-        />
-
         <h1>
-          {{ membership.providerName }}
+          CJ ONE
         </h1>
 
       </section>
@@ -116,7 +76,7 @@ onMounted(loadMembership)
 
 
         <p>
-          {{ membership.registeredAt || '등록 정보 없음' }}
+          CJ ONE
         </p>
 
       </section>
@@ -134,8 +94,16 @@ onMounted(loadMembership)
 
         <ul>
 
-          <li v-for="place in membership.usagePlaces" :key="place.usagePlaceId || place.placeName">
-            {{ place.placeName }}
+          <li>
+            뚜레쥬르
+          </li>
+
+          <li>
+            올리브영
+          </li>
+
+          <li>
+            CGV
           </li>
 
         </ul>
@@ -147,7 +115,7 @@ onMounted(loadMembership)
 
 
       <!-- 공식 사이트 -->
-      <button class="official-button" @click="openOfficialSite">
+      <button class="official-button">
 
         공식 사이트 이동
 
@@ -184,12 +152,12 @@ onMounted(loadMembership)
 
 
     <h3>
-      {{ membership.providerName }} 멤버십을 삭제하시겠어요?
+      CJ ONE 멤버십을 삭제하시겠어요?
     </h3>
 
 
     <p>
-      삭제하면 결제 추천에서 {{ membership.providerName }} 혜택 안내를 받을 수 없습니다.
+      삭제하면 결제 추천에서 CJ ONE 혜택 안내를 받을 수 없습니다.
     </p>
 
 
@@ -227,26 +195,14 @@ onMounted(loadMembership)
 
 <style scoped>
 
-.membership-title {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-}
-
-.membership-logo {
-  width: 56px;
-  height: 56px;
-  flex: 0 0 56px;
-  border-radius: 14px;
-  object-fit: contain;
-  background: #fff;
-}
-
 .membership-detail-page {
 
   min-height: 100vh;
 
-  padding-bottom: 80px;
+  padding-bottom: calc(var(--space-xl) + var(--space-2xl) + var(--space-xl));
+  margin: 0 auto;
+  max-width: 480px;
+  box-sizing: border-box;
 
 }
 
@@ -254,7 +210,7 @@ onMounted(loadMembership)
 
 .content {
 
-  padding: 20px;
+  padding: var(--space-lg);
 
 }
 
@@ -262,9 +218,14 @@ onMounted(loadMembership)
 
 .membership-title h1 {
 
-  font-size: 24px;
+  font-size: var(--typo-display-medium-size);
+  font-weight: var(--typo-display-medium-weight);
+  line-height: var(--typo-display-medium-line-height);
+  letter-spacing: var(--typo-display-medium-letter-spacing);
 
-  margin-bottom: 24px;
+  margin-bottom: var(--space-xl);
+
+  color: var(--color-text-primary);
 
 }
 
@@ -272,7 +233,25 @@ onMounted(loadMembership)
 
 .info-section {
 
-  margin-bottom: 28px;
+  margin-bottom: var(--space-xl);
+
+  padding: var(--space-md);
+
+  border-radius: var(--radius-lg);
+
+  background: linear-gradient(135deg, rgba(var(--color-primary-dark-rgb), 0.08) 0%, rgba(var(--color-primary-dark-rgb), 0.02) 100%);
+  border: 1px solid rgba(var(--color-primary-dark-rgb), 0.15);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+
+}
+
+[data-theme="dark"] .info-section {
+
+  background: linear-gradient(135deg, rgba(var(--color-primary-dark-rgb), 0.16) 0%, rgba(var(--color-primary-dark-rgb), 0.05) 100%);
+  border: 1px solid rgba(var(--color-primary-dark-rgb), 0.22);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.05);
 
 }
 
@@ -280,9 +259,13 @@ onMounted(loadMembership)
 
 .info-section h2 {
 
-  font-size: 16px;
+  font-size: var(--font-md);
 
-  margin-bottom: 12px;
+  margin-bottom: var(--space-sm);
+
+  color: var(--color-text-primary);
+
+  font-weight: var(--font-semibold);
 
 }
 
@@ -291,9 +274,9 @@ onMounted(loadMembership)
 .info-section p,
 .info-section li {
 
-  font-size: 15px;
+  font-size: var(--font-sm);
 
-  color: #333;
+  color: var(--color-text-primary);
 
 }
 
@@ -305,11 +288,25 @@ onMounted(loadMembership)
 
   height: 48px;
 
-  border-radius: 12px;
+  border-radius: var(--radius-md);
 
-  background: #1d4ed8;
+  background: linear-gradient(90deg, var(--color-btn-primary-start), var(--color-btn-primary-end));
 
-  color: white;
+  color: var(--color-btn-primary-text);
+
+  border: none;
+
+  font-weight: var(--font-semibold);
+
+  cursor: pointer;
+
+  transition: var(--transition-fast);
+
+}
+
+.official-button:hover {
+
+  opacity: 0.9;
 
 }
 
@@ -321,15 +318,38 @@ onMounted(loadMembership)
 
   height: 48px;
 
-  margin-top: 12px;
+  margin-top: var(--space-sm);
 
-  border-radius: 12px;
+  border-radius: var(--radius-md);
 
-  background: white;
+  background: linear-gradient(135deg, rgba(168, 78, 104, 0.1) 0%, rgba(168, 78, 104, 0.03) 100%);
 
-  color: #ef4444;
+  color: var(--color-coral);
 
-  border: 1px solid #ef4444;
+  border: 1px solid rgba(168, 78, 104, 0.25);
+
+  font-weight: var(--font-semibold);
+
+  cursor: pointer;
+
+  transition: var(--transition-fast);
+
+  backdrop-filter: blur(6px);
+
+  -webkit-backdrop-filter: blur(6px);
+
+}
+
+.delete-button:hover {
+
+  background: linear-gradient(135deg, rgba(168, 78, 104, 0.16) 0%, rgba(168, 78, 104, 0.05) 100%);
+
+}
+
+[data-theme="dark"] .delete-button {
+
+  background: linear-gradient(135deg, rgba(209, 123, 147, 0.16) 0%, rgba(209, 123, 147, 0.05) 100%);
+  border: 1px solid rgba(209, 123, 147, 0.3);
 
 }
 
@@ -347,7 +367,7 @@ onMounted(loadMembership)
 
   align-items: center;
 
-  z-index: 100;
+  z-index: var(--z-modal);
 
 }
 
@@ -356,33 +376,55 @@ onMounted(loadMembership)
 
   width: calc(100% - 40px);
 
-  background: white;
+  border-radius: var(--radius-lg);
 
-  border-radius: 16px;
+  padding: var(--space-xl);
 
-  padding: 24px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.85) 0%, var(--color-surface) 60%);
+
+  border: 1px solid rgba(255, 255, 255, 0.3);
+
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+
+  backdrop-filter: blur(12px);
+
+  -webkit-backdrop-filter: blur(12px);
+
+}
+
+[data-theme="dark"] .modal {
+
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.06) 0%, var(--color-surface) 60%);
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
+
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05);
 
 }
 
 
 .modal h3 {
 
-  font-size: 18px;
+  font-size: var(--font-lg);
 
-  margin-bottom: 12px;
+  margin-bottom: var(--space-sm);
+
+  color: var(--color-text-primary);
+
+  font-weight: var(--font-semibold);
 
 }
 
 
 .modal p {
 
-  font-size: 14px;
+  font-size: var(--font-sm);
 
-  color: #666;
+  color: var(--color-text-secondary);
 
   line-height: 1.5;
 
-  margin-bottom: 24px;
+  margin-bottom: var(--space-xl);
 
 }
 
@@ -391,7 +433,7 @@ onMounted(loadMembership)
 
   display: flex;
 
-  gap: 12px;
+  gap: var(--space-sm);
 
 }
 
@@ -402,26 +444,33 @@ onMounted(loadMembership)
 
   height: 44px;
 
-  border-radius: 10px;
+  border-radius: var(--radius-sm);
+
+  font-weight: var(--font-semibold);
+
+  border: none;
+
+  cursor: pointer;
 
 }
  
 
 .cancel-button {
 
-  background: #f3f4f6;
+  background: var(--color-border);
+
+  color: var(--color-text-primary);
 
 }
 
 
 .confirm-button {
 
-  background: #ef4444;
+  background: var(--color-coral);
 
-  color: white;
+  color: var(--color-btn-primary-text);
 
 }
 
 
 </style>
-<!-- 07_25 연동 변경: 멤버십 상세 API와 공식 사이트·주요 사용처 정보를 연결한다. -->

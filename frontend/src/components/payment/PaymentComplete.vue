@@ -1,6 +1,7 @@
 <script setup>
 
 import { useRouter } from 'vue-router';
+import Icon from '@/components/common/Icon.vue';
 
 
 const router = useRouter();
@@ -77,7 +78,7 @@ const goPoint = ()=>{
 
 
 <div class="icon">
-✓
+<Icon name="check" size="lg" />
 </div>
 
 
@@ -226,7 +227,7 @@ width:320px;
 
 padding:28px;
 
-background:white;
+background: var(--color-surface);
 
 border-radius:20px;
 

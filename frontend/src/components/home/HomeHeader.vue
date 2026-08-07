@@ -1,4 +1,5 @@
 <script setup>
+import Icon from '@/components/common/Icon.vue';
 
 // 부모(HomeView)로 전달하는 이벤트
 defineEmits([
@@ -27,9 +28,12 @@ defineProps({
 
 <header class="home-header">
 
-  <!-- 앱 이름 -->
+  <!-- 앱 이름 (아이콘 + 텍스트) -->
   <h1 class="logo">
-    YIGO
+    <span class="logo-badge">
+      <Icon name="lightbulb" size="sm" />
+    </span>
+    두리
   </h1>
 
 
@@ -43,7 +47,7 @@ defineProps({
       class="icon-button"
       @click="$emit('chat')"
     >
-      🤖
+      <Icon name="chat" size="md" />
     </button>
 
 
@@ -55,7 +59,7 @@ defineProps({
       @click="$emit('click-notification')"
     >
 
-      🔔
+      <Icon name="bell" size="md" />
 
 
       <!-- 읽지 않은 알림 -->
@@ -65,18 +69,6 @@ defineProps({
       />
 
     </button>
-
-
-
-    <!-- 사용자 이름 -->
-    <span
-      v-if="user"
-      class="user-name"
-    >
-      {{ user.name }}
-    </span>
-
-
 
     <!-- 프로필 -->
     <button
@@ -97,7 +89,7 @@ defineProps({
         v-else
         class="default-profile"
       >
-        👤
+        <Icon name="profile" size="md" />
       </span>
 
     </button>
@@ -128,9 +120,40 @@ defineProps({
 
 .logo {
 
+  display:flex;
+
+  align-items:center;
+
+  gap:6px;
+
   font-size:24px;
 
   font-weight:700;
+
+}
+
+
+
+/* 로고 아이콘 배지 - 브랜드 옐로우 원형 배경 */
+.logo-badge {
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:center;
+
+  width:28px;
+
+  height:28px;
+
+  border-radius:50%;
+
+  background: var(--color-primary);
+
+  color: var(--color-point-icon);
+
+  flex-shrink:0;
 
 }
 
@@ -158,13 +181,14 @@ defineProps({
 
 
 
-/* 공통 아이콘 버튼 */
+/* 공통 아이콘 버튼 — 시각적 아이콘 크기는 그대로 두고 터치 영역만
+   iOS/Android 권장 최소 터치 타깃(44px)에 가깝게 확대 */
 .icon-button,
 .profile-button {
 
-  width:32px;
+  width:40px;
 
-  height:32px;
+  height:40px;
 
   border:none;
 
@@ -179,6 +203,8 @@ defineProps({
   justify-content:center;
 
   cursor:pointer;
+
+  color:var(--color-text-primary);
 
 }
 
@@ -208,7 +234,7 @@ defineProps({
 
   border-radius:50%;
 
-  background:#ff3b30;
+  background: var(--color-coral);
 
 }
 

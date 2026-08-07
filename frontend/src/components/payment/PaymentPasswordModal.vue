@@ -17,11 +17,8 @@ const props = defineProps({
 
 
 const emit = defineEmits([
-
   'success',
-
   'close'
-
 ]);
 
 
@@ -91,13 +88,8 @@ const closeModal = () => {
 </script>
 
 <template>
-
-  <div
-    v-if="visible"
-    class="overlay"
-  >
-
-    <div class="modal">
+  <div class="overlay" @click="closeModal">
+    <div class="modal" @click.stop>
 
       <h2>
 
@@ -182,40 +174,76 @@ const closeModal = () => {
 <style scoped>
 
 .overlay{
-
-  position:fixed;
-
-  inset:0;
-
-  background:rgba(0,0,0,.45);
-
   display:flex;
-
   justify-content:center;
-
   align-items:center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1000;
+  animation: overlay-fade-in 0.3s ease-out;
+}
 
-  z-index:9999;
-
+@keyframes overlay-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 .modal{
-
-  width:340px;
-
-  padding:28px;
-
-  border-radius:20px;
-
-  background:#fff;
-
+  width:300px;
+  padding: var(--space-xl);
+  border-radius: var(--radius-xl);
   text-align:center;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, var(--color-surface) 60%);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  animation: modal-emerge 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes modal-emerge {
+  from {
+    opacity: 0;
+    transform: scale(0.85) translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+[data-theme="dark"] .modal{
+
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.06) 0%, var(--color-surface) 60%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+
+}
+
+.modal h2{
+
+  font-size: var(--font-lg);
+  font-weight: var(--font-bold);
+  color: var(--color-text-primary);
+  margin: 0;
 
 }
 
 .description{
 
-  margin-top:8px;
+  margin-top: var(--space-xs);
+
+  font-size: var(--font-sm);
+  color: var(--color-text-secondary);
 
 }
 
@@ -239,13 +267,13 @@ const closeModal = () => {
 
   border-radius:50%;
 
-  background:#ddd;
+  background:var(--color-border);
 
 }
 
 .dots span.active{
 
-  background:#222;
+  background:var(--color-primary);
 
 }
 
@@ -267,11 +295,27 @@ const closeModal = () => {
 
   height:80px;
 
-  border:none;
+  border:1px solid var(--color-border);
 
   border-radius:50%;
 
   font-size:24px;
+
+  background: var(--color-surface);
+
+  color:var(--color-text-primary);
+
+  font-weight:var(--font-semibold);
+
+  cursor:pointer;
+
+  transition:var(--transition-fast);
+
+}
+
+.keypad button:active{
+
+  transform:scale(0.95);
 
 }
 
@@ -288,6 +332,25 @@ const closeModal = () => {
   margin-top:24px;
 
   height:48px;
+
+  border:none;
+
+  border-radius:12px;
+
+  background:
+    linear-gradient(
+      90deg,
+      var(--color-btn-primary-start),
+      var(--color-btn-primary-end)
+    );
+
+  color:var(--color-btn-primary-text);
+
+  font-weight:var(--font-semibold);
+
+  cursor:pointer;
+
+  transition:var(--transition-fast);
 
 }
 

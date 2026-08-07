@@ -1,137 +1,88 @@
 <script setup>
 import { computed } from 'vue'
 
-
-// 부모 컴포넌트(FinancialPointCard)에서 전달받는 데이터
 const props = defineProps({
-
   id: {
     type: Number,
-    required: true
+    required: true,
   },
-
   name: {
     type: String,
-    required: true
+    required: true,
   },
-
   point: {
     type: Number,
-    required: true
-  }
-
+    required: true,
+  },
 })
 
+const formattedPoint = computed(() => props.point.toLocaleString())
 
-// 천 단위 콤마 적용
-const formattedPoint = computed(() => {
-  return props.point.toLocaleString()
-})
+const emit = defineEmits(['click', 'select-point'])
 
-
-// 클릭 이벤트 전달
-// 부모에서 상세 페이지 이동 처리
-const emit = defineEmits([
-  'click'
-])
-
-
+const handleClick = () => {
+  emit('click', props.id)
+  emit('select-point', {
+    id: props.id,
+    name: props.name,
+    point: props.point,
+  })
+}
 </script>
 
-
 <template>
-
-  <div
-    class="point-item"
-    @click="emit('click', id)"
-  >
-
-    <span class="point-name">
-      {{ name }}
-    </span>
-
+  <div class="point-item" @click="handleClick">
+    <span class="point-name">{{ name }}</span>
 
     <div class="point-right">
-
-      <span class="point-value">
-        {{ formattedPoint }}P
-      </span>
-
-
-      <span class="arrow">
-        >
-      </span>
-
+      <span class="point-value">{{ formattedPoint }}P</span>
+      <span class="arrow">›</span>
     </div>
-
-
   </div>
-
 </template>
 
-
 <style scoped>
-
 .point-item {
-
   display: flex;
-
   justify-content: space-between;
-
   align-items: center;
-
-  padding: 14px 0;
-
+  padding: var(--space-md) var(--space-xs);
+  border-radius: var(--radius-sm);
   cursor: pointer;
-
+  transition: var(--transition-fast);
 }
 
+.point-item:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+[data-theme="dark"] .point-item:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
 
 .point-item:not(:last-child) {
-
-  border-bottom: 1px solid #eeeeee;
-
+  border-bottom: 1px solid var(--color-border);
 }
-
 
 .point-name {
-
-  font-size: 15px;
-
-  color: #333333;
-
+  font-size: var(--font-sm);
+  color: var(--color-text-primary);
 }
-
 
 .point-right {
-
   display: flex;
-
   align-items: center;
-
-  gap: 8px;
-
+  gap: var(--space-xs);
 }
-
 
 .point-value {
-
-  font-size: 16px;
-
-  font-weight: 700;
-
-  color: #1d4ed8;
-
+  font-size: var(--font-md);
+  font-weight: var(--font-bold);
+  color: var(--color-text-primary);
 }
-
 
 .arrow {
-
-  color: #999;
-
-  font-size: 18px;
-
+  color: var(--color-text-secondary);
+  font-size: var(--font-lg);
 }
-
-
 </style>

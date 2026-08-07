@@ -10,7 +10,6 @@ const emit = defineEmits([
   'update:modelValue'
 ]);
 
-
 </script>
 
 
@@ -45,16 +44,27 @@ const emit = defineEmits([
 <style scoped>
 
 .checkbox {
-  display:flex;
-  gap:8px;
-  align-items:center;
-  font-size:14px;
+  display: flex;
+
+  gap: var(--space-xs);
+
+  align-items: center;
+
+  color: var(--color-text-primary);
+
+  font-size: var(--font-sm);
 }
 
 
 input {
-  width:18px;
-  height:18px;
+  width: 18px;
+
+  height: 18px;
+
+  accent-color: var(--color-primary);
+
+  cursor: pointer;
 }
+
 
 </style>
