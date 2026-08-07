@@ -27,10 +27,7 @@ class="card"
 
 
 <img
-<<<<<<< HEAD
-=======
 v-if="card.image"
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 :src="card.image"
 />
 
@@ -68,7 +65,6 @@ v-if="card.image"
 .card{
 
 display:flex;
-<<<<<<< HEAD
 gap:var(--space-md);
 padding:var(--space-lg);
 border:1px solid var(--color-border);
@@ -97,7 +93,6 @@ box-shadow:0 4px 16px rgba(0,0,0,0.08);
 .selected{
 
 border:2px solid var(--color-primary);
-=======
 gap:16px;
 padding:16px;
 border:1px solid #ddd;
@@ -109,28 +104,21 @@ border-radius:16px;
 .selected{
 
 border:2px solid #333;
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 }
 
 
 img{
 
-<<<<<<< HEAD
 width:72px;
 height:auto;
 border-radius:var(--radius-sm);
-=======
 width:70px;
 height:100px;
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 }
 
 
-<<<<<<< HEAD
 </style>
-=======
 </style>
 <!-- 07_25 연동 변경: 추천 API가 반환한 카드·예상 혜택 정보를 표시한다. -->
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e

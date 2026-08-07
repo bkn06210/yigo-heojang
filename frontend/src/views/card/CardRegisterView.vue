@@ -2,20 +2,14 @@
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useCardStore } from '@/stores/cardStore';
-<<<<<<< HEAD
-=======
 import { getUserCardCandidates, registerUserCard } from '@/api/walletApi';
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 import PageHeader from '@/components/common/PageHeader.vue';
 
 import CardScanModal from '@/components/card/CardScanModal.vue';
 import CardUploadModal from '@/components/card/CardUploadModal.vue';
 import CardRegisterCompleteModal from '@/components/card/CardRegisterCompleteModal.vue';
-<<<<<<< HEAD
 import Icon from '@/components/common/Icon.vue';
-=======
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 const cardStore = useCardStore();
 
@@ -43,8 +37,6 @@ const cardNumber = ref('');
 const expiryDate = ref('');
 const cvc = ref('');
 const password = ref('');
-<<<<<<< HEAD
-=======
 const residentNumber = ref('');
 
 // PR #29 연동: BIN 조회 결과와 사용자가 선택한 실제 카드 상품 ID를 보관한다.
@@ -87,7 +79,6 @@ const selectCandidate = () => {
   const selected = cardCandidates.value.find((candidate) => candidate.cardId === Number(selectedCardId.value));
   if (selected) cardName.value = selected.cardName;
 };
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 
 // 카드 인식 방법 선택
@@ -111,8 +102,6 @@ const openUpload = () => {
 };
 
 
-<<<<<<< HEAD
-=======
 // 직접 입력 선택
 const selectManual = () => {
 
@@ -121,7 +110,6 @@ const selectManual = () => {
 };
 
 
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 // 인식 결과 반영
 const completeScan = (data) => {
 
@@ -207,10 +195,8 @@ const formatPassword = () => {
 };
 
 
-<<<<<<< HEAD
 // 카드 등록
 const registerCard = () => {
-=======
 // 주민번호 앞자리
 
 const formatResidentNumber = () => {
@@ -225,7 +211,6 @@ const formatResidentNumber = () => {
 // 카드 등록
 // PR #29 연동 이전 임시 Store 등록 로직이며 실제 버튼에서는 더 이상 호출하지 않는다.
 const registerCardLegacy = () => {
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
   console.log('카드 등록 클릭');
 
@@ -248,7 +233,6 @@ const registerCardLegacy = () => {
     TODO: 추후 카드 등록 API 연결 시 교체
   */
 
-<<<<<<< HEAD
   // cardName에서 회사명 추출 (예: "삼성 ID one" → "삼성카드")
   const extractCompany = (name) => {
     if (name.includes('삼성')) return '삼성카드';
@@ -262,19 +246,14 @@ const registerCardLegacy = () => {
     return 'KB국민카드'; // 기본값
   };
 
-=======
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
   const newCard = {
 
     id: Date.now(),
 
     name: cardName.value,
 
-<<<<<<< HEAD
     company: extractCompany(cardName.value),
-=======
     company: 'KB국민카드',
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
     image: '',
 
@@ -310,8 +289,6 @@ console.log('등록 후 카드:', cardStore.cards);
 
 
 // 카드 목록 이동
-<<<<<<< HEAD
-=======
 // PR #29 연동: 선택한 카드 상품을 실제 보유카드 등록 API로 저장한다.
 const registerCard = async () => {
   registerError.value = '';
@@ -346,7 +323,6 @@ const registerCard = async () => {
   }
 };
 
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 const goCardList = () => {
 
   showComplete.value = false;
@@ -362,11 +338,8 @@ const goCardList = () => {
 <div class="page">
 
 
-<<<<<<< HEAD
 <PageHeader title="카드 등록" @back="router.back()"/>
-=======
 <PageHeader title="카드 등록"/>
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 <section class="register-type">
 
@@ -385,11 +358,8 @@ const goCardList = () => {
   @click="openScan"
 >
 
-<<<<<<< HEAD
 <Icon name="camera" size="lg" />
-=======
 📷
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 <span>
 카드 촬영
@@ -407,11 +377,8 @@ const goCardList = () => {
   @click="openUpload"
 >
 
-<<<<<<< HEAD
 <Icon name="image" size="lg" />
-=======
 🖼️
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 <span>
 사진 첨부
@@ -423,8 +390,6 @@ const goCardList = () => {
 
 </button>
 
-<<<<<<< HEAD
-=======
 
 <button
   class="type-card"
@@ -444,7 +409,6 @@ const goCardList = () => {
 
 </button>
 
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 </div>
 
 </section>
@@ -486,16 +450,11 @@ maxlength="19"
 inputmode="numeric"
 placeholder="0000-0000-0000-0000"
 @input="handleCardNumberInput"
-<<<<<<< HEAD
-=======
 @blur="loadCardCandidates"
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 />
 
 </div>
 
-<<<<<<< HEAD
-=======
 <!-- PR #29 연동: BIN 조회 결과가 여러 개면 실제 카드 상품을 사용자가 선택한다. -->
 <div v-if="cardCandidates.length" class="input-box">
   <label>카드 상품 선택</label>
@@ -510,7 +469,6 @@ placeholder="0000-0000-0000-0000"
 <!-- PR #29 연동: 후보 조회 및 등록 API 오류를 현재 폼 안에서 안내한다. -->
 <p v-if="registerError" class="error">{{ registerError }}</p>
 
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 <!-- 만료일 -->
 
 <div class="input-box">
@@ -570,8 +528,6 @@ placeholder="앞 2자리"
 
 </div>
 
-<<<<<<< HEAD
-=======
 <!-- 주민번호 -->
 
 <div class="input-box">
@@ -589,15 +545,11 @@ placeholder="앞 2자리"
 
 </div>
 
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 </section>
 <!-- 카드 등록 버튼 -->
 <button
   class="register-button"
-<<<<<<< HEAD
-=======
   :disabled="identifying || registering"
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
   @click="registerCard"
 >
   카드 등록
@@ -633,7 +585,6 @@ placeholder="앞 2자리"
 
 .page{
 
-<<<<<<< HEAD
 padding: var(--space-md);
 
 margin: 0 auto;
@@ -643,9 +594,7 @@ max-width: 480px;
 box-sizing: border-box;
 
 overflow: hidden visible;
-=======
 padding:20px;
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 }
 
@@ -653,28 +602,22 @@ padding:20px;
 .register-type,
 .form{
 
-<<<<<<< HEAD
 margin-top: var(--space-xl);
-=======
 margin-top:24px;
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 }
 
 
 h3{
 
-<<<<<<< HEAD
 font-size: var(--font-md);
 
 margin-bottom: var(--space-sm);
 color: var(--color-text-primary);
 font-weight: var(--font-semibold);
-=======
 font-size:16px;
 
 margin-bottom:14px;
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 }
 
@@ -684,11 +627,8 @@ margin-bottom:14px;
 
 display:flex;
 
-<<<<<<< HEAD
 gap: var(--space-sm);
-=======
 gap:12px;
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 }
 
@@ -698,7 +638,6 @@ gap:12px;
 
 flex:1;
 
-<<<<<<< HEAD
 padding: var(--space-md) var(--space-xs);
 
 border-radius: var(--radius-md);
@@ -708,7 +647,6 @@ border: 1px solid var(--color-input-border);
 background: var(--color-surface);
 color: var(--color-text-primary);
 cursor: pointer;
-=======
 padding:20px 10px;
 
 border-radius:16px;
@@ -716,7 +654,6 @@ border-radius:16px;
 border:1px solid #ddd;
 
 background:white;
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 }
 
@@ -724,11 +661,8 @@ background:white;
 
 .type-card.active{
 
-<<<<<<< HEAD
 border: 2px solid var(--color-primary);
-=======
 border:2px solid #4F46E5;
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 }
 
@@ -738,15 +672,12 @@ border:2px solid #4F46E5;
 
 display:block;
 
-<<<<<<< HEAD
 font-weight: var(--font-bold);
 
 margin-top: var(--space-xs);
-=======
 font-weight:700;
 
 margin-top:8px;
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 }
 
@@ -754,15 +685,12 @@ margin-top:8px;
 
 .type-card p{
 
-<<<<<<< HEAD
 font-size: var(--font-xs);
 
 color: var(--color-text-tertiary);
-=======
 font-size:12px;
 
 color:#888;
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 }
 
@@ -770,21 +698,15 @@ color:#888;
 
 .input-box{
 
-<<<<<<< HEAD
 margin-top: var(--space-md);
-=======
 margin-top:16px;
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 display:flex;
 
 flex-direction:column;
 
-<<<<<<< HEAD
 gap: var(--space-xs);
-=======
 gap:8px;
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 }
 
@@ -792,16 +714,13 @@ gap:8px;
 
 .input-box label{
 
-<<<<<<< HEAD
 font-size: var(--font-sm);
 
 color: var(--color-text-secondary);
 font-weight: var(--font-medium);
-=======
 font-size:14px;
 
 color:#555;
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 }
 
@@ -811,7 +730,6 @@ color:#555;
 
 height:48px;
 
-<<<<<<< HEAD
 border-radius: var(--radius-sm);
 
 border: 1px solid var(--color-input-border);
@@ -822,7 +740,6 @@ font-size: var(--font-sm);
 color: var(--color-text-primary);
 
 background: var(--color-surface);
-=======
 border-radius:12px;
 
 border:1px solid #ddd;
@@ -830,7 +747,6 @@ border:1px solid #ddd;
 padding:0 14px;
 
 font-size:15px;
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 }
 
@@ -842,7 +758,6 @@ width:100%;
 
 height:52px;
 
-<<<<<<< HEAD
 margin-top: var(--space-2xl);
 
 border:none;
@@ -856,7 +771,6 @@ color: var(--color-btn-primary-text);
 font-size: var(--font-md);
 font-weight: var(--font-semibold);
 cursor: pointer;
-=======
 margin-top:30px;
 
 border:none;
@@ -868,7 +782,6 @@ background:#4F46E5;
 color:white;
 
 font-size:16px;
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 }
 

@@ -1,14 +1,11 @@
-<<<<<<< HEAD
 ﻿<script setup>
 import PageHeader from '@/components/common/PageHeader.vue'
-=======
 <script setup>
 import { onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import PageHeader from '@/components/common/PageHeader.vue'
 import AIBriefingCard from '@/components/common/AIBriefingCard.vue'
 import { getPointHistory, getPoints, getPointUsagePlaces } from '@/api/walletApi'
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 
 // 금융 포인트 목록·이용처·이용내역 API 응답을 화면 데이터로 조합
@@ -16,13 +13,11 @@ const route = useRoute()
 const pointData = ref({ name: '', totalPoint: 0, aiMessage: '', usageMethods: [], histories: [] })
 const errorMessage = ref('')
 
-<<<<<<< HEAD
   usageMethods: [
     '카드 결제',
     '간편결제',
     '포인트 전환'
   ]
-=======
 const loadPoint = async () => {
   try {
     const points = await getPoints()
@@ -42,7 +37,6 @@ const loadPoint = async () => {
   } catch (error) {
     errorMessage.value = error?.response?.data?.message || error?.message || '포인트 상세 정보를 불러오지 못했습니다.'
   }
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 }
 
 onMounted(loadPoint)
@@ -270,11 +264,8 @@ li:last-child {
 
 .notice-section p {
 
-<<<<<<< HEAD
   font-size: var(--font-sm);
-=======
   font-size: 14px; 
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
   color: var(--color-text-secondary);
 
@@ -288,10 +279,7 @@ li:last-child {
 </style>
 
 // 기존 금융 포인트 상세 페이지 라우트 유지
-<<<<<<< HEAD
 // UI 변경으로 현재는 바텀시트에서 동일 API 데이터를 호출함
 // 추후 API 연동 시 상세 페이지 대신 바텀시트 데이터로 매핑
-=======
 // 혜택 목록의 바텀시트와 동일한 포인트 API 데이터를 사용한다.
 <!-- 07_25 연동 변경: 금융포인트 잔액·이력·사용처 API를 상세 화면에 표시한다. -->
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e

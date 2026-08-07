@@ -1,6 +1,5 @@
 <script setup>
 
-<<<<<<< HEAD
 import { computed, ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { storeToRefs } from 'pinia';
@@ -8,7 +7,6 @@ import { useAuthStore } from '@/stores/authStore';
 import { useCardStore } from '@/stores/cardStore';
 
 import PageHeader from '@/components/common/PageHeader.vue';
-=======
 import { computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { storeToRefs } from 'pinia';
@@ -16,21 +14,16 @@ import { storeToRefs } from 'pinia';
 import { useCardStore } from '@/stores/cardStore';
 import { useAuthStore } from '@/stores/authStore';
 
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 import CardItem from '@/components/card/CardItem.vue';
 import CardCompanyGroup from '@/components/card/CardCompanyGroup.vue';
 import EmptyStateCard from '@/components/common/EmptyStateCard.vue';
 import BottomNavigation from '@/components/layout/BottomNavigation.vue';
-<<<<<<< HEAD
 import { useToast } from '@/composables/useToast';
 import Icon from '@/components/common/Icon.vue';
-=======
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 
 
 const router = useRouter();
-<<<<<<< HEAD
 const { showToast } = useToast();
 
 // 로그인 상태
@@ -43,7 +36,6 @@ const cardStore = useCardStore();
 
 const { cards } = storeToRefs(cardStore);
 
-=======
 
 
 // 카드 Store 연결
@@ -72,7 +64,6 @@ onMounted(async () => {
   }
 });
 
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 
 // 로그인 이동
@@ -91,15 +82,12 @@ const goRegister = () => {
 };
 
 
-<<<<<<< HEAD
 // 초기화
 onMounted(() => {
   // mock 데이터는 추가하지 않음
 });
 
 
-=======
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 // 고정 카드 목록
 const pinnedCards = computed(() => {
 
@@ -189,12 +177,10 @@ const togglePin = (id) => {
 
   if (!target.pinned && pinnedCount >= 3) {
 
-<<<<<<< HEAD
     showToast('warning', '고정 카드는 최대 3개까지 가능합니다.');
 
     return;
 
-=======
 
     alert(
 
@@ -206,7 +192,6 @@ const togglePin = (id) => {
     return;
 
 
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
   }
 
 
@@ -214,7 +199,6 @@ const togglePin = (id) => {
 
 };
 
-<<<<<<< HEAD
 // 추천 카드 숨기기
 const hideRecommendedCard = ref(
   localStorage.getItem('hideRecommendedCard') === 'true'
@@ -224,9 +208,7 @@ const closeRecommendedCard = () => {
   hideRecommendedCard.value = true;
   localStorage.setItem('hideRecommendedCard', 'true');
 };
-=======
 
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 </script>
 
@@ -234,7 +216,6 @@ const closeRecommendedCard = () => {
 
 <div class="card-list-page">
 
-<<<<<<< HEAD
   <!-- 페이지 헤더 -->
   <PageHeader title="카드 목록" :show-back="false" @back="router.back()" />
 
@@ -251,7 +232,6 @@ const closeRecommendedCard = () => {
       <button v-else @click="goRegister" style="padding: 12px 20px; background: var(--color-primary); color: var(--color-btn-primary-text); border: none; border-radius: var(--radius-full); font-weight: 600; cursor: pointer;">카드 등록</button>
     </div>
   </main>
-=======
 
 
   <!-- 비로그인 -->
@@ -287,7 +267,6 @@ const closeRecommendedCard = () => {
     @click="goRegister"
 
   />
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 
 
@@ -298,7 +277,6 @@ const closeRecommendedCard = () => {
 
 
 
-<<<<<<< HEAD
 
     <!-- 고정 카드 목록 -->
 
@@ -316,7 +294,6 @@ const closeRecommendedCard = () => {
           @toggle-pin="togglePin"
         />
       </div>
-=======
     <header class="header">
 
 
@@ -371,14 +348,12 @@ const closeRecommendedCard = () => {
       />
 
 
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
     </section>
 
 
 
 
-<<<<<<< HEAD
     <!-- 전체 카드 (Grid Layout) -->
 
     <section class="card-section all-cards-section">
@@ -392,7 +367,6 @@ const closeRecommendedCard = () => {
           + 카드 등록
         </button>
       </div>
-=======
     <!-- 전체 카드 -->
 
     <section class="card-section">
@@ -403,7 +377,6 @@ const closeRecommendedCard = () => {
       </h2>
 
 
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 
       <CardCompanyGroup
@@ -419,20 +392,14 @@ const closeRecommendedCard = () => {
       />
 
 
-<<<<<<< HEAD
-=======
 
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
     </section>
 
 
 
   </template>
-<<<<<<< HEAD
 
-=======
   
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 <BottomNavigation />
 
 </div>
@@ -448,7 +415,6 @@ const closeRecommendedCard = () => {
 
 .card-list-page {
 
-<<<<<<< HEAD
   padding: var(--space-md);
 
   padding-bottom: calc(var(--space-xl) + var(--space-2xl) + var(--space-xl));
@@ -468,20 +434,17 @@ const closeRecommendedCard = () => {
   display: flex;
 
   flex-direction: column;
-=======
   padding:20px;
 
   min-height:100vh;
 
   background:#fafafa;
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 }
 
 
 
 
-<<<<<<< HEAD
 .header {
 
   display: flex;
@@ -491,7 +454,6 @@ const closeRecommendedCard = () => {
   align-items: center;
 
   margin-bottom: var(--space-xl);
-=======
 
 .header {
 
@@ -502,14 +464,12 @@ const closeRecommendedCard = () => {
   align-items:center;
 
   margin-bottom:24px;
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 }
 
 
 
 
-<<<<<<< HEAD
 .header h1 {
 
   margin: 0;
@@ -523,7 +483,6 @@ const closeRecommendedCard = () => {
   letter-spacing: var(--typo-display-medium-letter-spacing);
 
   color: var(--color-text-primary);
-=======
 
 .header h1 {
 
@@ -532,14 +491,12 @@ const closeRecommendedCard = () => {
   font-size:24px;
 
   font-weight:700;
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 }
 
 
 
 
-<<<<<<< HEAD
 .register-button {
 
   border: none;
@@ -621,7 +578,6 @@ const closeRecommendedCard = () => {
   transform: translateY(-1px);
 
 }
-=======
 
 .register-button {
 
@@ -650,25 +606,20 @@ const closeRecommendedCard = () => {
 
 }
 
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 
 
 
 .card-section {
 
-<<<<<<< HEAD
   margin-bottom: var(--space-lg);
-=======
 
   margin-bottom:32px;
 
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 }
 
 
-<<<<<<< HEAD
 .pinned-section {
 
   margin-top: -21px;
@@ -706,7 +657,6 @@ const closeRecommendedCard = () => {
   color: var(--color-text-primary);
 
   letter-spacing: -0.3px;
-=======
 
 
 
@@ -721,12 +671,10 @@ const closeRecommendedCard = () => {
 
   font-weight:700;
 
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 }
 
 
-<<<<<<< HEAD
 .recommended-slide {
 
   display: flex !important;
@@ -922,15 +870,12 @@ const closeRecommendedCard = () => {
   border-color: rgba(100, 150, 200, 0.4);
 
 }
-=======
 
 
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 
 :deep(.empty-card) {
 
-<<<<<<< HEAD
   background: var(--color-surface);
 
   border-radius: var(--radius-lg);
@@ -938,7 +883,6 @@ const closeRecommendedCard = () => {
   padding: var(--space-2xl) var(--space-md);
 
   box-shadow: var(--shadow-card);
-=======
 
   margin-top:40px;
 
@@ -956,7 +900,6 @@ const closeRecommendedCard = () => {
 
     0 4px 12px rgba(0,0,0,0.06);
 
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 }
 
@@ -965,26 +908,20 @@ const closeRecommendedCard = () => {
 
 :deep(.empty-card button:first-child) {
 
-<<<<<<< HEAD
   background: var(--color-primary);
 
   color: var(--color-btn-primary-text);
-=======
 
   background:#4F46E5;
 
 
   color:white;
 
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 }
 
 
-<<<<<<< HEAD
-=======
 
 
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 </style>
 <!-- 07_25 연동 변경: 로그인 회원의 실제 보유카드 목록 API를 화면 진입 시 호출한다. -->

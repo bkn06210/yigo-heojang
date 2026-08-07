@@ -1,13 +1,10 @@
 <script setup>
 import { ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
-<<<<<<< HEAD
 import PageHeader from '@/components/common/PageHeader.vue'
-=======
 import { resetPassword } from '@/api/authApi'
 
 
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 import AppButton from '@/components/common/AppButton.vue'
 import { useToast } from '@/composables/useToast'
 
@@ -72,11 +69,9 @@ const goBack = () => {
 }
 
 // 변경 버튼
-<<<<<<< HEAD
 const changePassword = () => {
   if (!password.value) {
     showToast('warning', '새 비밀번호를 입력해주세요.')
-=======
 const changePassword = async () => {
 
   submitError.value = ''
@@ -90,7 +85,6 @@ const changePassword = async () => {
       passwordConfirmError.value) {
 
     submitError.value = '비밀번호 입력값을 확인해주세요.'
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
     return
   }
 
@@ -99,12 +93,10 @@ const changePassword = async () => {
     return
   }
 
-<<<<<<< HEAD
   if (!passwordConfirm.value) {
     showToast('warning', '비밀번호 확인을 입력해주세요.')
     return
   }
-=======
   if (!passwordResetToken) {
     submitError.value = '비밀번호 인증 정보가 없습니다. 로그인 화면에서 다시 인증해주세요.'
     return
@@ -120,7 +112,6 @@ const changePassword = async () => {
   } finally {
     loading.value = false
   }
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
   if (passwordConfirmError.value) {
     showToast('warning', '비밀번호가 일치하지 않습니다.')
@@ -213,11 +204,9 @@ const changePassword = async () => {
           변경하기
         </button>
 
-<<<<<<< HEAD
       </form>
     </div>
   </div>
-=======
 <label>
 새 비밀번호
 </label>
@@ -267,7 +256,6 @@ const changePassword = async () => {
 </div>
 
 
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 </template>
 
 
@@ -297,14 +285,12 @@ const changePassword = async () => {
   margin: 0 0 var(--space-xl);
 }
 
-<<<<<<< HEAD
 /* 폼 */
 .password-form {
   display: flex;
   flex-direction: column;
   gap: var(--space-lg);
 }
-=======
 
 .guide {
 
@@ -313,7 +299,6 @@ color:#888;
 margin-top:8px;
 
 } 
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 .form-group {
   display: flex;
@@ -339,7 +324,6 @@ margin-top:8px;
   margin-left: 4px;
 }
 
-<<<<<<< HEAD
 .text-input {
   width: 100%;
   height: 44px;
@@ -433,7 +417,5 @@ margin-top:8px;
 }
 
 </style>
-=======
 </style>
 <!-- 07_25 연동 변경: 비밀번호 재설정 인증·변경 API 흐름을 화면에 연결한다. -->
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e

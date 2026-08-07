@@ -74,11 +74,8 @@ padding:20px;
 
 border-radius:16px;
 
-<<<<<<< HEAD
 border: 1px solid var(--color-border);
-=======
 border:1px solid #ddd;
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 }
 

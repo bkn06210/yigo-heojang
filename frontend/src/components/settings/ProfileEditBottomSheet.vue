@@ -3,10 +3,7 @@ import { ref, watch } from 'vue';
 
 import AppButton from '@/components/common/AppButton.vue';
 import AppInput from '@/components/common/AppInput.vue';
-<<<<<<< HEAD
 import Icon from '@/components/common/Icon.vue';
-=======
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 
 const props = defineProps({
@@ -22,8 +19,6 @@ const emit = defineEmits([
   'save',
 ]);
 
-<<<<<<< HEAD
-=======
 const fileInput = ref(null);
 
 const closeSheet = () => emit('close');
@@ -41,7 +36,6 @@ const changeProfileImage = (event) => {
   reader.readAsDataURL(file);
 };
 
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 // 수정용 임시 데이터
 const form = ref({
@@ -74,7 +68,6 @@ const saveProfile = () => {
     profileImageUrl: form.value.profileImageUrl,
   });
 };
-<<<<<<< HEAD
 
 
 // 바텀시트 닫기
@@ -109,8 +102,6 @@ const changeProfileImage = (event) => {
 
   reader.readAsDataURL(file);
 };
-=======
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 </script>
 
 <template>
@@ -132,11 +123,8 @@ const changeProfileImage = (event) => {
           <div v-else class="profile-image default-image"></div>
 
           <button class="camera-button" type="button" @click="openFilePicker">
-<<<<<<< HEAD
             <Icon name="camera" size="sm" />
-=======
             <span class="material-icons"> photo_camera </span>
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
           </button>
         </div>
       </div>
@@ -179,7 +167,6 @@ const changeProfileImage = (event) => {
 .bottom-sheet {
   width: 100%;
 
-<<<<<<< HEAD
   border-radius: var(--radius-xl) var(--radius-xl) 0 0;
 
   padding: var(--space-xl);
@@ -195,13 +182,11 @@ const changeProfileImage = (event) => {
   background: var(--color-surface);
   border-top: 1px solid rgba(255, 255, 255, 0.08);
   box-shadow: 0 -16px 40px rgba(0, 0, 0, 0.35);
-=======
   background: white;
 
   border-radius: 24px 24px 0 0;
 
   padding: 24px;
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 }
 
 .handle {
@@ -209,31 +194,25 @@ const changeProfileImage = (event) => {
 
   height: 4px;
 
-<<<<<<< HEAD
   background: var(--color-border);
 
   border-radius: 10px;
 
   margin: 0 auto var(--space-lg);
-=======
   background: #ddd;
 
   border-radius: 10px;
 
   margin: 0 auto 20px;
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 }
 
 h2 {
   text-align: center;
-<<<<<<< HEAD
   color: var(--color-text-primary);
   font-size: var(--font-xl);
   font-weight: var(--font-bold);
   letter-spacing: -0.2px;
   margin: 0;
-=======
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 }
 
 .profile-image-area {
@@ -263,11 +242,8 @@ h2 {
 }
 
 .default-image {
-<<<<<<< HEAD
   background: var(--color-border);
-=======
   background: #ddd;
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
   width: 100%;
 
@@ -283,7 +259,6 @@ h2 {
 
   bottom: -5px;
 
-<<<<<<< HEAD
   width: 36px;
 
   height: 36px;
@@ -312,7 +287,6 @@ h2 {
 [data-theme="dark"] .camera-button {
   background: white;
   color: #333;
-=======
   width: 34px;
 
   height: 34px;
@@ -322,7 +296,6 @@ h2 {
   background: white;
 
   border: 1px solid #ddd;
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 }
 
 .button-area {
@@ -337,7 +310,4 @@ h2 {
   flex: 1;
 }
 </style>
-<<<<<<< HEAD
-=======
 <!-- 07_25 연동 변경: 회원 프로필 수정 내용을 실제 회원 API로 저장한다. -->
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e

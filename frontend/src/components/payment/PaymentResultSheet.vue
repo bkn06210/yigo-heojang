@@ -10,7 +10,6 @@ defineProps({
   selectedCard: {
     type: Object,
     default: null
-<<<<<<< HEAD
   },
 
   selectedCategory: {
@@ -26,8 +25,6 @@ defineProps({
   paymentAmount: {
     type: Number,
     default: 0
-=======
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
   }
 
 });
@@ -65,7 +62,6 @@ const openDetail = (card) => {
 
 <div class="result-container">
 
-<<<<<<< HEAD
 <!-- 결제 정보 헤더 -->
 <div v-if="selectedCategory && selectedMerchant" class="result-header">
   <p class="result-context">
@@ -73,8 +69,6 @@ const openDetail = (card) => {
     <strong>{{ paymentAmount.toLocaleString() }}원</strong>을 결제하실 때
   </p>
 </div>
-=======
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 <h2>
 추천 결과
@@ -142,7 +136,6 @@ padding:20px;
 
 }
 
-<<<<<<< HEAD
 .result-container h2{
 
 margin: 0 0 var(--space-md);
@@ -180,13 +173,10 @@ color: var(--color-text-primary);
   border: 1px solid rgba(150, 170, 200, 0.15);
 }
 
-=======
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 .result-card{
 
 display:flex;
-<<<<<<< HEAD
 gap:var(--space-md);
 
 padding:var(--space-lg);
@@ -213,7 +203,6 @@ box-sizing:border-box;
 .result-card:hover{
 
 transform:translateY(-2px);
-=======
 gap:12px;
 
 padding:16px;
@@ -222,25 +211,20 @@ border:1px solid #ddd;
 border-radius:16px;
 
 margin-bottom:12px;
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 }
 
 
 .result-card.selected{
 
-<<<<<<< HEAD
 border:2px solid var(--color-primary);
-=======
 border:2px solid #333;
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 }
 
 
 .rank{
 
-<<<<<<< HEAD
 font-size: var(--font-xs);
 font-weight: var(--font-bold);
 color: var(--color-primary-dark);
@@ -302,11 +286,9 @@ transition:var(--transition-fast);
 background:var(--color-border);
 
 }
-=======
 font-size:14px;
 
 }
 
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 </style>

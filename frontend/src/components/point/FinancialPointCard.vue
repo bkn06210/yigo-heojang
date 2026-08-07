@@ -1,5 +1,4 @@
 <script setup>
-<<<<<<< HEAD
 import BaseCard from '@/components/common/BaseCard.vue'
 import PointItem from '@/components/point/PointItem.vue'
 
@@ -30,7 +29,6 @@ const selectPoint = (point) => {
     />
   </BaseCard>
 </template>
-=======
 import PointItem from '@/components/point/PointItem.vue'
 
 
@@ -130,4 +128,3 @@ const selectPoint = (point) => {
 
 </style>
 <!-- 07_25 연동 변경: 금융포인트 카드 표시값을 백엔드 응답 구조에 맞췄다. -->
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e

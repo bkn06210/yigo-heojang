@@ -51,7 +51,6 @@ defineProps({
 
 .timer{
 
-<<<<<<< HEAD
   display: flex;
   align-items: center;
   justify-content: center;
@@ -76,23 +75,18 @@ defineProps({
 
   background: linear-gradient(135deg, rgba(228, 218, 103, 0.18) 0%, rgba(228, 218, 103, 0.06) 100%);
   border: 1px solid rgba(228, 218, 103, 0.26);
-=======
   margin-top:16px;
 
   font-size:14px;
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 }
 
 
 .timer strong{
 
-<<<<<<< HEAD
   color: var(--color-gold-text);
   font-weight: var(--font-bold);
-=======
   margin-left:6px;
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 }
 

@@ -19,9 +19,7 @@ import EmptyStateCard from '@/components/common/EmptyStateCard.vue';
 import FinancialPointCard from '@/components/point/FinancialPointCard.vue';
 import FinancialPointBottomSheet from '@/components/point/FinancialPointBottomSheet.vue';
 
-<<<<<<< HEAD
 import MembershipCard from '@/components/point/MembershipCard.vue';
-=======
 // 혜택 컴포넌트
 import FinancialPointCard from '@/components/point/FinancialPointCard.vue';
 import FinancialPointBottomSheet from '@/components/point/FinancialPointBottomSheet.vue';
@@ -36,21 +34,16 @@ import { getPartnerLogo } from '@/utils/partnerLogos';
 const router = useRouter();
 
 const authStore = useAuthStore();
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 import BenefitReportCard from '@/components/point/BenefitReportCard.vue';
 import BenefitReportBottomSheet from '@/components/point/BenefitReportBottomSheet.vue';
 
-<<<<<<< HEAD
 const router = useRouter();
-=======
 // 로그인 상태
 const isLogin = computed(() => authStore.isLogin());
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 const authStore = useAuthStore();
 
-<<<<<<< HEAD
 // 로그인 상태
 const isLogin = computed(() => authStore.isLogin());
 
@@ -162,10 +155,43 @@ const closePointSheet = () => {
 };
 
 // 새로고침
-// TODO: API 연결 시 실제 데이터 재조회
+// 포인트·멤버십 API 조회
+const errorMessage = ref('');
+const financialPointList = ref([]);
+const membershipList = ref([]);
 
 const refreshPoint = async () => {
-  console.log('혜택 데이터 갱신');
+  errorMessage.value = '';
+  if (!isLogin.value) return;
+
+  const [pointResult, membershipResult, historyResult] = await Promise.allSettled([
+    getPoints(),
+    getMemberships(),
+    getPointHistory(),
+  ]);
+
+  if (pointResult.status === 'fulfilled') {
+    const pointData = pointResult.value;
+    const histories = historyResult.status === 'fulfilled'
+      ? historyResult.value?.histories || []
+      : [];
+    financialPointList.value = (pointData?.points || [])
+      .filter((point) => point.providerType !== 'MEMBERSHIP')
+      .map((point) => ({
+        id: Number(point.pointProviderId),
+        name: point.providerName,
+        balance: Number(point.balance),
+        status: point.status,
+      }));
+  } else {
+    errorMessage.value = '포인트 조회에 실패했습니다.';
+  }
+
+  if (membershipResult.status === 'fulfilled') {
+    membershipList.value = membershipResult.value || [];
+  } else {
+    console.error('멤버십 조회 실패');
+  }
 };
 
 
@@ -182,7 +208,6 @@ const refreshPoint = async () => {
 // 이 배열과 연결되어 있지 않아 여기 목록에는 반영되지 않음 (같은 TODO 참고)
 const membershipList = ref([]);
 
-=======
 // TODO: 카드 조회 API 연결
 // GET /api/cards
 //
@@ -406,18 +431,15 @@ const membershipList = ref([]);
 
 
 
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 const goMembershipRegister = () => {
   router.push('/memberships/register');
 };
 
-<<<<<<< HEAD
 // 멤버십 더보기
 
 const SHOW_COUNT = 3;
 
 const visibleCount = ref(SHOW_COUNT);
-=======
   router.push('/memberships/register');
 
 };
@@ -454,7 +476,6 @@ const showMoreMembership = () => {
 onMounted(refreshPoint);
 
 
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 const visibleMemberships = computed(() => {
   return membershipList.value.slice(0, visibleCount.value);
@@ -466,7 +487,6 @@ const showMoreMembership = () => {
 </script>
 
 <template>
-<<<<<<< HEAD
   <div class="point-page">
     <PageHeader title="혜택" :show-back="false" @back="router.back()" />
 
@@ -478,7 +498,6 @@ const showMoreMembership = () => {
         <button @click="goLogin" style="padding: 12px 20px; background: var(--color-primary); color: var(--color-btn-primary-text); border: none; border-radius: var(--radius-full); font-weight: 600; cursor: pointer;">로그인</button>
       </div>
     </main>
-=======
   <PullToRefresh @refresh="refreshPoint">
 
     <div class="point-page">
@@ -590,7 +609,6 @@ const showMoreMembership = () => {
             </button>
 
           </div>
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
     <!-- 로그인 -->
     <div v-else class="pull-container">
@@ -706,14 +724,12 @@ const showMoreMembership = () => {
       @close="closePointSheet"
     />
 
-<<<<<<< HEAD
     <!-- 혜택 리포트 상세 -->
     <BenefitReportBottomSheet
       v-if="showBenefitReport"
       @close="closeBenefitReport"
     />
   </div>
-=======
 
           <!-- 로그인 + 멤버십 없음 -->
           <EmptyStateCard
@@ -789,7 +805,6 @@ const showMoreMembership = () => {
   />
 
 
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 </template>
 
 <style scoped>
@@ -798,7 +813,6 @@ const showMoreMembership = () => {
    /* 전체 페이지 */
 
 .point-page {
-<<<<<<< HEAD
   padding: var(--space-md);
   padding-bottom: calc(var(--space-xl) + var(--space-2xl) + var(--space-xl));
   box-sizing: border-box;
@@ -806,10 +820,8 @@ const showMoreMembership = () => {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-=======
   padding: 20px;
   padding-bottom: 90px;
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 }
 
 .pull-container {
@@ -818,7 +830,6 @@ const showMoreMembership = () => {
   flex-direction: column;
 }
 
-<<<<<<< HEAD
 main.login-required {
   flex: 1;
   display: flex;
@@ -830,26 +841,20 @@ main.login-required {
   display: flex;
   flex-direction: column;
   gap: var(--space-lg);
-=======
 .content {
   display: flex;
   flex-direction: column;
   gap: 28px;
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 }
 
 /* 섹션 공통 */
 
-<<<<<<< HEAD
-=======
    /* 섹션 공통 */
 
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 section {
   width: 100%;
 }
 
-<<<<<<< HEAD
 h2 {
   margin: 0 0 var(--space-md);
 
@@ -858,7 +863,6 @@ h2 {
   letter-spacing: -0.3px;
 
   color: var(--color-text-primary);
-=======
 
 h2 {
   margin: 0 0 14px;
@@ -867,12 +871,10 @@ h2 {
   font-weight: 700;
 
   color: #222;
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 }
 
 /* 혜택 리포트 */
 
-<<<<<<< HEAD
 .benefit-report-section {
   margin-top: -14px;
   margin-bottom: 0;
@@ -985,7 +987,6 @@ h2 {
 .more-button:hover {
   color: var(--color-text-primary);
 }
-=======
    /* 혜택 리포트 */
 
 .benefit-report-section {
@@ -1131,20 +1132,17 @@ h2 {
 
 }
 
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 /* 안내 문구 */
 
 .notice {
   margin: var(--space-md) 0 0;
 
-<<<<<<< HEAD
   font-size: var(--font-xs);
 
   color: var(--color-text-tertiary);
 
   line-height: 1.5;
-=======
   margin:16px 0 0;
 
 
@@ -1154,12 +1152,10 @@ h2 {
 
   line-height:1.5;
 
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 }
 
 /* EmptyStateCard */
 
-<<<<<<< HEAD
 :deep(.empty-card) {
   width: 100%;
 
@@ -1248,7 +1244,6 @@ h2 {
   }
 }
 </style>
-=======
 
 
    /* EmptyStateCard */
@@ -1389,4 +1384,3 @@ h2 {
 </style>
 
 <!-- 07_25 연동 변경: 전체 포인트 현황과 적립·사용 이력을 실제 API로 조회한다. -->
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e

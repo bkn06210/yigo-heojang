@@ -2,7 +2,6 @@
 
   <nav class="bottom-nav">
 
-<<<<<<< HEAD
     <RouterLink to="/home" class="nav-link">
       <Icon name="home" size="md" />
       <span>홈</span>
@@ -30,7 +29,6 @@
     <RouterLink to="/settings" class="nav-link">
       <Icon name="settings" size="md" />
       <span>설정</span>
-=======
     <RouterLink to="/home">
       홈
     </RouterLink>
@@ -53,7 +51,6 @@
 
     <RouterLink to="/settings">
       설정
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
     </RouterLink>
 
   </nav>
@@ -97,7 +94,6 @@ import Icon from '@/components/common/Icon.vue';
 
 }
 
-<<<<<<< HEAD
 
 
 .bottom-nav a {
@@ -119,7 +115,6 @@ import Icon from '@/components/common/Icon.vue';
   text-decoration: none;
 
   transition: var(--transition-fast);
-=======
 .bottom-nav {
 
   height:70px;
@@ -146,7 +141,6 @@ import Icon from '@/components/common/Icon.vue';
 
 
   z-index:1000;
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 }
 
@@ -159,9 +153,7 @@ import Icon from '@/components/common/Icon.vue';
   font-weight: var(--font-bold);
 
 }
-<<<<<<< HEAD
 </style>
-=======
 </style>
 
 //나중에 할 일
@@ -187,4 +179,3 @@ z-index: 1000
 
 Alert
 z-index: 2000 -->
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e

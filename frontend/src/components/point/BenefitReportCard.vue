@@ -1,5 +1,4 @@
 <script setup>
-<<<<<<< HEAD
 import BaseCard from '@/components/common/BaseCard.vue'
 
 defineProps({
@@ -82,7 +81,6 @@ const openDetail = () => {
   font-weight: var(--font-semibold);
 }
 </style>
-=======
 
 const emit = defineEmits([
   'open'
@@ -234,4 +232,3 @@ const openDetail = () => {
 
 
 </style>
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e

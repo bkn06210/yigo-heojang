@@ -1,23 +1,17 @@
-<<<<<<< HEAD
 ﻿<script setup>
-=======
 <script setup>
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import PageHeader from '@/components/common/PageHeader.vue';
 import AppCheckbox from '@/components/common/AppCheckbox.vue';
 import AppButton from '@/components/common/AppButton.vue';
 import ConfirmModal from '@/components/common/ConfirmModal.vue';
-<<<<<<< HEAD
 import { useToast } from '@/composables/useToast';
 
 const router = useRouter();
 const { showToast } = useToast();
-=======
 
 const router = useRouter();
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 const agreements = ref({
   deleteData: false,
@@ -30,11 +24,8 @@ const reasons = ref({
   etc: false
 });
 
-<<<<<<< HEAD
 const etcReason = ref('');
 
-=======
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 const isModalOpen = ref(false);
 
 // 필수 체크박스가 모두 체크되어야 버튼 활성화
@@ -53,7 +44,6 @@ const openConfirmModal = () => {
 
 const handleWithdrawal = () => {
   isModalOpen.value = false;
-<<<<<<< HEAD
   const withdrawalData = {
     ...reasons.value,
     etcReasonDetail: reasons.value.etc ? etcReason.value : null
@@ -61,11 +51,9 @@ const handleWithdrawal = () => {
   console.log('회원 탈퇴 완료, 선택된 사유:', withdrawalData);
   showToast('success', '회원 탈퇴가 정상적으로 처리되었습니다.');
   router.push('/auth/login');
-=======
   console.log('회원 탈퇴 완료, 선택된 사유:', reasons.value);
   alert('회원 탈퇴가 정상적으로 처리되었습니다.');
   router.push('/login');
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 };
 </script>
 
@@ -95,7 +83,6 @@ const handleWithdrawal = () => {
           <AppCheckbox v-model="reasons.unused" label="사용하지 않음" />
           <AppCheckbox v-model="reasons.inconvenient" label="기능이 편리하지 않음" />
           <AppCheckbox v-model="reasons.etc" label="기타" />
-<<<<<<< HEAD
 
           <!-- 기타 선택 시 입력 박스 -->
           <div v-if="reasons.etc" class="etc-input-section">
@@ -108,8 +95,6 @@ const handleWithdrawal = () => {
             />
             <span class="input-counter">{{ etcReason.length }}/200</span>
           </div>
-=======
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
         </div>
       </div>
 
@@ -137,16 +122,12 @@ const handleWithdrawal = () => {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-<<<<<<< HEAD
   background-color: var(--color-bg);
-=======
   background-color: #f9f9f9;
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 }
 
 .content-container {
   flex: 1;
-<<<<<<< HEAD
   padding: var(--space-lg);
   padding-bottom: calc(var(--space-xl) + var(--space-2xl) + var(--space-xl));
 }
@@ -188,7 +169,6 @@ const handleWithdrawal = () => {
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.02) 100%);
   border: 1px solid rgba(255, 255, 255, 0.08);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.05);
-=======
   padding: 20px;
   padding-bottom: 100px;
 }
@@ -216,13 +196,11 @@ const handleWithdrawal = () => {
   box-shadow: 0 2px 5px rgba(0,0,0,0.05);
   padding: 20px;
   margin-bottom: 16px;
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 }
 
 .checkbox-group {
   display: flex;
   flex-direction: column;
-<<<<<<< HEAD
   gap: var(--space-sm);
 }
 
@@ -231,7 +209,6 @@ const handleWithdrawal = () => {
   font-weight: var(--font-semibold);
   color: var(--color-text-primary);
   margin-bottom: var(--space-sm);
-=======
   gap: 12px;
 }
 
@@ -240,13 +217,11 @@ const handleWithdrawal = () => {
   font-weight: 600;
   color: #333;
   margin-bottom: 12px; 
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 }
 
 .reason-list {
   display: flex;
   flex-direction: column;
-<<<<<<< HEAD
   gap: var(--space-sm);
 }
 
@@ -289,9 +264,7 @@ const handleWithdrawal = () => {
   font-size: var(--font-xs);
   color: var(--color-text-tertiary);
   text-align: right;
-=======
   gap: 12px;
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 }
 
 .footer-button-area {
@@ -299,7 +272,6 @@ const handleWithdrawal = () => {
   bottom: 0;
   left: 0;
   width: 100%;
-<<<<<<< HEAD
   padding: var(--space-sm) var(--space-md);
   box-sizing: border-box;
 
@@ -316,11 +288,9 @@ const handleWithdrawal = () => {
   box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.3);
 }
 </style>
-=======
   padding: 15px 20px;
   background-color: white;
   box-shadow: -2px 10px rgba(0,0,0,0.05);
   box-sizing: border-box;
 }
 </style>
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e

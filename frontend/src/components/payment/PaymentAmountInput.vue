@@ -1,12 +1,9 @@
 <script setup>
 
-<<<<<<< HEAD
 import { computed } from 'vue';
 
 const props = defineProps({
-=======
 defineProps({
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
   modelValue:{
     type:Number,
     default:0
@@ -26,7 +23,6 @@ const quickAmounts=[
   50000
 ];
 
-<<<<<<< HEAD
 const displayValue = computed({
   get() {
     return props.modelValue ? props.modelValue.toLocaleString() : '';
@@ -36,8 +32,6 @@ const displayValue = computed({
     emit('update:modelValue', numValue);
   }
 });
-=======
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 const updateAmount=(amount)=>{
 
@@ -63,17 +57,14 @@ const updateAmount=(amount)=>{
 
 
 <input
-<<<<<<< HEAD
  v-model="displayValue"
  type="text"
  placeholder="금액을 입력해주세요"
  inputmode="numeric"
-=======
  :value="modelValue"
  type="number"
  placeholder="금액 입력"
  @input="$emit('update:modelValue', Number($event.target.value))"
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 />
 
 
@@ -94,7 +85,6 @@ const updateAmount=(amount)=>{
 </section>
 
 
-<<<<<<< HEAD
 </template>
 
 
@@ -198,6 +188,4 @@ input::placeholder{
 }
 
 </style>
-=======
 </template>
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e

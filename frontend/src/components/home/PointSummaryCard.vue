@@ -1,5 +1,4 @@
 <script setup>
-<<<<<<< HEAD
 import BaseCard from '@/components/common/BaseCard.vue'
 
 const props = defineProps({
@@ -137,7 +136,6 @@ const emit = defineEmits(['click-item'])
   font-size: var(--font-xs);
 }
 </style>
-=======
 
 
 // Props
@@ -568,4 +566,3 @@ const emit = defineEmits([
 
 
 </style>
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e

@@ -1,23 +1,17 @@
 <script setup>
-<<<<<<< HEAD
 import { ref, watch, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { storeToRefs } from 'pinia';
-=======
 import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { storeToRefs } from 'pinia';
 import { logout as logoutApi } from '@/api/authApi';
 import { getMyInfo, updateMyInfo } from '@/api/memberApi';
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 import { useAuthStore } from '@/stores/authStore';
 
 import PageHeader from '@/components/common/PageHeader.vue';
-<<<<<<< HEAD
 import Icon from '@/components/common/Icon.vue';
-=======
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 import BottomNavigation from '@/components/layout/BottomNavigation.vue';
 import ProfileEditBottomSheet from '@/components/settings/ProfileEditBottomSheet.vue';
 
@@ -37,7 +31,6 @@ const isProfileSheetOpen = ref(false);
 
 
 // 보기 설정
-<<<<<<< HEAD
 const displaySetting = ref(localStorage.getItem('theme') || 'light');
 const isThemeDropdownOpen = ref(false);
 
@@ -74,9 +67,7 @@ onMounted(() => {
   displaySetting.value = savedTheme;
   document.documentElement.setAttribute('data-theme', savedTheme);
 });
-=======
 const displaySetting = ref('system');
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 
 // 로그인 이동
@@ -142,7 +133,6 @@ const closeProfileEdit = () => {
 
 
 // 프로필 저장
-<<<<<<< HEAD
 const updateProfile = (updatedUser) => {
 
   // TODO : 실제 API 연결 시 수정 API 호출
@@ -164,7 +154,6 @@ const logout = () => {
 
   router.push('/');
 
-=======
 const updateProfile = async (updatedUser) => {
   try {
     const member = await updateMyInfo(updatedUser.nickname);
@@ -201,7 +190,6 @@ const logout = async () => {
     authStore.logout();
     router.push('/auth/login');
   }
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 };
 
 </script>
@@ -210,18 +198,15 @@ const logout = async () => {
 
   <div class="settings-view">
 
-<<<<<<< HEAD
     <!-- 헤더 -->
     <PageHeader
       title="설정"
       :show-back="false"
-=======
 
     <!-- 헤더 -->
     <PageHeader
       title="설정"
       @back="goBack"
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
     />
 
 
@@ -276,13 +261,10 @@ const logout = async () => {
               @click="openProfileEdit"
             >
 
-<<<<<<< HEAD
               <Icon name="edit" size="md" />
-=======
               <span class="material-icons">
                 edit
               </span>
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
             </button>
 
@@ -324,10 +306,7 @@ const logout = async () => {
 
 
 
-<<<<<<< HEAD
-=======
 
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
       <!-- 설정 메뉴 -->
 
       <section class="menu-list">
@@ -356,10 +335,7 @@ const logout = async () => {
 
 
 
-<<<<<<< HEAD
-=======
 
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
         <!-- 알림 -->
 
         <div
@@ -382,23 +358,16 @@ const logout = async () => {
 
 
 
-<<<<<<< HEAD
-=======
 
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
         <!-- 보기 설정 -->
 
         <div class="menu-item dropdown-item">
 
-<<<<<<< HEAD
-=======
 
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
           <span>
             보기
           </span>
 
-<<<<<<< HEAD
           <div class="custom-dropdown">
             <button
               class="dropdown-trigger"
@@ -426,7 +395,6 @@ const logout = async () => {
             </div>
           </div>
 
-=======
 
 
           <div class="menu-value-dropdown">
@@ -462,16 +430,12 @@ const logout = async () => {
           </div>
 
 
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
         </div>
 
 
 
 
-<<<<<<< HEAD
-=======
 
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
         <!-- 계정 및 보안 -->
 
         <div
@@ -498,10 +462,7 @@ const logout = async () => {
 
 
 
-<<<<<<< HEAD
-=======
 
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
       <!-- 로그아웃 -->
 
       <section
@@ -530,10 +491,7 @@ const logout = async () => {
 
 
 
-<<<<<<< HEAD
-=======
 
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
     <!-- 프로필 수정 바텀시트 -->
 
     <ProfileEditBottomSheet
@@ -551,10 +509,7 @@ const logout = async () => {
 
 
 
-<<<<<<< HEAD
-=======
 
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
     <!-- 하단 네비게이션 -->
 
     <BottomNavigation />
@@ -578,7 +533,6 @@ const logout = async () => {
   box-sizing: border-box;
 }
 
-<<<<<<< HEAD
 .settings-content {
   flex: 1;
   padding-bottom: calc(var(--space-xl) + var(--space-2xl) + var(--space-xl));
@@ -841,7 +795,6 @@ const logout = async () => {
   cursor: pointer;
   transition: var(--transition-fast);
 }
-=======
 .settings-view {
 
   min-height: 100vh;
@@ -1212,6 +1165,5 @@ const logout = async () => {
 }
 
 
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 </style>
 <!-- 07_25 연동 변경: 설정 화면의 회원 정보와 인증 동작을 실제 API에 연결한다. -->

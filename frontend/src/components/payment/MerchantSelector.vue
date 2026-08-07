@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 ﻿<script setup>
 
 import { computed } from 'vue';
@@ -16,19 +15,16 @@ const props = defineProps({
     default: null
   }
 });
-=======
 <script setup>
 
 import { ref } from 'vue';
 
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 const emit = defineEmits([
   'update:category',
   'update:merchant'
 ]);
 
-<<<<<<< HEAD
 // Store에서 활성화된 카테고리만 가져오기
 const activeCategories = computed(() => {
   return personalizationStore.getActiveCategories();
@@ -45,7 +41,6 @@ const getMerchants = () => {
 };
 
 const merchants = computed(() => getMerchants());
-=======
 
 const categories = [
   '카페',
@@ -74,57 +69,41 @@ const merchants = {
 const selectedCategory = ref(null);
 const selectedMerchant = ref(null);
 
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 
 // 업종 선택
 const selectCategory = (category) => {
-<<<<<<< HEAD
-=======
 
   selectedCategory.value = category;
 
 
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
   // 기존 가맹점 선택 초기화
   emit(
     'update:merchant',
     null
   );
-<<<<<<< HEAD
-=======
   selectedMerchant.value = null;
 
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
   emit(
     'update:category',
     category
   );
-<<<<<<< HEAD
-=======
 
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 };
 
 
 
 // 가맹점 선택
 const selectMerchant = (merchant) => {
-<<<<<<< HEAD
-=======
 
   selectedMerchant.value = merchant;
 
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
   emit(
     'update:merchant',
     merchant
   );
-<<<<<<< HEAD
-=======
 
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 };
 
 </script>
@@ -142,21 +121,18 @@ const selectMerchant = (merchant) => {
   <div class="category-buttons">
 
     <button
-<<<<<<< HEAD
       v-for="cat in activeCategories"
       :key="cat.key"
       @click="selectCategory(cat.label)"
       :class="{ active: cat.label === category }"
     >
       {{ cat.label }}
-=======
       v-for="category in categories"
       :key="category"
       @click="selectCategory(category)"
       :class="{ active: selectedCategory === category }"
     >
       {{ category }}
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
     </button>
 
   </div>
@@ -167,41 +143,32 @@ const selectMerchant = (merchant) => {
 
 <!-- 가맹점 선택 영역 -->
 <section
-<<<<<<< HEAD
   v-if="category"
-=======
   v-if="selectedCategory"
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
   class="merchant-section"
 >
 
   <h3>
-<<<<<<< HEAD
     {{ category }} 가맹점 선택
-=======
     {{ selectedCategory }} 가맹점 선택
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
   </h3>
 
 
   <div class="merchant-list">
 
     <button
-<<<<<<< HEAD
       v-for="mct in merchants[category] || []"
       :key="mct"
       @click="selectMerchant(mct)"
       :class="{ active: mct === merchant }"
     >
       {{ mct }}
-=======
       v-for="merchant in merchants[selectedCategory] || []"
       :key="merchant"
       @click="selectMerchant(merchant)"
       :class="{ active: selectedMerchant === merchant }"
     >
       {{ merchant }}
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
     </button>
 
@@ -210,7 +177,6 @@ const selectMerchant = (merchant) => {
 </section>
 
 </template>
-<<<<<<< HEAD
 
 
 <style scoped>
@@ -293,6 +259,4 @@ const selectMerchant = (merchant) => {
 }
 
 </style>
-=======
 <!-- 07_25 연동 변경: 결제 추천 API가 요구하는 가맹점 정보를 선택 결과로 전달한다. -->
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e

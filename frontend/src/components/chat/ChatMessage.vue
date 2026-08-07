@@ -94,13 +94,10 @@ defineProps({
 
 .ai .bubble{
 
-<<<<<<< HEAD
   background: var(--color-surface);
 
   color: var(--color-text-primary);
-=======
   background:white;
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 }
 
@@ -108,15 +105,12 @@ defineProps({
 
 .user .bubble{
 
-<<<<<<< HEAD
   background: var(--color-primary);
 
   color: var(--color-btn-primary-text);
-=======
   background:#4F46E5;
 
   color:white;
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 }
 
@@ -126,11 +120,8 @@ span{
 
   font-size:12px;
 
-<<<<<<< HEAD
   color: var(--color-text-tertiary);
-=======
   color:#999;
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
   margin-top:4px;
 

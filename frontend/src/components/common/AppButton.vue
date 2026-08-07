@@ -1,11 +1,8 @@
-<<<<<<< HEAD
 ﻿<script setup>
 defineEmits(['click'])
-=======
 <script setup>
 
 const emit = defineEmits(['click'])
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 defineProps({
   text: {
@@ -36,10 +33,7 @@ defineProps({
     class="app-button"
     :class="[type, size]"
     :disabled="disabled"
-<<<<<<< HEAD
     type="button"
-=======
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
     @click="$emit('click')"
   >
     <slot>{{ text }}</slot>
@@ -104,14 +98,11 @@ defineProps({
 
 
 .secondary {
-<<<<<<< HEAD
   color: var(--color-text-secondary);
 
   background: var(--color-border);
-=======
   background-color: #f1f1f1;
   color: #777;
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 }
 
 

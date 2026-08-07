@@ -2,7 +2,6 @@
 import { defineProps, defineEmits } from 'vue';
 
 const props = defineProps({
-<<<<<<< HEAD
   title: String,
 
   message: String,
@@ -174,7 +173,6 @@ button {
 button:hover {
   opacity: 0.9;
 }
-=======
 title: String,
 message: String,
 confirmText: { type: String, default: '확인' },
@@ -201,5 +199,4 @@ const emit = defineEmits(['confirm', 'close']);
 .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center; }
 .modal-content { background: white; padding: 20px; border-radius: 8px; width: 300px; text-align: center; }
 .modal-buttons { margin-top: 20px; display: flex; justify-content: space-around; }
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 </style>

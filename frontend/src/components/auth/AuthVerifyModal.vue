@@ -3,7 +3,6 @@ import { ref, defineComponent } from 'vue'
 import ToastNotification from '@/components/common/ToastNotification.vue'
 import Icon from '@/components/common/Icon.vue'
 
-<<<<<<< HEAD
 export default defineComponent({
   components: {
     ToastNotification,
@@ -27,10 +26,8 @@ export default defineComponent({
     const error = ref('')
     const timeLeft = ref(300) // 5분 = 300초
     let timerInterval = null
-=======
 import { ref } from 'vue'
 import { requestPasswordResetCode, verifyPasswordResetCode } from '@/api/authApi'
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
     // 토스트 상태
     const toastType = ref('success')
@@ -114,14 +111,12 @@ import { requestPasswordResetCode, verifyPasswordResetCode } from '@/api/authApi
       }
     }
 
-<<<<<<< HEAD
     const handleDigitKeydown = (index, event) => {
       if (event.key === 'Backspace' && authCodeDigits.value[index] === '' && index > 0) {
         const prevInput = document.querySelector(`.digit-input-${index - 1}`)
         if (prevInput) prevInput.focus()
       }
     }
-=======
 const loading = ref(false)
 
 const getErrorMessage = (error, fallback) =>
@@ -175,7 +170,6 @@ const close = () => {
   emit('close')
 
 }
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
     return {
       email,
@@ -255,18 +249,15 @@ const close = () => {
     {{ formatTime(timeLeft) }}
   </p>
 
-<<<<<<< HEAD
   <p class="code-hint">
   {{ email }}로 전송된 6자리 인증번호를 입력해주세요.
   </p>
-=======
 <p v-if="emailError" class="error">{{ emailError }}</p>
 
 <button class="send" :disabled="loading" @click="sendCode">
 {{ codeSent ? '인증번호 재전송' : '인증번호 전송' }}
 </button>
 
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
   <div class="auth-code-boxes">
     <input
@@ -288,9 +279,7 @@ const close = () => {
 
   <button class="confirm" @click="submitAuthCode">확인</button>
 
-<<<<<<< HEAD
 </div>
-=======
 <input
 v-model="authCode"
 placeholder="인증번호를 입력해주세요"
@@ -308,7 +297,6 @@ class="confirm"
 >
 {{ loading ? '처리 중...' : '확인' }}
 </button>
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 
 </div>
@@ -524,7 +512,6 @@ input::placeholder {
 
 }
 
-<<<<<<< HEAD
 
 .confirm:hover:not(:disabled) {
 
@@ -560,10 +547,8 @@ input::placeholder {
 }
 
 </style>
-=======
 .send { width:100%; height:42px; margin:-8px 0 16px; border:1px solid #ddd; border-radius:8px; background:white; }
 .error { margin:-10px 0 12px; color:#ef4444; font-size:12px; }
 
 </style>
 <!-- 07_25 연동 변경: 본인인증 요청·검증을 실제 백엔드 API와 연결한 컴포넌트다. -->
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e

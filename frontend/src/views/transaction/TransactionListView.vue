@@ -1,16 +1,12 @@
 <script setup>
-<<<<<<< HEAD
 import { ref, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-=======
 import { computed, onMounted, ref } from 'vue';
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 import PageHeader from '@/components/common/PageHeader.vue';
 import TransactionFilterBottomSheet from '@/components/transaction/TransactionFilterBottomSheet.vue';
 import TransactionDatePickerBottomSheet from '@/components/transaction/TransactionDatePickerBottomSheet.vue';
 import TransactionDetailBottomSheet from '@/components/transaction/TransactionDetailBottomSheet.vue';
-<<<<<<< HEAD
 import Icon from '@/components/common/Icon.vue';
 
 
@@ -24,7 +20,6 @@ const filterCardId = computed(() =>
 
 const filterCardName = computed(() => route.query.cardName || '');
 
-=======
 import {
   getExpenseCategories,
   getTransaction,
@@ -33,7 +28,6 @@ import {
 } from '@/api/walletApi';
 
 
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 // 조회조건 표시
 const showFilter = ref(false);
 
@@ -56,7 +50,6 @@ const selectedDate = ref({
   endDate: '',
 });
 
-<<<<<<< HEAD
 
 // 카드 목록
 const cards = ref([
@@ -164,7 +157,6 @@ const filteredTransactions = computed(() => {
   );
 });
 
-=======
 const loading = ref(false);
 const detailLoading = ref(false);
 const errorMessage = ref('');
@@ -251,7 +243,6 @@ const loadTransactions = async (params = {}) => {
   }
 };
 
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 // 조회조건 열기
 const openFilter = () => {
@@ -286,16 +277,12 @@ const applyDate = (date) => {
   };
 
   showDatePicker.value = false;
-<<<<<<< HEAD
-=======
   showFilter.value = true;
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 };
 
 
 // 조회조건 적용
-<<<<<<< HEAD
 const applyFilter = (filter) => {
 
   console.log(
@@ -304,7 +291,6 @@ const applyFilter = (filter) => {
   );
 
   showFilter.value = false;
-=======
 const applyFilter = async (filter) => {
   activeFilter.value = { ...filter };
   showFilter.value = false;
@@ -324,20 +310,17 @@ const applyFilter = async (filter) => {
     endDate: toDateKey(filter.endDate) || undefined,
   };
   await loadTransactions(params);
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 };
 
 
 // 사용내역 상세 열기
-<<<<<<< HEAD
 const openDetail = (transaction) => {
 
   selectedTransaction.value = transaction;
 
   showDetail.value = true;
 
-=======
 const openDetail = async (transaction) => {
   selectedTransaction.value = transaction;
   showDetail.value = true;
@@ -349,7 +332,6 @@ const openDetail = async (transaction) => {
   } finally {
     detailLoading.value = false;
   }
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 };
 
 
@@ -361,8 +343,6 @@ const closeDetail = () => {
   selectedTransaction.value = null;
 
 };
-<<<<<<< HEAD
-=======
 
 const initializeTransactions = async () => {
   try {
@@ -382,7 +362,6 @@ const initializeTransactions = async () => {
 };
 
 onMounted(initializeTransactions);
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 </script>
 
@@ -394,25 +373,19 @@ onMounted(initializeTransactions);
 
   <div class="header">
 
-<<<<<<< HEAD
     <PageHeader
       :title="filterCardName ? `${filterCardName} 이용내역` : '카드이용내역'"
       @back="router.back()"
     />
-=======
     <PageHeader title="카드 사용내역" />
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 
     <button
       class="filter-icon"
       @click="openFilter"
     >
-<<<<<<< HEAD
       <Icon name="filter" size="sm" />
-=======
       ⚙️
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
     </button>
 
   </div>
@@ -422,10 +395,8 @@ onMounted(initializeTransactions);
 
   <!-- 사용내역 리스트 -->
 
-<<<<<<< HEAD
   <div
   v-for="transaction in filteredTransactions"
-=======
   <p v-if="errorMessage" class="transaction-message">
     {{ errorMessage }}
   </p>
@@ -439,13 +410,11 @@ onMounted(initializeTransactions);
 
   <div
   v-for="transaction in visibleTransactions"
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
   :key="transaction.id"
   class="transaction-item"
   @click="openDetail(transaction)"
 >
 
-<<<<<<< HEAD
     <!-- 매장명과 금액 (한 줄) -->
     <div class="transaction-header">
       <div class="merchant-title">
@@ -467,7 +436,6 @@ onMounted(initializeTransactions);
       <span class="info-text">{{ transaction.installment }}</span>
       <span class="info-dot">|</span>
       <span class="info-text">{{ transaction.cardType }}</span>
-=======
 
     <div class="top">
 
@@ -496,7 +464,6 @@ onMounted(initializeTransactions);
 
       {{ transaction.cardName }}
 
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
     </div>
 
 
@@ -515,11 +482,8 @@ onMounted(initializeTransactions);
 
     :cards="cards"
 
-<<<<<<< HEAD
-=======
     :categories="expenseCategories"
 
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
     :selectedDate="selectedDate"
 
     @close="closeFilter"
@@ -570,15 +534,12 @@ onMounted(initializeTransactions);
 <style scoped>
 
 .transaction-page {
-<<<<<<< HEAD
   padding: var(--space-md);
   margin: 0 auto;
   max-width: 480px;
   box-sizing: border-box;
   overflow: hidden visible;
-=======
   padding:20px;
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 }
 
 
@@ -597,20 +558,16 @@ width:36px;
 height:36px;
 border:none;
 background:none;
-<<<<<<< HEAD
 font-size: var(--font-lg);
 cursor: pointer;
 color: var(--color-text-primary);
-=======
 font-size:20px;
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 }
 
 
 
 .transaction-item {
-<<<<<<< HEAD
   padding: var(--space-md) 0;
   border-bottom: 1px solid var(--color-border);
   cursor: pointer;
@@ -664,7 +621,6 @@ font-size:20px;
 }
 
 </style>
-=======
 
 padding:16px 0;
 
@@ -724,4 +680,3 @@ font-size:14px;
 
 </style>
 <!-- 07_25 연동 변경: 소비내역 목록과 조회조건을 실제 백엔드 API에 연결한다. -->
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e

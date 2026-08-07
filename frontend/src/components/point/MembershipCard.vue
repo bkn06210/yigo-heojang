@@ -24,7 +24,6 @@ const goDetail = (id) => {
         {{ props.membership.name }}
       </span>
 
-<<<<<<< HEAD
       <AppButton
         text="상세 보기"
         type="outline"
@@ -33,7 +32,6 @@ const goDetail = (id) => {
       />
     </div>
   </BaseCard>
-=======
   <div class="membership-card">
 
 
@@ -64,7 +62,6 @@ const goDetail = (id) => {
 
   </div>
 
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 </template>
 
 <style scoped>
@@ -79,9 +76,7 @@ const goDetail = (id) => {
   font-weight: var(--font-medium);
   color: var(--color-text-primary);
 }
-<<<<<<< HEAD
 </style>
-=======
 
 .membership-main {
   display: flex;
@@ -118,4 +113,3 @@ const goDetail = (id) => {
 
 </style>
 <!-- 07_25 연동 변경: 멤버십 API 데이터와 제휴사 로고를 카드에 표시한다. -->
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e

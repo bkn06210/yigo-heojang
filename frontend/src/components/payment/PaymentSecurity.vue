@@ -1,27 +1,20 @@
-<<<<<<< HEAD
 <script setup>
 import Icon from '@/components/common/Icon.vue';
 </script>
 
-=======
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 <template>
 
 <div class="security">
 
-<<<<<<< HEAD
 <Icon name="lock" size="xs" />
 안전한 결제를 위해
-=======
 🔒 안전한 결제를 위해
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 <br>
 QR은 1분 후 자동으로 만료됩니다.
 
 </div>
 
 
-<<<<<<< HEAD
 </template>
 
 
@@ -51,6 +44,4 @@ QR은 1분 후 자동으로 만료됩니다.
 }
 
 </style>
-=======
 </template>
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e

@@ -1,7 +1,6 @@
 <script setup>
 import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
-<<<<<<< HEAD
 import { storeToRefs } from 'pinia';
 import { useAuthStore } from '@/stores/authStore';
 
@@ -18,7 +17,6 @@ const { user } = storeToRefs(authStore);
 // TODO: GET /notifications API 연결 예정
 // 비로그인 상태일 때는 빈 배열로 처리
 const notificationsData = [
-=======
 
 import NotificationModal from '@/components/notification/NotificationModal.vue';
   
@@ -29,7 +27,6 @@ const router = useRouter();
 // 알림 데이터
 // TODO: GET /notifications API 연결 예정
 const notifications = ref([
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
   {
     id: 1,
@@ -99,7 +96,6 @@ const notifications = ref([
 
   },
 
-<<<<<<< HEAD
 ];
 
 const notifications = ref(notificationsData);
@@ -110,11 +106,9 @@ const displayNotifications = computed(() => {
   return user.value ? notifications.value : [];
 });
 
-=======
 ]);
 const selectedNotification = ref(null);
 
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 const openNotification = (item) => {
   selectedNotification.value = item;
 };
@@ -125,11 +119,8 @@ const openNotification = (item) => {
 // 읽지 않은 알림 개수
 const unreadCount = computed(() => {
 
-<<<<<<< HEAD
   return displayNotifications.value.filter(
-=======
   return notifications.value.filter(
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
     item => !item.isRead
   ).length;
 
@@ -213,11 +204,8 @@ const deleteNotification = (id) => {
       class="back-button"
       @click="goBack"
     >
-<<<<<<< HEAD
       ‹
-=======
       ←
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
     </button>
 
 
@@ -243,11 +231,8 @@ const deleteNotification = (id) => {
 
 
     <div
-<<<<<<< HEAD
       v-if="displayNotifications.length === 0"
-=======
       v-if="notifications.length === 0"
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
       class="empty"
     >
       새로운 알림이 없습니다.
@@ -256,11 +241,8 @@ const deleteNotification = (id) => {
 
 
     <article
-<<<<<<< HEAD
       v-for="item in displayNotifications"
-=======
       v-for="item in notifications"
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
       :key="item.id"
       class="notification-item"
       :class="{
@@ -367,19 +349,16 @@ const deleteNotification = (id) => {
 
   min-height:100vh;
 
-<<<<<<< HEAD
   background: var(--color-bg);
 
   padding: var(--space-md);
 
   padding-bottom: calc(var(--space-xl) + var(--space-2xl) + var(--space-xl));
-=======
   background:#fafafa;
 
   padding:20px;
 
   padding-bottom:100px;
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 }
 
@@ -391,15 +370,12 @@ const deleteNotification = (id) => {
 
   align-items:center;
 
-<<<<<<< HEAD
   gap: var(--space-sm);
 
   margin-bottom: var(--space-xl);
-=======
   gap:12px;
 
   margin-bottom:24px;
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 }
 
@@ -407,15 +383,12 @@ const deleteNotification = (id) => {
 
 .notification-header h1 {
 
-<<<<<<< HEAD
   font-size: var(--font-title);
 
   font-weight: var(--font-bold);
-=======
   font-size:22px;
 
   font-weight:700;
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 }
 
@@ -427,19 +400,16 @@ const deleteNotification = (id) => {
 
   background:none;
 
-<<<<<<< HEAD
   font-size: var(--font-2xl);
 
   cursor:pointer;
 
   color: var(--color-text-primary);
 
-=======
   font-size:24px;
 
   cursor:pointer;
 
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 }
 
 
@@ -452,7 +422,6 @@ const deleteNotification = (id) => {
 
   justify-content:center;
 
-<<<<<<< HEAD
   width:24px;
 
   height:24px;
@@ -464,7 +433,6 @@ const deleteNotification = (id) => {
   color: var(--color-btn-primary-text);
 
   font-size: var(--font-xs);
-=======
   width:22px;
 
   height:22px;
@@ -476,27 +444,20 @@ const deleteNotification = (id) => {
   color:white;
 
   font-size:12px;
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 }
 
 
 
 .notification-list {
-<<<<<<< HEAD
   margin-top: var(--space-md);
-=======
 
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
   display:flex;
 
   flex-direction:column;
 
-<<<<<<< HEAD
   gap: var(--space-sm);
-=======
   gap:12px;
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 }
 
@@ -510,7 +471,6 @@ const deleteNotification = (id) => {
 
   align-items:flex-start;
 
-<<<<<<< HEAD
   padding: var(--space-md);
 
   background: var(--color-surface);
@@ -520,7 +480,6 @@ const deleteNotification = (id) => {
   color: var(--color-text-secondary);
 
   transition: var(--transition-normal);
-=======
   padding:18px;
 
   background:white;
@@ -530,7 +489,6 @@ const deleteNotification = (id) => {
   color:#999;
 
   transition:.2s;
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 }
 
@@ -538,15 +496,12 @@ const deleteNotification = (id) => {
 
 .notification-item.unread {
 
-<<<<<<< HEAD
   color: var(--color-text-primary);
 
   font-weight: var(--font-semibold);
-=======
   color:#222;
 
   font-weight:600;
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 }
 
@@ -554,17 +509,14 @@ const deleteNotification = (id) => {
 
 .notification-content h2 {
 
-<<<<<<< HEAD
   margin: 0 0 var(--space-xs);
 
   font-size: var(--font-md);
 
   font-weight: var(--font-semibold);
-=======
   margin:0 0 8px;
 
   font-size:16px;
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 }
 
@@ -572,19 +524,16 @@ const deleteNotification = (id) => {
 
 .notification-content p {
 
-<<<<<<< HEAD
   margin: 0 0 var(--space-xs);
 
   font-size: var(--font-sm);
 
   font-weight: var(--font-regular);
-=======
   margin:0 0 10px;
 
   font-size:14px;
 
   font-weight:400;
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 }
 
@@ -592,15 +541,12 @@ const deleteNotification = (id) => {
 
 .notification-content span {
 
-<<<<<<< HEAD
   font-size: var(--font-xs);
 
   color: var(--color-text-tertiary);
-=======
   font-size:12px;
 
   color:#aaa;
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 }
 
@@ -612,15 +558,12 @@ const deleteNotification = (id) => {
 
   background:none;
 
-<<<<<<< HEAD
   font-size: var(--font-lg);
 
   color: var(--color-text-tertiary);
-=======
   font-size:22px;
 
   color:#aaa;
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
   cursor:pointer;
 
@@ -632,25 +575,19 @@ const deleteNotification = (id) => {
 
   position:fixed;
 
-<<<<<<< HEAD
   right: var(--space-md);
 
   bottom: var(--space-lg);
-=======
   right:20px;
 
   bottom:30px;
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
   display:flex;
 
   flex-direction:column;
 
-<<<<<<< HEAD
   gap: var(--space-xs);
-=======
   gap:10px;
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 }
 
@@ -658,7 +595,6 @@ const deleteNotification = (id) => {
 
 .notification-actions button {
 
-<<<<<<< HEAD
   padding: var(--space-sm) var(--space-md);
 
   border:none;
@@ -668,7 +604,6 @@ const deleteNotification = (id) => {
   background: var(--color-primary);
 
   color: var(--color-btn-primary-text);
-=======
   padding:12px 18px;
 
   border:none;
@@ -678,7 +613,6 @@ const deleteNotification = (id) => {
   background:#222;
 
   color:white;
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
   cursor:pointer;
 
@@ -690,15 +624,12 @@ const deleteNotification = (id) => {
 
   text-align:center;
 
-<<<<<<< HEAD
   color: var(--color-text-secondary);
 
   padding: calc(var(--space-2xl) * 2.5) 0;
-=======
   color:#999;
 
   padding:60px 0;
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 }
 

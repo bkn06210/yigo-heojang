@@ -170,17 +170,14 @@ const close = () => {
 
 };
 
-<<<<<<< HEAD
 </script> -->
 
 
 <!-- <template>
-=======
 </script>
 
 
 <template>
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 <div
   class="overlay"
@@ -331,19 +328,16 @@ class="apply-button"
 
 </div>
 
-<<<<<<< HEAD
 </template> -->
 
 
 
 <!-- <style scoped>
-=======
 </template>
 
 
 
 <style scoped>
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 .overlay {
 
@@ -367,11 +361,8 @@ z-index:1200;
 
 width:100%;
 
-<<<<<<< HEAD
 background:var(--color-surface);
-=======
 background:white;
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 border-radius:24px 24px 0 0;
 
@@ -387,11 +378,8 @@ width:40px;
 
 height:5px;
 
-<<<<<<< HEAD
 background:var(--color-border);
-=======
 background:#ddd;
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 border-radius:10px;
 
@@ -421,11 +409,8 @@ background:none;
 
 font-size:20px;
 
-<<<<<<< HEAD
 color:var(--color-text-primary);
 
-=======
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 }
 
 
@@ -456,11 +441,8 @@ display:block;
 
 font-size:13px;
 
-<<<<<<< HEAD
 color: var(--color-text-tertiary);
-=======
 color:#777;
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 }
 
@@ -472,11 +454,8 @@ display:block;
 
 margin-top:6px;
 
-<<<<<<< HEAD
 color:var(--color-text-primary);
 
-=======
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 }
 
 
@@ -505,11 +484,8 @@ background:none;
 
 font-size:25px;
 
-<<<<<<< HEAD
 color:var(--color-text-primary);
 
-=======
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 }
 
 
@@ -533,11 +509,8 @@ text-align:center;
 
 font-size:13px;
 
-<<<<<<< HEAD
 color: var(--color-text-tertiary);
-=======
 color:#777;
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 }
 
@@ -549,17 +522,14 @@ height:40px;
 
 border-radius:50%;
 
-<<<<<<< HEAD
 border:1px solid var(--color-border);
 
 background:var(--color-surface);
 
 color:var(--color-text-primary);
-=======
 border:1px solid #eee;
 
 background:white;
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 }
 
@@ -567,7 +537,6 @@ background:white;
 
 .calendar button.selected {
 
-<<<<<<< HEAD
 background:
   linear-gradient(
     90deg,
@@ -576,11 +545,9 @@ background:
   );
 
 color:var(--color-btn-primary-text);
-=======
 background:#4F46E5;
 
 color:white;
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 border:none;
 
@@ -601,7 +568,6 @@ border:none;
 
 border-radius:12px;
 
-<<<<<<< HEAD
 background:
   linear-gradient(
     90deg,
@@ -610,11 +576,9 @@ background:
   );
 
 color:var(--color-btn-primary-text);
-=======
 background:#4F46E5;
 
 color:white;
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 font-size:16px;
 
@@ -623,10 +587,7 @@ font-size:16px;
 </style> -->
 
 <script setup>
-<<<<<<< HEAD
 import Icon from '@/components/common/Icon.vue';
-=======
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 const props = defineProps({
 
@@ -672,22 +633,16 @@ const close = () => {
 <div class="header">
 
 <h2>
-<<<<<<< HEAD
 상세 이용내역
-=======
 사용내역 상세
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 </h2>
 
 
 <button
 @click="close"
 >
-<<<<<<< HEAD
 <Icon name="close" size="sm" />
-=======
 ✕
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 </button>
 
 
@@ -699,7 +654,6 @@ const close = () => {
 <div class="content">
 
 
-<<<<<<< HEAD
 <div class="amount-box">
 
 <span>결제 금액</span>
@@ -715,12 +669,10 @@ const close = () => {
 
 <span>
 거래일
-=======
 <div class="row">
 
 <span>
 사용일자
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 </span>
 
 <strong>
@@ -730,18 +682,15 @@ const close = () => {
 </div>
 
 
-<<<<<<< HEAD
 <div class="row">
 
 <span>
 가맹점명
-=======
 
 <div class="row">
 
 <span>
 가맹점
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 </span>
 
 <strong>
@@ -751,7 +700,6 @@ const close = () => {
 </div>
 
 
-<<<<<<< HEAD
 <div class="row">
 
 <span>
@@ -760,7 +708,6 @@ const close = () => {
 
 <strong>
 {{ props.transaction.category }}
-=======
 
 
 <div class="row">
@@ -771,13 +718,11 @@ const close = () => {
 
 <strong>
 {{ props.transaction.cardName }}
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 </strong>
 
 </div>
 
 
-<<<<<<< HEAD
 <div class="row">
 
 <span>
@@ -826,7 +771,6 @@ const close = () => {
 
 <strong>
 {{ props.transaction.status }}
-=======
 
 
 <div class="row amount">
@@ -837,7 +781,6 @@ const close = () => {
 
 <strong>
 -{{ props.transaction.amount.toLocaleString() }}원
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 </strong>
 
 </div>
@@ -888,7 +831,6 @@ z-index:1300;
 
 .sheet {
 
-<<<<<<< HEAD
 width: 100%;
 
 height: 80vh;
@@ -902,7 +844,6 @@ background: var(--color-surface);
 border-radius: 24px 24px 0 0;
 
 padding: 20px;
-=======
 width:100%;
 
 background:white;
@@ -910,7 +851,6 @@ background:white;
 border-radius:24px 24px 0 0;
 
 padding:20px;
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 }
 
@@ -922,11 +862,8 @@ width:40px;
 
 height:5px;
 
-<<<<<<< HEAD
 background:var(--color-border);
-=======
 background:#ddd;
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 border-radius:10px;
 
@@ -956,18 +893,14 @@ background:none;
 
 font-size:20px;
 
-<<<<<<< HEAD
 color:var(--color-text-primary);
 
-=======
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 }
 
 
 
 .content {
 
-<<<<<<< HEAD
 margin-top: 24px;
 
 flex: 1;
@@ -975,14 +908,11 @@ flex: 1;
 overflow-y: auto;
 
 padding-right: 8px;
-=======
 margin-top:24px;
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 }
 
 
-<<<<<<< HEAD
 .amount-box {
 
 background:var(--color-bg);
@@ -1023,8 +953,6 @@ font-weight:bold;
 
 }
 
-=======
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 .row {
 
@@ -1034,11 +962,8 @@ justify-content:space-between;
 
 padding:16px 0;
 
-<<<<<<< HEAD
 border-bottom:1px solid var(--color-border);
-=======
 border-bottom:1px solid #eee;
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 }
 
@@ -1046,7 +971,6 @@ border-bottom:1px solid #eee;
 
 .row span {
 
-<<<<<<< HEAD
 color:var(--color-text-secondary);
 
 }
@@ -1068,21 +992,16 @@ color:var(--color-text-secondary);
   color: var(--color-text-secondary);
 }
 
-=======
 color:#777;
 
 }
 
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 
 .amount strong {
 
-<<<<<<< HEAD
 color:var(--color-coral);
-=======
 color:#e53935;
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 font-size:18px;
 
@@ -1102,7 +1021,6 @@ border:none;
 
 border-radius:12px;
 
-<<<<<<< HEAD
 background:
   linear-gradient(
     90deg,
@@ -1111,17 +1029,12 @@ background:
   );
 
 color:var(--color-btn-primary-text);
-=======
 background:#4F46E5;
 
 color:white;
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 }
 
 
-<<<<<<< HEAD
 </style> -->
-=======
 </style>
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e

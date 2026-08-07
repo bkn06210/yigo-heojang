@@ -1,5 +1,4 @@
 <script setup>
-<<<<<<< HEAD
 import { computed } from 'vue'
 import { Swiper, SwiperSlide } from 'swiper/vue'
 import { Pagination } from 'swiper/modules'
@@ -283,7 +282,6 @@ const donutDashArray = (rate) => {
   font-weight: var(--font-semibold);
 }
 </style>
-=======
 
 const props = defineProps({
 
@@ -670,4 +668,3 @@ const emit = defineEmits([
 
 </style>
 <!-- 07_25 연동 변경: 홈 카드 요약을 실제 보유카드 API 응답으로 표시한다. -->
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e

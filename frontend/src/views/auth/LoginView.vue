@@ -1,8 +1,5 @@
-<<<<<<< HEAD
 ﻿<script setup>
-=======
 <script setup>
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 
@@ -18,7 +15,6 @@ import PasswordInput from '@/components/common/PasswordInput.vue';
 
 // 로그인 상태 관리 Store
 import { useAuthStore } from '@/stores/authStore';
-<<<<<<< HEAD
 
 // 토스트 알림
 import { useToast } from '@/composables/useToast';
@@ -26,11 +22,9 @@ import { useToast } from '@/composables/useToast';
 
 const router = useRouter();
 const { showToast } = useToast();
-=======
 
 
 const router = useRouter();
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 
 // 로그인 상태 저장소
@@ -40,10 +34,7 @@ const authStore = useAuthStore();
 const email = ref('');
 const password = ref('');
 const passwordValid = ref(true);
-<<<<<<< HEAD
 const showPassword = ref(false);
-=======
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 
 // 로그인 요청 처리 함수
@@ -52,22 +43,16 @@ const login = async () => {
 
   // 이메일 입력 확인
   if (!email.value) {
-<<<<<<< HEAD
     showToast('warning', '이메일을 입력해주세요.');
-=======
     alert('이메일을 입력해주세요.');
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
     return;
   }
 
 
   // 비밀번호 입력 확인
   if (!password.value) {
-<<<<<<< HEAD
     showToast('warning', '비밀번호를 입력해주세요.');
-=======
     alert('비밀번호를 입력해주세요.');
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
     return;
   }
 
@@ -142,24 +127,18 @@ const login = async () => {
     // 서버에서 내려준 오류 처리
     if (error.response) {
 
-<<<<<<< HEAD
       showToast('error', error.response.data.message);
-=======
       alert(
         error.response.data.message
       );
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 
     } else {
 
-<<<<<<< HEAD
       showToast('error', '서버와 연결할 수 없습니다.');
-=======
       alert(
         '서버와 연결할 수 없습니다.'
       );
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
     }
 
@@ -175,15 +154,12 @@ const goSignup = () => {
 
 };
 
-<<<<<<< HEAD
 const goHome = () => {
 
   router.push('/home');
 
 };
 
-=======
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 
 // 비밀번호 찾기 팝업 표시 여부
@@ -205,11 +181,8 @@ const verifyPasswordFind = (passwordResetToken) => {
 
   showPasswordFind.value = false;
 
-<<<<<<< HEAD
   router.push('/auth/password-change');
-=======
   router.push({ path: '/auth/password-change', state: { passwordResetToken } });
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 };
 
@@ -218,11 +191,8 @@ const verifyPasswordFind = (passwordResetToken) => {
 
 
 <template>
-<<<<<<< HEAD
-=======
 
   <div class="login">
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
   <div class="login-page">
 
@@ -247,7 +217,6 @@ const verifyPasswordFind = (passwordResetToken) => {
       <!-- 입력 폼 -->
       <form @submit.prevent="login" class="login-form">
 
-<<<<<<< HEAD
         <!-- 이메일 입력 -->
         <div class="input-field">
           <label class="field-label">아이디(E-Mail)</label>
@@ -296,14 +265,12 @@ const verifyPasswordFind = (passwordResetToken) => {
             비밀번호 찾기
           </button>
         </div>
-=======
 
       <label>비밀번호</label>
 
       <PasswordInput
         v-model="password"
       />
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
         <!-- 로그인 버튼 -->
         <button
@@ -316,7 +283,6 @@ const verifyPasswordFind = (passwordResetToken) => {
 
       </form>
 
-<<<<<<< HEAD
       <!-- 회원가입 섹션 -->
       <div class="signup-section">
         <p class="signup-text">
@@ -330,10 +296,8 @@ const verifyPasswordFind = (passwordResetToken) => {
           </button>
         </p>
       </div>
-=======
 
     <div class="buttons">
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
       <!-- 또는 -->
       <div class="or-section">
@@ -342,7 +306,6 @@ const verifyPasswordFind = (passwordResetToken) => {
         <span class="or-line"></span>
       </div>
 
-<<<<<<< HEAD
       <!-- 나중에 하기 -->
       <div class="later-section">
         <button
@@ -353,7 +316,6 @@ const verifyPasswordFind = (passwordResetToken) => {
           나중에 하기
         </button>
       </div>
-=======
 
 
       <p>
@@ -378,12 +340,10 @@ const verifyPasswordFind = (passwordResetToken) => {
         비밀번호를 잊으셨나요?
 
       </p>
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 
     </div>
 
-<<<<<<< HEAD
     <AuthVerifyModal
       v-if="showPasswordFind"
       @close="showPasswordFind=false"
@@ -391,7 +351,6 @@ const verifyPasswordFind = (passwordResetToken) => {
     />
 
   </div>
-=======
 
   </div>
 
@@ -407,7 +366,6 @@ const verifyPasswordFind = (passwordResetToken) => {
 
   />
 
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 </template>
 
@@ -415,7 +373,6 @@ const verifyPasswordFind = (passwordResetToken) => {
 
 <style scoped>
 
-<<<<<<< HEAD
 .login-page {
   min-height: 100vh;
   background:
@@ -440,7 +397,6 @@ const verifyPasswordFind = (passwordResetToken) => {
   padding: var(--space-xl);
   box-sizing: border-box;
   box-shadow: var(--shadow-lg);
-=======
 .login {
 
   padding: 24px;
@@ -452,7 +408,6 @@ h1 {
 
   margin-bottom: 40px;
 
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 }
 
 .login-header {
@@ -462,7 +417,6 @@ h1 {
   margin-bottom: var(--space-2xl);
 }
 
-<<<<<<< HEAD
 .back-button {
   background: none;
   border: none;
@@ -507,15 +461,12 @@ h1 {
 }
 
 .login-form {
-=======
 
 section {
 
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
   display: flex;
 
   flex-direction: column;
-<<<<<<< HEAD
   gap: var(--space-sm);
   margin-bottom: var(--space-2xl);
 }
@@ -535,7 +486,6 @@ section {
   letter-spacing: 0.5px;
   margin: 0;
   text-align: left;
-=======
 
   gap: 14px;
 
@@ -559,7 +509,6 @@ section {
 
   margin-top: 20px;
 
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 }
 
 .text-input {
@@ -575,7 +524,6 @@ section {
   transition: all var(--transition-fast);
 }
 
-<<<<<<< HEAD
 .text-input::placeholder {
   color: var(--color-text-secondary);
 }
@@ -744,7 +692,6 @@ section {
 }
 
 </style>
-=======
 
 span,
 .password {
@@ -757,4 +704,3 @@ span,
 
 </style>
 <!-- 07_25 연동 변경: 로그인 입력을 실제 인증 API와 연결하고 오류를 표시한다. -->
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e

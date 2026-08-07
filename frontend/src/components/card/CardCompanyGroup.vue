@@ -65,11 +65,8 @@ const togglePin = (id) => {
       </h3>
 
 
-<<<<<<< HEAD
       <span class="card-count">
-=======
       <span>
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
         {{ company.cards.length }}장
       </span>
 
@@ -77,7 +74,6 @@ const togglePin = (id) => {
 
 
 
-<<<<<<< HEAD
     <!-- 카드 목록 (2열 그리드) -->
     <div class="cards-grid">
 
@@ -89,7 +85,6 @@ const togglePin = (id) => {
       />
 
     </div>
-=======
     <!-- 카드 목록 -->
     <CardItem
       v-for="card in visibleCards"
@@ -97,7 +92,6 @@ const togglePin = (id) => {
       :card="card"
       @toggle-pin="togglePin"
     />
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 
 
@@ -110,11 +104,8 @@ const togglePin = (id) => {
 
       {{
         isExpanded
-<<<<<<< HEAD
           ? '접기 ∧'
-=======
           ? '접기'
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
           : `+ ${company.cards.length - limit}개 더보기`
       }}
 
@@ -131,11 +122,8 @@ const togglePin = (id) => {
 
 .company-group {
 
-<<<<<<< HEAD
   margin-bottom: var(--space-2xl);
-=======
   margin-bottom:32px;
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 }
 
@@ -143,7 +131,6 @@ const togglePin = (id) => {
 
 .company-header {
 
-<<<<<<< HEAD
   display: flex;
 
   justify-content: space-between;
@@ -153,7 +140,6 @@ const togglePin = (id) => {
   margin-bottom: var(--space-md);
 
   padding: 0 var(--space-xs);
-=======
   display:flex;
 
   justify-content:space-between;
@@ -161,7 +147,6 @@ const togglePin = (id) => {
   align-items:center;
 
   margin-bottom:12px;
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 }
 
@@ -169,7 +154,6 @@ const togglePin = (id) => {
 
 .company-header h3 {
 
-<<<<<<< HEAD
   margin: 0;
 
   font-size: var(--font-md);
@@ -179,17 +163,14 @@ const togglePin = (id) => {
   color: var(--color-text-primary);
 
   letter-spacing: -0.2px;
-=======
   font-size:18px;
 
   font-weight:700;
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 }
 
 
 
-<<<<<<< HEAD
 .card-count {
 
   color: var(--color-text-tertiary);
@@ -197,18 +178,15 @@ const togglePin = (id) => {
   font-size: var(--font-xs);
 
   font-weight: var(--font-medium);
-=======
 .company-header span {
 
   color:#888;
 
   font-size:14px;
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 }
 
 
-<<<<<<< HEAD
 .cards-grid {
 
   display: flex;
@@ -251,7 +229,6 @@ const togglePin = (id) => {
 }
 
 </style>
-=======
 
 .more-button {
 
@@ -273,4 +250,3 @@ const togglePin = (id) => {
 
 
 </style>
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e

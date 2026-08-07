@@ -1,8 +1,5 @@
-<<<<<<< HEAD
 ﻿<script setup>
-=======
 <script setup>
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 import { ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 
@@ -10,10 +7,7 @@ import { useRouter } from 'vue-router';
 import AppInput from '@/components/common/AppInput.vue';
 import AppButton from '@/components/common/AppButton.vue';
 import PasswordInput from '@/components/common/PasswordInput.vue';
-<<<<<<< HEAD
 import AuthVerifyModal from '@/components/auth/AuthVerifyModal.vue';
-=======
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 // API 전달 데이터: name, email, password, signupVerificationToken
 import {
@@ -21,28 +15,22 @@ import {
   sendSignupEmailVerification,
   verifySignupEmailVerification,
 } from '@/api/authApi';
-<<<<<<< HEAD
 
 // 토스트 알림
 import { useToast } from '@/composables/useToast';
 
 const router = useRouter();
 const { showToast } = useToast();
-=======
 
 const router = useRouter();
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 // 입력값
 const name = ref('');
 const email = ref('');
 const password = ref('');
 const passwordConfirm = ref('');
-<<<<<<< HEAD
 const showPassword = ref(false);
 const showPasswordConfirm = ref(false);
-=======
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 // 이메일 인증 상태
 const verificationCode = ref('');
@@ -55,7 +43,6 @@ const passwordValid = ref(true);
 // 비밀번호 확인 오류
 const passwordConfirmError = ref('');
 
-<<<<<<< HEAD
 // 이메일 중복 검사 상태
 const emailDuplicateError = ref('');
 
@@ -112,7 +99,6 @@ const confirmVerificationCode = async () => {
     showToast('success', '이메일 인증이 완료되었습니다.');
   } catch (error) {
     showToast('error', error.response?.data?.message || '인증번호 확인에 실패했습니다.');
-=======
 // 이메일 인증번호 요청
 const sendVerificationCode = async () => {
   if (!email.value) {
@@ -149,7 +135,6 @@ const confirmVerificationCode = async () => {
     alert('이메일 인증이 완료되었습니다.');
   } catch (error) {
     alert(error.response?.data?.message || '인증번호 확인에 실패했습니다.');
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
   }
 };
 
@@ -189,14 +174,11 @@ watch(password, () => {
 watch(passwordConfirm, () => {
   validatePasswordConfirm();
 });
-<<<<<<< HEAD
 
 // 뒤로가기
 const goBack = () => {
   router.push('/auth/terms');
 };
-=======
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 // 로그인 이동
 const goLogin = () => {
@@ -211,38 +193,26 @@ const skip = () => {
 // 회원가입
 const nextStep = async () => {
   if (!name.value) {
-<<<<<<< HEAD
     showToast('warning', '이름을 입력해주세요.');
-=======
     alert('이름을 입력해주세요.');
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
     return;
   }
 
   if (!email.value) {
-<<<<<<< HEAD
     showToast('warning', '이메일을 입력해주세요.');
-=======
     alert('이메일을 입력해주세요.');
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
     return;
   }
 
   if (!isEmailVerified.value) {
-<<<<<<< HEAD
     showToast('warning', '이메일 인증을 완료해주세요.');
-=======
     alert('이메일 인증을 완료해주세요.');
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
     return;
   }
 
   if (!password.value) {
-<<<<<<< HEAD
     showToast('warning', '비밀번호를 입력해주세요.');
-=======
     alert('비밀번호를 입력해주세요.');
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
     return;
   }
 
@@ -256,13 +226,11 @@ const nextStep = async () => {
       email: email.value,
       password: password.value,
       signupVerificationToken: signupVerificationToken.value,
-<<<<<<< HEAD
     };
 
     await signup(userData);
 
     showToast('success', '회원가입이 완료되었습니다.');
-=======
       termsAgreements: JSON.parse(sessionStorage.getItem('termsAgreements') || '[]'),
     };
 
@@ -277,27 +245,22 @@ const nextStep = async () => {
     sessionStorage.removeItem('termsAgreements');
 
     alert('회원가입이 완료되었습니다.');
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
     router.push('/auth/login');
   } catch (error) {
     if (error.response) {
-<<<<<<< HEAD
       showToast('error', error.response.data.message);
     } else {
       showToast('error', '서버와 연결할 수 없습니다.');
-=======
       alert(error.response.data.message);
     } else {
       alert('서버와 연결할 수 없습니다.');
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
     }
   }
 };
 </script>
 
 <template>
-<<<<<<< HEAD
   <div class="signup-page">
     <div class="signup-container">
 
@@ -466,7 +429,6 @@ const nextStep = async () => {
       </p>
 
     </div>
-=======
   <div class="signup">
     <h1>회원가입</h1>
 
@@ -529,14 +491,12 @@ const nextStep = async () => {
 
       <p>입력하신 개인정보는 안전하게 암호화되어 보호됩니다.</p>
     </footer>
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
   </div>
 </template>
 
 
 
 <style scoped>
-<<<<<<< HEAD
 
 .signup-page {
   min-height: 100vh;
@@ -831,7 +791,6 @@ const nextStep = async () => {
 }
 
 </style>
-=======
 .signup {
   padding: 24px;
 }
@@ -918,4 +877,3 @@ footer div {
 }
 </style>
 <!-- 07_25 연동 변경: 회원가입 이메일 인증과 가입 API를 화면에 연결한다. -->
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e

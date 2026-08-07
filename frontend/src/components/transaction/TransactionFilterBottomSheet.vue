@@ -1,12 +1,9 @@
 <!-- src/components/transaction/TransactionFilterBottomSheet.vue -->
 
 <script setup>
-<<<<<<< HEAD
 import { ref, watch } from 'vue';
 import Icon from '@/components/common/Icon.vue';
-=======
 import { onMounted, ref, watch } from 'vue';
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 
 // 부모 전달값
@@ -20,14 +17,11 @@ const props = defineProps({
 
   },
 
-<<<<<<< HEAD
-=======
   categories: {
     type: Array,
     default: () => [],
   },
 
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
   
 
 
@@ -65,32 +59,23 @@ const showCardList = ref(false);
 // 조회 조건
 const filter = ref({
 
-<<<<<<< HEAD
   approval: '승인',
-=======
   approval: '전체',
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
   cardType: '전체',
 
   card: '전체',
 
-<<<<<<< HEAD
-=======
   userCardId: null,
 
   categoryId: null,
 
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
   region: '전체',
 
   transactionType: '전체',
 
-<<<<<<< HEAD
   period: '이번달',
-=======
   period: '전체',
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
   startDate: '',
 
@@ -112,12 +97,10 @@ watch(
 
     filter.value.endDate = value.endDate;
 
-<<<<<<< HEAD
   },
 
   {
     deep:true
-=======
     if (value.startDate || value.endDate) {
       filter.value.period = '직접 선택';
     }
@@ -127,7 +110,6 @@ watch(
   {
     deep:true,
     immediate:true,
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
   }
 
 );
@@ -174,22 +156,16 @@ const transactionTypes = [
 
 const periods = [
 
-<<<<<<< HEAD
-=======
   '전체',
 
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
   '이번달',
 
   '1개월',
 
   '3개월',
 
-<<<<<<< HEAD
-=======
   '월별 선택',
 
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
   '직접 선택',
 
 ];
@@ -207,11 +183,8 @@ const selectCard = (card) => {
 
   filter.value.card = card.name;
 
-<<<<<<< HEAD
-=======
   filter.value.userCardId = card.id;
 
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
   filter.value.cardType = card.type;
 
@@ -227,7 +200,6 @@ const selectCard = (card) => {
 
 
 
-<<<<<<< HEAD
 // 날짜 포맷팅
 const formatDate = (date) => {
   return (
@@ -266,7 +238,6 @@ const selectPeriod = (item) => {
 
   filter.value.startDate = formatDate(startDate);
   filter.value.endDate = formatDate(endDate);
-=======
 // 기간 선택
 
 const selectPeriod = (item) => {
@@ -310,7 +281,6 @@ const selectPeriod = (item) => {
   }
 
 
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 };
 
 
@@ -368,32 +338,23 @@ const reset = () => {
   filter.value = {
 
 
-<<<<<<< HEAD
     approval:'승인',
-=======
     approval:'전체',
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
     cardType:'전체',
 
     card:'전체',
 
-<<<<<<< HEAD
-=======
     userCardId:null,
 
     categoryId:null,
 
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
     region:'전체',
 
     transactionType:'전체',
 
-<<<<<<< HEAD
     period:'이번달',
-=======
     period:'전체',
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
     startDate:'',
 
@@ -402,11 +363,9 @@ const reset = () => {
 
   };
 
-<<<<<<< HEAD
 
 };
 
-=======
   selectPeriod('전체');
 
 
@@ -418,7 +377,6 @@ onMounted(() => {
   }
 });
 
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 </script>
 
 
@@ -454,11 +412,8 @@ class="overlay"
 <button
 @click="close"
 >
-<<<<<<< HEAD
 <Icon name="close" size="sm" />
-=======
 ✕
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 </button>
 
 
@@ -490,8 +445,6 @@ class="overlay"
 <button
 
 :class="{
-<<<<<<< HEAD
-=======
 active:filter.approval==='전체'
 }"
 
@@ -505,7 +458,6 @@ active:filter.approval==='전체'
 <button
 
 :class="{
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 active:filter.approval==='승인'
 }"
 
@@ -694,8 +646,6 @@ class="card-item"
 
 <!-- 지역 -->
 
-<<<<<<< HEAD
-=======
 <div class="filter-item">
   <h3>소비 카테고리</h3>
   <div class="chips wrap">
@@ -714,7 +664,6 @@ class="card-item"
 
 <!-- 지역 -->
 
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 <div class="filter-item">
 
@@ -942,11 +891,8 @@ max-height:85vh;
 
 overflow-y:auto;
 
-<<<<<<< HEAD
 background:var(--color-surface);
-=======
 background:white;
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 border-radius:24px 24px 0 0;
 
@@ -962,11 +908,8 @@ width:40px;
 
 height:5px;
 
-<<<<<<< HEAD
 background:var(--color-border);
-=======
 background:#ddd;
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 border-radius:10px;
 
@@ -986,7 +929,6 @@ align-items:center;
 
 }
 
-<<<<<<< HEAD
 .title-area h2 {
 
 color:var(--color-text-primary);
@@ -994,9 +936,7 @@ color:var(--color-text-primary);
 margin:0;
 
 }
-=======
 
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 .title-area button {
 
@@ -1006,11 +946,8 @@ background:none;
 
 font-size:20px;
 
-<<<<<<< HEAD
 color:var(--color-text-primary);
 
-=======
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 }
 
 
@@ -1025,7 +962,6 @@ margin-top:24px;
 
 .filter-item h3 {
 
-<<<<<<< HEAD
 font-size: var(--font-md);
 
 font-weight: var(--font-semibold);
@@ -1034,12 +970,10 @@ margin-bottom:12px;
 
 color:var(--color-text-primary);
 
-=======
 font-size:15px;
 
 margin-bottom:12px;
 
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 }
 
 
@@ -1068,17 +1002,14 @@ padding:10px 14px;
 
 border-radius:12px;
 
-<<<<<<< HEAD
 border:1px solid var(--color-border);
 
 background:var(--color-surface);
 
 color:var(--color-text-primary);
-=======
 border:1px solid #ddd;
 
 background:white;
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 }
 
@@ -1086,17 +1017,14 @@ background:white;
 
 .chips button.active {
 
-<<<<<<< HEAD
 border:2px solid var(--color-primary);
 
 background:var(--color-primary);
 
 color:var(--color-btn-primary-text);
-=======
 border:2px solid #4F46E5;
 
 color:#4F46E5;
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 }
 
@@ -1116,7 +1044,6 @@ justify-content:space-between;
 
 align-items:center;
 
-<<<<<<< HEAD
 border:1px solid var(--color-border);
 
 border-radius:12px;
@@ -1124,13 +1051,11 @@ border-radius:12px;
 background:var(--color-surface);
 
 color:var(--color-text-primary);
-=======
 border:1px solid #ddd;
 
 border-radius:12px;
 
 background:white;
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 }
 
@@ -1140,11 +1065,8 @@ background:white;
 
 margin-top:12px;
 
-<<<<<<< HEAD
 border:1px solid var(--color-border);
-=======
 border:1px solid #ddd;
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 border-radius:16px;
 
@@ -1166,7 +1088,6 @@ align-items:center;
 
 padding:14px;
 
-<<<<<<< HEAD
 background:var(--color-surface);
 
 border:none;
@@ -1174,13 +1095,11 @@ border:none;
 border-bottom:1px solid var(--color-border);
 
 color:var(--color-text-primary);
-=======
 background:white;
 
 border:none;
 
 border-bottom:1px solid #eee;
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 }
 
@@ -1206,11 +1125,8 @@ margin:4px 0 0;
 
 font-size:13px;
 
-<<<<<<< HEAD
 color:var(--color-text-secondary);
-=======
 color:#777;
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 }
 
@@ -1222,21 +1138,15 @@ margin-top:12px;
 
 padding:14px;
 
-<<<<<<< HEAD
 background:var(--color-bg);
-=======
 background:#f7f7f7;
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 border-radius:12px;
 
 text-align:center;
 
-<<<<<<< HEAD
 color:var(--color-text-primary);
 
-=======
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 }
 
 
@@ -1267,17 +1177,14 @@ border-radius:12px;
 
 flex:1;
 
-<<<<<<< HEAD
 border:1px solid var(--color-border);
 
 background:var(--color-surface);
 
 color:var(--color-text-primary);
-=======
 border:1px solid #ddd;
 
 background:white;
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 }
 
@@ -1289,7 +1196,6 @@ flex:2;
 
 border:none;
 
-<<<<<<< HEAD
 background:
   linear-gradient(
     90deg,
@@ -1304,7 +1210,6 @@ font-weight:var(--font-semibold);
 }
 
 </style>
-=======
 background:#4F46E5;
 
 color:white;
@@ -1313,4 +1218,3 @@ color:white;
 
 </style>
 <!-- 07_25 연동 변경: 조회조건을 소비내역 API 쿼리 파라미터로 전달한다. -->
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e

@@ -40,11 +40,8 @@ const benefits = ref([
 
 <template>
   <div class="benefit-detail-page">
-<<<<<<< HEAD
     <PageHeader title="혜택 상세" @back="router.back()" />
-=======
     <PageHeader title="혜택 상세" />
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
     <!-- 카드 정보 -->
     <section class="card-section">
@@ -70,28 +67,21 @@ const benefits = ref([
 
 <style scoped>
 .benefit-detail-page {
-<<<<<<< HEAD
   padding: var(--space-md);
   box-sizing: border-box;
-=======
   padding: 20px;
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 }
 
 .card-section {
   display: flex;
   flex-direction: column;
   align-items: center;
-<<<<<<< HEAD
   margin-bottom: var(--space-2xl);
-=======
   margin-bottom: 32px;
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 }
 
 .card-image {
   width: 220px;
-<<<<<<< HEAD
   border-radius: var(--radius-sm);
   margin-bottom: var(--space-md);
 }
@@ -100,7 +90,6 @@ const benefits = ref([
   font-size: var(--font-xl);
   font-weight: var(--font-bold);
   color: var(--color-text-primary);
-=======
   border-radius: 12px;
   margin-bottom: 16px;
 }
@@ -108,16 +97,12 @@ const benefits = ref([
 .card-section h2 {
   font-size: 20px;
   font-weight: 700;
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 }
 
 .benefit-section {
   display: flex;
   flex-direction: column;
-<<<<<<< HEAD
   gap: var(--space-md);
-=======
   gap: 16px;
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 }
 </style> 

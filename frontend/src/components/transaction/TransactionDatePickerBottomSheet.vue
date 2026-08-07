@@ -2,10 +2,7 @@
 
 <script setup>
 import { ref, computed } from 'vue';
-<<<<<<< HEAD
 import Icon from '@/components/common/Icon.vue';
-=======
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 
 const emit = defineEmits([
@@ -18,12 +15,9 @@ const emit = defineEmits([
 // 현재 보고 있는 달
 const currentDate = ref(new Date());
 
-<<<<<<< HEAD
 // 월 선택 모드
 const showMonthPicker = ref(false);
-=======
 
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 // 선택 날짜
 const startDate = ref('');
@@ -52,7 +46,6 @@ const changeMonth = (value) => {
 
 
 
-<<<<<<< HEAD
 // 월 선택
 
 const selectMonth = (month) => {
@@ -66,8 +59,6 @@ const selectMonth = (month) => {
 };
 
 
-=======
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 // 캘린더 날짜 생성
 
@@ -141,10 +132,7 @@ const calendarDays = computed(() => {
 
 
 
-<<<<<<< HEAD
-=======
 
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 // 날짜 포맷
 
 const formatDate = (date) => {
@@ -166,10 +154,7 @@ const formatDate = (date) => {
 
 
 
-<<<<<<< HEAD
-=======
 
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 // 날짜 선택
 
 const selectDate = (date) => {
@@ -238,12 +223,9 @@ const selectDate = (date) => {
 
 
 
-<<<<<<< HEAD
-=======
 
 
 
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 // 선택 상태
 
 const isSelected = (date) => {
@@ -262,7 +244,6 @@ const isSelected = (date) => {
 
 
 
-<<<<<<< HEAD
 // 범위 내 상태 (시작일과 종료일 사이)
 
 const isBetween = (date) => {
@@ -302,8 +283,6 @@ const isLastInRange = (date) => {
   return date === endDate.value;
 
 };
-=======
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 
 
@@ -312,7 +291,6 @@ const isLastInRange = (date) => {
 
 const apply = () => {
 
-<<<<<<< HEAD
   let applyStartDate = startDate.value;
 
   let applyEndDate = endDate.value;
@@ -333,38 +311,30 @@ const apply = () => {
     applyStartDate = formatDate(firstDay);
 
     applyEndDate = formatDate(lastDay);
-=======
 
   if(!startDate.value || !endDate.value) {
 
 
     return;
 
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
   }
 
 
-<<<<<<< HEAD
-=======
 
 
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
   emit(
 
     'apply',
 
     {
 
-<<<<<<< HEAD
       startDate:applyStartDate,
 
       endDate:applyEndDate,
-=======
       startDate:startDate.value,
 
       endDate:endDate.value,
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
     }
 
@@ -376,11 +346,8 @@ const apply = () => {
 
 
 
-<<<<<<< HEAD
-=======
 
 
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 // 닫기
 
 const close = () => {
@@ -394,7 +361,6 @@ const close = () => {
 
 </script>
 
-<<<<<<< HEAD
 <template>
 
 <div class="overlay" @click.self="close">
@@ -418,7 +384,6 @@ const close = () => {
 
 <div class="selected">
 
-=======
 
 
 
@@ -497,7 +462,6 @@ class="overlay"
 <div class="selected">
 
 
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 <div>
 
 <p>
@@ -540,7 +504,6 @@ class="overlay"
 
 
 
-<<<<<<< HEAD
 <div v-if="showMonthPicker" class="month-picker">
 
 <div class="month-grid">
@@ -575,7 +538,6 @@ class="overlay"
 
 <div class="calendar">
 
-=======
 
 
 
@@ -584,7 +546,6 @@ class="overlay"
 
 
 
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 <button
 
 v-for="(day,index) in calendarDays"
@@ -594,27 +555,22 @@ v-for="(day,index) in calendarDays"
 :disabled="!day"
 
 :class="{
-<<<<<<< HEAD
 active:isSelected(day),
 between:isBetween(day),
 'range-start':isFirstInRange(day),
 'range-end':isLastInRange(day)
-=======
 active:isSelected(day)
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 }"
 
 @click="selectDate(day)"
 
 >
 
-<<<<<<< HEAD
 <span>{{day?.split('.')[2]}}</span>
 
 </button>
 
 </div>
-=======
 
 {{day?.split('.')[2]}}
 
@@ -622,15 +578,12 @@ active:isSelected(day)
 </button>
 
 
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 </div>
 
 
 
-<<<<<<< HEAD
 <button class="apply" @click="apply">
-=======
 
 
 
@@ -642,7 +595,6 @@ class="apply"
 @click="apply"
 
 >
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 적용
 
@@ -650,7 +602,6 @@ class="apply"
 
 
 
-<<<<<<< HEAD
 </section>
 
 </div>
@@ -897,7 +848,6 @@ cursor:pointer;
 }
 
 </style>
-=======
 
 
 </section>
@@ -1075,4 +1025,3 @@ color:white;
 
 
 </style>
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e

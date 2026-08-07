@@ -1,22 +1,18 @@
 <script setup>
-<<<<<<< HEAD
 import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { maskCardNumber } from '@/utils/card'
 import BaseCard from '@/components/common/BaseCard.vue'
 import Icon from '@/components/common/Icon.vue'
-=======
 import { useRouter } from 'vue-router';
 
 import { maskCardNumber } from '@/utils/card';
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 const props = defineProps({
   card: {
     type: Object,
     required: true,
   },
-<<<<<<< HEAD
 })
 
 const emit = defineEmits(['toggle-pin'])
@@ -210,7 +206,6 @@ const maskedCardNumber = computed(() => {
   white-space: nowrap;
 }
 </style>
-=======
 });
 
 const emit = defineEmits([
@@ -389,4 +384,3 @@ const handlePinClick = () => {
 
 
 </style>
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e

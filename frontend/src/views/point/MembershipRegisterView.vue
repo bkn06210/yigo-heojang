@@ -1,10 +1,8 @@
-<<<<<<< HEAD
 ﻿<script setup>
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 
 import PageHeader from '@/components/common/PageHeader.vue'
-=======
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
@@ -12,7 +10,6 @@ import { getMembershipProviders, registerMembership } from '@/api/walletApi'
 import { getPartnerUsagePlaces } from '@/utils/partnerUsagePlaces'
 import { getPartnerLogo } from '@/utils/partnerLogos'
 
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 const router = useRouter()
 
@@ -31,7 +28,6 @@ const selectedMembership = ref(null)
 
 // 임시 멤버십 데이터
 // 추후 API 응답 데이터로 교체 예정
-<<<<<<< HEAD
 const membershipList = ref([
   {
     id: 1,
@@ -62,7 +58,6 @@ const membershipList = ref([
       '영화관',
       '카페'
     ]
-=======
 const membershipList = ref([])
 const errorMessage = ref('')
 
@@ -79,7 +74,6 @@ const loadProviders = async () => {
       }))
   } catch (error) {
     errorMessage.value = error?.response?.data?.message || error?.message || '제휴 멤버십을 불러오지 못했습니다.'
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
   }
 }
 
@@ -203,7 +197,6 @@ const popularMemberships = computed(() => {
 
 
 // 멤버십 추가 클릭
-<<<<<<< HEAD
 // TODO: 백엔드 연동 필요 - 현재는 완료 팝업만 띄우고 실제로 저장하지 않음.
 // PointListView.vue의 membershipList(로컬 빈 배열)와 연결되어 있지 않아서
 // 여기서 "추가"를 눌러도 혜택 목록 페이지에는 반영되지 않음.
@@ -214,7 +207,6 @@ const addMembership = (membership) => {
 
   showModal.value = true
 
-=======
 const addMembership = async (membership) => {
   try {
     await registerMembership(membership.id)
@@ -224,7 +216,6 @@ const addMembership = async (membership) => {
   } catch (error) {
     errorMessage.value = error?.response?.data?.message || error?.message || '멤버십 추가에 실패했습니다.'
   }
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 }
 
 
@@ -895,7 +886,6 @@ button:hover {
 
 .suggestion-item:hover {
 
-<<<<<<< HEAD
   background: rgba(255, 255, 255, 0.15);
 
 }
@@ -904,10 +894,8 @@ button:hover {
 
   background: rgba(255, 255, 255, 0.04);
 
-=======
   background: #f8f8f8;
  
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 }
 
 

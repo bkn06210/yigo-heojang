@@ -1,5 +1,4 @@
 <script setup>
-<<<<<<< HEAD
 import { useRouter } from 'vue-router';
 
 const props = defineProps({
@@ -34,7 +33,6 @@ const goToPoint = () => {
     router.push(props.membershipBenefit.route);
   }
 };
-=======
 
 /*
 | 결제 결과 모달
@@ -138,12 +136,10 @@ const goPoint = ()=>{
 };
 
 
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 </script>
 
 <template>
 
-<<<<<<< HEAD
   <div class="overlay">
 
     <div class="modal">
@@ -184,7 +180,6 @@ const goPoint = ()=>{
 
   </div>
 
-=======
 
 <div class="overlay">
 
@@ -315,12 +310,10 @@ const goPoint = ()=>{
 
 </div>
 
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 </template>
 
 <style scoped>
 
-<<<<<<< HEAD
 .overlay{
 
   position:fixed;
@@ -332,7 +325,6 @@ const goPoint = ()=>{
   justify-content:center;
   align-items:center;
 
-=======
 
 .overlay{
 
@@ -348,7 +340,6 @@ const goPoint = ()=>{
 
   background:rgba(0,0,0,0.45);
 
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
   z-index:1000;
 
 }
@@ -357,7 +348,6 @@ const goPoint = ()=>{
 
   width:320px;
 
-<<<<<<< HEAD
   border-radius: var(--radius-xl);
 
   padding: var(--space-xl);
@@ -420,7 +410,6 @@ const goPoint = ()=>{
 
   display:flex;
   justify-content:center;
-=======
   padding:28px;
 
   background:white;
@@ -446,22 +435,17 @@ const goPoint = ()=>{
 
   justify-content:center;
 
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
   align-items:center;
 
   font-size:32px;
 
-<<<<<<< HEAD
   color: var(--color-coral);
   background: rgba(168, 78, 104, 0.12);
 
-=======
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 }
 
 .payment-info{
 
-<<<<<<< HEAD
   margin: var(--space-xl) 0;
 
 }
@@ -473,27 +457,21 @@ const goPoint = ()=>{
   color: var(--color-text-secondary);
 
   font-size: var(--font-sm);
-=======
   margin:24px 0;
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 }
 
 .payment-info strong{
 
-<<<<<<< HEAD
   font-size: var(--font-2xl);
   font-weight: var(--font-bold);
   color: var(--color-text-primary);
-=======
   font-size:24px;
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 }
 
 .benefit-box{
 
-<<<<<<< HEAD
   margin-bottom: var(--space-md);
 
   padding: var(--space-md);
@@ -511,20 +489,17 @@ const goPoint = ()=>{
   font-size: var(--font-sm);
 
   color: var(--color-text-secondary);
-=======
   padding:16px;
 
   border-radius:14px;
 
   margin-bottom:16px;
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 }
 
 .point-button{
 
   width:100%;
-<<<<<<< HEAD
   height:44px;
 
   border:none;
@@ -547,38 +522,32 @@ const goPoint = ()=>{
 .point-button:hover{
 
   opacity: 0.9;
-=======
 
   height:44px;
 
   border-radius:10px;
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 }
 
 .notice{
 
-<<<<<<< HEAD
   margin: var(--space-lg) 0;
 
   font-size: var(--font-sm);
   line-height:1.5;
 
   color: var(--color-text-secondary);
-=======
   font-size:14px;
 
   line-height:1.5;
 
   margin:20px 0;
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
 
 }
 
 .confirm-button{
 
   width:100%;
-<<<<<<< HEAD
   height:48px;
 
   margin-top: var(--space-sm);
@@ -607,7 +576,6 @@ const goPoint = ()=>{
 }
 
 </style>
-=======
 
   height:48px;
 
@@ -617,4 +585,3 @@ const goPoint = ()=>{
 
 
 </style>
->>>>>>> 29557b87f11aa5ce9f2606e90780fd1b5f44382e
