@@ -434,7 +434,11 @@ CREATE TABLE card_term_document (
     -- 수집 시점에는 대응하는 card 행이 없을 수 있다. 카드사가 표기한 이름을 그대로 남겨야
     -- card_id가 NULL인 문서를 나중에 어느 카드에 붙일지 판단할 수 있다.
     source_card_name      VARCHAR(200) NOT NULL COMMENT '카드사 표기 카드명. card_id 매칭의 근거',
-    issuer                VARCHAR(50)  NOT NULL COMMENT '카드사 (예: KB국민, 삼성)',
+    -- 수집기가 쓰는 카드사 표기와 카드사 마스터의 정식 명칭이 다르다(KB국민 / KB국민카드).
+    -- 문자열로 이으면 표기가 갈리는 순간 조용히 조인이 비므로 ID로 잇는다.
+    -- 원래 표기는 그대로 남긴다 — 매칭이 틀렸을 때 무엇을 보고 이었는지 근거가 된다.
+    card_company_id       BIGINT       NULL COMMENT '카드사 ID. 마스터와 매칭되기 전이면 NULL',
+    issuer                VARCHAR(50)  NOT NULL COMMENT '수집기가 쓴 카드사 표기 (예: KB국민, 삼성)',
     -- 카드사마다 문서 구성이 다르다. 유형을 ENUM으로 고정하면 카드사를 추가할 때마다
     -- ALTER가 필요하므로 값으로 흡수한다.
     doc_type              VARCHAR(30)  NOT NULL COMMENT '문서 유형: PRODUCT_GUIDE(상품설명서) | KEY_TERMS(주요거래조건)',
@@ -459,8 +463,46 @@ CREATE TABLE card_term_document (
     -- 약관이 개정되면 해시가 달라지므로 새 행으로 쌓여 이력이 남는다.
     UNIQUE KEY uk_card_term_document (issuer, doc_type, content_hash),
     KEY idx_card_term_document_card (card_id),
-    CONSTRAINT fk_card_term_document_card FOREIGN KEY (card_id) REFERENCES card (card_id)
+    KEY idx_card_term_document_company (card_company_id),
+    CONSTRAINT fk_card_term_document_card FOREIGN KEY (card_id) REFERENCES card (card_id),
+    CONSTRAINT fk_card_term_document_company FOREIGN KEY (card_company_id)
+        REFERENCES card_company (card_company_id)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT '카드 약관 원문';
+
+-- 약관 원문을 검색 단위로 자른 조각.
+-- 원문 한 장이 수만 자라 통째로는 프롬프트에 들어가지 않고, 들어가더라도 질문과
+-- 무관한 조항이 대부분이라 답이 흐려진다. 조문 단위로 잘라 두고 질문에 가까운
+-- 몇 개만 골라 넣는다.
+--
+-- 개정된 약관이 새 행으로 쌓이는 원문과 달리, 조각은 현행본만 남긴다.
+-- 옛 조각을 함께 두면 "연회비 반환 기준"에 지난 시행본과 현행본이 나란히 검색돼
+-- 어느 쪽이 지금 맞는 답인지 가릴 수 없다. 원문 이력은 위 테이블에 그대로 남으므로
+-- 조각은 언제든 다시 만들 수 있다.
+CREATE TABLE card_term_chunk (
+    card_term_chunk_id    BIGINT       NOT NULL AUTO_INCREMENT COMMENT '약관 조각 ID',
+    card_term_document_id BIGINT       NOT NULL COMMENT '약관 문서 ID',
+    chunk_index           INT          NOT NULL COMMENT '문서 안에서의 순서. 0부터',
+    -- 조각만 따로 읽는 검색 단계에서 무엇에 관한 규정인지 드러나게 한다.
+    -- 조문 구조가 없는 문서(상품설명서)는 글자 수로 자르므로 값이 없다.
+    heading               VARCHAR(200) NULL COMMENT '속한 장·조 제목. 조문 구조가 없으면 NULL',
+    content               TEXT         NOT NULL COMMENT '조각 본문',
+    -- 임베딩은 float32 배열을 그대로 담는다. JSON 문자열로 두면 숫자 하나가
+    -- 열 바이트 남짓을 먹어 같은 값이 두 배 넘는 자리를 차지한다.
+    -- 파생물이라 값이 없어도 검색은 동작한다(키워드 검색으로만 돌아간다).
+    embedding             BLOB         NULL COMMENT '임베딩 벡터(float32 이진). 미생성이면 NULL',
+    embedding_model       VARCHAR(50)  NULL COMMENT '임베딩을 만든 모델. 섞이면 유사도가 무의미해진다',
+    created_at            DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '생성 일시',
+
+    PRIMARY KEY (card_term_chunk_id),
+    -- 같은 문서를 다시 자르면 조각이 두 벌로 쌓인다. 순서 번호로 막는다.
+    UNIQUE KEY uk_card_term_chunk (card_term_document_id, chunk_index),
+    -- 한글은 띄어쓰기로 단어가 갈리지 않아 기본 파서로는 색인이 되지 않는다.
+    -- ngram 파서는 글자 두 개씩 잘라 색인하므로 '분실신고' 같은 말도 걸린다.
+    FULLTEXT KEY ft_card_term_chunk_content (content) WITH PARSER ngram,
+    -- 문서가 지워지면 조각도 함께 지운다. 남으면 원문 없는 조각이 검색에 걸린다.
+    CONSTRAINT fk_card_term_chunk_document FOREIGN KEY (card_term_document_id)
+        REFERENCES card_term_document (card_term_document_id) ON DELETE CASCADE
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT '약관 원문 검색 조각';
 
 -- ════════════════════════════════════════════════════════════
 -- 4. 보유카드
