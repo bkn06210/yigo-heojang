@@ -122,4 +122,5 @@ def _to_intent(raw: Optional[str]) -> Intent:
         card_text=parsed.get("cardText"),
         period_text=parsed.get("periodText"),
         amount=parsed.get("amount"),
+        term_query=parsed.get("termQuery"),
     )

@@ -347,8 +347,56 @@ def test_가맹점을_짚어_물으면_그_가맹점_거래만_합산한다(fake
 
 
 @needs_db
-def test_약관_질문은_아직_못_한다고_말한다(fake_engine):
+def test_약관_질문은_원문_조항을_근거로_답한다(fake_engine):
     body = _ask("카드 잃어버리면 어떻게 해?")
 
     assert body["intent"] == IntentName.TERM_QA
-    assert "약관 원문" in body["answer"]
+    # 엔진이 아니라 약관 원문에서 답이 나온다. 조문 제목이 근거로 실린다.
+    assert "분실" in body["answer"]
+    assert any("약관" in source for source in body["sources"])
+    assert body["followUpQuestion"] is None
+
+
+@needs_db
+def test_약관_검색어를_못_만들면_되묻는다(fake_engine):
+    """무엇을 찾을지 모르면 질문을 그대로 검색어로 쓰지 않는다.
+
+    일상어와 약관의 낱말이 달라, 질문을 그대로 넣으면 무관한 조항이 낮은 점수로
+    걸린다. 그걸 근거로 문장을 만들면 사용자가 틀렸다는 것을 알 방법이 없다.
+    """
+    body = _ask("약관에 우주선 관련 규정 있어?")
+
+    assert body["intent"] == IntentName.TERM_QA
+    assert body["followUpQuestion"] is not None
+
+
+@needs_db
+def test_약관_검색은_무관한_조항을_돌려주지_않는다():
+    """점수가 낮은 것은 못 찾은 것으로 본다.
+
+    하한이 없으면 어떤 검색어를 넣어도 뭔가는 걸린다. 실측에서 맞는 조항은 5점을
+    넘었고 무관한 것은 0.1 미만이라, 그 사이를 끊어 "없다"고 말할 수 있게 한다.
+    """
+    from chatbot import terms
+    from chatbot.db import connection
+
+    with connection() as conn:
+        assert terms.search(conn, "분실 도난 신고")
+        assert terms.search(conn, "우주선 위성 궤도") == []
+
+
+@needs_db
+def test_약관_검색은_카드사마다_하나씩만_싣는다():
+    """개인회원 표준약관은 3사 내용이 사실상 같다.
+
+    같은 조문이 카드사 수만큼 실리면 LLM 에게 같은 글을 세 번 주는 셈이라
+    프롬프트 자리만 차지하고 답에 보태는 것이 없다.
+    """
+    from chatbot import terms
+    from chatbot.db import connection
+
+    with connection() as conn:
+        passages = terms.search(conn, "분실 도난 신고")
+
+    names = [passage.company_name for passage in passages]
+    assert len(names) == len(set(names))
