@@ -70,13 +70,13 @@ const timeGreeting = computed(() => {
   const nickname = user.value?.nickname || user.value?.name || '사용자';
 
   if (hour >= 6 && hour < 12) {
-    return { message: `좋은 아침이에요, ${nickname}님! ☀️`, emoji: '☀️' };
+    return { message: `좋은 아침이에요, ${nickname}님!`, emoji: '☀️' };
   } else if (hour >= 12 && hour < 18) {
-    return { message: `좋은 오후예요, ${nickname}님! 🌤️`, emoji: '🌤️' };
+    return { message: `좋은 오후예요, ${nickname}님!`, emoji: '🌤️' };
   } else if (hour >= 18 && hour < 22) {
-    return { message: `좋은 저녁이에요, ${nickname}님! 🌙`, emoji: '🌙' };
+    return { message: `좋은 저녁이에요, ${nickname}님!`, emoji: '🌙' };
   } else {
-    return { message: `늦은 시간이네요, 푹 쉬세요! 😴`, emoji: '😴' };
+    return { message: `늦은 시간이네요, 푹 쉬세요!`, emoji: '😴' };
   }
 });
 
@@ -634,10 +634,12 @@ onMounted(async () => {
 /* 인사말 */
 .greeting-text {
   margin: 0;
-  font-size: var(--font-xl);
+  font-size: var(--font-lg);
   font-weight: var(--font-bold);
   color: var(--color-text-primary);
-  line-height: 1.3;
+  line-height: 1.4;
+  white-space: nowrap;
+  max-width: 100%;
 }
 
 /* Empty 버튼 영역 */

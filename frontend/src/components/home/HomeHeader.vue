@@ -130,6 +130,8 @@ defineProps({
 
   font-weight:700;
 
+  color: var(--color-text-primary);
+
 }
 
 

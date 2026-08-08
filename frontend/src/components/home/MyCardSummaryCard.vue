@@ -82,8 +82,8 @@ const donutDashArray = (rate) => {
             <div class="donut-section">
               <div class="donut-chart">
                 <svg viewBox="0 0 100 100">
-                  <circle cx="50" cy="50" r="45" fill="none" stroke="#E8E8E8" stroke-width="6"/>
-                  <circle cx="50" cy="50" r="45" fill="none" stroke="var(--color-card-donut)" stroke-width="6"
+                  <circle cx="50" cy="50" r="45" fill="none" stroke="#E8E8E8" stroke-width="8"/>
+                  <circle cx="50" cy="50" r="45" fill="none" stroke="var(--color-card-donut)" stroke-width="8"
                     :stroke-dasharray="donutDashArray(card.achievementRate)" stroke-dashoffset="0" stroke-linecap="round"
                     transform="rotate(-90 50 50)"/>
                 </svg>
@@ -223,6 +223,13 @@ const donutDashArray = (rate) => {
   font-size: var(--font-lg);
   font-weight: var(--font-bold);
   color: var(--color-donut-text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  line-height: 1;
 }
 
 .achievement-info {

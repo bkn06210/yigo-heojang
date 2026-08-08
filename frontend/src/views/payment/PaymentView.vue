@@ -353,7 +353,7 @@ const closeModal = () => {
   <div class="payment-page">
     <PageHeader title="결제" :show-back="false" />
 
-    <div v-if="hasCards" class="recommend-section" style="display: flex; flex-direction: column; align-items: flex-end; margin-top: -55px; margin-bottom: 0; padding-right: var(--space-md); padding-top: 0;">
+    <div v-if="hasCards" class="recommend-section" style="display: flex; flex-direction: column; align-items: flex-end; margin-top: -10px; margin-bottom: 0; padding-right: var(--space-md); padding-top: 0;">
       <p style="margin: 0 0 2px 0; font-size: var(--font-sm); color: var(--color-text-secondary);">더 좋은 혜택을 찾기 원하시나요?</p>
       <button class="recommend-btn" @click="$router.push('/payment/recommend')" style="font-size: var(--font-sm); padding: 6px 12px; background: var(--color-primary); color: var(--color-btn-primary-text); border: none; border-radius: var(--radius-md); cursor: pointer; text-decoration: none; font-weight: 500;">카드 추천 받기</button>
     </div>
@@ -586,7 +586,7 @@ main {
 
 .benefits-section {
   /* 작업 관리자에서는 180px가 낫고(모바일용)/vs code에서는 65 */
-  margin-top: 180px;  
+  margin-top: 140px;  
   margin-bottom: var(--space-md);
   flex-shrink: 0;
 }

@@ -66,6 +66,14 @@ const goDetail = (id) => {
   border-radius: var(--radius-md);
   object-fit: cover;
   flex-shrink: 0;
+  background: #f0f0f0;
+  border: 1px solid #e0e0e0;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="dark"] .membership-logo {
+  background: #5a5a5a;
+  border: 1px solid #6a6a6a;
 }
 
 .membership-name {

@@ -165,9 +165,13 @@ const findPassword = () => {
 
 
 // 본인인증 완료
-const verifyPasswordFind = () => {
+const verifyPasswordFind = (data) => {
 
   showPasswordFind.value = false;
+
+  if (data?.passwordResetToken) {
+    sessionStorage.setItem('passwordResetToken', data.passwordResetToken);
+  }
 
   router.push('/auth/password-change');
 

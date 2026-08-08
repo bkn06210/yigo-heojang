@@ -2,6 +2,7 @@
 import { ref, defineComponent } from 'vue'
 import ToastNotification from '@/components/common/ToastNotification.vue'
 import Icon from '@/components/common/Icon.vue'
+import { requestPasswordResetCode, verifyPasswordResetCode } from '@/api/authApi'
 
 export default defineComponent({
   components: {
@@ -59,17 +60,29 @@ export default defineComponent({
       return `${mins}:${secs.toString().padStart(2, '0')}`
     }
 
-    const requestAuthCode = () => {
+    const requestAuthCode = async () => {
       if (!email.value.trim()) {
         error.value = '아이디를 입력해주세요'
         return
       }
       error.value = ''
-      step.value = 2
-      startTimer()
+
+      try {
+        await requestPasswordResetCode(email.value)
+        toastType.value = 'success'
+        toastMessage.value = '인증 이메일이 발송되었습니다.'
+        showToast.value = true
+        step.value = 2
+        startTimer()
+      } catch (err) {
+        error.value = err.response?.data?.message || '이메일 발송에 실패했습니다.'
+        toastType.value = 'error'
+        toastMessage.value = error.value
+        showToast.value = true
+      }
     }
 
-    const submitAuthCode = () => {
+    const submitAuthCode = async () => {
       const fullCode = authCodeDigits.value.join('')
       if (!fullCode.trim()) {
         error.value = '인증번호를 입력해주세요'
@@ -79,11 +92,21 @@ export default defineComponent({
         error.value = '인증번호는 6자리입니다'
         return
       }
-      if (fullCode === '123456') {
+
+      try {
+        const response = await verifyPasswordResetCode(email.value, fullCode)
         stopTimer()
-        emit('success')
-      } else {
-        error.value = '인증번호가 일치하지 않습니다. 다시 확인해주세요.'
+        toastType.value = 'success'
+        toastMessage.value = '인증이 완료되었습니다.'
+        showToast.value = true
+        setTimeout(() => {
+          emit('success', { passwordResetToken: response.data?.passwordResetToken })
+        }, 1000)
+      } catch (err) {
+        error.value = err.response?.data?.message || '인증번호가 일치하지 않습니다. 다시 확인해주세요.'
+        toastType.value = 'error'
+        toastMessage.value = error.value
+        showToast.value = true
       }
     }
 

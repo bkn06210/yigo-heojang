@@ -5,6 +5,7 @@ import com.wallet.transaction.dto.ExpenseCategoryResponse;
 import com.wallet.transaction.dto.TransactionDetailResponse;
 import com.wallet.transaction.dto.TransactionListResponse;
 import com.wallet.transaction.dto.TransactionResponse;
+import com.wallet.transaction.dto.TransactionSummaryResponse;
 import com.wallet.transaction.dto.TransactionSyncResponse;
 import com.wallet.transaction.mapper.TransactionMapper;
 import org.springframework.http.HttpStatus;
@@ -100,6 +101,33 @@ public class TransactionServiceImpl implements TransactionService {
         }
 
         return detail;
+    }
+
+    @Override
+    public TransactionSummaryResponse getTransactionsSummary(Long userId, Long userCardId) {
+        String currentMonth = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM"));
+
+        List<TransactionResponse> transactions =
+                transactionMapper.selectTransactionList(
+                        userId,
+                        currentMonth,
+                        null,
+                        userCardId,
+                        "APPROVED",
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null
+                );
+
+        int count = transactions.size();
+        long totalAmount = transactions.stream()
+                .mapToLong(TransactionResponse::getPaymentAmount)
+                .sum();
+
+        return new TransactionSummaryResponse(count, totalAmount);
     }
 
     @Override

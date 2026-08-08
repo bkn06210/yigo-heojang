@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router'
 import PageHeader from '@/components/common/PageHeader.vue'
 import AppButton from '@/components/common/AppButton.vue'
 import { useToast } from '@/composables/useToast'
+import { resetPassword } from '@/api/authApi'
 
 const router = useRouter()
 const { showToast } = useToast()
@@ -62,7 +63,7 @@ const goBack = () => {
 }
 
 // 변경 버튼
-const changePassword = () => {
+const changePassword = async () => {
   if (!password.value) {
     showToast('warning', '새 비밀번호를 입력해주세요.')
     return
@@ -83,9 +84,21 @@ const changePassword = () => {
     return
   }
 
-  // TODO: 비밀번호 변경 API 연결
-  showToast('success', '비밀번호가 안전하게 변경되었습니다.')
-  router.go(-1)
+  try {
+    const passwordResetToken = sessionStorage.getItem('passwordResetToken')
+    if (!passwordResetToken) {
+      showToast('error', '인증 정보가 없습니다. 다시 시도해주세요.')
+      router.push('/auth/login')
+      return
+    }
+
+    await resetPassword(passwordResetToken, password.value)
+    showToast('success', '비밀번호가 안전하게 변경되었습니다.')
+    sessionStorage.removeItem('passwordResetToken')
+    router.push('/auth/login')
+  } catch (error) {
+    showToast('error', error.response?.data?.message || '비밀번호 변경에 실패했습니다.')
+  }
 }
 
 </script>
