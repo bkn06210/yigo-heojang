@@ -56,8 +56,8 @@ class BenefitReportServiceIntegrationTest {
 
         // 카페 두 건이 '카페'로 묶인다. '외식'으로 올려 묶으면 어디서 아꼈는지가 사라진다.
         BenefitReportCategory cafe = categoryOf(report, cafeCategoryId);
-        assertThat(cafe.getCategoryName()).isEqualTo("카페");
-        assertThat(cafe.getParentCategoryName()).isEqualTo("외식");
+        assertThat(cafe.getCategoryName()).isEqualTo("IT리포트카페");
+        assertThat(cafe.getParentCategoryName()).isEqualTo("IT리포트외식");
         assertThat(cafe.getBenefitAmount()).isEqualTo(3_000L);
         assertThat(cafe.getDetails()).hasSize(2);
     }
@@ -68,9 +68,9 @@ class BenefitReportServiceIntegrationTest {
         BenefitReport report = benefitReportService.getReport(memberId, BASE_MONTH);
 
         assertThat(report.getCategories()).extracting(BenefitReportCategory::getCategoryName)
-                .containsExactly("카페", "편의점");
+                .containsExactly("IT리포트카페", "IT리포트편의점");
         assertThat(report.getTopCategoryId()).isEqualTo(cafeCategoryId);
-        assertThat(report.getTopCategoryName()).isEqualTo("카페");
+        assertThat(report.getTopCategoryName()).isEqualTo("IT리포트카페");
         assertThat(report.getTopCategoryBenefitAmount()).isEqualTo(3_000L);
     }
 
@@ -114,15 +114,18 @@ class BenefitReportServiceIntegrationTest {
     }
 
     private void insertFixture() {
-        cafeCategoryId = categoryId("CAFE");
-        cvsCategoryId = categoryId("CONVENIENCE_STORE");
+        cafeCategoryId = insertCategory("IT_REPORT_CAFE", "IT리포트카페",
+                insertCategory("IT_REPORT_DINING", "IT리포트외식", null));
+        cvsCategoryId = insertCategory("IT_REPORT_CVS", "IT리포트편의점",
+                insertCategory("IT_REPORT_SHOPPING", "IT리포트쇼핑", null));
 
         jdbc.update("INSERT INTO member (email, password_hash, name, nickname, member_status)"
                 + " VALUES ('benefit-report-it@example.com', 'x', '리포트IT', '리포트IT', 'ACTIVE')");
         memberId = jdbc.queryForObject("SELECT LAST_INSERT_ID()", Long.class);
 
-        long companyId = jdbc.queryForObject(
-                "SELECT card_company_id FROM card_company LIMIT 1", Long.class);
+        jdbc.update("INSERT INTO card_company (company_code, company_name)"
+                + " VALUES ('IT_REPORT_COMPANY', 'IT리포트카드사')");
+        long companyId = jdbc.queryForObject("SELECT LAST_INSERT_ID()", Long.class);
         jdbc.update("INSERT INTO card (card_company_id, card_name, card_type, annual_fee, is_active)"
                 + " VALUES (?, '리포트IT_카드', 'CREDIT', 0, 'Y')", companyId);
         long cardId = jdbc.queryForObject("SELECT LAST_INSERT_ID()", Long.class);
@@ -141,9 +144,10 @@ class BenefitReportServiceIntegrationTest {
         insertExpense(cvsCategoryId, "리포트IT_혜택없음", 1_000L, 0L, "APPROVED");
     }
 
-    private long categoryId(String code) {
-        return jdbc.queryForObject(
-                "SELECT category_id FROM category WHERE category_code = ?", Long.class, code);
+    private long insertCategory(String code, String name, Long parentCategoryId) {
+        jdbc.update("INSERT INTO category (category_code, category_name, parent_category_id)"
+                + " VALUES (?, ?, ?)", code, name, parentCategoryId);
+        return jdbc.queryForObject("SELECT LAST_INSERT_ID()", Long.class);
     }
 
     private void insertExpense(long categoryId, String merchantName, long amount,

@@ -27,8 +27,8 @@ import static org.assertj.core.api.Assertions.assertThat;
  *   ③ 판정된 실적구간의 개별한도·혜택값이 반영된다
  *   ④ 혜택이 없는 카드도 목록에서 빠지지 않는다
  *
- * 픽스처를 직접 넣고 롤백하므로 시드 데이터에 의존하지 않는다.
- * 카테고리·가맹점만 팀 표준 시드에서 코드로 찾아 쓴다.
+ * 카테고리·가맹점·카드사까지 전부 직접 넣고 롤백한다. 시드에서 찾아 쓰면 시드가 없는
+ * 환경(CI는 schema.sql만 적재한다)에서 깨진다.
  */
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations = "file:src/main/webapp/WEB-INF/spring/root-context.xml")
@@ -142,18 +142,25 @@ class ApplicableBenefitServiceIntegrationTest {
     }
 
     private void insertFixture() {
-        cafeCategoryId = jdbc.queryForObject(
-                "SELECT category_id FROM category WHERE category_code = 'CAFE'", Long.class);
-        cafeMerchantId = jdbc.queryForObject(
-                "SELECT merchant_id FROM merchant WHERE category_id = ? LIMIT 1",
-                Long.class, cafeCategoryId);
+        jdbc.update("INSERT INTO category (category_code, category_name, parent_category_id)"
+                + " VALUES ('IT_LOOKUP_DINING', 'IT조회외식', NULL)");
+        long parentCategoryId = jdbc.queryForObject("SELECT LAST_INSERT_ID()", Long.class);
+
+        jdbc.update("INSERT INTO category (category_code, category_name, parent_category_id)"
+                + " VALUES ('IT_LOOKUP_CAFE', 'IT조회카페', ?)", parentCategoryId);
+        cafeCategoryId = jdbc.queryForObject("SELECT LAST_INSERT_ID()", Long.class);
+
+        jdbc.update("INSERT INTO merchant (merchant_code, merchant_name, category_id)"
+                + " VALUES ('IT_LOOKUP_CAFE_BRAND', 'IT조회카페브랜드', ?)", cafeCategoryId);
+        cafeMerchantId = jdbc.queryForObject("SELECT LAST_INSERT_ID()", Long.class);
 
         jdbc.update("INSERT INTO member (email, password_hash, name, nickname, member_status)"
                 + " VALUES ('benefit-lookup-it@example.com', 'x', '혜택조회IT', '혜택조회IT', 'ACTIVE')");
         memberId = jdbc.queryForObject("SELECT LAST_INSERT_ID()", Long.class);
 
-        long companyId = jdbc.queryForObject(
-                "SELECT card_company_id FROM card_company LIMIT 1", Long.class);
+        jdbc.update("INSERT INTO card_company (company_code, company_name)"
+                + " VALUES ('IT_LOOKUP_COMPANY', 'IT조회카드사')");
+        long companyId = jdbc.queryForObject("SELECT LAST_INSERT_ID()", Long.class);
 
         long benefitCardId = insertCard(companyId, "혜택조회IT_카페카드");
         long emptyCardId = insertCard(companyId, "혜택조회IT_무혜택카드");
