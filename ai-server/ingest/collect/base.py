@@ -27,6 +27,9 @@ class DocType:
 
     PRODUCT_GUIDE = "PRODUCT_GUIDE"  # 상품설명서·이용안내장
     KEY_TERMS = "KEY_TERMS"  # 주요거래조건
+    # 카드사 단위 문서. 카드 한 장이 아니라 카드사 전체에 걸린다.
+    # 분실·도난·해지·이의제기처럼 상품설명서에 없는 조항이 여기 있다.
+    MEMBER_TERMS = "MEMBER_TERMS"  # 개인회원 약관
 
 
 @dataclass(frozen=True)
@@ -56,11 +59,29 @@ class Collector(ABC):
 
     @abstractmethod
     def list_documents(self) -> Iterator[DocumentRef]:
-        """수집 가능한 문서 목록. 다운로드는 하지 않는다."""
+        """카드별 문서 목록. 다운로드는 하지 않는다."""
+
+    @abstractmethod
+    def list_member_terms(self) -> Iterator[DocumentRef]:
+        """카드사 단위 개인회원 약관 목록.
+
+        카드별 문서와 나눠 놓은 이유는 고르는 기준이 다르기 때문이다.
+        카드별 문서는 수집할 카드 이름으로 거르는데, 회원약관은 카드와 무관해
+        같은 기준을 태우면 통째로 걸러진다.
+
+        구현이 없어도 되게 두지 않고 추상 메서드로 둔다. 기본값을 빈 목록으로
+        주면 카드사를 추가할 때 회원약관만 조용히 빠져, 그 카드사 카드에서만
+        분실·해지 질문에 답하지 못하는 상태가 된다.
+        """
 
     @abstractmethod
     def fetch(self, ref: DocumentRef) -> bytes:
-        """문서 원본(PDF) 바이트."""
+        """문서 원본 바이트. PDF일 수도 HTML일 수도 있다.
+
+        형식을 여기서 알리지 않는 것은, 카드사가 PDF 주소라고 해놓고 오류 페이지를
+        HTML로 돌려주는 경우가 있어 선언한 형식을 믿을 수 없기 때문이다.
+        실제 형식은 추출 단계가 바이트 앞머리를 보고 판정한다.
+        """
 
 
 # 브라우저와 같은 값을 쓴다. 일부 카드사는 이 헤더가 없으면 응답을 주지 않는다.
@@ -77,6 +98,22 @@ def clean_text(value: Optional[str]) -> str:
     그대로 두면 '삼성카드 &amp; POINT'가 되어 카드 마스터와 이름이 맞지 않는다.
     """
     return html.unescape((value or "").strip())
+
+
+def decode_html(raw: bytes) -> str:
+    """받아온 HTML 바이트를 문자열로 되돌린다.
+
+    응답 헤더의 charset을 믿지 않는다. 카드사 약관 화면 중에는 charset을 주지
+    않는 곳이 있어, 라이브러리가 ISO-8859-1로 추측하면 한글이 통째로 깨진다.
+    국내 카드사 문서는 UTF-8 아니면 EUC-KR 둘 중 하나다.
+    """
+    for encoding in ("utf-8-sig", "utf-8", "euc-kr"):
+        try:
+            return raw.decode(encoding)
+        except UnicodeDecodeError:
+            continue
+    # 어느 것으로도 안 되면 읽히는 글자만 남긴다. 뒤따르는 본문 길이 검사에 걸린다.
+    return raw.decode("utf-8", errors="ignore")
 
 
 def make_session(referer: str) -> requests.Session:

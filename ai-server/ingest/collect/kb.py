@@ -11,7 +11,7 @@ import re
 import time
 from typing import Dict, Iterator, List
 
-from .base import Collector, DocType, DocumentRef, clean_text, make_session
+from .base import Collector, DocType, DocumentRef, clean_text, decode_html, make_session
 
 _LIST_URL = "https://card.kbcard.com/CRD/DVIEW/HCAMCXPRICAC0047"
 _DETAIL_URL = "https://card.kbcard.com/CRD/DVIEW/HCAMCXPRICAC0076"
@@ -36,6 +36,16 @@ _DOC_TYPE_BY_MARKER = (
 )
 
 _REQUEST_INTERVAL_SEC = 1.0
+
+# 개인회원 약관은 카드 상세가 아니라 고객센터 이용약관 화면에 모여 있다.
+_TERMS_URL = "https://m.kbcard.com/CXHIACSC0013.cms"
+
+# 약관 이름과 내려받기 링크가 나란히 붙어 있다. 이름을 함께 읽어야
+# 어느 약관인지 알 수 있다 — 파일명만으로는 구분되지 않는다.
+_TERMS_ENTRY = re.compile(r"<span>([^<]{2,60})</span>\s*<a href=\"(https://[^\"]+?\.pdf)\"")
+
+# 파일명 끝에 붙는 개정일. 여섯 자리(YYMMDD)와 여덟 자리(YYYYMMDD)가 섞여 있다.
+_TERMS_REVISED = re.compile(r"_(\d{8}|\d{6})\.pdf$")
 
 
 class KbCollector(Collector):
@@ -62,6 +72,25 @@ class KbCollector(Collector):
                     file_name=url.rsplit("/", 1)[-1],
                 )
             time.sleep(_REQUEST_INTERVAL_SEC)
+
+    def list_member_terms(self) -> Iterator[DocumentRef]:
+        response = self._session.get(_TERMS_URL, timeout=60)
+        response.raise_for_status()
+
+        for name, url in _TERMS_ENTRY.findall(decode_html(response.content)):
+            term_name = clean_text(name)
+            if not term_name:
+                continue
+
+            yield DocumentRef(
+                issuer=self.issuer,
+                card_name=term_name,
+                doc_type=DocType.MEMBER_TERMS,
+                doc_key=url.rsplit("/", 1)[-1],
+                source_url=url,
+                revised_at=_terms_revised_at(url),
+                file_name=url.rsplit("/", 1)[-1],
+            )
 
     def fetch(self, ref: DocumentRef) -> bytes:
         response = self._session.get(ref.source_url, timeout=120)
@@ -100,3 +129,17 @@ def _classify(url: str) -> "str | None":
 def _revised_at(url: str) -> "str | None":
     match = _REVISED_PATTERN.search(url)
     return match.group(1) if match else None
+
+
+def _terms_revised_at(url: str) -> "str | None":
+    """개인회원 약관 파일명에서 개정일을 읽어 YYYYMMDD로 맞춘다.
+
+    같은 화면 안에서도 표기가 갈린다(standardagreement_260402 / attach_20201218).
+    여섯 자리를 그대로 두면 다른 카드사와 자릿수가 달라 개정 판정이 어긋난다.
+    """
+    match = _TERMS_REVISED.search(url)
+    if match is None:
+        return None
+
+    digits = match.group(1)
+    return digits if len(digits) == 8 else f"20{digits}"

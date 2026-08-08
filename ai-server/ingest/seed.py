@@ -14,6 +14,7 @@ import sys
 from pathlib import Path
 from typing import Dict, List, Optional
 
+from .companies import CARD_COMPANIES
 from .load import connect
 
 _STRUCTURED_DIR = Path(__file__).resolve().parent / "out" / "structured"
@@ -86,14 +87,6 @@ def _slug(name: str) -> str:
     return re.sub(r"[^A-Z0-9_]", "", name.upper().replace(" ", "_"))[:30]
 
 
-# 수집 어댑터가 쓰는 카드사 표기 → 카드사 마스터(ID, 코드, 정식 명칭, BIN).
-# BIN은 카드번호 앞자리로 카드사를 판별하는 값이라 수집 대상이 아니고 여기에 고정으로 둔다.
-# 카드사와 BIN이 같은 파일에 있어야 참조가 어긋나지 않는다.
-CARD_COMPANIES = {
-    "KB국민": (1, "KB_CARD", "KB국민카드", "222879"),
-    "신한": (2, "SHINHAN_CARD", "신한카드", "356078"),
-    "삼성": (3, "SAMSUNG_CARD", "삼성카드", "376293"),
-}
 
 
 def build() -> str:
