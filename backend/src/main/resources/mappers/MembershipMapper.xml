@@ -139,13 +139,12 @@
             #{pointProviderId},
             0,
             NOW()
-        FROM DUAL
-        WHERE NOT EXISTS (
+            WHERE NOT EXISTS (
             SELECT 1
             FROM point_wallet
             WHERE member_id = #{memberId}
             AND point_provider_id = #{pointProviderId}
-        )
+            )
 
     </insert>
 

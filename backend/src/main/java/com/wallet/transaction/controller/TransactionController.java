@@ -4,7 +4,6 @@ import com.wallet.common.ApiResponse;
 import com.wallet.transaction.dto.ExpenseCategoryListResponse;
 import com.wallet.transaction.dto.TransactionDetailResponse;
 import com.wallet.transaction.dto.TransactionListResponse;
-import com.wallet.transaction.dto.TransactionSummaryResponse;
 import com.wallet.transaction.dto.TransactionSyncResponse;
 import com.wallet.transaction.service.TransactionService;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -70,19 +69,6 @@ public class TransactionController {
                 transactionService.getTransactionDetail(userId, expenseId);
 
         return ApiResponse.success("소비내역 상세 조회에 성공했습니다.", data);
-    }
-
-    @GetMapping("/api/transactions/summary")
-    public ApiResponse<TransactionSummaryResponse> getTransactionsSummary(
-            HttpServletRequest request,
-            @RequestParam(value = "userCardId", required = false) Long userCardId
-    ) {
-        Long userId = (Long) request.getAttribute(AUTHENTICATED_MEMBER_ID);
-
-        TransactionSummaryResponse data =
-                transactionService.getTransactionsSummary(userId, userCardId);
-
-        return ApiResponse.success("이번 달 소비내역 요약 조회에 성공했습니다.", data);
     }
 
     @PostMapping("/api/transactions/sync")
