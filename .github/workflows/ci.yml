@@ -55,8 +55,26 @@ jobs:
           cache: maven
 
       # 컨테이너는 빈 wallet DB만 만든다. 테이블은 schema.sql로 적재한다.
+      # 시드는 넣지 않는다 — 테스트는 각자 픽스처를 넣고 롤백하므로 시드에 의존하면 안 된다.
+      # 시드가 바뀌었다고 코드 테스트가 깨지는 상태를 만들지 않기 위함이다.
       - name: Load schema into MySQL
         run: mysql -h 127.0.0.1 -P 3306 -uroot -proot wallet < db/schema.sql
+
+      # 시드 파일이 순서대로 적재되는지는 따로 검사한다. 목적이 다르다 —
+      # 위는 "코드가 맞나", 여기는 "시드가 깨지지 않았나"다.
+      # 별도 DB에 넣는 이유: 테스트 DB에 시드를 부으면 테스트가 그걸 쓰게 되어 위 원칙이 무너진다.
+      # 순서 의존도 함께 검증된다(91은 data.sql의 카테고리가, 92는 91의 카드·혜택이 먼저 있어야 한다).
+      - name: Verify seed files load in order
+        run: |
+          mysql -h 127.0.0.1 -P 3306 -uroot -proot \
+            -e "CREATE DATABASE wallet_seed_check CHARACTER SET utf8mb4"
+          for f in db/schema.sql db/data.sql db/91_seed_card_benefit.sql db/92_seed_user_data.sql; do
+            echo "적재: $f"
+            mysql -h 127.0.0.1 -P 3306 -uroot -proot --default-character-set=utf8mb4 \
+              wallet_seed_check < "$f"
+          done
+          mysql -h 127.0.0.1 -P 3306 -uroot -proot \
+            -e "DROP DATABASE wallet_seed_check"
 
       # db.properties는 gitignore라 저장소에 없다(개인 접속값). CI 접속값으로 새로 만든다.
       # allowPublicKeyRetrieval=true: 새 MySQL의 caching_sha2 최초 인증이 평문 TCP에서 막히지 않게.
