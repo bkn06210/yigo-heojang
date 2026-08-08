@@ -234,7 +234,9 @@ const loadHome = async () => {
     // PR #25 연동: 홈 진입 시 카드 현황/브리핑을 한 번의 API 호출로 조회한다.
     await cardStore.loadMonthlyStatuses();
     homeData.value.myCard = cards.value[0] || null;
-    homeData.value.briefing.content = cardBriefing.value?.message || '이번 달 카드 실적을 확인해보세요.';
+    // 브리핑 문구는 서버가 상황에 맞춰 완성해 내려준다(카드가 없거나 결제가 없어도 온다).
+    // 여기 폴백은 조회 자체가 실패했을 때만 쓰인다.
+    homeData.value.briefing.content = cardBriefing.value?.message || '카드 현황을 불러오지 못했어요.';
   } catch (error) {
     console.error('홈 카드 현황 조회 실패', error);
   }

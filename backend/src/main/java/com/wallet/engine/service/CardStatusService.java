@@ -8,6 +8,7 @@ import com.wallet.engine.calculator.PerformanceTierResolver;
 import com.wallet.engine.dao.BenefitMapper;
 import com.wallet.engine.dao.CardStateMapper;
 import com.wallet.engine.dao.PerformanceMapper;
+import com.wallet.engine.dao.SpendingMapper;
 import com.wallet.engine.dao.UserCardMapper;
 import com.wallet.engine.dao.dto.BenefitRow;
 import com.wallet.engine.dao.dto.BenefitUsageRow;
@@ -25,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.YearMonth;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -60,6 +62,7 @@ public class CardStatusService {
     private final PerformanceInputAssembler performanceInputAssembler;
     private final CardMonthlyStatusBuilder statusBuilder;
     private final CardStatusOverviewBuilder overviewBuilder;
+    private final SpendingMapper spendingMapper;
 
     // 순수 계산기는 스테이트리스라 빈으로 두지 않는다 — 프레임워크에서 떼어 둔 설계를 유지한다
     private final PerformanceTierResolver tierResolver = new PerformanceTierResolver();
@@ -71,7 +74,8 @@ public class CardStatusService {
                              CardStateAssembler cardStateAssembler,
                              PerformanceInputAssembler performanceInputAssembler,
                              CardMonthlyStatusBuilder statusBuilder,
-                             CardStatusOverviewBuilder overviewBuilder) {
+                             CardStatusOverviewBuilder overviewBuilder,
+                             SpendingMapper spendingMapper) {
         this.userCardMapper = userCardMapper;
         this.cardStateMapper = cardStateMapper;
         this.performanceMapper = performanceMapper;
@@ -80,6 +84,7 @@ public class CardStatusService {
         this.performanceInputAssembler = performanceInputAssembler;
         this.statusBuilder = statusBuilder;
         this.overviewBuilder = overviewBuilder;
+        this.spendingMapper = spendingMapper;
     }
 
     /**
@@ -91,11 +96,12 @@ public class CardStatusService {
      */
     @Transactional(readOnly = true)
     public CardStatusOverview getOverview(long memberId, YearMonth baseMonth) {
-        List<CardMonthlyStatus> statuses = buildStatuses(memberId, baseMonth, null);
-        if (statuses.isEmpty()) {
-            return CardStatusOverview.empty();
-        }
-        return overviewBuilder.build(statuses);
+        StatusBundle bundle = buildStatuses(memberId, baseMonth, null);
+        // 카드가 없어도 조립기를 태운다 — 카드 등록을 안내하는 브리핑이 그 자리에서 나온다.
+        return overviewBuilder.build(bundle.statuses(), new BriefingContext(
+                baseMonth.toString(),
+                bundle.benefitTargetCategories(),
+                spendingMapper.findMonthlySpendingByCategory(memberId, baseMonth.toString())));
     }
 
     /**
@@ -108,9 +114,24 @@ public class CardStatusService {
      */
     @Transactional(readOnly = true)
     public CardMonthlyStatus getCardStatus(long memberId, long userCardId, YearMonth baseMonth) {
-        return buildStatuses(memberId, baseMonth, userCardId).stream()
+        return buildStatuses(memberId, baseMonth, userCardId).statuses().stream()
                 .findFirst()
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND));
+    }
+
+    /**
+     * 카드별 현황과, 그 과정에서 읽은 혜택의 대상 업종.
+     *
+     * 대상 업종을 함께 내보내는 것은 브리핑이 "결제한 업종인데 혜택을 못 받는" 자리를 찾기 위해서다.
+     * 혜택 조회는 카드마다 판정된 실적 구간으로 이뤄지므로, 여기서 흘려보내면 같은 조회를
+     * 한 번 더 해야 한다. 현황 응답에는 넣지 않는다 — 화면이 쓰지 않는 값이다.
+     */
+    private record StatusBundle(List<CardMonthlyStatus> statuses,
+                                Map<Long, Long> benefitTargetCategories) {
+
+        static StatusBundle empty() {
+            return new StatusBundle(List.of(), Map.of());
+        }
     }
 
     /**
@@ -121,12 +142,12 @@ public class CardStatusService {
      *
      * @param onlyUserCardId 개별 조회면 그 카드 ID, 전체 조회면 null
      */
-    private List<CardMonthlyStatus> buildStatuses(long memberId, YearMonth baseMonth, Long onlyUserCardId) {
+    private StatusBundle buildStatuses(long memberId, YearMonth baseMonth, Long onlyUserCardId) {
         List<UserCardRow> cards = userCardMapper.findActiveCards(memberId).stream()
                 .filter(card -> onlyUserCardId == null || onlyUserCardId == card.getUserCardId())
                 .toList();
         if (cards.isEmpty()) {
-            return List.of();
+            return StatusBundle.empty();
         }
 
         String baseYearMonth = baseMonth.toString();
@@ -150,20 +171,24 @@ public class CardStatusService {
                         CardPerformanceSumRow::getUserCardId, CardPerformanceSumRow::getPerformanceAmount));
 
         List<CardMonthlyStatus> statuses = new ArrayList<>(cards.size());
+        // 혜택 id는 카드가 달라도 겹치지 않으므로 카드별로 나누지 않고 한 표에 모은다.
+        Map<Long, Long> benefitTargetCategories = new HashMap<>();
         for (UserCardRow card : cards) {
             statuses.add(buildStatus(card, baseYearMonth, previousYearMonth,
                     statesByUserCard.getOrDefault(card.getUserCardId(), List.of()),
                     usagesByUserCard.getOrDefault(card.getUserCardId(), List.of()),
                     tiersByCard.getOrDefault(card.getCardId(), List.of()),
-                    quarterPerformanceByUserCard.getOrDefault(card.getUserCardId(), 0L)));
+                    quarterPerformanceByUserCard.getOrDefault(card.getUserCardId(), 0L),
+                    benefitTargetCategories));
         }
-        return statuses;
+        return new StatusBundle(statuses, benefitTargetCategories);
     }
 
     /** 카드 한 장의 현황. 조회한 값을 계산기에 물려주기만 하고 새 계산 규칙은 두지 않는다. */
     private CardMonthlyStatus buildStatus(UserCardRow card, String baseYearMonth, String previousYearMonth,
                                           List<CardMonthlyStateRow> stateRows, List<BenefitUsageRow> usageRows,
-                                          List<PerformanceTierRow> tierRows, long quarterPerformanceAmount) {
+                                          List<PerformanceTierRow> tierRows, long quarterPerformanceAmount,
+                                          Map<Long, Long> benefitTargetCategories) {
         long prevPerformanceAmount = cardStateAssembler.resolvePrevPerformanceAmount(
                 stateRows, baseYearMonth, previousYearMonth);
 
@@ -183,6 +208,13 @@ public class CardStatusService {
                 card.getCardId(), status.tierId(), quarterTierId);
         Map<Long, Long> usedAmountByBenefit = usageRows.stream()
                 .collect(Collectors.toMap(BenefitUsageRow::getBenefitId, BenefitUsageRow::getUsedAmount));
+
+        // 업종을 겨냥한 혜택만 담는다. 전 가맹점·특정 가맹점 혜택은 소비 업종과 맞춰볼 기준이 없다.
+        for (BenefitRow benefit : benefitRows) {
+            if (benefit.getTargetCategoryId() != null) {
+                benefitTargetCategories.put(benefit.getBenefitId(), benefit.getTargetCategoryId());
+            }
+        }
 
         return statusBuilder.build(
                 card.getUserCardId(), card.getCardName(), baseYearMonth,

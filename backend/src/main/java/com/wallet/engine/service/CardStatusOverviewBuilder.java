@@ -1,7 +1,9 @@
 package com.wallet.engine.service;
 
+import com.wallet.engine.dao.dto.CategorySpendingRow;
 import com.wallet.engine.dto.BenefitSummary;
 import com.wallet.engine.dto.BenefitUsageStatus;
+import com.wallet.engine.dto.BriefingType;
 import com.wallet.engine.dto.CardMonthlyStatus;
 import com.wallet.engine.dto.CardStatusBriefing;
 import com.wallet.engine.dto.CardStatusOverview;
@@ -29,17 +31,15 @@ import java.util.Map;
 @Component
 public class CardStatusOverviewBuilder {
 
-    private static final String BRIEFING_MESSAGE_FORMAT =
-            "보유하신 카드 %d장 중 %s 카드 실적이 %s%%로 가장 임박했어요. 이번 달은 이 카드부터 채우는 걸 추천드려요.";
-
     /**
      * 카드별 상세 현황을 홈 응답으로 접는다.
      *
      * @param statuses 보유 카드별 상세 현황 (조회 순서 = 응답 순서)
+     * @param context  브리핑 판정에 필요한 카드 현황 밖의 값들
      */
-    public CardStatusOverview build(List<CardMonthlyStatus> statuses) {
+    public CardStatusOverview build(List<CardMonthlyStatus> statuses, BriefingContext context) {
         List<CardStatusSummary> cards = statuses.stream().map(this::toSummary).toList();
-        return new CardStatusOverview(buildBriefing(cards), cards);
+        return new CardStatusOverview(buildBriefing(statuses, cards, context), cards);
     }
 
     private CardStatusSummary toSummary(CardMonthlyStatus status) {
@@ -125,6 +125,140 @@ public class CardStatusOverviewBuilder {
     }
 
     /**
+     * 지금 무엇을 말할지 고른다.
+     *
+     * 여러 상황이 동시에 성립할 수 있어 순서를 못박는다. 위에 있을수록 <b>사용자가 지금
+     * 할 수 있는 일이 구체적</b>이다 — "카페는 이 카드로"가 "실적을 채우세요"보다 실행하기 쉽다.
+     *
+     * <pre>
+     * ① 카드 없음      다른 안내가 성립하지 않는다
+     * ② 안 쓰는 혜택    결제하는 업종인데 그 혜택을 못 받고 있다
+     * ③ 실적 임박      이 카드부터 채우면 된다
+     * ④ 전부 달성      더 채울 것이 없다
+     * ⑤ 소비 관찰      권할 혜택은 없지만 소비가 몰린 업종이 있다
+     * ⑥ 그 외          이번 달 결제가 아직 없다
+     * </pre>
+     */
+    private CardStatusBriefing buildBriefing(List<CardMonthlyStatus> statuses,
+                                             List<CardStatusSummary> cards,
+                                             BriefingContext context) {
+        if (cards.isEmpty()) {
+            return message(BriefingType.NO_CARD, context, Map.of());
+        }
+
+        CardStatusBriefing unusedBenefit = unusedBenefit(statuses, context);
+        if (unusedBenefit != null) {
+            return unusedBenefit;
+        }
+
+        CardStatusBriefing performanceNear = performanceNear(cards, context);
+        if (performanceNear != null) {
+            return performanceNear;
+        }
+
+        if (hasAchievedEveryTarget(cards)) {
+            return message(BriefingType.ALL_ACHIEVED, context, Map.of());
+        }
+
+        CardStatusBriefing insight = spendingInsight(context);
+        return insight != null ? insight : message(BriefingType.GETTING_STARTED, context, Map.of());
+    }
+
+    /**
+     * 결제하는 업종인데 그 혜택을 못 받고 있는 자리를 찾는다.
+     *
+     * <b>"놓친 혜택"과 다르다.</b> 지난 거래를 되짚어 "얼마 놓쳤다"를 합산하지 않는다.
+     * 거래마다 따로 계산해 더하면 월 한도에 막히는 몫이 빠져 실제보다 큰 금액이 나온다
+     * (카페 20만원의 10%는 2만원이 아니라 한도에 막혀 5천원이다).
+     * 여기서는 현재 상태만 보고 <b>앞으로 무엇을 하면 되는지</b>만 말한다.
+     *
+     * 걸러내는 것:
+     *   · 이번 달 계산에 안 잡히는 혜택 — 실적 미충족 카드의 실적 조건부 혜택.
+     *     권해봐야 적용되지 않아 "이 카드로 결제하세요"가 거짓말이 된다
+     *   · 이미 받고 있는 혜택(소진액 &gt; 0) — 안 쓰는 것이 아니다
+     *   · 한도를 다 쓴 혜택(잔여 0) — 더 결제해도 안 나온다. 잔여 null은 제약이 없다는 뜻이라 남긴다
+     *   · 업종을 겨냥하지 않는 혜택 — 소비 업종과 맞춰볼 기준이 없다
+     *
+     * 후보가 여럿이면 <b>소비가 큰 업종</b>을 고른다. 그래야 안내가 실제 생활에 가깝다.
+     * 금액까지 같으면 benefitId 오름차순 — 같은 입력에 같은 답이 나오게 하는 재현성 규칙이다.
+     */
+    private CardStatusBriefing unusedBenefit(List<CardMonthlyStatus> statuses,
+                                             BriefingContext context) {
+        UnusedBenefit best = null;
+
+        for (CardMonthlyStatus status : statuses) {
+            for (BenefitUsageStatus benefit : status.benefits()) {
+                if (benefit.requirePerformance() && !status.performanceMet()) {
+                    continue;
+                }
+                if (benefit.usedAmount() > 0) {
+                    continue;
+                }
+                Long remainingLimit = benefit.remainingLimit();
+                if (remainingLimit != null && remainingLimit == 0L) {
+                    continue;
+                }
+                Long targetCategoryId = context.benefitTargetCategories().get(benefit.benefitId());
+                if (targetCategoryId == null) {
+                    continue;
+                }
+                CategorySpendingRow spending = findSpending(context.spending(), targetCategoryId);
+                if (spending == null) {
+                    continue;
+                }
+
+                UnusedBenefit candidate = new UnusedBenefit(status, benefit, spending);
+                if (best == null || candidate.isBetterThan(best)) {
+                    best = candidate;
+                }
+            }
+        }
+
+        if (best == null) {
+            return null;
+        }
+        return new CardStatusBriefing(
+                BriefingType.UNUSED_BENEFIT,
+                best.status.userCardId(),
+                best.status.cardName(),
+                null,
+                null,
+                fill(BriefingMessages.pick(BriefingType.UNUSED_BENEFIT, context.yearMonth()), Map.of(
+                        "category", best.spending.getCategoryName(),
+                        "count", String.valueOf(best.spending.getPaymentCount()),
+                        "card", best.status.cardName(),
+                        "benefit", best.benefit.benefitName())));
+    }
+
+    /**
+     * 이 혜택이 겨냥한 업종에 결제가 있었는지 찾는다.
+     *
+     * 상위 분류도 함께 본다. 혜택이 대분류(외식)를 겨냥하면 하위 중분류(카페) 결제도 대상이라,
+     * 중분류만 대조하면 대분류 혜택이 통째로 안 잡힌다. 혜택 매칭 규칙과 같은 방향이다.
+     */
+    private CategorySpendingRow findSpending(List<CategorySpendingRow> spending, long targetCategoryId) {
+        return spending.stream()
+                .filter(row -> targetCategoryId == row.getCategoryId()
+                        || (row.getParentCategoryId() != null
+                            && targetCategoryId == row.getParentCategoryId()))
+                .findFirst()
+                .orElse(null);
+    }
+
+    /** 안 쓰고 있는 혜택 후보 하나. 고르는 기준이 두 값에 걸쳐 있어 묶어 둔다. */
+    private record UnusedBenefit(CardMonthlyStatus status,
+                                 BenefitUsageStatus benefit,
+                                 CategorySpendingRow spending) {
+
+        boolean isBetterThan(UnusedBenefit other) {
+            if (spending.getTotalAmount() != other.spending.getTotalAmount()) {
+                return spending.getTotalAmount() > other.spending.getTotalAmount();
+            }
+            return benefit.benefitId() < other.benefit.benefitId();
+        }
+    }
+
+    /**
      * 실적 달성이 가장 임박한 카드를 고른다.
      *
      * 후보에서 빠지는 카드가 둘이다.
@@ -136,12 +270,12 @@ public class CardStatusOverviewBuilder {
      *
      * @param cards 보유 카드 요약 전체. 문구의 "카드 N장"은 후보 수가 아니라 보유 수다
      */
-    private CardStatusBriefing buildBriefing(List<CardStatusSummary> cards) {
+    private CardStatusBriefing performanceNear(List<CardStatusSummary> cards, BriefingContext context) {
         return cards.stream()
                 .filter(card -> card.achievementRate() != null)
                 .filter(card -> card.remainingPerformance() > 0)
                 .min(byImminence())
-                .map(card -> toBriefing(card, cards.size()))
+                .map(card -> toPerformanceBriefing(card, cards.size(), context))
                 .orElse(null);
     }
 
@@ -151,12 +285,59 @@ public class CardStatusOverviewBuilder {
                 .thenComparingLong(CardStatusSummary::userCardId);
     }
 
-    private CardStatusBriefing toBriefing(CardStatusSummary card, int totalCardCount) {
-        String message = String.format(BRIEFING_MESSAGE_FORMAT,
-                totalCardCount, card.cardName(), formatRate(card.achievementRate()));
+    private CardStatusBriefing toPerformanceBriefing(CardStatusSummary card, int totalCardCount,
+                                                     BriefingContext context) {
         return new CardStatusBriefing(
-                card.userCardId(), card.cardName(), card.achievementRate(),
-                card.remainingPerformance(), message);
+                BriefingType.PERFORMANCE_NEAR,
+                card.userCardId(),
+                card.cardName(),
+                card.achievementRate(),
+                card.remainingPerformance(),
+                fill(BriefingMessages.pick(BriefingType.PERFORMANCE_NEAR, context.yearMonth()), Map.of(
+                        "cardCount", String.valueOf(totalCardCount),
+                        "card", card.cardName(),
+                        "rate", formatRate(card.achievementRate()))));
+    }
+
+    /**
+     * 실적 조건이 있는 카드를 전부 채웠는가.
+     *
+     * 조건이 있는 카드가 하나도 없으면 <b>달성한 것이 아니다</b>. 채울 실적이 없었을 뿐인데
+     * "모두 채우셨습니다"라고 하면 하지 않은 일을 했다고 말하는 것이 된다.
+     */
+    private boolean hasAchievedEveryTarget(List<CardStatusSummary> cards) {
+        List<CardStatusSummary> withTarget = cards.stream()
+                .filter(card -> card.achievementRate() != null)
+                .toList();
+        return !withTarget.isEmpty()
+                && withTarget.stream().allMatch(card -> card.remainingPerformance() == 0);
+    }
+
+    /** 권할 혜택은 없지만 소비가 몰린 업종이 있을 때. 관찰만 전한다. */
+    private CardStatusBriefing spendingInsight(BriefingContext context) {
+        if (context.spending().isEmpty()) {
+            return null;
+        }
+        // 조회가 금액 내림차순이라 첫 줄이 가장 많이 쓴 업종이다.
+        CategorySpendingRow top = context.spending().get(0);
+        return message(BriefingType.SPENDING_INSIGHT, context, Map.of(
+                "category", top.getCategoryName(),
+                "count", String.valueOf(top.getPaymentCount())));
+    }
+
+    private CardStatusBriefing message(BriefingType type, BriefingContext context,
+                                       Map<String, String> values) {
+        return new CardStatusBriefing(type, null, null, null, null,
+                fill(BriefingMessages.pick(type, context.yearMonth()), values));
+    }
+
+    /** 문구의 자리표시자를 서버가 채운다. 숫자를 문장에 끼우는 일까지 LLM에 맡기지 않는다. */
+    private String fill(String template, Map<String, String> values) {
+        String filled = template;
+        for (Map.Entry<String, String> value : values.entrySet()) {
+            filled = filled.replace("{" + value.getKey() + "}", value.getValue());
+        }
+        return filled;
     }
 
     /** 문구용 달성률 — 90.0은 "90", 85.5는 "85.5". 의미 없는 소수점 0을 문장에 남기지 않는다. */

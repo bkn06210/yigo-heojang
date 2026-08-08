@@ -2114,9 +2114,23 @@ GET /api/cards/monthly-status
 • 사용 목적: 대시보드 홈, 보유 카드 목록 화면용. 로그인 사용자의 보유 카드 전부를 한 번에 반환한다. 홈 상단 브리핑(briefing)과 카드별 실적 요약·남은 혜택(benefitsSummary)을 담는다.
 • 주의사항:
 ◦ 카드가 여러 장이라도 한 번의 호출로 처리한다 (개별 호출 반복 금지).
-◦ 보유 카드가 0장이면 에러가 아니라 cards: [], briefing: null을 반환한다 (정상 상태).
+◦ 보유 카드가 0장이면 에러가 아니라 `cards: []`와 **카드 등록을 안내하는 briefing**을 반환한다 (정상 상태). 빈 화면을 두지 않고 다음에 할 일을 알린다.
 ◦ 3번(상세)과의 분리 근거: 목록에서 카드마다 전체 혜택 상세를 반복 전송하면 응답이 커지므로, 목록은 요약(benefitsSummary)만, 혜택 상세(benefits, 이용률 포함)는 3번 개별 호출로 나눈다.
-◦ briefing은 실적 달성이 가장 임박한 카드 안내 — 판단·문구 모두 엔진 생성 (화면 표기는 "추천", "AI 브리핑" 라벨 지양). 후보에서 빠지는 카드는 둘이다: 실적 조건이 없는 카드(targetPerformance=0)와 이미 최고 구간까지 채운 카드(remainingPerformance=0). 남은 카드 중 달성률 최대, 동률이면 남은 금액이 적은 쪽 → userCardId 오름차순. 후보가 없으면 `null`.
+◦ **briefing은 "지금 무엇을 하면 되는가"를 말한다.** 판단·문구 모두 엔진 생성이며 요청마다 LLM을 부르지 않는다(홈은 앱을 열자마자 보여야 하는 화면이라 1~3초를 기다릴 수 없다). 문장은 미리 써둔 것 중에서 고르고 숫자는 서버가 끼운다. 화면 표기는 "AI 브리핑" 라벨 지양.
+◦ **`briefing.type`으로 상황을 구분한다.** 문장을 뜯어 분기하면 문구가 바뀔 때마다 화면이 깨지므로, 분기는 `type`으로 하고 문장은 `message`를 그대로 쓴다. 여러 상황이 성립하면 **사용자가 지금 할 수 있는 일이 더 구체적인 쪽**을 고른다.
+
+| `type` | 언제 | 카드를 가리키나 |
+|---|---|---|
+| `NO_CARD` | 보유 카드 0장 | 아니오 |
+| `UNUSED_BENEFIT` | 결제한 업종인데 그 혜택을 못 받고 있다 | 예 |
+| `PERFORMANCE_NEAR` | 실적 달성이 임박한 카드가 있다 | 예 |
+| `ALL_ACHIEVED` | 실적 조건이 있는 카드를 전부 채웠다 | 아니오 |
+| `SPENDING_INSIGHT` | 권할 혜택은 없지만 소비가 몰린 업종이 있다 | 아니오 |
+| `GETTING_STARTED` | 이번 달 결제 기록이 없다 | 아니오 |
+
+◦ `PERFORMANCE_NEAR` 후보에서 빠지는 카드는 둘이다: 실적 조건이 없는 카드(targetPerformance=0)와 이미 최고 구간까지 채운 카드(remainingPerformance=0). 남은 카드 중 달성률 최대, 동률이면 남은 금액이 적은 쪽 → userCardId 오름차순.
+◦ `UNUSED_BENEFIT`은 **"놓친 혜택"이 아니다.** 지난 거래를 되짚어 "얼마 놓쳤다"를 합산하지 않는다 — 거래별로 따로 계산해 더하면 월 한도에 막히는 몫이 빠져 실제보다 큰 금액이 나온다. 현재 상태만 보고 앞으로 무엇을 하면 되는지만 말하므로 **월 총계를 담지 않는다.** 실적 미충족 카드의 실적 조건부 혜택, 이미 받고 있는 혜택, 한도를 다 쓴 혜택은 후보에서 빠진다.
+◦ `userCardId`·`cardName`·`achievementRate`·`remainingPerformance`는 **상황에 따라 null**이다 (가리킬 카드가 없는 type). `type`과 `message`는 항상 있다.
 ◦ performanceMet: 현재 실적 충족 여부(bool). false면 전월실적 조건이 걸린 혜택은 이번 달 적용되지 않는다.
 ◦ sharedLimit은 `int|null`. **null = 통합한도가 없는 카드**(혜택별 개별한도만 적용), 0 = 혜택 없음. 둘을 뭉개면 안 된다.
 ◦ **benefitsSummary는 묶음 한도(limitGroupCode) 그룹을 한 줄로 접어 내려준다.** 한도를 공유하는 혜택을 각각 내려주면 목록 화면이 그대로 더해 실제 지갑보다 몇 배 큰 금액으로 보이기 때문이다. 대표는 그룹에서 가장 작은 benefitId, 표시명은 `"대표 혜택명 외 N건"`. 상세는 31번(접지 않고 혜택별로 전부 내려감).
@@ -2138,6 +2152,7 @@ GET /api/cards/monthly-status
   "code": "SUCCESS",
   "data": {
     "briefing": {
+      "type": "PERFORMANCE_NEAR",
       "userCardId": 12,
       "cardName": "삼성 ID ON",
       "achievementRate": 90.0,
