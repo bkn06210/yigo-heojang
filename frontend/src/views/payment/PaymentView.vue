@@ -66,6 +66,8 @@ const flippingIndex = ref(null);
 const showPasswordModal = ref(false);
 const showQRModal = ref(false);
 const showTimeoutModal = ref(false);
+const qrToken = ref(null);
+const qrImageUrl = ref(null);
 const cardUpOffset = ref(0);
 const showToast = ref(false);
 const toastMessage = ref('');
@@ -365,9 +367,40 @@ const selectCard = (index) => {
   selectedIndexFloat.value = index;
 };
 
-const handlePasswordSuccess = () => {
+const handlePasswordSuccess = async () => {
   showPasswordModal.value = false;
-  showQRModal.value = true;
+
+  try {
+    if (!currentCard.value || !currentCard.value.id) {
+      throw new Error('카드를 선택해주세요');
+    }
+
+    // 디버그: 전송 데이터 확인
+    console.log('QR 생성 요청:', {
+      userCardId: currentCard.value.id,
+      paymentAmount: paymentAmount.value,
+      card: currentCard.value
+    });
+
+    // QR 코드 생성
+    const response = await createPaymentQr(currentCard.value.id, paymentAmount.value);
+    console.log('QR 생성 응답:', response);
+
+    qrToken.value = response.qrToken || response.token;
+    qrImageUrl.value = response.qrImage || response.imageUrl;
+
+    showQRModal.value = true;
+  } catch (error) {
+    const errorMsg = error?.response?.data?.message || error?.message || 'QR 생성에 실패했습니다';
+    console.error('QR 생성 실패:', {
+      message: errorMsg,
+      status: error?.response?.status,
+      data: error?.response?.data,
+      fullError: error
+    });
+    toastMessage.value = errorMsg;
+    showToast.value = true;
+  }
 };
 
 const getModalStyle = () => {
@@ -457,6 +490,10 @@ const closeModal = () => {
   cardUpOffset.value = 0;
   isFlipping.value = false;
 };
+
+onMounted(async () => {
+  await cardStore.loadCards();
+});
 </script>
 
 <template>
@@ -540,6 +577,8 @@ const closeModal = () => {
                             @success="handlePasswordSuccess"
                             @close="handlePasswordClose" />
       <PaymentQRModal v-if="showQRModal"
+                      :qr-token="qrToken"
+                      :qr-image-url="qrImageUrl"
                       @close="handleQRClose"
                       @timeout="handleQRTimeout"
                       @success="handleQRSuccess" />

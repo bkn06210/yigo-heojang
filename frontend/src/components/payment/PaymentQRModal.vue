@@ -1,13 +1,36 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue';
+import QRCode from 'qrcode';
+
+const props = defineProps({
+  qrToken: String,
+  qrImageUrl: String
+});
 
 const emit = defineEmits(['close', 'timeout', 'success']);
+const qrCanvas = ref(null);
 
 const timeRemaining = ref(60);
 let timerInterval = null;
 let successTimeout = null;
 
-onMounted(() => {
+onMounted(async () => {
+  // QR 코드 생성
+  if (props.qrToken && qrCanvas.value) {
+    try {
+      await QRCode.toCanvas(qrCanvas.value, props.qrToken, {
+        width: 200,
+        margin: 2,
+        color: {
+          dark: '#000000',
+          light: '#FFFFFF'
+        }
+      });
+    } catch (error) {
+      console.error('QR 코드 생성 실패:', error);
+    }
+  }
+
   successTimeout = setTimeout(() => {
     if (timerInterval) {
       clearInterval(timerInterval);
@@ -64,9 +87,7 @@ const formatTime = (seconds) => {
       </div>
 
       <div class="qr-container">
-        <div class="qr-code">
-          QR 코드
-        </div>
+        <canvas ref="qrCanvas" class="qr-code"></canvas>
       </div>
 
       <p class="instruction">
@@ -136,17 +157,13 @@ const formatTime = (seconds) => {
   margin: var(--space-lg) 0;
 }
 
-.qr-code {
+canvas.qr-code {
   width: 200px;
   height: 200px;
   background: white;
   border: 2px solid var(--color-border);
   border-radius: var(--radius-lg);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: var(--font-sm);
-  color: var(--color-text-secondary);
+  display: block;
 }
 
 .instruction {

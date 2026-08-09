@@ -33,7 +33,7 @@ public class PaymentQrService {
         if (request.getUserCardId() == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "userCardId는 필수입니다.");
         }
-        if (request.getPaymentAmount() == null || request.getPaymentAmount() <= 0) {
+        if (request.getPaymentAmount() != null && request.getPaymentAmount() <= 0) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "paymentAmount는 0보다 커야 합니다.");
         }
 
@@ -53,11 +53,14 @@ public class PaymentQrService {
         java.time.LocalDateTime expiresAt = java.time.LocalDateTime.now().plusMinutes(5);
         Timestamp expiresAtTimestamp = Timestamp.valueOf(expiresAt);
 
+        // paymentAmount가 null이면 0으로 설정 (금액 미입력 시)
+        Long paymentAmount = request.getPaymentAmount() != null ? request.getPaymentAmount() : 0L;
+
         PaymentQrInsertParam param = new PaymentQrInsertParam(
                 qrToken,
                 memberId,
                 request.getUserCardId(),
-                request.getPaymentAmount(),
+                paymentAmount,
                 "READY",
                 expiresAtTimestamp
         );
