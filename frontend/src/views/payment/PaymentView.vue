@@ -7,17 +7,22 @@ import { useAuthStore } from '@/stores/authStore';
 import { useCardStore } from '@/stores/cardStore';
 import { createPaymentQr, getPaymentQr } from '@/api/paymentQrApi';
 import { getPayment } from '@/api/walletApi';
+import { getRecommendations } from '@/api/paymentApi';
+import { usePersonalizationStore } from '@/stores/personalization';
 import PageHeader from '@/components/common/PageHeader.vue';
 import BottomNavigation from '@/components/layout/BottomNavigation.vue';
 import ToastNotification from '@/components/common/ToastNotification.vue';
 import PaymentPasswordModal from '@/components/payment/PaymentPasswordModal.vue';
 import PaymentQRModal from '@/components/payment/PaymentQRModal.vue';
 import PaymentTimeoutModal from '@/components/payment/PaymentTimeoutModal.vue';
+import PaymentAmountInput from '@/components/payment/PaymentAmountInput.vue';
+import MerchantSelector from '@/components/payment/MerchantSelector.vue';
 
 const paymentStore = usePaymentStore();
 const router = useRouter();
 const authStore = useAuthStore();
 const cardStore = useCardStore();
+const personalizationStore = usePersonalizationStore();
 
 const { user } = storeToRefs(authStore);
 const { cards: storeCards } = storeToRefs(cardStore);
@@ -32,7 +37,13 @@ const CAROUSEL_CONFIG = {
 
 const cards = computed(() => storeCards.value);
 
-const selectedIndex = ref(0);
+const selectedIndexFloat = ref(0);
+const selectedIndex = computed(() => Math.round(selectedIndexFloat.value) % Math.max(cards.value.length, 1));
+const paymentAmount = ref(0);
+const selectedCategory = ref(null);
+const selectedMerchant = ref(null);
+const recommendedCardIds = ref([]);
+const isRecommending = ref(false);
 
 // 현재 선택된 카드
 const currentCard = computed(() => cards.value[selectedIndex.value] || null);
@@ -42,12 +53,12 @@ const currentBenefits = computed(() => {
   return currentCard.value?.benefits?.slice(0, 3) || [];
 });
 
-// 카드 개수에 따라 selectedIndex 초기화
+// 카드 개수에 따라 selectedIndexFloat 초기화
 watch(() => storeCards.value.length, (newLen) => {
   if (newLen <= 2) {
-    selectedIndex.value = 0;
+    selectedIndexFloat.value = 0;
   } else {
-    selectedIndex.value = Math.floor(newLen / 2);
+    selectedIndexFloat.value = Math.floor(newLen / 2);
   }
 }, { immediate: true });
 const flipProgress = ref(0); // 0 ~ 1
@@ -96,12 +107,12 @@ const getCardStyle = (index) => {
     // 1장: 중앙 고정
     angle = 0;
     spread = 0;
-    yLift = 80;
+    yLift = isRecommending.value ? 100 : 80;
   } else if (cardCount === 2) {
     // 2장: 좌우 균형 배치
     angle = offset * 40; // -40도, 40도
     spread = 100;
-    yLift = 50;
+    yLift = isRecommending.value ? 100 : 50;
   } else {
     // 3장 이상: 부채꼴 배치
     const maxOffset = Math.floor(cardCount / 2);
@@ -145,6 +156,105 @@ const getCardStyle = (index) => {
     opacity,
     zIndex,
   };
+};
+
+// Cubic-bezier easing 함수
+const easeInOutCubic = (t) => {
+  // cubic-bezier(0.22, 1, 0.36, 1) - 자연스러운 감속
+  return t < 0.5
+    ? 4 * t * t * t
+    : 1 - Math.pow(-2 * t + 2, 3) / 2;
+};
+
+// 카드 추천 받기
+const getCardRecommendations = async () => {
+  if (isRecommending.value) return;
+
+  // expectedAmount 검증
+  if (!paymentAmount.value || paymentAmount.value <= 0) {
+    console.error('결제 금액이 0보다 커야 합니다.');
+    return;
+  }
+
+  try {
+    isRecommending.value = true;
+
+    // 카테고리 이름으로 ID 찾기
+    const categoryId = selectedCategory.value
+      ? personalizationStore.categories.find(cat => cat.label === selectedCategory.value)?.id
+      : null;
+
+
+    // API 호출: 선택한 가맹점 정보와 함께 추천 요청
+    const response = await getRecommendations({
+      categoryId: categoryId,
+      merchantId: null,
+      expectedAmount: paymentAmount.value,
+      paymentType: 'CARD',
+    });
+
+
+    // 추천 카드 ID 리스트 저장 (최대 3장)
+    // 응답 형식: { recommendations: [{ userCardId, rank, ... }] }
+    const recommendations = response?.data?.recommendations || [];
+    recommendedCardIds.value = recommendations
+      .map(item => item.userCardId)
+      .slice(0, 3);
+
+    // 목표 카드 인덱스 계산
+    if (recommendedCardIds.value.length > 0) {
+      const topRecommendedId = recommendedCardIds.value[0];
+
+      // 디버깅: 현재 카드들 출력
+
+      const targetIndex = cards.value.findIndex(c => c.id === topRecommendedId);
+
+
+      if (targetIndex !== -1) {
+        // 부드러운 애니메이션 (800ms - 더 천천히)
+        const startIndex = selectedIndexFloat.value;
+        const startTime = Date.now();
+        const duration = 800; // 800ms (더 느리게)
+        const cardCount = cards.value.length;
+
+        // 가장 짧은 경로 계산 (시계방향)
+        let distance = (targetIndex - startIndex + cardCount) % cardCount;
+
+        // 반시계방향이 더 짧으면 음수로
+        if (distance > cardCount / 2) {
+          distance = distance - cardCount;
+        }
+
+        const animate = () => {
+          const elapsed = Date.now() - startTime;
+          const progress = Math.min(elapsed / duration, 1);
+          const eased = easeInOutCubic(progress);
+
+          // 부드러운 보간 (modulo 처리 개선)
+          const newIndex = startIndex + distance * eased;
+          selectedIndexFloat.value = newIndex >= 0 ? newIndex % cardCount : (newIndex % cardCount + cardCount) % cardCount;
+
+          if (progress < 1) {
+            requestAnimationFrame(animate);
+          } else {
+            selectedIndexFloat.value = targetIndex;
+            isRecommending.value = false;
+          }
+        };
+
+        animate();
+      } else {
+        isRecommending.value = false;
+        console.error('목표 카드를 찾을 수 없습니다.');
+      }
+    } else {
+      isRecommending.value = false;
+      console.error('추천 카드가 없습니다.');
+    }
+  } catch (error) {
+    console.error('카드 추천 API 에러:', error?.response?.data || error.message);
+    isRecommending.value = false;
+  }
 };
 
 // 스와이프 끝났을 때 처리
@@ -252,7 +362,7 @@ const handleTouchEnd = () => {
 };
 
 const selectCard = (index) => {
-  selectedIndex.value = index;
+  selectedIndexFloat.value = index;
 };
 
 const handlePasswordSuccess = () => {
@@ -353,9 +463,27 @@ const closeModal = () => {
   <div class="payment-page">
     <PageHeader title="결제" :show-back="false" />
 
-    <div v-if="hasCards" class="recommend-section" style="display: flex; flex-direction: column; align-items: flex-end; margin-top: -10px; margin-bottom: 0; padding-right: var(--space-md); padding-top: 0;">
-      <p style="margin: 0 0 2px 0; font-size: var(--font-sm); color: var(--color-text-secondary);">더 좋은 혜택을 찾기 원하시나요?</p>
-      <button class="recommend-btn" @click="$router.push('/payment/recommend')" style="font-size: var(--font-sm); padding: 6px 12px; background: var(--color-primary); color: var(--color-btn-primary-text); border: none; border-radius: var(--radius-md); cursor: pointer; text-decoration: none; font-weight: 500;">카드 추천 받기</button>
+    <!-- 결제 금액 입력 -->
+    <div v-if="hasCards" class="payment-amount-section" style="margin-top: var(--space-sd); margin-bottom: var(--space-md);">
+      <h3 style="margin: 0 0 12px 0; font-size: 16px; font-weight: 700; color: var(--color-text-primary);">결제 금액</h3>
+      <PaymentAmountInput v-model="paymentAmount" />
+    </div>
+
+    <!-- 이용 장소 선택 -->
+    <div v-if="hasCards" class="merchant-section" style="margin-bottom: var(--space-md);">
+      <h3 style="margin: 0 0 12px 0; font-size: 16px; font-weight: 700; color: var(--color-text-primary);">이용 장소</h3>
+      <MerchantSelector
+        v-model:category="selectedCategory"
+        v-model:merchant="selectedMerchant"
+      />
+      <!-- 카드 추천 받기 -->
+      <button
+        @click="getCardRecommendations"
+        :disabled="isRecommending"
+        class="recommend-btn"
+      >
+        {{ isRecommending ? '추천 중...' : '카드 추천 받기' }}
+      </button>
     </div>
 
     <main style="flex: 1; display: flex; flex-direction: column;">
@@ -368,13 +496,13 @@ const closeModal = () => {
         </div>
       </div>
 
-      <!-- 현재 카드의 혜택 표시 -->
-      <div v-if="hasCards && currentBenefits.length > 0" class="benefits-section">
+      <!-- 현재 카드의 혜택 표시 (임시 비활성화) -->
+      <!-- <div v-if="hasCards && currentBenefits.length > 0" class="benefits-section">
         <h3 class="benefits-title">{{ currentCard?.name }} 주요 혜택</h3>
         <ul class="benefits-list">
           <li v-for="(benefit, idx) in currentBenefits" :key="idx" class="benefits-item">• {{ typeof benefit === 'string' ? benefit : benefit.benefitName }}</li>
         </ul>
-      </div>
+      </div> -->
 
       <!-- 부채꼴 캐러셀 -->
       <div v-if="hasCards" ref="cardsContainerRef" class="cards-carousel"
@@ -384,8 +512,14 @@ const closeModal = () => {
         <div class="cards-container">
           <div v-for="(card, index) in cards" :key="card.id"
                class="card-item"
-               :class="{ flipping: isFlipping && index === flippingIndex }"
-               :style="getCardStyle(index)"
+               :class="{
+                 flipping: isFlipping && index === flippingIndex,
+                 recommended: recommendedCardIds.includes(card.userCardId)
+               }"
+               :style="{
+                 ...getCardStyle(index),
+                 transitionDelay: `${index * 0.08}s`
+               }"
                @click="selectCard(index)">
             <div class="card-flip">
               <div class="card-front">
@@ -434,21 +568,23 @@ const closeModal = () => {
   padding-bottom: calc(var(--space-xl) + var(--space-2xl) + var(--space-xl));
   background: var(--color-bg);
   box-sizing: border-box;
-  overflow: hidden;   /* 불필요한 스크롤 제거 */
   display: flex;
   flex-direction: column;
   width: 100%;
-   max-width: 480px;   /* 모바일 기준 고정 너비 */
-   margin: 0 auto;     /* 중앙 정렬 */
-     height: 100vh;      /* 화면 전체 높이 */
+  max-width: 480px;
+  margin: 0 auto;
+  min-height: 100vh;
 }
 
 main {
   display: flex;
-  align-items: center;
-  justify-content: center;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
   flex: 1;
   width: 100%;
+  overflow-y: auto;
+  gap: var(--space-md);
 }
 
 /* ===== 부채꼴 캐러셀 ===== */
@@ -477,12 +613,19 @@ main {
   position: absolute;
   width: clamp(140px, 20vw, 180px);
   height: clamp(220px, 30vh, 280px);
-  transform-origin: bottom center; /* 회전축을 아래쪽으로 */
-  transition: transform 0.4s ease, opacity 0.4s ease; /* 부드러운 애니메이션 */
+  transform-origin: bottom center;
   perspective: 1000px;
   cursor: pointer;
   top: 50%;
   left: 55%;
+  border: 3px solid transparent;
+  box-sizing: border-box;
+  transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94), border 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.card-item.recommended {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 12px rgba(var(--color-primary-rgb), 0.3);
 }
 
 .card-flip {
@@ -507,6 +650,16 @@ main {
   }
   100% {
     transform: rotateY(180deg);
+  }
+}
+
+/* 카드 회전 애니메이션 (추천 받기) */
+@keyframes rotate-carousel {
+  0% {
+    transform: rotateZ(0deg);
+  }
+  100% {
+    transform: rotateZ(360deg);
   }
 }
 
@@ -613,18 +766,25 @@ main {
 }
 
 .recommend-btn {
-  background: var(--color-primary);
-  color: var(--color-btn-primary-text);
+  background: none;
   border: none;
-  border-radius: var(--radius-md);
-  padding: var(--space-sm) var(--space-md);
+  color: var(--color-primary-dark);
+  font-size: var(--font-xs);
+  padding: 0;
   cursor: pointer;
-  text-decoration: none;
-  transition: all 0.2s ease;
+  text-decoration: underline;
+  transition: var(--transition-fast);
+  margin-top: var(--space-sm);
+  font-weight: var(--font-semibold);
 }
 
-.recommend-btn:hover {
-  opacity: 0.9;
+.recommend-btn:hover:not(:disabled) {
+  opacity: 0.7;
+}
+
+.recommend-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .payment-btn {
