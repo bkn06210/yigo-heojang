@@ -32,6 +32,16 @@
         <url-pattern>/*</url-pattern>
     </filter-mapping>
 
+    <!-- 프론트에서 추가 - CORS 필터: JWT 필터보다 먼저 실행되어 모든 응답에 CORS 헤더를 추가한다 -->
+    <filter>
+        <filter-name>corsFilter</filter-name>
+        <filter-class>com.wallet.auth.filter.CorsFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>corsFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
     <!-- JWT 인증 필터 -->
     <filter>
         <filter-name>jwtAuthenticationFilter</filter-name>

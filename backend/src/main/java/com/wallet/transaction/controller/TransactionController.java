@@ -4,6 +4,7 @@ import com.wallet.common.ApiResponse;
 import com.wallet.transaction.dto.ExpenseCategoryListResponse;
 import com.wallet.transaction.dto.TransactionDetailResponse;
 import com.wallet.transaction.dto.TransactionListResponse;
+import com.wallet.transaction.dto.TransactionSummaryResponse;
 import com.wallet.transaction.dto.TransactionSyncResponse;
 import com.wallet.transaction.service.TransactionService;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -56,6 +57,26 @@ public class TransactionController {
                 );
 
         return ApiResponse.success("소비내역 목록 조회에 성공했습니다.", data);
+    }
+
+    @GetMapping("/api/transactions/summary")
+    public ApiResponse<TransactionSummaryResponse> getTransactionsSummary(
+            @RequestParam(value = "yearMonth", required = false) String yearMonth,
+            @RequestParam(value = "userCardId", required = false) Long userCardId,
+            HttpServletRequest request
+    ) {
+        Long userId = (Long) request.getAttribute(AUTHENTICATED_MEMBER_ID);
+
+        // yearMonth가 없으면 현재 월로 설정 (프론트 테스트용)
+        if (yearMonth == null || yearMonth.isBlank()) {
+            java.time.YearMonth now = java.time.YearMonth.now();
+            yearMonth = now.format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM"));
+        }
+
+        TransactionSummaryResponse data =
+                transactionService.getTransactionsSummary(userId, yearMonth, userCardId);
+
+        return ApiResponse.success("이번 달 거래 요약 조회에 성공했습니다.", data);
     }
 
     @GetMapping("/api/transactions/{expenseId}")

@@ -31,12 +31,12 @@ const showUpload = ref(false);
 const showComplete = ref(false);
 
 
-// 카드 등록 정보
-const cardName = ref('');
-const cardNumber = ref('');
-const expiryDate = ref('');
-const cvc = ref('');
-const password = ref('');
+// 카드 등록 정보 (테스트용 목데이터: KB국민카드)
+const cardName = ref('ALL point 카드');
+const cardNumber = ref('2228-7900-0000-0000');
+const expiryDate = ref('12/25');
+const cvc = ref('123');
+const password = ref('12');
 
 
 // 카드 인식 방법 선택
@@ -147,15 +147,12 @@ const formatPassword = () => {
 
 const registerCard = async () => {
   try {
-    await registerUserCard({
-      cardName: cardName.value,
-      cardNumber: cardNumber.value.replace(/-/g, ''),
-      expiryDate: expiryDate.value,
-      cvc: cvc.value,
-      password: password.value,
-    });
+    const response = await registerUserCard(
+      cardName.value,
+      cardNumber.value.replace(/-/g, '')
+    );
 
-    await cardStore.loadMonthlyStatuses();
+    await cardStore.loadCards();
     showComplete.value = true;
   } catch (error) {
     console.error('카드 등록 실패:', error);

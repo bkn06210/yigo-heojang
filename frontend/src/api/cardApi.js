@@ -13,3 +13,8 @@ export const getCardStatus = (userCardId, yearMonth) => {
   if (yearMonth) params.yearMonth = yearMonth
   return api.get(`/api/cards/${userCardId}/monthly-status`, { params })
 }
+
+// 카드 상세 정보 조회 (마스킹된 카드 번호 포함)
+export const getUserCardDetail = (userCardId) => {
+  return api.get(`/api/user-cards/${userCardId}`).then(res => res.data.data)
+}

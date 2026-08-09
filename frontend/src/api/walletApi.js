@@ -24,6 +24,7 @@ export const deleteMembership = (id) => api.delete(`/api/memberships/${id}`).the
 
 export const getTransactions = (params = {}) => api.get('/api/transactions', { params }).then(data)
 export const getTransaction = (id) => api.get(`/api/transactions/${id}`).then(data)
+export const getTransactionsSummary = (params = {}) => api.get('/api/transactions/summary', { params }).then(data)
 export const syncTransactions = () => api.post('/api/transactions/sync').then(data)
 export const getExpenseCategories = () => api.get('/api/expense-categories').then(data)
 
@@ -42,12 +43,10 @@ export const getCardMonthlyStatus = (userCardId, params = {}) =>
 export const getUserCardCandidates = (cardNumber) =>
   api.post('/api/user-cards/candidates', { cardNumber }).then(data)
 
-// PR #29 연동: 선택한 카드 상품과 카드번호로 로그인 회원의 보유카드를 등록한다.
-export const registerUserCard = (payload) => {
-  // payload.cardId와 payload.cardNumber만 백엔드로 전송
-  const { cardId, cardNumber } = payload;
-  return api.post('/api/user-cards', { cardId, cardNumber }).then(data);
-}
+// 사용자가 입력한 카드명과 카드번호로 보유카드를 등록한다.
+// 백엔드에서 cardNumber로 카드 상품을 자동 조회해 userCardId를 생성한다.
+export const registerUserCard = (cardName, cardNumber) =>
+  api.post('/api/user-cards', { cardName, cardNumber }).then(data)
 
 // PR #32 연동: 로그인 회원의 활성 보유카드 기본 목록을 조회한다.
 export const getUserCards = () =>

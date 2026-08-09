@@ -5,6 +5,7 @@ import { storeToRefs } from 'pinia';
 
 import { useAuthStore } from '@/stores/authStore';
 import { useCardStore } from '@/stores/cardStore';
+import { getTransactionsSummary } from '@/api/walletApi';
 
 import HomeHeader from '@/components/home/HomeHeader.vue';
 import Icon from '@/components/common/Icon.vue';
@@ -125,10 +126,23 @@ const benefitReport = {
 //   - 응답 형식: { success: true, code: "SUCCESS", data: { count, totalAmount }, message: null }
 //   - 쿼리 파라미터 처리: cardId가 없으면 전체, 있으면 해당 카드만 반환
 //     (예: /transactions/summary?cardId=1 → cardId가 1인 카드의 이번 달 요약)
-const spendingSummary = {
-  count: 8,
+const spendingSummary = ref({
+  count: 0,
+  totalAmount: 0,
+});
 
-  totalAmount: 342000,
+const loadSpendingSummary = async () => {
+  try {
+    // 현재 월을 "2026-08" 형식으로 계산
+    const today = new Date();
+    const currentMonth = String(today.getMonth() + 1).padStart(2, '0');
+    const yearMonth = `${today.getFullYear()}-${currentMonth}`;
+
+    const summary = await getTransactionsSummary({ yearMonth });
+    spendingSummary.value = summary;
+  } catch (error) {
+    console.error('거래 요약 조회 실패:', error);
+  }
 };
 
 // 헤더
@@ -223,6 +237,7 @@ onMounted(async () => {
   await cardStore.loadPoints();
   await cardStore.loadMemberships();
   await loadHome();
+  await loadSpendingSummary();
 });
 </script>
 

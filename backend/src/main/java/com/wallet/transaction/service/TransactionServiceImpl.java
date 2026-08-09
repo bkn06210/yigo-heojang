@@ -5,6 +5,7 @@ import com.wallet.transaction.dto.ExpenseCategoryResponse;
 import com.wallet.transaction.dto.TransactionDetailResponse;
 import com.wallet.transaction.dto.TransactionListResponse;
 import com.wallet.transaction.dto.TransactionResponse;
+import com.wallet.transaction.dto.TransactionSummaryResponse;
 import com.wallet.transaction.dto.TransactionSyncResponse;
 import com.wallet.transaction.mapper.TransactionMapper;
 import org.springframework.http.HttpStatus;
@@ -100,6 +101,37 @@ public class TransactionServiceImpl implements TransactionService {
         }
 
         return detail;
+    }
+
+    @Override
+    public TransactionSummaryResponse getTransactionsSummary(
+            Long userId,
+            String yearMonth,
+            Long userCardId
+    ) {
+        // 전체 거래 조회
+        List<TransactionResponse> transactions =
+                transactionMapper.selectTransactionList(
+                        userId,
+                        yearMonth,
+                        null,
+                        userCardId,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null
+                );
+
+        // 건수와 총액 계산
+        int count = transactions.size();
+        long totalAmount = transactions.stream()
+                .mapToLong(TransactionResponse::getPaymentAmount)
+                .sum();
+
+        return new TransactionSummaryResponse(count, totalAmount);
     }
 
     @Override

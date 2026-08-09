@@ -49,8 +49,14 @@ const goRegister = () => {
 
 
 // 초기화
-onMounted(() => {
-  // mock 데이터는 추가하지 않음
+onMounted(async () => {
+  if (isLogin.value) {
+    try {
+      await cardStore.loadCards();
+    } catch (error) {
+      console.error('카드 목록 로드 실패:', error);
+    }
+  }
 });
 
 

@@ -60,6 +60,23 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         @NonNull HttpServletResponse response,
         @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
+        // 프론트에서 추가 - CORS preflight 요청(OPTIONS) 사전 처리
+        // 브라우저는 교차 출처 요청 전에 preflight를 보내는데,
+        // 이 요청에는 Authorization 헤더가 없으므로 여기서 먼저 처리해야 함
+        // 허용된 오리진과 메서드, 헤더를 응답 헤더에 추가하고 200 OK를 반환
+        if (isPreflightRequest(request)) {
+            String origin = request.getHeader("Origin");
+            if (frontendOrigin != null && frontendOrigin.equals(origin)) {
+                response.setHeader("Access-Control-Allow-Origin", frontendOrigin);
+                response.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,PATCH,DELETE,OPTIONS");
+                response.setHeader("Access-Control-Allow-Headers", "*");
+                response.setHeader("Access-Control-Allow-Credentials", "true");
+                response.setHeader("Vary", "Origin");
+            }
+            response.setStatus(HttpServletResponse.SC_OK);
+            return;
+        }
+
         if (isPublicRequest(request)) {
             filterChain.doFilter(request, response);
             return;

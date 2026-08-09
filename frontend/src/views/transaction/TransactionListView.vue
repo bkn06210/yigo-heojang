@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { getTransactions } from '@/api/walletApi';
 
@@ -252,7 +252,9 @@ const formatDate = (dateStr) => {
 // 사용내역 조회
 const loadTransactions = async () => {
   try {
-    const response = await getTransactions();
+    const params = filterCardId.value ? { userCardId: filterCardId.value } : {};
+    console.log('거래 로드 - filterCardId:', filterCardId.value, 'params:', params);
+    const response = await getTransactions(params);
     const rawTransactions = response?.transactions || [];
     transactions.value = rawTransactions.map((t) => ({
       id: t.expenseId,
@@ -273,6 +275,12 @@ const loadTransactions = async () => {
 };
 
 onMounted(() => {
+  loadTransactions();
+});
+
+// 쿼리 파라미터(카드 선택) 변경 시 다시 로드
+watch(() => route.query.cardId, () => {
+  currentPage.value = 1;
   loadTransactions();
 });
 

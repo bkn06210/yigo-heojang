@@ -4,7 +4,8 @@ import { ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
 import { useCardStore } from '@/stores/cardStore';
-import { getCardStatus } from '@/api/cardApi';
+import { getUserCardDetail } from '@/api/cardApi';
+import { getTransactions } from '@/api/walletApi';
 
 import PageHeader from '@/components/common/PageHeader.vue';
 import BottomNavigation from '@/components/layout/BottomNavigation.vue';
@@ -128,10 +129,22 @@ const card = ref({
   image: '/images/cards/shinhan.png',
 });
 
+const recentTransactions = ref([]);
+
 const loadCard = async () => {
   try {
-    const data = await getCardStatus(route.params.id);
+    const data = await getUserCardDetail(route.params.id);
     card.value = { ...card.value, ...data };
+
+    // 이 카드의 거래 데이터 로드
+    const params = { userCardId: card.value.userCardId };
+    const transactionResponse = await getTransactions(params);
+    const transactions = transactionResponse?.transactions || [];
+    recentTransactions.value = transactions.slice(0, 3).map((t) => ({
+      date: t.paymentDate.split('T')[0].slice(5),
+      merchant: t.merchantName || t.categoryName,
+      amount: `-${t.paymentAmount.toLocaleString()}원`,
+    }));
   } catch (error) {
     console.error('카드 상세 조회 실패:', error);
   }
@@ -157,7 +170,7 @@ const goBenefitDetail = () => {
 const goTransaction = () => {
   router.push({
     path: '/transactions',
-    query: { cardId: card.id, cardName: card.name },
+    query: { cardId: card.value.userCardId, cardName: card.value.name },
   });
 };
 
@@ -262,7 +275,7 @@ const toggleMemo = () => {
     </p>
 
     <p class="number">
-      {{ card.owner }} {{ maskCardNumber(card.cardNumber) }}
+      {{ card.owner }} {{ maskCardNumber(card.maskedCardNumber) }}
     </p>
 
   </div>
@@ -315,32 +328,16 @@ const toggleMemo = () => {
       </div>
     </section>
 
-    <!-- 최근 소비내역 -->
+    <!-- 카드이용내역 -->
     <section class="transaction-section">
-      <h2>최근 소비내역</h2>
+      <h2>카드이용내역</h2>
 
-      <div class="transaction-item">
-        <span> 07.28 </span>
+      <div v-for="(transaction, index) in recentTransactions" :key="index" class="transaction-item">
+        <span> {{ transaction.date }} </span>
 
-        <span> 스타벅스 </span>
+        <span> {{ transaction.merchant }} </span>
 
-        <span> -6,200원 </span>
-      </div>
-
-      <div class="transaction-item">
-        <span> 07.27 </span>
-
-        <span> CU </span>
-
-        <span> -4,500원 </span>
-      </div>
-
-      <div class="transaction-item">
-        <span> 07.26 </span>
-
-        <span> 올리브영 </span>
-
-        <span> -28,900원 </span>
+        <span> {{ transaction.amount }} </span>
       </div>
 
       <button class="more-button" @click="goTransaction">+ 더보기</button>
