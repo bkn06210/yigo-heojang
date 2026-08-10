@@ -29,6 +29,11 @@ const { cards: storeCards } = storeToRefs(cardStore);
 const isLoggedIn = computed(() => !!user.value);
 const hasCards = computed(() => storeCards.value.length > 0);
 
+// 카드 등록 페이지로 이동
+const goToCardRegister = () => {
+  router.push('/cards/register');
+};
+
 const CAROUSEL_CONFIG = {
   FLIP_THRESHOLD: 100,
   HORIZONTAL_SWIPE_THRESHOLD: 50,
@@ -43,7 +48,10 @@ const paymentAmount = ref(0);
 const selectedCategory = ref(null);
 const selectedMerchant = ref(null);
 const recommendedCardIds = ref([]);
+const recommendedInfo = ref({}); // { cardId: { rank, reason, benefit } }
 const isRecommending = ref(false);
+const showSwipeGuide = ref(false); // 스와이프 가이드 톨팁
+const showRecommendationResult = ref(false); // 추천 결과 표시 여부
 
 // 현재 선택된 카드
 const currentCard = computed(() => cards.value[selectedIndex.value] || null);
@@ -212,17 +220,37 @@ const getCardRecommendations = async () => {
     });
 
 
-    // 추천 카드 ID 리스트 저장 (최대 3장)
-    // 응답 형식: { recommendations: [{ userCardId, rank, ... }] }
+    // 추천 카드 ID 리스트 저장 (최대 3장) + 추천 정보
+    // 응답 형식: { recommendations: [{ userCardId, rank, benefitReason, ... }] }
     const recommendations = response?.data?.recommendations || [];
     console.log('API 추천 응답:', recommendations);
+
     recommendedCardIds.value = recommendations
       .map(item => item.userCardId)
       .slice(0, 3);
-    console.log('저장된 추천 카드 ID들:', recommendedCardIds.value);
 
-    // 카드를 추천 순서대로 재정렬 (1순위, 2순위, 3순위가 배열 앞에 붙어있어야 함!)
+    // 추천 정보 저장: { cardId: { rank, reason } }
+    recommendedInfo.value = {};
+    recommendations.slice(0, 3).forEach((item, idx) => {
+      recommendedInfo.value[item.userCardId] = {
+        rank: idx + 1,
+        reason: item.benefitReason || item.benefitsSummary?.[0] || '최적의 선택',
+        benefit: item.benefitsSummary?.[0] || '주요 혜택'
+      };
+    });
+    console.log('저장된 추천 카드 ID들:', recommendedCardIds.value);
+    console.log('추천 정보:', recommendedInfo.value);
+
+    // 카드를 추천 순서대로 재정렬
     cardStore.reorderCardsByRecommendation(recommendedCardIds.value);
+
+    // 스와이프 가이드 톨팁 표시 (1초 후 자동 표시, 3초 후 자동 숨김)
+    setTimeout(() => {
+      showSwipeGuide.value = true;
+      setTimeout(() => {
+        showSwipeGuide.value = false;
+      }, 3000);
+    }, 1000);
 
     // 목표 카드 인덱스 계산
     if (recommendedCardIds.value.length > 0) {
@@ -263,6 +291,7 @@ const getCardRecommendations = async () => {
               selectedIndexFloat.value = 0; // 1순위가 중앙에
               isAnimatingToCenter.value = false;
               isRecommendationMode.value = true;
+              showRecommendationResult.value = true; // 추천 결과 헤더 표시
               // CSS transition이 자동으로 펼쳐짐 애니메이션 처리
             }, 800); // 1단계 duration과 같음
             isRecommending.value = false;
@@ -570,14 +599,20 @@ onMounted(async () => {
     </div>
 
     <!-- 카드 추천 받기 -->
-    <div v-if="hasCards" style="margin-bottom: var(--space-md);">
-      <button
-        @click="getCardRecommendations"
-        :disabled="isRecommending"
-        class="recommend-btn"
-      >
-        {{ isRecommending ? '추천 중...' : '카드 추천 받기' }}
-      </button>
+    <div v-if="hasCards" style="margin-bottom: var(--space-md); padding: 0 var(--space-md);">
+      <div style="background: linear-gradient(135deg, rgba(var(--color-primary-rgb), 0.1) 0%, rgba(var(--color-primary-rgb), 0.05) 100%); border-radius: var(--radius-lg); padding: 16px; margin-bottom: 12px;">
+        <h4 style="margin: 0 0 8px 0; font-size: 14px; font-weight: 700; color: var(--color-text-primary);">🎯 추천 카드 찾기</h4>
+        <p style="margin: 0 0 12px 0; font-size: 12px; color: var(--color-text-secondary);">카테고리와 금액에 맞는 최적의 카드를 추천받으세요</p>
+        <button
+          @click="getCardRecommendations"
+          :disabled="isRecommending"
+          style="width: 100%; padding: 12px 16px; background: var(--color-primary); color: var(--color-btn-primary-text); border: none; border-radius: var(--radius-md); font-weight: 700; font-size: 14px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px;"
+          :style="{ opacity: isRecommending ? 0.7 : 1 }"
+        >
+          <span v-if="!isRecommending">✨ 카드 추천</span>
+          <span v-else>⏳ 추천 중...</span>
+        </button>
+      </div>
     </div>
 
     <main style="flex: 1; display: flex; flex-direction: column;">
@@ -590,19 +625,22 @@ onMounted(async () => {
         </div>
       </div>
 
-      <!-- 현재 카드의 혜택 표시 (임시 비활성화) -->
-      <!-- <div v-if="hasCards && currentBenefits.length > 0" class="benefits-section">
-        <h3 class="benefits-title">{{ currentCard?.name }} 주요 혜택</h3>
-        <ul class="benefits-list">
-          <li v-for="(benefit, idx) in currentBenefits" :key="idx" class="benefits-item">• {{ typeof benefit === 'string' ? benefit : benefit.benefitName }}</li>
-        </ul>
-      </div> -->
+      <!-- 추천 결과 헤더 (추천 완료 후에만) -->
+      <div v-if="showRecommendationResult" style="margin-bottom: 8px; padding: 0 16px;">
+        <h3 style="margin: 0; font-size: 16px; font-weight: 700; color: var(--color-text-primary);">✨ 추천 결과</h3>
+        <p style="margin: 4px 0 0 0; font-size: 11px; color: var(--color-text-secondary);">당신을 위한 최적의 카드</p>
+      </div>
 
       <!-- 부채꼴 캐러셀 -->
       <div v-if="hasCards" ref="cardsContainerRef" class="cards-carousel"
            @touchstart="handleTouchStart"
            @touchmove="handleTouchMove"
            @touchend="handleTouchEnd">
+        <!-- 스와이프 가이드 톨팁 -->
+        <div v-if="showSwipeGuide" style="position: absolute; top: 20px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); color: white; padding: 8px 16px; border-radius: 20px; font-size: 12px; z-index: 100; white-space: nowrap; animation: fadeInOut 3s;">
+          💡 좌측으로 스와이프하면 다른 카드를 볼 수 있습니다
+        </div>
+
         <div class="cards-container">
           <div v-for="(card, index) in cards" :key="card.id"
                class="card-item"
@@ -615,6 +653,17 @@ onMounted(async () => {
                  transitionDelay: `${index * 0.08}s`
                }"
                @click="selectCard(index)">
+            <!-- 추천 배지 (카드 위) -->
+            <div v-if="recommendedInfo[card.userCardId]" class="card-rank-badge">
+              {{ ['🥇', '🥈', '🥉'][recommendedInfo[card.userCardId].rank - 1] }}
+              {{ recommendedInfo[card.userCardId].rank }}위
+            </div>
+
+            <!-- 추천 근거 (카드 위) -->
+            <div v-if="recommendedInfo[card.userCardId]" class="card-reason-text">
+              {{ recommendedInfo[card.userCardId].reason }}
+            </div>
+
             <div class="card-flip">
               <div class="card-front">
                 <img :src="card.image" :alt="card.name" />
@@ -625,6 +674,41 @@ onMounted(async () => {
               </div>
             </div>
           </div>
+
+          <!-- 카드 추가 버튼 -->
+          <button
+            class="card-add-button"
+            :style="{
+              ...getCardStyle(cards.length),
+              transitionDelay: `${cards.length * 0.08}s`
+            }"
+            @click="goToCardRegister"
+            type="button"
+          >
+            <div class="add-icon">+</div>
+          </button>
+        </div>
+
+        <!-- 추천 이유 + 혜택 (추천 받았을 때만) -->
+        <div v-if="currentCard && recommendedCardIds.length > 0 && recommendedInfo[currentCard.userCardId]" class="benefits-section" style="position: absolute; bottom: 0; left: 0; right: 0; width: 100%; padding: 0 var(--space-md); box-sizing: border-box;">
+          <h3 class="benefits-title">{{ currentCard.name }}</h3>
+          <p class="benefits-reason">💡 {{ recommendedInfo[currentCard.userCardId].reason }}</p>
+          <h4 style="margin: 8px 0 6px 0; font-size: 12px; font-weight: 700; color: var(--color-text-primary);">주요 혜택</h4>
+          <ul class="benefits-list">
+            <li v-for="(benefit, idx) in currentBenefits.slice(0, 2)" :key="idx" class="benefits-item">
+              • {{ typeof benefit === 'string' ? benefit : benefit.benefitName }}
+            </li>
+          </ul>
+        </div>
+
+        <!-- 주요 혜택만 (평소) -->
+        <div v-else-if="currentCard && currentBenefits.length > 0" class="benefits-section" style="position: absolute; bottom: 430px; left: 140px; right: 0; width: 400%; padding: 0 var(--space-md); box-sizing: border-box;">
+          <h3 class="benefits-title">{{ currentCard.name }} 주요 혜택</h3>
+          <ul class="benefits-list">
+            <li v-for="(benefit, idx) in currentBenefits" :key="idx" class="benefits-item">
+              • {{ typeof benefit === 'string' ? benefit : benefit.benefitName }}
+            </li>
+          </ul>
         </div>
       </div>
 
@@ -726,12 +810,85 @@ main {
   box-shadow: 0 0 12px rgba(var(--color-primary-rgb), 0.3);
 }
 
+/* 카드 추가 버튼 */
+.card-add-button {
+  position: absolute;
+  width: clamp(140px, 20vw, 180px);
+  height: clamp(220px, 30vh, 280px);
+  transform-origin: bottom center;
+  perspective: 1000px;
+  cursor: pointer;
+  top: 50%;
+  left: 55%;
+  border: none;
+  border-radius: 16px;
+  box-sizing: border-box;
+  will-change: transform;
+  backface-visibility: hidden;
+  transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94), background 0.3s ease;
+  background: var(--color-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.card-add-button:hover {
+  background: rgba(var(--color-primary-dark-rgb), 0.8);
+}
+
+.add-icon {
+  font-size: clamp(48px, 12vw, 64px);
+  font-weight: var(--font-bold);
+  color: var(--color-btn-primary-text);
+  line-height: 1;
+}
+
+/* 추천 배지 */
+.card-rank-badge {
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--color-primary);
+  color: var(--color-btn-primary-text);
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+  z-index: 10;
+  box-shadow: 0 2px 8px rgba(var(--color-primary-rgb), 0.3);
+}
+
+/* 추천 근거 텍스트 */
+.card-reason-text {
+  position: absolute;
+  top: -32px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  max-width: 140px;
+  text-align: center;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  z-index: 10;
+}
+
 .card-flip {
   width: 100%;
   height: 100%;
   position: relative;
   transform-style: preserve-3d;
   transform-origin: center center;
+  background: var(--color-surface);
+  border-radius: 12px;
 }
 
 .card-item.flipping .card-flip {
@@ -836,10 +993,11 @@ main {
 }
 
 .benefits-section {
-  /* 작업 관리자에서는 180px가 낫고(모바일용)/vs code에서는 65 */
-  margin-top: 140px;  
+  margin-top: 24px;
   margin-bottom: var(--space-md);
+  padding: 0 var(--space-md);
   flex-shrink: 0;
+  min-height: zz0px;
 }
 
 .benefits-title {
@@ -1119,6 +1277,26 @@ main {
 .register-card-btn:active {
   transform: translateY(0);
   opacity: 0.8;
+}
+
+/* 톨팁 페이드인/아웃 애니메이션 */
+@keyframes fadeInOut {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-8px);
+  }
+  10% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+  90% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-8px);
+  }
 }
 
 </style>

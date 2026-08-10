@@ -5,6 +5,7 @@ import { storeToRefs } from 'pinia';
 
 import { useAuthStore } from '@/stores/authStore';
 import { useCardStore } from '@/stores/cardStore';
+import { useTour } from '@/composables/useTour';
 import { getTransactionsSummary } from '@/api/walletApi';
 
 import HomeHeader from '@/components/home/HomeHeader.vue';
@@ -238,6 +239,14 @@ onMounted(async () => {
   await cardStore.loadMemberships();
   await loadHome();
   await loadSpendingSummary();
+
+  // 투어 시작 (처음 방문했을 때만)
+  const { isTourCompleted, startHomeTour } = useTour();
+  if (!isTourCompleted('home')) {
+    setTimeout(() => {
+      startHomeTour();
+    }, 1000);
+  }
 });
 </script>
 
@@ -257,17 +266,20 @@ onMounted(async () => {
       <div class="profile-briefing-section">
         <!-- 프로필 헤더 섹션 -->
         <section v-if="user" class="profile-header-section">
-          <div class="profile-avatar-large" @click="goProfile">{{ user.nickname?.charAt(0) || '👤' }}</div>
+          <div class="profile-avatar-large" @click="goProfile">
+            <img v-if="user.profileImage" :src="user.profileImage" alt="프로필" class="profile-image" />
+            <span v-else>{{ user.nickname?.charAt(0) || user.name?.charAt(0) || '👤' }}</span>
+          </div>
           <p class="profile-date-text">{{ currentDate }}</p>
           <p class="greeting-text">{{ timeGreeting.message }}</p>
         </section>
 
         <!-- 우측 상단 버튼들 -->
         <div class="profile-header-buttons">
-          <button @click="goChatBot" class="header-btn" title="채팅">
+          <button @click="goChatBot" class="header-btn" title="채팅" data-tour="chat-button">
             <Icon name="chat" size="md" />
           </button>
-          <button @click="goNotification" class="header-btn notification-btn" :class="{ 'has-notification': hasUnreadNotification }" title="알림">
+          <button @click="goNotification" class="header-btn notification-btn" :class="{ 'has-notification': hasUnreadNotification }" title="알림" data-tour="notification-button">
             <Icon name="bell" size="md" />
             <span v-if="hasUnreadNotification" class="notification-dot" />
           </button>
@@ -591,11 +603,26 @@ onMounted(async () => {
   flex-shrink: 0;
   cursor: pointer;
   transition: var(--transition-fast);
+  overflow: hidden;
 }
 
 .profile-avatar-large:hover {
   opacity: 0.8;
   transform: scale(1.05);
+}
+
+.profile-avatar-large .profile-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.profile-avatar-large span {
+  color: white;
+}
+
+[data-theme="dark"] .profile-avatar-large span {
+  color: black;
 }
 
 /* 프로필 헤더 우측 버튼들 */

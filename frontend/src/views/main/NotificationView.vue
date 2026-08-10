@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router';
 import { storeToRefs } from 'pinia';
 import { useAuthStore } from '@/stores/authStore';
 
+import PageHeader from '@/components/common/PageHeader.vue';
 import NotificationModal from '@/components/notification/NotificationModal.vue';
 
 // 뒤로가기용
@@ -183,30 +184,11 @@ const deleteNotification = (id) => {
 
 
   <!-- 헤더 -->
-  <header class="notification-header">
-
-    <button
-      type="button"
-      class="back-button"
-      @click="goBack"
-    >
-      ‹
+  <PageHeader title="알림" @back="goBack">
+    <button @click="readAll" style="background: var(--color-primary); color: var(--color-btn-primary-text); border: none; padding: 12px 20px; border-radius: var(--radius-lg); font-weight: 600; font-size: var(--font-sm); cursor: pointer; height: 40px; display: flex; align-items: center;">
+      모두 읽음
     </button>
-
-
-    <h1>
-      알림
-    </h1>
-
-
-    <span
-      v-if="unreadCount"
-      class="count"
-    >
-      {{ unreadCount }}
-    </span>
-
-  </header>
+  </PageHeader>
 
 
 
@@ -273,33 +255,6 @@ const deleteNotification = (id) => {
 
   </main>
 
-
-
-
-  <!-- 하단 버튼 -->
-  <footer
-    v-if="notifications.length"
-    class="notification-actions"
-  >
-
-    <button
-      type="button"
-      @click="readAll"
-    >
-      모두 읽음
-    </button>
-
-
-    <button
-      type="button"
-      @click="deleteAll"
-    >
-      전체 삭제
-    </button>
-
-
-  </footer>
-
   <NotificationModal
   v-if="selectedNotification"
   :notification="selectedNotification"
@@ -342,67 +297,6 @@ const deleteNotification = (id) => {
 
 
 
-.notification-header {
-
-  display:flex;
-
-  align-items:center;
-
-  gap: var(--space-sm);
-
-  margin-bottom: var(--space-xl);
-
-}
-
-
-
-.notification-header h1 {
-
-  font-size: var(--font-title);
-
-  font-weight: var(--font-bold);
-
-}
-
-
-
-.back-button {
-
-  border:none;
-
-  background:none;
-
-  font-size: var(--font-2xl);
-
-  cursor:pointer;
-
-  color: var(--color-text-primary);
-
-}
-
-
-
-.count {
-
-  display:flex;
-
-  align-items:center;
-
-  justify-content:center;
-
-  width:24px;
-
-  height:24px;
-
-  border-radius: var(--radius-full);
-
-  background: var(--color-coral);
-
-  color: var(--color-btn-primary-text);
-
-  font-size: var(--font-xs);
-
-}
 
 
 
@@ -500,39 +394,6 @@ const deleteNotification = (id) => {
 
 
 
-.notification-actions {
-
-  position:fixed;
-
-  right: var(--space-md);
-
-  bottom: var(--space-lg);
-
-  display:flex;
-
-  flex-direction:column;
-
-  gap: var(--space-xs);
-
-}
-
-
-
-.notification-actions button {
-
-  padding: var(--space-sm) var(--space-md);
-
-  border:none;
-
-  border-radius: var(--radius-lg);
-
-  background: var(--color-primary);
-
-  color: var(--color-btn-primary-text);
-
-  cursor:pointer;
-
-}
 
 
 

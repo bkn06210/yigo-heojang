@@ -176,22 +176,18 @@ const logout = () => {
 
 
         <div class="profile-image-wrapper">
-
-
           <img
-            v-if="user.profileImageUrl"
-            :src="user.profileImageUrl"
+            v-if="user.profileImage"
+            :src="user.profileImage"
             alt="프로필 이미지"
             class="profile-image"
           />
-
-
           <div
             v-else
             class="profile-image default-image"
-          />
-
-
+          >
+            {{ user.nickname?.charAt(0) || user.name?.charAt(0) || '👤' }}
+          </div>
         </div>
 
 
@@ -505,7 +501,17 @@ const logout = () => {
 }
 
 .default-image {
-  background: var(--color-border);
+  background: var(--color-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  font-weight: var(--font-bold);
+  color: white;
+}
+
+[data-theme="dark"] .default-image {
+  color: black;
 }
 
 .profile-info {
