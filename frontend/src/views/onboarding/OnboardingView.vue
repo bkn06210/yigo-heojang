@@ -164,7 +164,8 @@ const skip = () => {
   display: flex;
   flex-direction: column;
 
-  padding: 24px;
+  padding: var(--space-xl);
+  background: var(--color-bg);
 
   box-sizing: border-box;
 
@@ -187,9 +188,10 @@ const skip = () => {
 
 .progress {
 
-  font-size: 14px;
+  font-size: var(--font-sm);
 
-  font-weight: 600;
+  font-weight: var(--font-semibold);
+  color: var(--color-text-primary);
 
 }
 
@@ -200,9 +202,9 @@ const skip = () => {
 
   background: none;
 
-  color: #888;
+  color: var(--color-text-tertiary);
 
-  font-size: 14px;
+  font-size: var(--font-sm);
 
   cursor: pointer;
 
@@ -233,13 +235,14 @@ const skip = () => {
 
   white-space: pre-line;
 
-  font-size: 28px;
+  font-size: var(--font-2xl);
 
   line-height: 1.4;
 
-  font-weight: 700;
+  font-weight: var(--font-bold);
+  color: var(--color-text-primary);
 
-  margin-bottom: 40px;
+  margin-bottom: var(--space-2xl);
 
 }
 
@@ -277,7 +280,7 @@ const skip = () => {
 
 .bottom-area {
 
-  padding-bottom: 20px;
+  padding-bottom: var(--space-md);
 
 }
 
@@ -290,19 +293,19 @@ const skip = () => {
   height: 56px;
 
 
-  border-radius: 14px;
+  border-radius: var(--radius-md);
 
   border: none;
 
 
-  background: #111;
+  background: var(--color-text-primary);
 
-  color: white;
+  color: var(--color-btn-primary-text);
 
 
-  font-size: 16px;
+  font-size: var(--font-md);
 
-  font-weight: 600;
+  font-weight: var(--font-semibold);
 
 
   cursor: pointer;

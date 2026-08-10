@@ -1,12 +1,14 @@
-<script setup>
+﻿<script setup>
 import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import PageHeader from '@/components/common/PageHeader.vue';
 import AppCheckbox from '@/components/common/AppCheckbox.vue';
 import AppButton from '@/components/common/AppButton.vue';
 import ConfirmModal from '@/components/common/ConfirmModal.vue';
+import { useToast } from '@/composables/useToast';
 
 const router = useRouter();
+const { showToast } = useToast();
 
 const agreements = ref({
   deleteData: false,
@@ -18,6 +20,8 @@ const reasons = ref({
   inconvenient: false,
   etc: false
 });
+
+const etcReason = ref('');
 
 const isModalOpen = ref(false);
 
@@ -37,9 +41,13 @@ const openConfirmModal = () => {
 
 const handleWithdrawal = () => {
   isModalOpen.value = false;
-  console.log('회원 탈퇴 완료, 선택된 사유:', reasons.value);
-  alert('회원 탈퇴가 정상적으로 처리되었습니다.');
-  router.push('/login');
+  const withdrawalData = {
+    ...reasons.value,
+    etcReasonDetail: reasons.value.etc ? etcReason.value : null
+  };
+  console.log('회원 탈퇴 완료, 선택된 사유:', withdrawalData);
+  showToast('success', '회원 탈퇴가 정상적으로 처리되었습니다.');
+  router.push('/auth/login');
 };
 </script>
 
@@ -69,6 +77,18 @@ const handleWithdrawal = () => {
           <AppCheckbox v-model="reasons.unused" label="사용하지 않음" />
           <AppCheckbox v-model="reasons.inconvenient" label="기능이 편리하지 않음" />
           <AppCheckbox v-model="reasons.etc" label="기타" />
+
+          <!-- 기타 선택 시 입력 박스 -->
+          <div v-if="reasons.etc" class="etc-input-section">
+            <input
+              v-model="etcReason"
+              type="text"
+              placeholder="탈퇴 사유를 입력해주세요"
+              class="etc-input"
+              maxlength="200"
+            />
+            <span class="input-counter">{{ etcReason.length }}/200</span>
+          </div>
         </div>
       </div>
 
@@ -96,57 +116,112 @@ const handleWithdrawal = () => {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background-color: #f9f9f9;
+  background-color: var(--color-bg);
 }
 
 .content-container {
   flex: 1;
-  padding: 20px;
-  padding-bottom: 100px;
+  padding: var(--space-lg);
+  padding-bottom: calc(var(--space-xl) + var(--space-2xl) + var(--space-xl));
 }
 
 .notice-section {
-  margin-bottom: 20px;
-  padding-left: 4px;
+  margin-bottom: var(--space-xl);
+  padding-left: var(--space-xxs);
 }
 
+/* 안내 타이틀 (Display Typography) */
 .notice-title {
-  font-size: 1.2rem;
-  font-weight: bold;
-  color: #333;
-  margin-bottom: 4px;
+  font-size: var(--typo-display-medium-size);
+  font-weight: var(--typo-display-medium-weight);
+  line-height: var(--typo-display-medium-line-height);
+  letter-spacing: var(--typo-display-medium-letter-spacing);
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-xs);
 }
 
 .notice-subtitle {
-  font-size: 0.9rem;
-  color: #666;
+  font-size: var(--font-sm);
+  color: var(--color-text-secondary);
 }
 
+/* 카드 영역 (Soft Glassmorphism, 중립 톤) */
 .card-box {
-  background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-  padding: 20px;
-  margin-bottom: 16px;
+  border-radius: var(--radius-lg);
+  padding: var(--space-md);
+  margin-bottom: var(--space-sm);
+
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0.2) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+[data-theme="dark"] .card-box {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.02) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
 
 .checkbox-group {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: var(--space-sm);
 }
 
 .section-label {
-  font-size: 0.95rem;
-  font-weight: 600;
-  color: #333;
-  margin-bottom: 12px; 
+  font-size: var(--font-sm);
+  font-weight: var(--font-semibold);
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-sm);
 }
 
 .reason-list {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: var(--space-sm);
+}
+
+.etc-input-section {
+  margin-top: var(--space-xs);
+  padding-top: 0;
+  border-top: none;
+}
+
+.etc-input {
+  width: 100%;
+  padding: var(--space-sm) var(--space-md);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-bg);
+  color: var(--color-text-primary);
+  font-size: var(--font-sm);
+  font-family: inherit;
+  transition: all var(--transition-fast);
+  box-sizing: border-box;
+}
+
+.etc-input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(var(--color-primary-dark-rgb), 0.1);
+}
+
+[data-theme="dark"] .etc-input:focus {
+  box-shadow: 0 0 0 3px rgba(var(--color-primary-dark-rgb), 0.15);
+}
+
+.etc-input::placeholder {
+  color: var(--color-text-tertiary);
+}
+
+.input-counter {
+  display: block;
+  margin-top: var(--space-xs);
+  font-size: var(--font-xs);
+  color: var(--color-text-tertiary);
+  text-align: right;
 }
 
 .footer-button-area {
@@ -154,9 +229,19 @@ const handleWithdrawal = () => {
   bottom: 0;
   left: 0;
   width: 100%;
-  padding: 15px 20px;
-  background-color: white;
-  box-shadow: -2px 10px rgba(0,0,0,0.05);
+  padding: var(--space-sm) var(--space-md);
   box-sizing: border-box;
+
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.5) 0%, var(--color-surface) 40%);
+  border-top: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.05);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+[data-theme="dark"] .footer-button-area {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.04) 0%, var(--color-surface) 40%);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.3);
 }
 </style>

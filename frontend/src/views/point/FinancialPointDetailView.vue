@@ -1,38 +1,19 @@
-<script setup>
-import { onMounted, ref } from 'vue'
-import { useRoute } from 'vue-router'
+﻿<script setup>
 import PageHeader from '@/components/common/PageHeader.vue'
-import AIBriefingCard from '@/components/common/AIBriefingCard.vue'
-import { getPointHistory, getPoints, getPointUsagePlaces } from '@/api/walletApi'
 
 
-// 금융 포인트 목록·이용처·이용내역 API 응답을 화면 데이터로 조합
-const route = useRoute()
-const pointData = ref({ name: '', totalPoint: 0, aiMessage: '', usageMethods: [], histories: [] })
-const errorMessage = ref('')
+// 임시 데이터
+// 추후 금융 포인트 상세 API 응답으로 교체
+const pointData = {
+  name: 'KB Pay 포인트',
+  totalPoint: 12300,
 
-const loadPoint = async () => {
-  try {
-    const points = await getPoints()
-    const point = (points?.points || []).find((item) => Number(item.pointProviderId) === Number(route.params.id))
-    if (!point) throw new Error('포인트 정보를 찾을 수 없습니다.')
-    const [usage, history] = await Promise.all([
-      getPointUsagePlaces(route.params.id).catch(() => ({ usagePlaces: [] })),
-      getPointHistory({ pointWalletId: point.pointWalletId }).catch(() => ({ histories: [] })),
-    ])
-    pointData.value = {
-      name: point.providerName,
-      totalPoint: Number(point.totalPoint || 0),
-      aiMessage: `${point.providerName} ${Number(point.totalPoint || 0).toLocaleString()}P를 보유하고 있습니다.`,
-      usageMethods: (usage?.usagePlaces || []).map((place) => place.placeName),
-      histories: history?.histories || [],
-    }
-  } catch (error) {
-    errorMessage.value = error?.response?.data?.message || error?.message || '포인트 상세 정보를 불러오지 못했습니다.'
-  }
+  usageMethods: [
+    '카드 결제',
+    '간편결제',
+    '포인트 전환'
+  ]
 }
-
-onMounted(loadPoint)
 
 </script>
 
@@ -44,10 +25,8 @@ onMounted(loadPoint)
 
     <!-- 페이지 제목 -->
     <PageHeader
-      :title="pointData.name || '금융 포인트'"
+      title="KB Pay 포인트"
     />
-
-    <p v-if="errorMessage">{{ errorMessage }}</p>
 
 
     <!-- 총 보유 포인트 -->
@@ -63,13 +42,6 @@ onMounted(loadPoint)
 
     </section>
 
-
-
-    <!-- AI 브리핑 -->
-   <AIBriefingCard
-     :isLogin="true"
-     :message="pointData.aiMessage"
-   />
 
 
     <!-- 포인트 활용 방법 -->
@@ -95,17 +67,6 @@ onMounted(loadPoint)
 
 
 
-
-    <section class="usage-section">
-      <h2>포인트 이용내역</h2>
-      <ul v-if="pointData.histories.length">
-        <li v-for="history in pointData.histories" :key="history.pointHistoryId">
-          {{ history.content || history.providerName }}
-          {{ history.pointType === 'USE' ? '-' : '+' }}{{ Number(history.pointAmount || 0).toLocaleString() }}P
-        </li>
-      </ul>
-      <p v-else>포인트 이용내역이 없습니다.</p>
-    </section>
 
     <!-- 포인트 안내 -->
     <section class="notice-section">
@@ -138,7 +99,10 @@ onMounted(loadPoint)
 
 .financial-point-detail {
 
-  padding: 20px;
+  padding: var(--space-md);
+  margin: 0 auto;
+  max-width: 480px;
+  box-sizing: border-box;
 
 }
 
@@ -146,13 +110,25 @@ onMounted(loadPoint)
 
 .point-summary {
 
-  background: white;
+  border-radius: var(--radius-lg);
 
-  border-radius: 16px;
+  padding: var(--space-xl);
 
-  padding: 24px;
+  margin-bottom: var(--space-lg);
 
-  margin-bottom: 20px;
+  background: linear-gradient(135deg, rgba(var(--color-primary-dark-rgb), 0.1) 0%, rgba(var(--color-primary-dark-rgb), 0.03) 100%);
+  border: 1px solid rgba(var(--color-primary-dark-rgb), 0.2);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+
+}
+
+[data-theme="dark"] .point-summary {
+
+  background: linear-gradient(135deg, rgba(var(--color-primary-dark-rgb), 0.15) 0%, rgba(var(--color-primary-dark-rgb), 0.05) 100%);
+  border: 1px solid rgba(var(--color-primary-dark-rgb), 0.25);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.06);
 
 }
 
@@ -160,9 +136,11 @@ onMounted(loadPoint)
 
 .label {
 
-  font-size: 14px;
+  font-size: var(--font-sm);
 
-  color: #666;
+  color: var(--color-text-secondary);
+
+  font-weight: var(--font-regular);
 
 }
 
@@ -170,11 +148,13 @@ onMounted(loadPoint)
 
 .point {
 
-  margin-top: 10px;
+  margin-top: var(--space-xs);
 
-  font-size: 32px;
-
-  font-weight: 700;
+  font-size: var(--typo-display-large-size);
+  font-weight: var(--typo-display-large-weight);
+  line-height: var(--typo-display-large-line-height);
+  letter-spacing: var(--typo-display-large-letter-spacing);
+  color: var(--color-text-primary);
 
 }
 
@@ -183,13 +163,15 @@ onMounted(loadPoint)
 .usage-section,
 .notice-section {
 
-  background: white;
+  background-color: var(--color-surface);
 
-  border-radius: 16px;
+  border-radius: var(--radius-lg);
 
-  padding: 20px;
+  padding: var(--space-md);
 
-  margin-top: 20px;
+  margin-top: var(--space-md);
+
+  box-shadow: var(--shadow-card);
 
 }
 
@@ -197,9 +179,15 @@ onMounted(loadPoint)
 
 h2 {
 
-  font-size: 17px;
+  margin: 0 0 var(--space-md);
 
-  margin-bottom: 16px;
+  color: var(--color-text-primary);
+
+  font-size: var(--font-lg);
+
+  font-weight: var(--font-bold);
+
+  letter-spacing: -0.3px;
 
 }
 
@@ -217,9 +205,11 @@ ul {
 
 li {
 
-  padding: 12px 0;
+  padding: var(--space-sm) 0;
 
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid var(--color-border);
+
+  color: var(--color-text-primary);
 
 }
 
@@ -235,11 +225,13 @@ li:last-child {
 
 .notice-section p {
 
-  font-size: 14px; 
+  font-size: var(--font-sm);
 
-  color: #666;
+  color: var(--color-text-secondary);
 
-  margin: 8px 0;
+  margin: var(--space-xs) 0;
+
+  line-height: 1.5;
 
 }
 
@@ -247,5 +239,5 @@ li:last-child {
 </style>
 
 // 기존 금융 포인트 상세 페이지 라우트 유지
-// 혜택 목록의 바텀시트와 동일한 포인트 API 데이터를 사용한다.
-<!-- 07_25 연동 변경: 금융포인트 잔액·이력·사용처 API를 상세 화면에 표시한다. -->
+// UI 변경으로 현재는 바텀시트에서 동일 API 데이터를 호출함
+// 추후 API 연동 시 상세 페이지 대신 바텀시트 데이터로 매핑
