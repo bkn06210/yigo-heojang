@@ -2,11 +2,14 @@ package com.wallet.notification.mapper;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import com.wallet.notification.domain.Notification;
+import com.wallet.notification.domain.NotificationListItemResult;
 import com.wallet.notification.domain.NotificationSetting;
 
+@Mapper
 public interface NotificationMapper {
     /**
      * 회원의 알림 설정 행을 조회한다. 행이 없으면 null을 반환한다.
@@ -29,4 +32,42 @@ public interface NotificationMapper {
      * 앞단에 씌워지면 이 메서드는 캐시 miss일 때만 호출되는 fallback이 된다.
      */
     int countUnread(@Param("memberId") Long memberId);
+
+    /**
+     * 회원의 삭제되지 않은 알림 목록을 최신순으로 조회한다.
+     * limit을 "요청한 size + 1"로 넘기면, 결과가 size보다 많이 오는지 보고
+     * 다음 페이지 존재 여부(hasNext)를 별도 COUNT 쿼리 없이 판단할 수 있다.
+     */
+    List<NotificationListItemResult> selectActiveByMemberId(
+        @Param("memberId") Long memberId,
+        @Param("limit") int limit,
+        @Param("offset") int offset
+    );
+
+    /**
+     * 아직 읽지 않은 알림을 읽음 처리한다.
+     * WHERE 절에 memberId와 read_at IS NULL을 함께 걸어서,
+     * "내 알림이 아니거나(소유권 위반)" "이미 읽은 알림이거나(중복 처리)" 인 경우
+     * 둘 다 영향받은 행이 0건이 되게 한다. 두 경우를 구분하는 건 Repository/Service 쪽 책임이다.
+     */
+    int markAsRead(
+        @Param("notificationId") Long notificationId,
+        @Param("memberId") Long memberId)
+    ;
+
+    /**
+     * notificationId가 해당 회원 소유의 삭제되지 않은 알림으로 실제 존재하는지 확인한다.
+     * markAsRead가 0건을 갱신했을 때, "존재하지 않아서 0건"인지
+     * "이미 읽어서 0건"인지 구분하기 위한 보조 조회다.
+     */
+    boolean existsActiveByIdAndMemberId(
+        @Param("notificationId") Long notificationId,
+        @Param("memberId") Long memberId
+    );
+
+    /** 알림을 삭제 처리(soft delete)한다. */
+    int softDeleteByIdAndMemberId(
+        @Param("notificationId") Long notificationId,
+        @Param("memberId") Long memberId
+    );
 }

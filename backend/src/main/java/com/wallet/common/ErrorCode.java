@@ -331,6 +331,17 @@ public enum ErrorCode {
         HttpStatus.NOT_FOUND,
         "USER_CARD_NOT_FOUND",
         "보유 카드를 찾을 수 없습니다."
+    ),
+
+    // =========================================================================
+    //  9. 알림 (Notification)
+    // =========================================================================
+
+    /** 로그인 회원 소유의 알림을 찾을 수 없음 (존재하지 않거나, 다른 회원 소유이거나, 이미 삭제됨) */
+    NOTIFICATION_NOT_FOUND(
+        HttpStatus.NOT_FOUND,
+        "NOTIFICATION_NOT_FOUND",
+        "알림을 찾을 수 없습니다."
     );
 
     private final HttpStatus status;

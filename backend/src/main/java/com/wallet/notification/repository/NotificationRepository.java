@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import com.wallet.notification.domain.Notification;
+import com.wallet.notification.domain.NotificationListItemResult;
 import com.wallet.notification.domain.NotificationSetting;
 import com.wallet.notification.mapper.NotificationMapper;
 
@@ -49,5 +50,21 @@ public class NotificationRepository {
 
     public int countUnread(Long memberId) {
         return notificationMapper.countUnread(memberId);
+    }
+
+    public List<NotificationListItemResult> findActiveByMember(Long memberId, int limit, int offset) {
+        return notificationMapper.selectActiveByMemberId(memberId, limit, offset);
+    }
+
+    public int markAsRead(Long notificationId, Long memberId) {
+        return notificationMapper.markAsRead(notificationId, memberId);
+    }
+
+    public boolean existsActiveByIdAndMemberId(Long notificationId, Long memberId) {
+        return notificationMapper.existsActiveByIdAndMemberId(notificationId, memberId);
+    }
+
+    public int softDelete(Long notificationId, Long memberId) {
+        return notificationMapper.softDeleteByIdAndMemberId(notificationId, memberId);
     }
 }

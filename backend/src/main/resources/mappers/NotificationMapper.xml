@@ -12,6 +12,17 @@
         </constructor>
     </resultMap>
 
+    <resultMap id="notificationListItemResultMap" type="com.wallet.notification.domain.NotificationListItemResult">
+        <constructor>
+            <idArg column="notification_id" javaType="Long"/>
+            <arg column="notification_type" javaType="com.wallet.notification.domain.NotificationType"/>
+            <arg column="title" javaType="String"/>
+            <arg column="content" javaType="String"/>
+            <arg column="created_at" javaType="java.time.LocalDateTime"/>
+            <arg column="read_at" javaType="java.time.LocalDateTime"/>
+        </constructor>
+    </resultMap>
+
     <select id="selectSetting" resultMap="notificationSettingResultMap">
         SELECT notification_setting_id,
                member_id,
@@ -70,5 +81,47 @@
           AND read_at IS NULL
           AND deleted_at IS NULL
     </select>
+
+    <!--
+        idx_notification_member_created (member_id, deleted_at, created_at) 인덱스를
+        그대로 타도록 WHERE 절 컬럼 순서를 인덱스와 맞췄다.
+        created_at이 같은 값으로 여러 건 들어올 수 있어(배치가 한 번에 여러 건 insert)
+        notification_id를 2차 정렬 기준으로 추가해 순서를 항상 동일하게 고정한다.
+    -->
+    <select id="selectActiveByMemberId" resultMap="notificationListItemResultMap">
+        SELECT notification_id, notification_type, title, content, created_at, read_at
+        FROM notification
+        WHERE member_id = #{memberId}
+          AND deleted_at IS NULL
+        ORDER BY created_at DESC, notification_id DESC
+            LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <update id="markAsRead">
+        UPDATE notification
+        SET read_at = NOW()
+        WHERE notification_id = #{notificationId}
+          AND member_id = #{memberId}
+          AND deleted_at IS NULL
+          AND read_at IS NULL
+    </update>
+
+    <select id="existsActiveByIdAndMemberId" resultType="boolean">
+        SELECT EXISTS (
+            SELECT 1
+            FROM notification
+            WHERE notification_id = #{notificationId}
+              AND member_id = #{memberId}
+              AND deleted_at IS NULL
+        )
+    </select>
+
+    <update id="softDeleteByIdAndMemberId">
+        UPDATE notification
+        SET deleted_at = NOW()
+        WHERE notification_id = #{notificationId}
+          AND member_id = #{memberId}
+          AND deleted_at IS NULL
+    </update>
 
 </mapper>
