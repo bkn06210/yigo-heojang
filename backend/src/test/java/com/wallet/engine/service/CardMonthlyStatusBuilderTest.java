@@ -33,7 +33,7 @@ class CardMonthlyStatusBuilderTest {
         // 전월 35만 → 30만 구간 충족(통합한도 2만). 당월 24만 → 목표 30만, 달성률 80%
         CardMonthlyStatus status = builder.build(
                 12, "삼성 iD ON", "2026-08",
-                350_000, 240_000, 8_000, TIERS, List.of(), Map.of());
+                350_000, 240_000, 8_000, TIERS, List.of(), Map.of(), Map.of());
 
         assertThat(status.performanceMet()).isTrue();
         assertThat(status.sharedLimit()).isEqualTo(20_000L);
@@ -49,7 +49,7 @@ class CardMonthlyStatusBuilderTest {
         List<PerformanceTier> onlyZeroTier = List.of(new PerformanceTier(1, 0, null));
 
         CardMonthlyStatus status = builder.build(
-                1, "기본카드", "2026-08", 0, 0, 0, onlyZeroTier, List.of(), Map.of());
+                1, "기본카드", "2026-08", 0, 0, 0, onlyZeroTier, List.of(), Map.of(), Map.of());
 
         assertThat(status.performanceMet()).isFalse();
         assertThat(status.achievementRate()).isNull();
@@ -62,7 +62,7 @@ class CardMonthlyStatusBuilderTest {
 
         CardMonthlyStatus status = builder.build(
                 1, "카드", "2026-08", 350_000, 0, 0, TIERS,
-                List.of(row), Map.of(10L, 2_000L));
+                List.of(row), Map.of(10L, 2_000L), Map.of());
 
         BenefitUsageStatus benefit = only(status);
         assertThat(benefit.benefitId()).isEqualTo(10L);
@@ -81,7 +81,7 @@ class CardMonthlyStatusBuilderTest {
 
         CardMonthlyStatus status = builder.build(
                 1, "카드", "2026-08", 350_000, 0, 0, TIERS,
-                List.of(telecom, utility), Map.of(20L, 1_000L, 21L, 2_000L));
+                List.of(telecom, utility), Map.of(20L, 1_000L, 21L, 2_000L), Map.of());
 
         // 두 혜택 모두 그룹 합산(3,000) 기준으로 같은 값을 갖는다 — 화면이 배로 더하지 않게
         assertThat(status.benefits()).hasSize(2);
@@ -100,7 +100,7 @@ class CardMonthlyStatusBuilderTest {
 
         CardMonthlyStatus status = builder.build(
                 1, "카드", "2026-08", 350_000, 0, 0, TIERS,
-                List.of(limited, unlimited), Map.of(10L, 1_000L, 30L, 5_000L));
+                List.of(limited, unlimited), Map.of(10L, 1_000L, 30L, 5_000L), Map.of());
 
         assertThat(status.benefits()).extracting(BenefitUsageStatus::benefitId)
                 .containsExactly(10L, 30L);
@@ -119,7 +119,7 @@ class CardMonthlyStatusBuilderTest {
         BenefitRow row = benefitRow(60, "그룹 한도 초과 혜택", null, 10_000L, null);
 
         CardMonthlyStatus status = builder.build(
-                1, "카드", "2026-08", 350_000, 0, 0, TIERS, List.of(row), Map.of(60L, 11_600L));
+                1, "카드", "2026-08", 350_000, 0, 0, TIERS, List.of(row), Map.of(60L, 11_600L), Map.of());
 
         BenefitUsageStatus benefit = only(status);
         // 잔여는 0으로 깎으면서 이용률만 116%를 내보내면 응답이 자기모순이다
@@ -133,7 +133,7 @@ class CardMonthlyStatusBuilderTest {
         BenefitRow row = benefitRow(50, "구간 미달로 한도 0", null, 0L, null);
 
         CardMonthlyStatus status = builder.build(
-                1, "카드", "2026-08", 350_000, 0, 0, TIERS, List.of(row), Map.of());
+                1, "카드", "2026-08", 350_000, 0, 0, TIERS, List.of(row), Map.of(), Map.of());
 
         BenefitUsageStatus benefit = only(status);
         assertThat(benefit.monthlyLimit()).isZero();
@@ -153,7 +153,7 @@ class CardMonthlyStatusBuilderTest {
         // 전월실적 0 → 0원 구간 → 실적 미충족. 상세는 그래도 둘 다 보여준다
         CardMonthlyStatus status = builder.build(
                 1, "카드", "2026-08", 0, 0, 0, TIERS,
-                List.of(conditional, unconditional), Map.of());
+                List.of(conditional, unconditional), Map.of(), Map.of());
 
         assertThat(status.performanceMet()).isFalse();
         assertThat(status.benefits()).hasSize(2);
@@ -169,12 +169,73 @@ class CardMonthlyStatusBuilderTest {
 
         CardMonthlyStatus status = builder.build(
                 1, "카드", "2026-08", 350_000, 0, 0, TIERS,
-                List.of(row), Map.of(40L, 5_000L));
+                List.of(row), Map.of(40L, 5_000L), Map.of());
 
         BenefitUsageStatus benefit = only(status);
         assertThat(benefit.monthlyLimit()).isEqualTo(10_000L);
         assertThat(benefit.remainingLimit()).isEqualTo(5_000L);
         assertThat(benefit.usageRate()).isEqualByComparingTo("50.0");
+    }
+
+    @Test
+    @DisplayName("선택형 혜택은 그달에 고른 선택지만 목록에 담는다")
+    void 고르지_않은_선택지는_담지_않는다() {
+        BenefitRow chosen = benefitRow(70, "생활 10% 할인", null, 5_000L, null);
+        chosen.setOptionGroupCode("SELECT_SERVICE");
+        chosen.setOptionKey("LIVING");
+        BenefitRow notChosen = benefitRow(71, "의료 20% 할인", null, 5_000L, null);
+        notChosen.setOptionGroupCode("SELECT_SERVICE");
+        notChosen.setOptionKey("MEDICAL");
+        BenefitRow always = benefitRow(72, "전 가맹점 0.7% 적립", null, null, null);
+
+        CardMonthlyStatus status = builder.build(
+                1, "카드", "2026-08", 350_000, 0, 0, TIERS,
+                List.of(chosen, notChosen, always), Map.of(),
+                Map.of("SELECT_SERVICE", "LIVING"));
+
+        // 고르지 않은 의료(71)만 빠진다. 묶음에 안 속한 혜택(72)은 선택과 무관하게 남는다
+        assertThat(status.benefits()).extracting(BenefitUsageStatus::benefitId)
+                .containsExactly(70L, 72L);
+    }
+
+    @Test
+    @DisplayName("선택 기록이 없으면 그 묶음의 혜택이 하나도 담기지 않는다")
+    void 선택_기록이_없으면_묶음_전체가_빠진다() {
+        BenefitRow living = benefitRow(70, "생활 10% 할인", null, 5_000L, null);
+        living.setOptionGroupCode("SELECT_SERVICE");
+        living.setOptionKey("LIVING");
+        BenefitRow always = benefitRow(72, "전 가맹점 0.7% 적립", null, null, null);
+
+        CardMonthlyStatus status = builder.build(
+                1, "카드", "2026-08", 350_000, 0, 0, TIERS,
+                List.of(living, always), Map.of(), Map.of());
+
+        // 기본값으로 아무거나 켜지 않는다 — 회원이 고르지 않은 혜택을 받는다고 표시하게 된다
+        assertThat(status.benefits()).extracting(BenefitUsageStatus::benefitId)
+                .containsExactly(72L);
+    }
+
+    @Test
+    @DisplayName("묶음 한도 합산은 고르지 않은 선택지의 소진액까지 포함한다")
+    void 그룹_합산은_선택과_무관하게_전체_행을_더한다() {
+        // 같은 쇼핑 한도(SHOPPING)를 두 선택지가 나눠 쓰는 카드 — 한도 묶음이 선택지 경계를 가로지른다
+        BenefitRow chosen = benefitRow(80, "선택A 쇼핑 7% 할인", "SHOPPING", 5_000L, null);
+        chosen.setOptionGroupCode("PACK");
+        chosen.setOptionKey("A");
+        BenefitRow notChosen = benefitRow(81, "선택B 쇼핑 7% 할인", "SHOPPING", 5_000L, null);
+        notChosen.setOptionGroupCode("PACK");
+        notChosen.setOptionKey("B");
+
+        CardMonthlyStatus status = builder.build(
+                1, "카드", "2026-08", 350_000, 0, 0, TIERS,
+                List.of(chosen, notChosen), Map.of(80L, 1_000L, 81L, 2_000L),
+                Map.of("PACK", "A"));
+
+        // 목록에는 고른 것만, 잔액은 같은 지갑을 쓴 3,000원이 빠진 값 — 계산기와 같은 범위로 합산한다
+        BenefitUsageStatus benefit = only(status);
+        assertThat(benefit.benefitId()).isEqualTo(80L);
+        assertThat(benefit.usedAmount()).isEqualTo(3_000L);
+        assertThat(benefit.remainingLimit()).isEqualTo(2_000L);
     }
 
     // ── 헬퍼 ──────────────────────────────────────────────────────────────

@@ -13,6 +13,7 @@ import com.wallet.engine.dao.dto.BenefitRow;
 import com.wallet.engine.dao.dto.BenefitUsageRow;
 import com.wallet.engine.dao.dto.CardMonthlyStateRow;
 import com.wallet.engine.dao.dto.CardPerformanceSumRow;
+import com.wallet.engine.dao.dto.OptionSelectionRow;
 import com.wallet.engine.dao.dto.PerformanceTierRow;
 import com.wallet.engine.dao.dto.UserCardRow;
 import com.wallet.engine.dto.CardMonthlyStatus;
@@ -141,6 +142,13 @@ public class CardStatusService {
         Map<Long, List<PerformanceTierRow>> tiersByCard = performanceMapper
                 .findTiersByCardIds(cards.stream().map(UserCardRow::getCardId).distinct().toList()).stream()
                 .collect(Collectors.groupingBy(PerformanceTierRow::getCardId));
+        // 선택형 혜택의 그달 선택 — 카드마다 부르면 N+1이 되므로 회원 단위로 한 번에 읽는다.
+        // 선택 기록이 없는 보유카드는 빈 맵이 되고, 그 카드의 선택형 혜택은 목록에 담기지 않는다.
+        Map<Long, Map<String, String>> selectionsByUserCard = cardStateMapper
+                .findOptionSelections(memberId, baseYearMonth).stream()
+                .collect(Collectors.groupingBy(OptionSelectionRow::getUserCardId,
+                        Collectors.toMap(OptionSelectionRow::getOptionGroupCode,
+                                OptionSelectionRow::getSelectedOptionKey)));
         // 전분기 실적 — 분기 구간표를 쓰는 혜택의 개별한도 조회 키를 정한다
         Map<Long, Long> quarterPerformanceByUserCard = cardStateMapper
                 .findPerformanceSums(memberId,
@@ -155,7 +163,8 @@ public class CardStatusService {
                     statesByUserCard.getOrDefault(card.getUserCardId(), List.of()),
                     usagesByUserCard.getOrDefault(card.getUserCardId(), List.of()),
                     tiersByCard.getOrDefault(card.getCardId(), List.of()),
-                    quarterPerformanceByUserCard.getOrDefault(card.getUserCardId(), 0L)));
+                    quarterPerformanceByUserCard.getOrDefault(card.getUserCardId(), 0L),
+                    selectionsByUserCard.getOrDefault(card.getUserCardId(), Map.of())));
         }
         return statuses;
     }
@@ -163,7 +172,8 @@ public class CardStatusService {
     /** 카드 한 장의 현황. 조회한 값을 계산기에 물려주기만 하고 새 계산 규칙은 두지 않는다. */
     private CardMonthlyStatus buildStatus(UserCardRow card, String baseYearMonth, String previousYearMonth,
                                           List<CardMonthlyStateRow> stateRows, List<BenefitUsageRow> usageRows,
-                                          List<PerformanceTierRow> tierRows, long quarterPerformanceAmount) {
+                                          List<PerformanceTierRow> tierRows, long quarterPerformanceAmount,
+                                          Map<String, String> selectedOptionKeys) {
         long prevPerformanceAmount = cardStateAssembler.resolvePrevPerformanceAmount(
                 stateRows, baseYearMonth, previousYearMonth);
 
@@ -188,7 +198,7 @@ public class CardStatusService {
                 card.getUserCardId(), card.getCardName(), baseYearMonth,
                 prevPerformanceAmount, currentPerformanceAmount(stateRows, baseYearMonth),
                 sharedLimitUsed(stateRows, baseYearMonth),
-                tiers, benefitRows, usedAmountByBenefit);
+                tiers, benefitRows, usedAmountByBenefit, selectedOptionKeys);
     }
 
     /** 기준월 누적 실적인정액. 그 달에 아직 결제가 없으면 행이 없고, 그때 0은 오류가 아니라 정답이다. */
