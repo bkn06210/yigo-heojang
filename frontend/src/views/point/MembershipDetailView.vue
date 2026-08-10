@@ -1,12 +1,43 @@
 ﻿<script setup>
 
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { deleteMembership as removeMembership, getMembership } from '@/api/walletApi'
+import { getOfficialSiteUrl } from '@/utils/partnerSites'
+import { getPartnerUsagePlaces } from '@/utils/partnerUsagePlaces'
+import { getPartnerLogo } from '@/utils/partnerLogos'
 
 
 // 공통 컴포넌트
 import PageHeader from '@/components/common/PageHeader.vue'
 import BottomNavigation from '@/components/layout/BottomNavigation.vue'
 
+const route = useRoute()
+const router = useRouter()
+
+// 멤버십 데이터
+const membership = ref({ providerName: '', registeredAt: '', totalPoint: 0, usagePlaces: [] })
+const errorMessage = ref('')
+
+// 멤버십 조회
+const loadMembership = async () => {
+  try {
+    const data = await getMembership(route.params.id)
+    membership.value = {
+      ...data,
+      logo: getPartnerLogo(data.providerName, data.logoImage),
+      usagePlaces: getPartnerUsagePlaces(data.providerName, data.usagePlaces),
+    }
+  } catch (error) {
+    errorMessage.value = error?.response?.data?.message || error?.message || '멤버십 정보를 불러오지 못했습니다.'
+  }
+}
+
+// 공식 사이트 이동
+const goOfficialWebsite = () => {
+  const url = getOfficialSiteUrl(membership.value.providerName, membership.value.officialSiteUrl)
+  if (url) window.open(url, '_blank', 'noopener,noreferrer')
+}
 
 // 삭제 팝업 상태
 const showDeleteModal = ref(false)
@@ -29,14 +60,16 @@ const closeDeleteModal = () => {
 
 
 // 삭제 처리
-const deleteMembership = () => {
-
-  // 추후 백 연결
-  // DELETE /api/user-memberships/{id}
-
-  showDeleteModal.value = false
-
+const deleteMembership = async () => {
+  try {
+    await removeMembership(route.params.id)
+    router.replace('/points')
+  } catch (error) {
+    errorMessage.value = error?.response?.data?.message || error?.message || '멤버십 삭제에 실패했습니다.'
+  }
 }
+
+onMounted(loadMembership)
 
 
 </script>
@@ -55,12 +88,19 @@ const deleteMembership = () => {
 
     <main class="content">
 
+      <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
 
-      <!-- 멤버십 이름 -->
+      <!-- 멤버십 이미지 & 이름 -->
       <section class="membership-title">
+        <img
+          v-if="membership.logo"
+          :src="membership.logo"
+          :alt="`${membership.providerName} 로고`"
+          class="membership-logo-large"
+        />
 
         <h1>
-          CJ ONE
+          {{ membership.providerName }}
         </h1>
 
       </section>
@@ -76,7 +116,7 @@ const deleteMembership = () => {
 
 
         <p>
-          CJ ONE
+          {{ membership.registeredAt || '등록 정보 없음' }}
         </p>
 
       </section>
@@ -85,25 +125,17 @@ const deleteMembership = () => {
 
 
       <!-- 주요 사용처 -->
-      <section class="info-section">
+      <section v-if="membership.usagePlaces?.length" class="info-section">
 
         <h2>
           주요 사용처
         </h2>
 
 
-        <ul>
+        <ul class="usage-place-list">
 
-          <li>
-            뚜레쥬르
-          </li>
-
-          <li>
-            올리브영
-          </li>
-
-          <li>
-            CGV
+          <li v-for="place in membership.usagePlaces" :key="place.usagePlaceId || place.placeName">
+            {{ place.placeName }}
           </li>
 
         </ul>
@@ -115,7 +147,10 @@ const deleteMembership = () => {
 
 
       <!-- 공식 사이트 -->
-      <button class="official-button">
+      <button
+        class="official-button"
+        @click="goOfficialWebsite"
+      >
 
         공식 사이트 이동
 
@@ -137,7 +172,7 @@ const deleteMembership = () => {
 
 
 
-    <BottomNav />
+    <BottomNavigation />
 
 
   </div>
@@ -152,12 +187,12 @@ const deleteMembership = () => {
 
 
     <h3>
-      CJ ONE 멤버십을 삭제하시겠어요?
+      {{ membership.providerName }} 멤버십을 삭제하시겠어요?
     </h3>
 
 
     <p>
-      삭제하면 결제 추천에서 CJ ONE 혜택 안내를 받을 수 없습니다.
+      삭제하면 결제 추천에서 {{ membership.providerName }} 혜택 안내를 받을 수 없습니다.
     </p>
 
 
@@ -179,9 +214,6 @@ const deleteMembership = () => {
       </button>
 
     </div>
-
-    <BottomNavigation />
-
 
   </div>
 
@@ -216,6 +248,22 @@ const deleteMembership = () => {
 
 
 
+.membership-title {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-bottom: var(--space-xl);
+}
+
+.membership-logo-large {
+  width: 80px;
+  height: 80px;
+  border-radius: var(--radius-lg);
+  object-fit: cover;
+  margin-bottom: var(--space-md);
+}
+
 .membership-title h1 {
 
   font-size: var(--typo-display-medium-size);
@@ -223,7 +271,7 @@ const deleteMembership = () => {
   line-height: var(--typo-display-medium-line-height);
   letter-spacing: var(--typo-display-medium-letter-spacing);
 
-  margin-bottom: var(--space-xl);
+  margin: 0;
 
   color: var(--color-text-primary);
 
@@ -277,6 +325,34 @@ const deleteMembership = () => {
   font-size: var(--font-sm);
 
   color: var(--color-text-primary);
+
+}
+
+
+
+.usage-place-list {
+
+  display: grid;
+
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+
+  gap: var(--space-xs) var(--space-md);
+
+  margin: 0;
+
+  padding-left: var(--space-lg);
+
+}
+
+
+
+.error-message {
+
+  margin-bottom: var(--space-md);
+
+  font-size: var(--font-sm);
+
+  color: var(--color-coral);
 
 }
 
