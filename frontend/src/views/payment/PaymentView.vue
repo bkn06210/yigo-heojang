@@ -72,6 +72,9 @@ const cardUpOffset = ref(0);
 const showToast = ref(false);
 const toastMessage = ref('');
 const isFlipping = ref(false);
+const showPaymentAmountInput = ref(false);
+const isRecommendationMode = ref(false);
+const isAnimatingToCenter = ref(false); // 모든 카드가 중앙에 합쳐지는 중
 
 
 let touchStartX = 0;
@@ -83,7 +86,7 @@ let swipeDirection = null;
 const swipeProgress = ref(0);
 const isSwipeAnimating = ref(false);
 
-// 부채꼴 배치 (카드 수에 따라 자동 각도 분배)
+// 부채꼴 배치 (카드 수에 따라 자동 각도 분배) / 추천 모드 선형 배치
 const getCardStyle = (index) => {
   const centerIndex = selectedIndex.value;
   const cardCount = cards.value.length;
@@ -98,7 +101,15 @@ const getCardStyle = (index) => {
     };
   }
 
-  const offset = index - centerIndex;
+  // 부채꼴 배치: 애니메이션 상태와 모드에 따라
+  let offset;
+  if (isAnimatingToCenter.value) {
+    // 합쳐지는 중: 모든 카드가 정중앙에 겹침
+    offset = 0;
+  } else {
+    // 평소/추천 모드: 항상 centerIndex 기준 (스와이프로 카드 이동 가능)
+    offset = index - centerIndex;
+  }
 
   // 카드 개수별 레이아웃 결정
   let angle = 0;
@@ -148,9 +159,11 @@ const getCardStyle = (index) => {
     };
   }
 
-  const upOffset = index === centerIndex ? cardUpOffset.value : 0;
-  const scale = index === centerIndex ? 1 : 0.9;
-  const opacity = index === centerIndex ? 1 : 0.7;
+  // isAnimatingToCenter 상태에서는 cardUpOffset 무시
+  const upOffset = isAnimatingToCenter.value ? 0 : (index === centerIndex ? cardUpOffset.value : 0);
+  const isCenter = isAnimatingToCenter.value || index === centerIndex;
+  const scale = isCenter ? 1 : 0.9;
+  const opacity = isCenter ? 1 : 0.7;
   const zIndex = 10 - Math.abs(offset);
 
   return {
@@ -175,13 +188,20 @@ const getCardRecommendations = async () => {
   try {
     isRecommending.value = true;
 
-    // 카테고리 이름으로 ID 찾기
+    // 카테고리 라벨로 id 찾기 (백엔드는 숫자 ID를 기대)
     const categoryId = selectedCategory.value
       ? personalizationStore.categories.find(cat => cat.label === selectedCategory.value)?.id
       : null;
 
     // 금액이 0보다 크면 전송, 아니면 null
     const expectedAmount = (paymentAmount.value && paymentAmount.value > 0) ? paymentAmount.value : null;
+
+    console.log('추천 API 요청 데이터:', {
+      categoryId,
+      selectedCategory: selectedCategory.value,
+      expectedAmount,
+      paymentType: 'CARD',
+    });
 
     // API 호출: 선택한 가맹점 정보와 함께 추천 요청
     const response = await getRecommendations({
@@ -195,9 +215,14 @@ const getCardRecommendations = async () => {
     // 추천 카드 ID 리스트 저장 (최대 3장)
     // 응답 형식: { recommendations: [{ userCardId, rank, ... }] }
     const recommendations = response?.data?.recommendations || [];
+    console.log('API 추천 응답:', recommendations);
     recommendedCardIds.value = recommendations
       .map(item => item.userCardId)
       .slice(0, 3);
+    console.log('저장된 추천 카드 ID들:', recommendedCardIds.value);
+
+    // 카드를 추천 순서대로 재정렬 (1순위, 2순위, 3순위가 배열 앞에 붙어있어야 함!)
+    cardStore.reorderCardsByRecommendation(recommendedCardIds.value);
 
     // 목표 카드 인덱스 계산
     if (recommendedCardIds.value.length > 0) {
@@ -205,42 +230,46 @@ const getCardRecommendations = async () => {
 
       // 디버깅: 현재 카드들 출력
 
-      const targetIndex = cards.value.findIndex(c => c.id === topRecommendedId);
+      console.log('추천된 카드 ID:', topRecommendedId, '타입:', typeof topRecommendedId);
+      console.log('현재 보유한 카드들:', cards.value.map(c => ({ id: c.id, id타입: typeof c.id, name: c.name })));
+      const targetIndex = cards.value.findIndex(c => Number(c.id) === Number(topRecommendedId));
 
 
       if (targetIndex !== -1) {
-        // 부드러운 애니메이션 (800ms - 더 천천히)
-        const startIndex = selectedIndexFloat.value;
-        const startTime = Date.now();
-        const duration = 800; // 800ms (더 느리게)
         const cardCount = cards.value.length;
+        const startIndex = selectedIndexFloat.value;
+        const centerValue = Math.floor(cardCount / 2);
 
-        // 가장 짧은 경로 계산 (시계방향)
-        let distance = (targetIndex - startIndex + cardCount) % cardCount;
+        // 1단계: 모든 카드가 중앙으로 합쳐지기 (800ms - 여유롭게)
+        isAnimatingToCenter.value = true;
+        const stage1Start = Date.now();
+        const stage1Duration = 800;
 
-        // 반시계방향이 더 짧으면 음수로
-        if (distance > cardCount / 2) {
-          distance = distance - cardCount;
-        }
-
-        const animate = () => {
-          const elapsed = Date.now() - startTime;
-          const progress = Math.min(elapsed / duration, 1);
+        const animate1 = () => {
+          const elapsed = Date.now() - stage1Start;
+          const progress = Math.min(elapsed / stage1Duration, 1);
           const eased = easeInOutCubic(progress);
 
-          // 부드러운 보간 (modulo 처리 개선)
-          const newIndex = startIndex + distance * eased;
-          selectedIndexFloat.value = newIndex >= 0 ? newIndex % cardCount : (newIndex % cardCount + cardCount) % cardCount;
+          const newIndex = startIndex + (centerValue - startIndex) * eased;
+          selectedIndexFloat.value = newIndex;
 
           if (progress < 1) {
-            requestAnimationFrame(animate);
+            requestAnimationFrame(animate1);
           } else {
-            selectedIndexFloat.value = targetIndex;
+            selectedIndexFloat.value = centerValue;
+            // 1단계 완료: 잠깐 여유 후 2단계 펼쳐짐
+            setTimeout(() => {
+              cardStore.reorderCardsByRecommendation(recommendedCardIds.value);
+              selectedIndexFloat.value = 0; // 1순위가 중앙에
+              isAnimatingToCenter.value = false;
+              isRecommendationMode.value = true;
+              // CSS transition이 자동으로 펼쳐짐 애니메이션 처리
+            }, 800); // 1단계 duration과 같음
             isRecommending.value = false;
           }
         };
 
-        animate();
+        animate1();
       } else {
         isRecommending.value = false;
         console.error('목표 카드를 찾을 수 없습니다.');
@@ -288,6 +317,14 @@ const handleTouchMove = (e) => {
 
   swipeDirection = { deltaX, deltaY };
 
+  // isAnimatingToCenter 상태: 스와이프만 반응
+  if (isAnimatingToCenter.value) {
+    if (Math.abs(deltaX) > 10) {
+      swipeProgress.value = deltaX / 300;
+    }
+    return;
+  }
+
   // 위로 드래그할 때: 카드 플립
   if (deltaY > 0) {
     cardUpOffset.value = Math.min(deltaY, 300);
@@ -324,10 +361,20 @@ const handleTouchEnd = () => {
     console.log('→ Horizontal swipe - rotating cards');
     isSwipeAnimating.value = true;
 
-    if (swipeProgress.value > 0) {
-      selectedIndex.value = (selectedIndex.value - 1 + cards.value.length) % cards.value.length;
+    // 추천 모드 진입: 모든 카드가 겹쳐있는 상태에서 스와이프하면 펼쳐짐
+    if (isAnimatingToCenter.value && !isRecommendationMode.value) {
+      console.log('→ Expanding recommendation cards');
+      cardStore.reorderCardsByRecommendation(recommendedCardIds.value);
+      selectedIndexFloat.value = 0; // 재정렬 후 1순위가 중앙에
+      isAnimatingToCenter.value = false;
+      isRecommendationMode.value = true;
     } else {
-      selectedIndex.value = (selectedIndex.value + 1) % cards.value.length;
+      // 평소 스와이프: selectedIndexFloat 변경
+      if (swipeProgress.value > 0) {
+        selectedIndexFloat.value = selectedIndexFloat.value - 1;
+      } else {
+        selectedIndexFloat.value = selectedIndexFloat.value + 1;
+      }
     }
 
     setTimeout(() => {
@@ -496,20 +543,34 @@ onMounted(async () => {
   <div class="payment-page">
     <PageHeader title="결제" :show-back="false" />
 
-    <!-- 결제 금액 입력 -->
-    <div v-if="hasCards" class="payment-amount-section" style="margin-top: var(--space-sd); margin-bottom: var(--space-md);">
-      <h3 style="margin: 0 0 12px 0; font-size: 16px; font-weight: 700; color: var(--color-text-primary);">결제 금액</h3>
-      <PaymentAmountInput v-model="paymentAmount" />
-    </div>
-
     <!-- 이용 장소 선택 -->
-    <div v-if="hasCards" class="merchant-section" style="margin-bottom: var(--space-md);">
+    <div v-if="hasCards" class="merchant-section" style="margin-top: var(--space-sd); margin-bottom: var(--space-md);">
       <h3 style="margin: 0 0 12px 0; font-size: 16px; font-weight: 700; color: var(--color-text-primary);">이용 장소</h3>
       <MerchantSelector
         v-model:category="selectedCategory"
         v-model:merchant="selectedMerchant"
       />
-      <!-- 카드 추천 받기 -->
+    </div>
+
+    <!-- 결제 금액 입력 -->
+    <div v-if="hasCards" class="payment-amount-section" style="margin-bottom: var(--space-md);">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+        <h3 style="margin: 0; font-size: 16px; font-weight: 700; color: var(--color-text-primary);">결제 금액</h3>
+        <button
+          @click="showPaymentAmountInput = !showPaymentAmountInput"
+          style="background: none; border: none; font-size: 18px; cursor: pointer; padding: 4px 8px; color: var(--color-text-primary); display: flex; align-items: center; justify-content: center; transition: transform 0.3s ease;"
+          :style="{ transform: showPaymentAmountInput ? 'rotate(90deg)' : 'rotate(0deg)' }"
+        >
+          ›
+        </button>
+      </div>
+      <div v-if="showPaymentAmountInput">
+        <PaymentAmountInput v-model="paymentAmount" />
+      </div>
+    </div>
+
+    <!-- 카드 추천 받기 -->
+    <div v-if="hasCards" style="margin-bottom: var(--space-md);">
       <button
         @click="getCardRecommendations"
         :disabled="isRecommending"
@@ -655,6 +716,8 @@ main {
   left: 55%;
   border: 3px solid transparent;
   box-sizing: border-box;
+  will-change: transform;
+  backface-visibility: hidden;
   transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94), border 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 

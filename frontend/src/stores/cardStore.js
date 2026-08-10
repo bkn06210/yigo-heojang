@@ -205,7 +205,20 @@ export const useCardStore = defineStore(
 
     };
 
+    // 카드를 추천 순서대로 재정렬
+    const reorderCardsByRecommendation = (recommendedCardIds) => {
+      if (!recommendedCardIds || recommendedCardIds.length === 0) return;
 
+      // 숫자 타입으로 통일 (c.id가 문자열일 수 있으므로)
+      const recommendedSet = new Set(recommendedCardIds.map(id => Number(id)));
+      const reorderedCards = [
+        ...recommendedCardIds
+          .map(id => cards.value.find(c => Number(c.id) === Number(id)))
+          .filter(Boolean),
+        ...cards.value.filter(c => !recommendedSet.has(Number(c.id)))
+      ];
+      cards.value = reorderedCards;
+    };
 
     return {
 
@@ -228,6 +241,8 @@ export const useCardStore = defineStore(
       removeCard,
 
       clearCards,
+
+      reorderCardsByRecommendation,
 
     };
 
