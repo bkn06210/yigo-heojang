@@ -38,6 +38,18 @@ final class UserSeedScenario {
     }
 
     /**
+     * 선택형 혜택 묶음의 그달 선택 한 건.
+     *
+     * 선택 기록이 없는 묶음은 그달에 고르지 않은 것이라 혜택이 하나도 적용되지 않는다.
+     * 그래서 선택형 카드를 보유만 시키고 이 행을 빼면 그 카드의 묶음 혜택이 영영 계산되지 않는다.
+     *
+     * @param optionGroupCode benefit.option_group_code 와 같은 값
+     * @param optionKey       그달에 고른 선택지. benefit.option_key 와 같은 값
+     */
+    record Selection(long memberId, String cardName, String optionGroupCode, String optionKey) {
+    }
+
+    /**
      * 거래 한 건.
      *
      * @param merchantCode 가맹점 코드. 혜택이 걸린 브랜드가 아니면 null
@@ -63,6 +75,7 @@ final class UserSeedScenario {
                 new Holding(1, "마이핏카드(적립형)", false),
                 new Holding(1, "삼성 iD ON 카드", false),
                 new Holding(1, "신한카드 Deep Once", false),
+                new Holding(1, "삼성카드 taptap O", false),
 
                 new Holding(2, "ALL 카드", true),
                 new Holding(2, "마이핏카드(할인형)", false),
@@ -74,6 +87,23 @@ final class UserSeedScenario {
                 new Holding(3, "삼성카드 & POINT", false),
                 new Holding(3, "삼성카드 taptap O", false),
                 new Holding(3, "신한카드 The BEST-XO", false));
+    }
+
+    /**
+     * 선택형 혜택의 선택 — 보유카드마다 하나씩, 다섯 달 모두 같은 선택을 유지한다.
+     *
+     * 회원마다 다른 선택지를 고르게 둔다. 같은 카드를 가진 두 회원의 화면에 서로 다른 혜택이
+     * 떠야 "매월 택1"이 실제로 회원 단위로 동작한다는 것이 시드에서 드러난다.
+     *
+     * 신한카드 The BEST-XO의 GIFT_OPTION은 넣지 않는다 — 증정(GIFT) 혜택이라 결제 트랜잭션이
+     * 없고, 엔진이 계산·현황 조회에서 애초에 제외하므로 선택 상태가 아무 데도 쓰이지 않는다.
+     */
+    static List<Selection> selections() {
+        return List.of(
+                new Selection(1, "YOU Wish 카드", "WISH_PICK", "DAILY"),
+                new Selection(1, "삼성카드 taptap O", "LIFESTYLE", "PACKAGE_2"),
+                new Selection(2, "삼성 iD SELECT UP 카드", "SELECT_SERVICE", "LIVING"),
+                new Selection(3, "삼성카드 taptap O", "LIFESTYLE", "PACKAGE_5"));
     }
 
     /** 다섯 달치 거래를 시간순으로 만든다 */
