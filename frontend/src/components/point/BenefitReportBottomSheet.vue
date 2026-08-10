@@ -1,4 +1,4 @@
-<script setup>
+﻿<script setup>
 import { ref } from 'vue'
 
 
@@ -234,24 +234,35 @@ const backToCategory = () => {
 
   box-sizing: border-box;
 
-  background: white;
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
 
-  border-radius: 24px 24px 0 0;
-
-  padding: 24px;
+  padding: var(--space-xl);
 
   max-height: 70vh;
 
   overflow-y: auto;
+
+  /* 카드사용내역 상세 바텀시트와 동일하게 불투명 배경으로 통일 */
+  background: var(--color-surface);
+  box-shadow: 0 -16px 40px rgba(0, 0, 0, 0.12);
+
+}
+
+[data-theme="dark"] .bottom-sheet {
+
+  box-shadow: 0 -16px 40px rgba(0, 0, 0, 0.35);
 
 }
 
 
 h2 {
 
-  font-size: 20px;
+  font-size: var(--font-xl);
+  font-weight: var(--font-bold);
+  letter-spacing: -0.2px;
+  color: var(--color-text-primary);
 
-  margin-bottom: 20px;
+  margin: 0 0 var(--space-xl);
 
 }
 
@@ -263,11 +274,34 @@ h2 {
 
   justify-content: space-between;
 
-  padding: 16px 0;
+  align-items: center;
 
-  border-bottom: 1px solid #eee;
+  padding: var(--space-md);
+
+  margin-bottom: var(--space-sm);
+
+  border-radius: var(--radius-md);
+
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
 
   cursor: pointer;
+
+  transition: var(--transition-fast);
+
+}
+
+.category-item:hover {
+
+  background: linear-gradient(135deg, rgba(var(--color-primary-dark-rgb), 0.1) 0%, rgba(var(--color-primary-dark-rgb), 0.03) 100%);
+  border: 1px solid rgba(var(--color-primary-dark-rgb), 0.2);
+
+}
+
+[data-theme="dark"] .category-item:hover {
+
+  background: linear-gradient(135deg, rgba(var(--color-primary-dark-rgb), 0.18) 0%, rgba(var(--color-primary-dark-rgb), 0.06) 100%);
+  border: 1px solid rgba(var(--color-primary-dark-rgb), 0.28);
 
 }
 
@@ -275,9 +309,14 @@ h2 {
 
 .detail-item {
 
-  padding: 16px 0;
+  padding: var(--space-md);
 
-  border-bottom: 1px solid #eee;
+  margin-bottom: var(--space-sm);
+
+  border-radius: var(--radius-md);
+
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
 
 }
 
@@ -287,7 +326,7 @@ h2 {
 
   margin-top: 6px;
 
-  color: #666;
+  color: var(--color-text-secondary);
 
 }
 
@@ -299,7 +338,7 @@ h2 {
 
   margin-top: 8px;
 
-  color: #2563eb;
+  color: var(--color-text-primary);
 
 }
 
@@ -307,9 +346,13 @@ h2 {
 
 .total {
 
-  font-size: 28px;
+  font-size: var(--typo-display-large-size);
+  font-weight: var(--typo-display-large-weight);
+  line-height: var(--typo-display-large-line-height);
+  letter-spacing: var(--typo-display-large-letter-spacing);
+  color: var(--color-text-primary);
 
-  font-weight: 700;
+  margin: 0 0 var(--space-lg);
 
 }
 
@@ -318,6 +361,26 @@ h2 {
 .back-button {
 
   margin-bottom: 16px;
+
+  width: auto;
+
+  height: 40px;
+
+  padding: 0 var(--space-md);
+
+  border: 1px solid var(--color-border);
+
+  background: var(--color-surface);
+
+  color: var(--color-text-primary);
+
+  font-size: var(--font-sm);
+
+  font-weight: var(--font-semibold);
+
+  cursor: pointer;
+
+  transition: var(--transition-fast);
 
 }
 
@@ -333,7 +396,24 @@ h2 {
 
   border-radius: 12px;
 
-  background: #f3f4f6;
+  border: none;
+
+  background:
+    linear-gradient(
+      90deg,
+      var(--color-btn-primary-start),
+      var(--color-btn-primary-end)
+    );
+
+  color: var(--color-btn-primary-text);
+
+  font-size: var(--font-sm);
+
+  font-weight: var(--font-semibold);
+
+  cursor: pointer;
+
+  transition: var(--transition-fast);
 
 }
 

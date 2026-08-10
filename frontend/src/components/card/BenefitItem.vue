@@ -18,19 +18,20 @@ defineProps({
 <style scoped>
 .benefit-item {
   padding: 16px;
-  border: 1px solid #e5e5e5;
+  border: 1px solid var(--color-border);
   border-radius: 12px;
-  background: #fff;
+  background: var(--color-surface);
 }
 
 h3 {
   margin-bottom: 8px;
   font-size: 16px;
   font-weight: 600;
+  color: var(--color-text-primary);
 }
 
 p {
-  color: #666;
+  color: var(--color-text-secondary);
   font-size: 14px;
   line-height: 1.5;
 }

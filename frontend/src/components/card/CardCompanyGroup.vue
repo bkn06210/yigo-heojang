@@ -65,7 +65,7 @@ const togglePin = (id) => {
       </h3>
 
 
-      <span>
+      <span class="card-count">
         {{ company.cards.length }}장
       </span>
 
@@ -73,13 +73,17 @@ const togglePin = (id) => {
 
 
 
-    <!-- 카드 목록 -->
-    <CardItem
-      v-for="card in visibleCards"
-      :key="card.id"
-      :card="card"
-      @toggle-pin="togglePin"
-    />
+    <!-- 카드 목록 (2열 그리드) -->
+    <div class="cards-grid">
+
+      <CardItem
+        v-for="card in visibleCards"
+        :key="card.id"
+        :card="card"
+        @toggle-pin="togglePin"
+      />
+
+    </div>
 
 
 
@@ -92,7 +96,7 @@ const togglePin = (id) => {
 
       {{
         isExpanded
-          ? '접기'
+          ? '접기 ∧'
           : `+ ${company.cards.length - limit}개 더보기`
       }}
 
@@ -109,7 +113,7 @@ const togglePin = (id) => {
 
 .company-group {
 
-  margin-bottom:32px;
+  margin-bottom: var(--space-2xl);
 
 }
 
@@ -117,13 +121,15 @@ const togglePin = (id) => {
 
 .company-header {
 
-  display:flex;
+  display: flex;
 
-  justify-content:space-between;
+  justify-content: space-between;
 
-  align-items:center;
+  align-items: center;
 
-  margin-bottom:12px;
+  margin-bottom: var(--space-md);
+
+  padding: 0 var(--space-xs);
 
 }
 
@@ -131,41 +137,70 @@ const togglePin = (id) => {
 
 .company-header h3 {
 
-  font-size:18px;
+  margin: 0;
 
-  font-weight:700;
+  font-size: var(--font-md);
+
+  font-weight: var(--font-semibold);
+
+  color: var(--color-text-primary);
+
+  letter-spacing: -0.2px;
+
+}
+
+
+
+.card-count {
+
+  color: var(--color-text-tertiary);
+
+  font-size: var(--font-xs);
+
+  font-weight: var(--font-medium);
 
 }
 
 
+.cards-grid {
 
-.company-header span {
+  display: flex;
 
-  color:#888;
+  flex-direction: column;
 
-  font-size:14px;
+  gap: var(--space-md);
+
+  margin-bottom: var(--space-md);
 
 }
-
 
 
 .more-button {
 
-  width:100%;
+  width: 100%;
 
-  padding:12px;
+  padding: var(--space-sm) 0;
 
-  border:none;
+  background: none;
 
-  background:none;
+  border: none;
 
-  color:#666;
+  color: var(--color-text-secondary);
 
-  cursor:pointer;
+  cursor: pointer;
 
-  font-size:14px;
+  font-size: var(--font-sm);
+
+  font-weight: var(--font-medium);
+
+  transition: var(--transition-fast);
 
 }
 
+.more-button:hover {
+
+  color: var(--color-text-primary);
+
+}
 
 </style>

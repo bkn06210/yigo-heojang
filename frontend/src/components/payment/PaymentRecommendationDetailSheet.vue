@@ -1,4 +1,4 @@
-<script setup>
+﻿<script setup>
 const props = defineProps({
 
   // 바텀시트 표시 여부
@@ -75,7 +75,6 @@ const selectCard = () => {
       >
 
         <img
-          v-if="card.image"
           :src="card.image"
           :alt="card.name"
           class="card-image"
@@ -190,11 +189,33 @@ const selectCard = () => {
 
   max-width:430px;
 
-  background:#fff;
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
 
-  border-radius:24px 24px 0 0;
+  padding: var(--space-xl);
 
-  padding:24px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.6) 0%, var(--color-surface) 30%);
+  border-top: 1px solid rgba(255, 255, 255, 0.35);
+  box-shadow: 0 -16px 40px rgba(0, 0, 0, 0.12);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+
+}
+
+[data-theme="dark"] .sheet{
+
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.06) 0%, var(--color-surface) 30%);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 -16px 40px rgba(0, 0, 0, 0.35);
+
+}
+
+.sheet h2{
+
+  font-size: var(--typo-display-medium-size);
+  font-weight: var(--typo-display-medium-weight);
+  letter-spacing: var(--typo-display-medium-letter-spacing);
+  color: var(--color-text-primary);
+  margin: 0;
 
 }
 
@@ -206,9 +227,9 @@ const selectCard = () => {
 
   border-radius:999px;
 
-  background:#ddd;
+  background:var(--color-border);
 
-  margin:0 auto 20px;
+  margin:0 auto var(--space-lg);
 
 }
 
@@ -216,9 +237,49 @@ const selectCard = () => {
 
   display:flex;
 
-  gap:16px;
+  gap: var(--space-md);
 
-  margin:24px 0;
+  align-items: center;
+
+  margin: var(--space-xl) 0;
+
+  padding: var(--space-md);
+
+  border-radius: var(--radius-md);
+
+  background: linear-gradient(135deg, rgba(var(--color-primary-dark-rgb), 0.1) 0%, rgba(var(--color-primary-dark-rgb), 0.03) 100%);
+  border: 1px solid rgba(var(--color-primary-dark-rgb), 0.2);
+
+}
+
+[data-theme="dark"] .card-info{
+
+  background: linear-gradient(135deg, rgba(var(--color-primary-dark-rgb), 0.18) 0%, rgba(var(--color-primary-dark-rgb), 0.06) 100%);
+  border: 1px solid rgba(var(--color-primary-dark-rgb), 0.28);
+
+}
+
+.card-info h3{
+
+  margin: 0 0 var(--space-xs);
+  font-size: var(--font-md);
+  font-weight: var(--font-bold);
+  color: var(--color-text-primary);
+
+}
+
+.card-info p{
+
+  margin: 0;
+  font-size: var(--font-sm);
+  color: var(--color-text-secondary);
+
+}
+
+.card-info strong{
+
+  color: var(--color-primary-dark);
+  font-weight: var(--font-bold);
 
 }
 
@@ -226,25 +287,48 @@ const selectCard = () => {
 
   width:72px;
 
+  border-radius: var(--radius-sm);
+
 }
 
 .section{
 
-  margin-bottom:24px;
+  margin-bottom: var(--space-xl);
+
+}
+
+.section h4{
+
+  margin: 0;
+  font-size: var(--font-sm);
+  font-weight: var(--font-semibold);
+  color: var(--color-text-primary);
 
 }
 
 .section ul{
 
-  margin-top:12px;
+  margin-top: var(--space-sm);
 
-  padding-left:20px;
+  padding-left: var(--space-lg);
 
 }
 
 .section li{
 
-  margin-bottom:8px;
+  margin-bottom: var(--space-xs);
+
+  font-size: var(--font-sm);
+  color: var(--color-text-secondary);
+
+}
+
+.section p{
+
+  margin-top: var(--space-sm);
+  font-size: var(--font-sm);
+  color: var(--color-text-secondary);
+  line-height: 1.5;
 
 }
 
@@ -258,7 +342,27 @@ const selectCard = () => {
 
   border-radius:12px;
 
+  background:
+    linear-gradient(
+      90deg,
+      var(--color-btn-primary-start),
+      var(--color-btn-primary-end)
+    );
+
+  color:var(--color-btn-primary-text);
+
+  font-weight:var(--font-semibold);
+
+  cursor:pointer;
+
+  transition:var(--transition-fast);
+
+}
+
+.select-button:hover{
+
+  opacity:0.9;
+
 }
 
 </style>
-<!-- 07_25 연동 변경: 추천 API의 상세 계산 결과를 바텀시트에 표시한다. -->

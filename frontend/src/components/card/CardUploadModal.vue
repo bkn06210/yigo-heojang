@@ -1,5 +1,6 @@
 <script setup>
 import { ref } from 'vue';
+import Icon from '@/components/common/Icon.vue';
 
 const emit = defineEmits([
   'close',
@@ -27,8 +28,7 @@ const scanStep = ref('');
 // 실제 서비스에서는 OCR API 결과
 const scanResult = ref({
   cardName: 'KB My WE:SH 카드',
-  // PR #29 연동: 업로드 목 결과도 서버 BIN/Luhn 검증을 통과하는 시연용 KB 카드번호를 사용한다.
-  cardNumber: '2228790000000008',
+  cardNumber: '1234567890121123',
   expiryDate: '12/28',
 });
 
@@ -154,7 +154,7 @@ const complete = () => {
 
 
 <button @click="close">
-✕
+<Icon name="close" size="sm" />
 </button>
 
 </div>
@@ -171,7 +171,7 @@ class="upload-area"
 <label class="upload-button">
 
 
-🖼 카드 사진 선택
+<Icon name="image" size="sm" /> 카드 사진 선택
 
 
 <input
@@ -232,7 +232,7 @@ class="result"
 
 
 <h3>
-✅ 카드 정보 인식 완료
+<Icon name="check" size="sm" /> 카드 정보 인식 완료
 </h3>
 
 
@@ -320,7 +320,7 @@ z-index:2000;
 
 width:90%;
 
-background:white;
+background:var(--color-surface);
 
 border-radius:24px;
 
@@ -348,6 +348,8 @@ background:none;
 
 font-size:20px;
 
+color:var(--color-text-primary);
+
 }
 
 
@@ -364,7 +366,7 @@ margin-top:30px;
 
 height:160px;
 
-border:2px dashed #4f46e5;
+border:2px dashed var(--color-border);
 
 border-radius:20px;
 
@@ -426,7 +428,7 @@ width:80%;
 
 height:3px;
 
-background:#4f46e5;
+background:var(--color-border);
 
 animation:scan 1.5s infinite;
 
@@ -470,7 +472,7 @@ justify-content:space-between;
 
 padding:14px 0;
 
-border-bottom:1px solid #eee;
+border-bottom:1px solid var(--color-border);
 
 }
 
@@ -488,11 +490,15 @@ border:none;
 
 border-radius:12px;
 
-background:#4f46e5;
+background:
+  linear-gradient(
+    90deg,
+    var(--color-btn-primary-start),
+    var(--color-btn-primary-end)
+  );
 
-color:white;
+color:var(--color-btn-primary-text);
 
 }
 
 </style>
-<!-- 07_25 연동 변경: 카드 이미지 인식 결과를 카드등록 흐름에 전달하도록 보완했다. -->

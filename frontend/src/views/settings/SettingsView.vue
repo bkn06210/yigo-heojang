@@ -1,9 +1,7 @@
-<script setup>
-import { onMounted, ref } from 'vue';
+﻿<script setup>
+import { ref, watch, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { storeToRefs } from 'pinia';
-import { logout as logoutApi } from '@/api/authApi';
-import { getMyInfo, updateMyInfo } from '@/api/memberApi';
 
 import { useAuthStore } from '@/stores/authStore';
 
@@ -27,7 +25,42 @@ const isProfileSheetOpen = ref(false);
 
 
 // 보기 설정
-const displaySetting = ref('system');
+const displaySetting = ref(localStorage.getItem('theme') || 'light');
+const isThemeDropdownOpen = ref(false);
+
+const themeOptions = [
+  { value: 'system', label: '시스템 설정' },
+  { value: 'light', label: '라이트 모드' },
+  { value: 'dark', label: '다크 모드' }
+];
+
+const getThemeLabel = () => {
+  return themeOptions.find(opt => opt.value === displaySetting.value)?.label || '시스템 설정';
+};
+
+// 테마 변경
+const selectTheme = (value) => {
+  displaySetting.value = value;
+  isThemeDropdownOpen.value = false;
+};
+
+// 테마 변경 감지
+watch(displaySetting, (newValue) => {
+  if (newValue === 'system') {
+    // 시스템 설정은 light로 설정 (필요시 나중에 시스템 색상 감지 로직 추가)
+    document.documentElement.setAttribute('data-theme', 'light');
+    localStorage.setItem('theme', 'light');
+  } else {
+    document.documentElement.setAttribute('data-theme', newValue);
+    localStorage.setItem('theme', newValue);
+  }
+});
+
+onMounted(() => {
+  const savedTheme = localStorage.getItem('theme') || 'light';
+  displaySetting.value = savedTheme;
+  document.documentElement.setAttribute('data-theme', savedTheme);
+});
 
 
 // 로그인 이동
@@ -93,42 +126,27 @@ const closeProfileEdit = () => {
 
 
 // 프로필 저장
-const updateProfile = async (updatedUser) => {
-  try {
-    const member = await updateMyInfo(updatedUser.nickname);
-    authStore.updateUser({
-      ...member,
-      profileImageUrl: updatedUser.profileImageUrl,
-    });
-    closeProfileEdit();
-  } catch (error) {
-    alert(error.response?.data?.message || '프로필 수정에 실패했습니다.');
-  }
-};
+const updateProfile = (updatedUser) => {
 
-const loadMyInfo = async () => {
-  if (!authStore.isLogin()) return;
-  try {
-    authStore.updateUser(await getMyInfo());
-  } catch (error) {
-    console.error('회원정보 조회 실패:', error);
-  }
-};
+  // TODO : 실제 API 연결 시 수정 API 호출
 
-onMounted(loadMyInfo);
+  authStore.updateUser(updatedUser);
+
+
+  closeProfileEdit();
+
+};
 
 
 
 // 로그아웃
-const logout = async () => {
-  try {
-    await logoutApi();
-  } catch (error) {
-    console.log('로그아웃 API 실패:', error);
-  } finally {
-    authStore.logout();
-    router.push('/auth/login');
-  }
+const logout = () => {
+
+  authStore.logout();
+
+
+  router.push('/');
+
 };
 
 </script>
@@ -137,11 +155,10 @@ const logout = async () => {
 
   <div class="settings-view">
 
-
     <!-- 헤더 -->
     <PageHeader
       title="설정"
-      @back="goBack"
+      :show-back="false"
     />
 
 
@@ -297,45 +314,36 @@ const logout = async () => {
 
         <div class="menu-item dropdown-item">
 
-
           <span>
             보기
           </span>
 
+          <div class="custom-dropdown">
+            <button
+              class="dropdown-trigger"
+              @click="isThemeDropdownOpen = !isThemeDropdownOpen"
+            >
+              {{ getThemeLabel() }}
+              <span class="dropdown-arrow" :class="{ open: isThemeDropdownOpen }">
+                ▾
+              </span>
+            </button>
 
-
-          <div class="menu-value-dropdown">
-
-
-            <select v-model="displaySetting">
-
-
-              <option value="system">
-                시스템 설정
-              </option>
-
-
-              <option value="light">
-                라이트 모드
-              </option>
-
-
-              <option value="dark">
-                다크 모드
-              </option>
-
-
-            </select>
-
-
-
-            <span class="dropdown-arrow">
-              ▾
-            </span>
-
-
+            <div
+              v-if="isThemeDropdownOpen"
+              class="dropdown-menu"
+            >
+              <button
+                v-for="option in themeOptions"
+                :key="option.value"
+                class="dropdown-option"
+                :class="{ active: displaySetting === option.value }"
+                @click="selectTheme(option.value)"
+              >
+                {{ option.label }}
+              </button>
+            </div>
           </div>
-
 
         </div>
 
@@ -433,11 +441,22 @@ const logout = async () => {
 
   min-height: 100vh;
 
-  background: #f7f7f8;
+  background: var(--color-bg);
 
   display:flex;
 
   flex-direction:column;
+
+  padding: var(--space-md);
+  padding-bottom: calc(var(--space-xl) + var(--space-2xl) + var(--space-xl));
+
+  margin: 0 auto;
+
+  max-width: 480px;
+
+  box-sizing: border-box;
+
+  overflow: hidden visible;
 
 }
 
@@ -449,23 +468,19 @@ const logout = async () => {
 
   flex:1;
 
-  padding:20px;
-
-  padding-bottom:100px;
+  padding-bottom: calc(var(--space-xl) + var(--space-2xl) + var(--space-xl));
 
 }
 
 
 
-/* 프로필 */
+/* 프로필 (Bento: 강조 셀 + Soft Glassmorphism) */
 
 .profile-section {
 
-  background:white;
+  border-radius: var(--radius-xl);
 
-  border-radius:20px;
-
-  padding:24px 20px;
+  padding: var(--space-2xl) var(--space-lg);
 
   display:flex;
 
@@ -473,15 +488,27 @@ const logout = async () => {
 
   align-items:center;
 
-  margin-bottom:20px;
+  margin-bottom: var(--space-lg);
 
+  background: linear-gradient(135deg, rgba(var(--color-primary-dark-rgb), 0.12) 0%, rgba(var(--color-primary-dark-rgb), 0.04) 100%);
+  border: 1px solid rgba(var(--color-primary-dark-rgb), 0.2);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+
+}
+
+[data-theme="dark"] .profile-section {
+  background: linear-gradient(135deg, rgba(var(--color-primary-dark-rgb), 0.12) 0%, rgba(var(--color-primary-dark-rgb), 0.04) 100%);
+  border: 1px solid rgba(var(--color-primary-dark-rgb), 0.2);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.06);
 }
 
 
 
 .guest-profile {
 
-  gap:16px;
+  gap: var(--space-md);
 
 }
 
@@ -491,9 +518,9 @@ const logout = async () => {
 
   margin:0;
 
-  color:#666;
+  color: var(--color-text-secondary);
 
-  font-size:15px;
+  font-size: var(--font-sm);
 
 }
 
@@ -503,17 +530,27 @@ const logout = async () => {
 
   border:none;
 
-  background:#4F46E5;
+  background: linear-gradient(90deg, var(--color-btn-primary-start), var(--color-btn-primary-end));
 
-  color:white;
+  color: var(--color-btn-primary-text);
 
-  padding:10px 24px;
+  padding: var(--space-xs) var(--space-xl);
 
-  border-radius:20px;
+  border-radius: var(--radius-lg);
 
-  font-size:14px;
+  font-size: var(--font-sm);
+
+  font-weight: var(--font-semibold);
 
   cursor:pointer;
+
+  transition: var(--transition-fast);
+
+}
+
+.login-button:hover {
+
+  opacity: 0.9;
 
 }
 
@@ -537,7 +574,7 @@ const logout = async () => {
 
   height:100%;
 
-  border-radius:50%;
+  border-radius: var(--radius-full);
 
   object-fit:cover;
 
@@ -547,7 +584,7 @@ const logout = async () => {
 
 .default-image {
 
-  background:#e5e7eb;
+  background: var(--color-border);
 
 }
 
@@ -555,7 +592,7 @@ const logout = async () => {
 
 .profile-info {
 
-  margin-top:14px;
+  margin-top: var(--space-sm);
 
 }
 
@@ -567,7 +604,7 @@ const logout = async () => {
 
   align-items:center;
 
-  gap:8px;
+  gap: var(--space-xs);
 
 }
 
@@ -575,9 +612,13 @@ const logout = async () => {
 
 .nickname {
 
-  font-size:18px;
+  font-size: var(--font-2xl);
 
-  font-weight:700;
+  font-weight: var(--font-bold);
+
+  letter-spacing: -0.3px;
+
+  color: var(--color-text-primary);
 
 }
 
@@ -591,9 +632,9 @@ const logout = async () => {
 
   border:none;
 
-  background:#f3f4f6;
+  background: rgba(255, 255, 255, 0.4);
 
-  border-radius:50%;
+  border-radius: var(--radius-full);
 
   display:flex;
 
@@ -603,15 +644,35 @@ const logout = async () => {
 
   cursor:pointer;
 
+  transition: var(--transition-fast);
+
+}
+
+.edit-profile-button:hover {
+
+  background: rgba(255, 255, 255, 0.6);
+
+}
+
+[data-theme="dark"] .edit-profile-button {
+
+  background: rgba(255, 255, 255, 0.08);
+
+}
+
+[data-theme="dark"] .edit-profile-button:hover {
+
+  background: rgba(255, 255, 255, 0.14);
+
 }
 
 
 
 .edit-profile-button .material-icons {
 
-  font-size:16px;
+  font-size: var(--font-md);
 
-  color:#666;
+  color: var(--color-text-secondary);
 
 }
 
@@ -623,13 +684,15 @@ const logout = async () => {
 
 .menu-list {
 
-  background:white;
+  background: var(--color-surface);
 
-  border-radius:20px;
+  border-radius: var(--radius-lg);
 
-  overflow:hidden;
+  overflow: visible;
 
-  box-shadow:0 2px 10px rgba(0,0,0,0.04);
+  box-shadow: var(--shadow-card);
+
+  position: relative;
 
 }
 
@@ -639,7 +702,7 @@ const logout = async () => {
 
   min-height:56px;
 
-  padding:0 20px;
+  padding: 0 var(--space-md);
 
   display:flex;
 
@@ -647,11 +710,21 @@ const logout = async () => {
 
   align-items:center;
 
-  border-bottom:1px solid #f1f1f1;
+  border-bottom: 1px solid var(--color-bg);
 
-  font-size:15px;
+  font-size: var(--font-sm);
+
+  color: var(--color-text-primary);
 
   cursor:pointer;
+
+  transition: var(--transition-fast);
+
+}
+
+.menu-item:hover {
+
+  background: var(--color-bg);
 
 }
 
@@ -667,9 +740,9 @@ const logout = async () => {
 
 .menu-item span:last-child {
 
-  color:#999;
+  color: var(--color-text-tertiary);
 
-  font-size:22px;
+  font-size: var(--font-2xl);
 
 }
 
@@ -680,74 +753,113 @@ const logout = async () => {
 /* 보기 설정 */
 
 .dropdown-item {
-
-  cursor:default;
-
+  cursor: default;
 }
 
-
-
-.menu-value-dropdown {
-
-  position:relative;
-
-  display:flex;
-
-  align-items:center;
-
+.custom-dropdown {
+  position: relative;
+  display: inline-block;
 }
 
+.dropdown-trigger {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
 
+  border: 1.5px solid var(--color-border);
+  background: var(--color-bg);
+  color: var(--color-text-primary);
 
-.menu-value-dropdown select {
+  height: 36px;
+  min-width: 120px;
+  padding: var(--space-xs) var(--space-md);
 
-  appearance:none;
+  border-radius: var(--radius-md);
 
-  -webkit-appearance:none;
+  font-size: var(--font-sm);
+  font-weight: var(--font-medium);
+  cursor: pointer;
 
-  border:none;
-
-  outline:none;
-
-
-  background:#f5f5f7;
-
-  color:#555;
-
-
-  height:34px;
-
-  min-width:110px;
-
-
-  padding:0 34px 0 14px;
-
-
-  border-radius:18px;
-
-
-  font-size:13px;
-
-  font-weight:500;
-
-  cursor:pointer;
-
+  transition: all var(--transition-fast);
 }
 
+.dropdown-trigger:hover {
+  border-color: var(--color-primary);
+  background: linear-gradient(135deg, rgba(var(--color-primary-dark-rgb), 0.06) 0%, rgba(var(--color-primary-dark-rgb), 0.02) 100%);
+}
 
+.dropdown-trigger:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(var(--color-primary-dark-rgb), 0.1);
+}
+
+[data-theme="dark"] .dropdown-trigger:hover {
+  background: linear-gradient(135deg, rgba(var(--color-primary-dark-rgb), 0.08) 0%, rgba(var(--color-primary-dark-rgb), 0.02) 100%);
+}
+
+[data-theme="dark"] .dropdown-trigger:focus {
+  box-shadow: 0 0 0 3px rgba(var(--color-primary-dark-rgb), 0.12);
+}
 
 .dropdown-arrow {
+  font-size: var(--font-xs);
+  color: var(--color-text-tertiary);
+  transition: transform var(--transition-fast);
+  margin-left: auto;
+}
 
-  position:absolute;
+.dropdown-arrow.open {
+  transform: rotate(-180deg);
+}
 
-  right:12px;
+.dropdown-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
 
-  color:#888;
+  min-width: 140px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
 
-  font-size:12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  overflow: hidden;
 
-  pointer-events:none;
+  z-index: 1000;
+}
 
+[data-theme="dark"] .dropdown-menu {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+.dropdown-option {
+  width: 100%;
+  text-align: left;
+
+  border: none;
+  background: transparent;
+  color: var(--color-text-primary);
+
+  padding: var(--space-sm) var(--space-md);
+  font-size: var(--font-sm);
+  cursor: pointer;
+
+  transition: all var(--transition-fast);
+}
+
+.dropdown-option:hover {
+  background: var(--color-bg);
+}
+
+.dropdown-option.active {
+  background: linear-gradient(135deg, rgba(var(--color-primary-dark-rgb), 0.12) 0%, rgba(var(--color-primary-dark-rgb), 0.04) 100%);
+  color: var(--color-primary-dark);
+  font-weight: var(--font-semibold);
+}
+
+[data-theme="dark"] .dropdown-option.active {
+  background: linear-gradient(135deg, rgba(var(--color-primary-dark-rgb), 0.12) 0%, rgba(var(--color-primary-dark-rgb), 0.04) 100%);
 }
 
 
@@ -758,7 +870,7 @@ const logout = async () => {
 
 .logout-section {
 
-  margin-top:32px;
+  margin-top: var(--space-2xl);
 
   display:flex;
 
@@ -770,9 +882,9 @@ const logout = async () => {
 
 .logout-button {
 
-  border:none;
+  border: none;
 
-  background:white;
+  background: transparent;
 
 
   width:100%;
@@ -780,24 +892,22 @@ const logout = async () => {
   height:52px;
 
 
-  border-radius:16px;
+  border-radius: var(--radius-md);
 
 
-  color:#ef4444;
+  color: var(--color-coral);
 
 
-  font-size:15px;
+  font-size: var(--font-sm);
 
-  font-weight:600;
+  font-weight: var(--font-semibold);
 
 
   cursor:pointer;
 
-
-  box-shadow:0 2px 8px rgba(0,0,0,0.04);
+  transition: var(--transition-fast);
 
 }
 
 
 </style>
-<!-- 07_25 연동 변경: 설정 화면의 회원 정보와 인증 동작을 실제 API에 연결한다. -->
