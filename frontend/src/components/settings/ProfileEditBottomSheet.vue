@@ -136,10 +136,17 @@ const changeProfileImage = (event) => {
   position: fixed;
 
   inset: 0;
+  width: 100%;
+  max-width: 480px;
+  left: 50%;
+  transform: translateX(-50%);
+  margin: 0 auto;
 
   background: rgba(0, 0, 0, 0.45);
 
   display: flex;
+
+  justify-content: center;
 
   align-items: flex-end;
 
@@ -148,6 +155,8 @@ const changeProfileImage = (event) => {
 
 .bottom-sheet {
   width: 100%;
+
+  max-width: 480px;
 
   border-radius: var(--radius-xl) var(--radius-xl) 0 0;
 
@@ -158,6 +167,8 @@ const changeProfileImage = (event) => {
   box-shadow: 0 -16px 40px rgba(0, 0, 0, 0.12);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
+
+  box-sizing: border-box;
 }
 
 [data-theme="dark"] .bottom-sheet {

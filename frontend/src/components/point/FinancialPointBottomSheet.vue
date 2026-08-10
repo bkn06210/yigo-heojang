@@ -230,10 +230,17 @@ v-for="method in point.usageMethods"
 position: fixed;
 
 inset: 0;
+width: 100%;
+max-width: 480px;
+left: 50%;
+transform: translateX(-50%);
+margin: 0 auto;
 
 background: rgba(0,0,0,0.4);
 
 display: flex;
+
+justify-content: center;
 
 align-items: flex-end;
 
@@ -247,6 +254,8 @@ z-index: 1000;
 
 width: 100%;
 
+max-width: 480px;
+
 border-radius: var(--radius-xl) var(--radius-xl) 0 0;
 
 padding: var(--space-xl);
@@ -258,6 +267,8 @@ overflow-y: auto;
 /* 카드사용내역 상세 바텀시트와 동일하게 불투명 배경으로 통일 */
 background: var(--color-surface);
 box-shadow: 0 -16px 40px rgba(0, 0, 0, 0.12);
+
+box-sizing: border-box;
 
 }
 

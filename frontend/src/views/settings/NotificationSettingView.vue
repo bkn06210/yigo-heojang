@@ -89,15 +89,20 @@ watch(notifications, (newVal) => {
 
 <style scoped>
 .notification-setting-view {
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
   min-height: 100vh;
   background-color: var(--color-bg);
+  box-sizing: border-box;
 }
 
 .content-container {
   flex: 1;
   padding: var(--space-lg);
+  padding-bottom: calc(var(--space-xl) + var(--space-2xl) + var(--space-xl));
 }
 
 /* 타이틀 (Display Typography) */

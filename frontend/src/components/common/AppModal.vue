@@ -50,6 +50,11 @@ class="overlay"
 .overlay {
  position: fixed;
  inset: 0;
+ width: 100%;
+ max-width: 480px;
+ left: 50%;
+ transform: translateX(-50%);
+ margin: 0 auto;
 
  background: rgba(0,0,0,0.4);
 
@@ -64,13 +69,16 @@ class="overlay"
 .modal {
  background: var(--color-surface);
 
- width: 320px;
+ width: 90%;
+ max-width: 480px;
 
  padding: var(--space-xl);
 
  border-radius: var(--radius-lg);
 
  box-shadow: var(--shadow-card);
+
+ box-sizing: border-box;
 }
 
 

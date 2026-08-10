@@ -63,9 +63,13 @@ import Icon from '@/components/common/Icon.vue';
 
   bottom: 0;
 
-  left: 0;
+  left: 50%;
+
+  transform: translateX(-50%);
 
   width: 100%;
+
+  max-width: 480px;
 
 
   z-index: var(--z-sticky);

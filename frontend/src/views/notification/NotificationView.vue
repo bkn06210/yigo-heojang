@@ -199,22 +199,23 @@ const deleteNotification = (id)=>{
 <style scoped>
 
 
-.notification-view{
-
-  min-height:100vh;
-
-  background:#f8f8fb;
-
-  padding-bottom:100px;
-
+.notification-view {
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: var(--color-bg);
+  box-sizing: border-box;
 }
 
 
 
-.notification-container{
-
-  padding:20px;
-
+.notification-container {
+  flex: 1;
+  padding: 20px;
+  padding-bottom: calc(var(--space-xl) + var(--space-2xl) + var(--space-xl));
 }
 
 

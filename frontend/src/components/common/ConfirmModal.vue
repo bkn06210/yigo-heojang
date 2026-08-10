@@ -73,6 +73,11 @@ defineEmits([
   position: fixed;
 
   inset: 0;
+  width: 100%;
+  max-width: 480px;
+  left: 50%;
+  transform: translateX(-50%);
+  margin: 0 auto;
 
   background: rgba(0,0,0,0.5);
 
@@ -93,11 +98,14 @@ defineEmits([
 
   border-radius: var(--radius-lg);
 
-  width: 300px;
+  width: 90%;
+  max-width: 480px;
 
   text-align: center;
 
   box-shadow: var(--shadow-card);
+
+  box-sizing: border-box;
 }
 
 

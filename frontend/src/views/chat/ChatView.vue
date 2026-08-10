@@ -252,23 +252,24 @@ const goBack = ()=>{
 <style scoped>
 
 
-.chat-view{
-
-  min-height:100vh;
-
-  background:#f8f8fb;
-
-  padding-bottom:90px;
-
+.chat-view {
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: var(--color-bg);
+  box-sizing: border-box;
 }
 
 
 
 
-.chat-container{
-
-  padding:20px;
-
+.chat-container {
+  flex: 1;
+  padding: 20px;
+  padding-bottom: calc(var(--space-xl) + var(--space-2xl) + var(--space-xl));
 }
 
 

@@ -170,6 +170,11 @@ const selectCard = () => {
   position:fixed;
 
   inset:0;
+  width:100%;
+  max-width:480px;
+  left:50%;
+  transform:translateX(-50%);
+  margin:0 auto;
 
   background:rgba(0,0,0,.4);
 
@@ -187,7 +192,7 @@ const selectCard = () => {
 
   width:100%;
 
-  max-width:430px;
+  max-width:480px;
 
   border-radius: var(--radius-xl) var(--radius-xl) 0 0;
 
@@ -198,6 +203,8 @@ const selectCard = () => {
   box-shadow: 0 -16px 40px rgba(0, 0, 0, 0.12);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
+
+  box-sizing: border-box;
 
 }
 

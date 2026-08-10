@@ -189,6 +189,11 @@ const confirmNotification = () => {
   position:fixed;
 
   inset:0;
+  width:100%;
+  max-width:480px;
+  left:50%;
+  transform:translateX(-50%);
+  margin:0 auto;
 
   display:flex;
 
@@ -210,7 +215,7 @@ const confirmNotification = () => {
 
   width:calc(100% - 40px);
 
-  max-width:360px;
+  max-width:480px;
 
   padding:24px;
 
@@ -219,6 +224,8 @@ const confirmNotification = () => {
   border-radius:20px;
 
   box-shadow:0 10px 30px rgba(0,0,0,0.15);
+
+  box-sizing: border-box;
 
 }
 

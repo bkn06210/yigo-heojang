@@ -70,6 +70,11 @@ const emit = defineEmits([
 
   position:fixed;
   inset:0;
+  width:100%;
+  max-width:480px;
+  left:50%;
+  transform:translateX(-50%);
+  margin:0 auto;
 
   background:rgba(0,0,0,.45);
 
@@ -83,7 +88,8 @@ const emit = defineEmits([
 
 .modal{
 
-  width:320px;
+  width:90%;
+  max-width:480px;
 
   border-radius: var(--radius-xl);
 
@@ -96,6 +102,8 @@ const emit = defineEmits([
   box-shadow: 0 16px 40px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.4);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
+
+  box-sizing: border-box;
 
 }
 

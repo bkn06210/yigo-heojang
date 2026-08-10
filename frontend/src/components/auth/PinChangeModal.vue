@@ -104,18 +104,21 @@ const changePinSuccess = () => {
 <style scoped>
 .modal-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  inset: 0;
+  width: 100%;
+  max-width: 480px;
+  left: 50%;
+  transform: translateX(-50%);
+  margin: 0 auto;
   background: rgba(0, 0, 0, 0.5);
   display: flex;
   align-items: flex-end;
+  justify-content: center;
   z-index: 1000;
 }
 
 .modal-content {
-  width: 100%;
+  width: 90%;
   max-width: 480px;
   background: var(--color-surface);
   border-radius: 24px 24px 0 0;

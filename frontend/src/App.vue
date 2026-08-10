@@ -38,7 +38,8 @@ const { toast, closeToast } = useToast();
   overflow: hidden;
   min-height: 100vh;
   width: 100%;
-  max-width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
   box-sizing: border-box;
 }
 

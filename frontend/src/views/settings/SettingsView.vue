@@ -429,15 +429,16 @@ const logout = () => {
 
 <style scoped>
 .settings-view {
-  min-height: 100vh;
-  background: var(--color-bg);
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
+  min-height: 100vh;
+  background-color: var(--color-bg);
+  box-sizing: border-box;
   padding: var(--space-md);
   padding-bottom: calc(var(--space-xl) + var(--space-2xl) + var(--space-xl));
-  margin: 0 auto;
-  max-width: 480px;
-  box-sizing: border-box;
 }
 
 .settings-content {

@@ -751,10 +751,17 @@ class="apply"
 position:fixed;
 
 inset:0;
+width:100%;
+max-width:480px;
+left:50%;
+transform:translateX(-50%);
+margin:0 auto;
 
 background:rgba(0,0,0,.35);
 
 display:flex;
+
+justify-content:center;
 
 align-items:flex-end;
 
@@ -768,6 +775,8 @@ z-index:1100;
 
 width:100%;
 
+max-width:480px;
+
 max-height:85vh;
 
 overflow-y:auto;
@@ -777,6 +786,8 @@ background:var(--color-surface);
 border-radius:24px 24px 0 0;
 
 padding:20px;
+
+box-sizing: border-box;
 
 }
 

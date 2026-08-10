@@ -213,10 +213,18 @@ const backToCategory = () => {
   inset: 0;
 
   width: 100%;
+  max-width: 480px;
+  left: 50%;
+  transform: translateX(-50%);
+  margin: 0 auto;
 
   overflow: hidden;
 
   background: rgba(0,0,0,0.4);
+
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
 
   z-index: 1000;
 
@@ -231,6 +239,8 @@ const backToCategory = () => {
   bottom: 0;
 
   width: 100%;
+
+  max-width: 480px;
 
   box-sizing: border-box;
 

@@ -474,12 +474,13 @@ onMounted(() => {
 
 /* 개인화 설정 전체 화면 */
 .personalization-setting-view {
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
   min-height: 100vh;
   background-color: var(--color-bg);
-  margin: 0 auto;
-  max-width: 480px;
   box-sizing: border-box;
 }
 
@@ -487,7 +488,7 @@ onMounted(() => {
 .content-container {
   flex: 1;
   padding: var(--space-md);
-  padding-bottom: 120px;
+  padding-bottom: calc(var(--space-xl) + var(--space-2xl) + var(--space-xl));
   /*
     하단 고정 버튼 영역과 겹치지 않도록 여유 공간 확보
     (모바일 화면 기준)

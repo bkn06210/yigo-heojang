@@ -30,16 +30,19 @@ const emit = defineEmits(['regenerate', 'cancel']);
   justify-content: center;
   align-items: center;
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  inset: 0;
+  width: 100%;
+  max-width: 480px;
+  left: 50%;
+  transform: translateX(-50%);
+  margin: 0 auto;
   background: rgba(0, 0, 0, 0.5);
   z-index: 1000;
 }
 
 .modal {
-  width: 280px;
+  width: 90%;
+  max-width: 480px;
   padding: var(--space-xl);
   border-radius: var(--radius-xl);
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, var(--color-surface) 60%);
@@ -48,6 +51,7 @@ const emit = defineEmits(['regenerate', 'cancel']);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   text-align: center;
+  box-sizing: border-box;
 }
 
 [data-theme="dark"] .modal {

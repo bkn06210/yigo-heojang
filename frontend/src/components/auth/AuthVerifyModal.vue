@@ -259,6 +259,11 @@ export default defineComponent({
 
   position: fixed;
   inset: 0;
+  width: 100%;
+  max-width: 480px;
+  left: 50%;
+  transform: translateX(-50%);
+  margin: 0 auto;
   background: rgba(0, 0, 0, 0.4);
   display: flex;
   justify-content: center;
@@ -270,12 +275,14 @@ export default defineComponent({
 
 .modal {
 
-  width: 320px;
+  width: 90%;
+  max-width: 480px;
   background: var(--color-surface);
   border-radius: 16px;
   padding: 24px;
   position: relative;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  box-sizing: border-box;
 
 }
 

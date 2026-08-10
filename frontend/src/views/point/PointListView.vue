@@ -267,13 +267,17 @@ const showMoreMembership = () => {
 /* 전체 페이지 */
 
 .point-page {
-  padding: var(--space-md);
-  padding-bottom: calc(var(--space-xl) + var(--space-2xl) + var(--space-xl));
-  box-sizing: border-box;
-  overflow: visible;
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  background-color: var(--color-bg);
+  box-sizing: border-box;
+  padding: var(--space-md);
+  padding-bottom: calc(var(--space-xl) + var(--space-2xl) + var(--space-xl));
+  overflow: visible;
 }
 
 .pull-container {

@@ -62,6 +62,11 @@ const close = () => {
 
 position:fixed;
 inset:0;
+width:100%;
+max-width:480px;
+left:50%;
+transform:translateX(-50%);
+margin:0 auto;
 
 background:rgba(0,0,0,.4);
 
@@ -78,13 +83,16 @@ z-index:3000;
 
 background:var(--color-surface);
 
-width:80%;
+width:90%;
+max-width:480px;
 
 padding:24px;
 
 border-radius:20px;
 
 text-align:center;
+
+box-sizing: border-box;
 
 }
 

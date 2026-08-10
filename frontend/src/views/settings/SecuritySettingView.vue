@@ -81,15 +81,20 @@ watch(
 
 <style scoped>
 .security-setting-view {
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background-color: #f9f9f9;
+  background-color: var(--color-bg);
+  box-sizing: border-box;
 }
 
 .content-container {
   flex: 1;
   padding: 20px;
+  padding-bottom: calc(var(--space-xl) + var(--space-2xl) + var(--space-xl));
 }
 
 .section-title {

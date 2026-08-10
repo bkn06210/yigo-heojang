@@ -129,6 +129,11 @@ const complete = () => {
 .overlay {
   position: fixed;
   inset: 0;
+  width: 100%;
+  max-width: 480px;
+  left: 50%;
+  transform: translateX(-50%);
+  margin: 0 auto;
 
   background: rgba(0, 0, 0, 0.4);
 
@@ -141,12 +146,15 @@ const complete = () => {
 
 .modal {
   width: 90%;
+  max-width: 480px;
 
   background: var(--color-surface);
 
   border-radius: 24px;
 
   padding: 20px;
+
+  box-sizing: border-box;
 }
 
 .header {

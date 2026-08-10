@@ -128,9 +128,15 @@ const maskCardNumber = (number) => {
 .overlay{
     position:fixed;
     inset:0;
+    width:100%;
+    max-width:480px;
+    left:50%;
+    transform:translateX(-50%);
+    margin:0 auto;
     background:rgba(0,0,0,.35);
 
     display:flex;
+    justify-content:center;
     align-items:flex-end;
 
     z-index:999;
@@ -138,6 +144,7 @@ const maskCardNumber = (number) => {
 
 .bottom-sheet{
     width:100%;
+    max-width:480px;
     max-height:80vh;
 
     background:white;
@@ -147,6 +154,8 @@ const maskCardNumber = (number) => {
     padding:20px;
 
     overflow:auto;
+
+    box-sizing: border-box;
 }
 
 .handle{
