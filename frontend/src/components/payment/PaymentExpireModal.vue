@@ -85,13 +85,34 @@ const emit = defineEmits([
 
   width:320px;
 
-  background:white;
+  border-radius: var(--radius-xl);
 
-  border-radius:20px;
-
-  padding:28px;
+  padding: var(--space-xl);
 
   text-align:center;
+
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.85) 0%, var(--color-surface) 60%);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+
+}
+
+[data-theme="dark"] .modal{
+
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.06) 0%, var(--color-surface) 60%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+
+}
+
+.modal h2{
+
+  font-size: var(--font-lg);
+  font-weight: var(--font-bold);
+  color: var(--color-text-primary);
+  margin: 0;
 
 }
 
@@ -99,17 +120,19 @@ const emit = defineEmits([
 
   font-size:42px;
 
-  margin-bottom:16px;
+  margin-bottom: var(--space-md);
 
 }
 
 .description{
 
-  margin:20px 0;
+  margin: var(--space-lg) 0;
 
   line-height:1.6;
 
-  font-size:14px;
+  font-size: var(--font-sm);
+
+  color: var(--color-text-secondary);
 
 }
 
@@ -119,20 +142,62 @@ const emit = defineEmits([
 
   flex-direction:column;
 
-  gap:12px;
+  gap: var(--space-sm);
 
 }
 
-.refresh-button,
-.cancel-button{
+.refresh-button{
 
   height:48px;
 
   border:none;
 
-  border-radius:12px;
+  border-radius: var(--radius-md);
+
+  background: linear-gradient(90deg, var(--color-btn-primary-start), var(--color-btn-primary-end));
+
+  color: var(--color-btn-primary-text);
+
+  font-size: var(--font-sm);
+  font-weight: var(--font-semibold);
 
   cursor:pointer;
+
+  transition: var(--transition-fast);
+
+}
+
+.refresh-button:hover{
+
+  opacity: 0.9;
+
+}
+
+.cancel-button{
+
+  height:48px;
+
+  border: 1px solid var(--color-border);
+
+  border-radius: var(--radius-md);
+
+  background: none;
+
+  color: var(--color-text-secondary);
+
+  font-size: var(--font-sm);
+  font-weight: var(--font-semibold);
+
+  cursor:pointer;
+
+  transition: var(--transition-fast);
+
+}
+
+.cancel-button:hover{
+
+  background: var(--color-surface);
+  color: var(--color-text-primary);
 
 }
 

@@ -1,5 +1,6 @@
 <script setup>
 import { ref } from 'vue';
+import Icon from '@/components/common/Icon.vue';
 
 const emit = defineEmits(['close', 'complete']);
 
@@ -13,8 +14,7 @@ const showResult = ref(false);
 // 실제 서비스에서는 OCR API 응답 데이터
 const scanResult = ref({
   cardName: 'KB My WE:SH 카드',
-  // PR #29 연동: 촬영 목 결과도 서버 BIN/Luhn 검증을 통과하는 시연용 KB 카드번호를 사용한다.
-  cardNumber: '2228790000000008',
+  cardNumber: '1234567890121123',
   expiryDate: '12/28',
 });
 
@@ -73,7 +73,7 @@ const complete = () => {
       <div class="header">
         <h2>카드 촬영</h2>
 
-        <button @click="close">✕</button>
+        <button @click="close"><Icon name="close" size="sm" /></button>
       </div>
 
       <!-- 촬영 화면 -->
@@ -85,7 +85,8 @@ const complete = () => {
         </div>
 
         <button class="scan-button" @click="scanCard" :disabled="isScanning">
-          {{ isScanning ? '카드 정보를 분석 중입니다' : '📷 촬영' }}
+          <template v-if="isScanning">카드 정보를 분석 중입니다</template>
+          <template v-else><Icon name="camera" size="sm" /> 촬영</template>
         </button>
       </div>
 
@@ -141,7 +142,7 @@ const complete = () => {
 .modal {
   width: 90%;
 
-  background: white;
+  background: var(--color-surface);
 
   border-radius: 24px;
 
@@ -162,6 +163,8 @@ const complete = () => {
   background: none;
 
   font-size: 20px;
+
+  color: var(--color-text-primary);
 }
 
 .camera-area {
@@ -174,7 +177,7 @@ const complete = () => {
   position: relative;
   height: 180px;
 
-  border: 2px dashed #4f46e5;
+  border: 2px dashed var(--color-border);
   border-radius: 20px;
 
   display: flex;
@@ -183,7 +186,7 @@ const complete = () => {
 
   overflow: hidden;
 
-  color: #777;
+  color: var(--color-text-secondary);
 }
 
 /* 카드 스캔 라인 */
@@ -198,7 +201,7 @@ const complete = () => {
 
   height: 3px;
 
-  background: #4f46e5;
+  background: var(--color-border);
 
   animation: scan 1.2s infinite;
 }
@@ -230,9 +233,14 @@ const complete = () => {
 
   border-radius: 12px;
 
-  background: #4f46e5;
+  background:
+    linear-gradient(
+      90deg,
+      var(--color-btn-primary-start),
+      var(--color-btn-primary-end)
+    );
 
-  color: white;
+  color: var(--color-btn-primary-text);
 }
 
 .info {
@@ -246,7 +254,6 @@ const complete = () => {
 
   padding: 12px 0;
 
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid var(--color-border);
 }
 </style>
-<!-- 07_25 연동 변경: 카드 스캔 결과를 카드등록 API 입력으로 전달하도록 보완했다. -->

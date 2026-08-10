@@ -1,0 +1,323 @@
+/* 두리 — design tokens */
+
+html {
+  /* 페이지마다 스크롤바 유무가 달라 중앙 정렬된 콘텐츠가 좌우로 흔들리는 것을 방지
+     both-edges: 좌우 여백을 대칭으로 예약해 실제로 정중앙에 오도록 함 */
+  scrollbar-gutter: stable both-edges;
+}
+
+:root {
+  /* =====================
+     Color
+  ====================== */
+
+  /* Base (WCAG 대비 기준, 쿨톤) */
+  --color-bg: #F7F8FA;
+  --color-surface: #FFFFFF;
+  --color-bg-subtle: #F5F7FA;
+  --color-bg-secondary: #FAFBFC;
+  --color-border: #D6DADC;
+
+  /* Primary Gold — 팀 결정으로 그린↔골드 반전 (2026-08-04).
+     기존 --color-gold-* 토큰명은 그대로 두되 값만 그린으로 교체함
+     (이름 리네이밍은 전체 코드베이스 참조가 많아 범위 밖으로 판단) */
+  /* 라이트 모드에서 눈부심이 있어 살짝 톤다운 (원래 값 #FFEB3B) */
+  --color-primary: #EFDD39;
+  --color-primary-dark: #B8A03A;
+  /* rgba(184, 160, 58, x) 형태로 코드 곳곳에 하드코딩된 골드 틴트를
+     테마 대응시키기 위한 RGB 트리플릿 (다크모드에서는 쿨그레이로 교체) */
+  --color-primary-dark-rgb: 184, 160, 58;
+
+  /* Gradient — 버튼 그라디언트를 없애기로 해서 시작/끝을 동일한 단색으로 통일 */
+  --color-gradient-start: var(--color-primary);
+  --color-gradient-end: var(--color-primary);
+  --color-gradient-sub-text: #4A4116;
+
+  /* AI Briefing */
+  --color-ai-briefing-start: #F8F3D4;
+  --color-ai-briefing-end: #F5EFC9;
+
+  /* Point */
+  --color-point-icon: #B8A03A;
+  --color-point-bg: #F5EFC9;
+
+  /* Membership — 그린이 대신함 */
+  --color-membership-icon: #3D6B52;
+  --color-membership-bg: #E3EDE7;
+
+  /* Gold 토큰명 유지, 값은 그린으로 반전 */
+  --color-gold-fill: #3D6B52;
+  --color-gold-text: #2E5240;
+  --color-gold-nav: #3D6B52;
+
+  /* Warning (로즈/베리) */
+  --color-coral: #A84E68;
+
+  /* Section Card Colors (생동감 있는 배경) */
+  --color-section-card-coral-bg: #F3E7EB;
+  --color-section-card-gold-bg: #F8F3D4;
+  --color-section-card-orange-bg: #F5EFC9;
+  --color-section-card-green-bg: #E3EDE7;
+
+  /* Section Accent Colors (강조 색상) */
+  --color-accent-coral: #A84E68;
+  --color-accent-gold: #FFEB3B;
+  --color-accent-orange: #B8A03A;
+  --color-accent-green: #3D6B52;
+
+  /* Card Donut Chart Color */
+  --color-card-donut: #7AB88A;
+  --color-donut-text: #000000;
+
+  /* Navigation */
+  --color-nav-active: #7AB88A;
+
+  /* Text (WCAG AA 기준, 쿨톤) */
+  --color-text-primary: #24242A;
+  --color-text-secondary: #63666B;
+  --color-text-tertiary: #83868B;
+
+
+  /* Button */
+  --color-btn-primary-start: var(--color-gradient-start);
+  --color-btn-primary-end: var(--color-gradient-end);
+  /* 골드 배경엔 흰 글씨 대비가 부족해 진한 텍스트로 변경 */
+  --color-btn-primary-text: #24242A;
+
+  --color-btn-secondary: var(--color-primary);
+
+  --color-btn-disabled-bg: var(--color-border);
+  --color-btn-disabled-text: var(--color-text-secondary);
+
+  --color-btn-text-on-light-bg: #24242A;
+
+
+  /* Input */
+  --color-input-border: #D6DADC;
+  --color-input-focus: var(--color-primary);
+  --color-input-error: var(--color-coral);
+
+
+  /* Status */
+  --color-success-icon: var(--color-primary);
+  --color-success-bg: var(--color-point-bg);
+
+  /* Filter / Chip */
+  --color-filter-active-bg: var(--color-point-bg);
+  --color-filter-active-text: var(--color-primary);
+
+
+
+  /* =====================
+     Typography
+  ====================== */
+
+  --font-xs: 12px;
+  --font-sm: 14px;
+  --font-md: 16px;
+  --font-lg: 18px;
+  --font-xl: 22px;
+  --font-title: 24px;
+  --font-2xl: 28px;
+
+  --font-regular: 400;
+  --font-medium: 500;
+  --font-semibold: 600;
+  --font-bold: 700;
+
+  /* =====================
+     Typography - Semantic
+  ====================== */
+
+  /* Display (금액/통계 숫자 전용) */
+  --typo-display-large-size: 32px;
+  --typo-display-large-weight: 700;
+  --typo-display-large-line-height: 1.2;
+  --typo-display-large-letter-spacing: -0.5px;
+
+  --typo-display-medium-size: 28px;
+  --typo-display-medium-weight: 700;
+  --typo-display-medium-line-height: 1.3;
+  --typo-display-medium-letter-spacing: -0.3px;
+
+  /* Heading (제목) */
+  --typo-heading-1-size: 22px;
+  --typo-heading-1-weight: 700;
+  --typo-heading-1-line-height: 1.3;
+  --typo-heading-1-letter-spacing: 0px;
+
+  --typo-heading-2-size: 18px;
+  --typo-heading-2-weight: 700;
+  --typo-heading-2-line-height: 1.35;
+  --typo-heading-2-letter-spacing: 0px;
+
+  --typo-heading-3-size: 16px;
+  --typo-heading-3-weight: 600;
+  --typo-heading-3-line-height: 1.4;
+  --typo-heading-3-letter-spacing: 0px;
+
+  /* Body (본문) */
+  --typo-body-large-size: 16px;
+  --typo-body-large-weight: 400;
+  --typo-body-large-line-height: 1.5;
+  --typo-body-large-letter-spacing: 0px;
+
+  --typo-body-medium-size: 14px;
+  --typo-body-medium-weight: 400;
+  --typo-body-medium-line-height: 1.5;
+  --typo-body-medium-letter-spacing: 0px;
+
+  --typo-body-small-size: 12px;
+  --typo-body-small-weight: 400;
+  --typo-body-small-line-height: 1.5;
+  --typo-body-small-letter-spacing: 0px;
+
+  /* Label (폼 레이블) */
+  --typo-label-large-size: 14px;
+  --typo-label-large-weight: 600;
+  --typo-label-large-line-height: 1.4;
+  --typo-label-large-letter-spacing: 0.5px;
+
+  --typo-label-medium-size: 12px;
+  --typo-label-medium-weight: 600;
+  --typo-label-medium-line-height: 1.4;
+  --typo-label-medium-letter-spacing: 0.5px;
+
+  /* Caption (보조 텍스트) */
+  --typo-caption-large-size: 12px;
+  --typo-caption-large-weight: 500;
+  --typo-caption-large-line-height: 1.4;
+  --typo-caption-large-letter-spacing: 0px;
+
+  --typo-caption-medium-size: 12px;
+  --typo-caption-medium-weight: 400;
+  --typo-caption-medium-line-height: 1.4;
+  --typo-caption-medium-letter-spacing: 0px;
+
+
+  /* =====================
+     Radius
+  ====================== */
+
+  --radius-xs: 6px;
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+  --radius-full: 9999px;
+
+
+
+  /* =====================
+     Spacing
+  ====================== */
+
+  --space-xxs: 4px;
+  --space-xs: 8px;
+  --space-sm: 12px;
+  --space-md: 16px;
+  --space-lg: 20px;
+  --space-xl: 24px;
+  --space-2xl: 32px;
+
+
+
+  /* =====================
+     Shadow
+  ====================== */
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07);
+  --shadow-lg: 0 10px 24px rgba(0, 0, 0, 0.12);
+  --shadow-card:
+    0 1px 2px rgba(0,0,0,.05),
+    0 10px 30px -12px rgba(0,0,0,.18);
+
+
+
+  /* =====================
+     Transition
+  ====================== */
+
+  --transition-fast: .15s ease;
+  --transition-normal: .25s ease;
+  --transition-slow: .35s ease;
+
+
+
+  /* =====================
+     Z-index
+  ====================== */
+
+  --z-dropdown: 100;
+  --z-sticky: 500;
+  --z-overlay: 900;
+  --z-bottom-sheet: 950;
+  --z-modal: 1000;
+  --z-toast: 1100;
+}
+
+
+
+/* =====================
+   Dark Theme
+====================== */
+
+[data-theme="dark"] {
+
+  --color-bg: #1A1A1C;
+  --color-surface: #242426;
+  --color-border: #303238;
+
+
+  /* 그린↔골드 반전. 브라운골드 톤은 노랑과 짝지어졌을 때 카카오 브랜드
+     배색(노랑+브라운)과 겹쳐 보여 쿨톤 그레이로 교체함 */
+  /* 버튼 그라디언트를 없애기로 해서 시작/끝을 동일한 단색으로 통일 */
+  --color-gradient-start: var(--color-primary);
+  --color-gradient-end: var(--color-primary);
+  --color-gradient-sub-text: #2C2E32;
+
+
+  --color-primary: #FFEB3B;
+  --color-primary-dark: #A6ACB4;
+  --color-primary-dark-rgb: 166, 172, 180;
+
+  /* AI Briefing */
+  --color-ai-briefing-start: #3C4046;
+  --color-ai-briefing-end: #2E3136;
+
+  --color-point-icon: #FFEB3B;
+  --color-point-bg: rgba(166,172,180,0.16);
+
+
+  --color-membership-icon: #4B8B70;
+  --color-membership-bg: rgba(75,139,112,0.14);
+
+
+  --color-gold-fill: #4B8B70;
+  --color-gold-text: #4B8B70;
+  --color-gold-nav: #4B8B70;
+
+  /* Card Donut Chart Color */
+  --color-card-donut: #3D6B52;
+  --color-donut-text: #FFFFFF;
+
+  /* Navigation */
+  --color-nav-active: #4B8B70;
+
+  --color-coral: #D17B93;
+
+
+  --color-text-primary: #EDEFF1;
+  --color-text-secondary: #8A8D93;
+  --color-text-tertiary: #75787D;
+
+
+  /* 골드 배경 위 흰 글씨는 대비가 약해 진한 텍스트로 변경 */
+  --color-btn-primary-text: #24242A;
+
+
+  --shadow-card:
+    0 1px 2px rgba(0,0,0,.3),
+    0 14px 34px -12px rgba(0,0,0,.6);
+}

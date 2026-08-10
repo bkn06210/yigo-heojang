@@ -88,20 +88,13 @@ defineProps({
   border-radius:50%;
 
 
-  /*
-    현재는 CSS conic-gradient 사용
-
-    --rate 값만 바뀌면
-    카드별 달성률 적용 가능
-  */
-
   background:
 
     conic-gradient(
 
-      #4f46e5 var(--rate),
+      var(--color-primary) var(--rate),
 
-      #eeeeee var(--rate)
+      var(--color-border) var(--rate)
 
     );
 
@@ -128,7 +121,7 @@ defineProps({
   border-radius:50%;
 
 
-  background:white;
+  background:var(--color-surface);
 
 
   display:flex;
@@ -146,9 +139,11 @@ defineProps({
 
 .donut-inner strong{
 
+  color:var(--color-text-primary);
 
-  font-size:20px;
+  font-size:var(--font-lg);
 
+  font-weight:var(--font-bold);
 
 }
 
@@ -157,10 +152,9 @@ defineProps({
 .donut-inner span{
 
 
-  font-size:12px;
+  color:var(--color-text-secondary);
 
-
-  color:#777;
+  font-size:var(--font-xs);
 
 
 }

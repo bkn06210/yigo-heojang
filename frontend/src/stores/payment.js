@@ -42,8 +42,6 @@ export const usePaymentStore = defineStore('payment', () => {
   |
   */
   const membershipBenefit = ref(null);
-  const categoryId = ref(null);
-  const merchantName = ref('');
 
 
   /*
@@ -52,15 +50,13 @@ export const usePaymentStore = defineStore('payment', () => {
   | 추천 화면에서 결제하기 버튼 클릭 시 호출
   |
   */
-  const setPaymentInfo = (card, amount, membership, paymentTarget = {}) => {
+  const setPaymentInfo = (card, amount, membership) => {
 
     selectedCard.value = card;
 
     paymentAmount.value = amount;
 
     membershipBenefit.value = membership;
-    categoryId.value = paymentTarget.categoryId ?? null;
-    merchantName.value = paymentTarget.merchantName ?? '';
 
   };
 
@@ -78,8 +74,6 @@ export const usePaymentStore = defineStore('payment', () => {
     paymentAmount.value = 0;
 
     membershipBenefit.value = null;
-    categoryId.value = null;
-    merchantName.value = '';
 
   };
 
@@ -91,8 +85,6 @@ export const usePaymentStore = defineStore('payment', () => {
     paymentAmount,
 
     membershipBenefit,
-    categoryId,
-    merchantName,
 
     setPaymentInfo,
 
@@ -101,4 +93,3 @@ export const usePaymentStore = defineStore('payment', () => {
   };
 
 });
-// 07_25 연동 변경: 추천·결제·QR 흐름에서 사용하는 API 상태를 관리한다.

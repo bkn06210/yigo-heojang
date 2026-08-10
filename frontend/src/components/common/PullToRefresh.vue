@@ -5,11 +5,13 @@
     @touchmove="handleTouchMove"
     @touchend="handleTouchEnd"
   >
+
     <!-- 새로고침 안내 영역 -->
     <div
       class="refresh-indicator"
       :style="{ height: `${pullDistance}px` }"
     >
+
       <span v-if="isRefreshing">
         새로고침 중...
       </span>
@@ -21,15 +23,20 @@
       <span v-else-if="pullDistance > 0">
         아래로 당겨 새로고침
       </span>
+
     </div>
+
 
     <!-- 실제 페이지 내용 -->
     <div
       class="content"
       :style="{ transform: `translateY(${pullDistance}px)` }"
     >
+
       <slot />
+
     </div>
+
   </div>
 </template>
 
@@ -63,7 +70,9 @@ const threshold = 80
 
 // 손가락을 처음 댄 위치
 const handleTouchStart = (event) => {
+
   startY.value = event.touches[0].clientY
+
 }
 
 
@@ -78,7 +87,9 @@ const handleTouchMove = (event) => {
 
   // 아래로 당길 때만 동작
   if(distance > 0){
+
     pullDistance.value = Math.min(distance, 120)
+
   }
 
 }
@@ -93,15 +104,18 @@ const handleTouchEnd = async () => {
     isRefreshing.value = true
 
     try {
-      // 부모 컴포넌트에서 Promise 반환을 기다림
+
       await emit('refresh')
+
     } finally {
+
       isRefreshing.value = false
+
     }
 
   }
-  
-  //초기화
+
+
   pullDistance.value = 0
 
 }
@@ -112,22 +126,48 @@ const handleTouchEnd = async () => {
 <style scoped>
 
 .refresh-container {
-  overflow: hidden;
+
+  overflow: visible;
+
+  width: 100%;
+
+  height: 100%;
+
+  display: flex;
+
+  flex-direction: column;
+
 }
+
 
 
 .refresh-indicator {
+
   display: flex;
+
   justify-content: center;
+
   align-items: center;
 
-  font-size: 14px;
-  color: #666;
+
+  color: var(--color-text-secondary);
+
+  font-size: var(--font-sm);
+
 }
 
 
+
 .content {
-  transition: transform 0.2s ease;
+
+  transition: transform var(--transition-fast);
+
+  flex: 1;
+
+  display: flex;
+
+  flex-direction: column;
+
 }
 
 </style>
