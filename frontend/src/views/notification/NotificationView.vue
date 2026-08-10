@@ -104,7 +104,11 @@ const deleteNotification = (id)=>{
 <div class="notification-view">
 
 
-  <PageHeader title="알림" />
+  <PageHeader title="알림">
+    <button @click="readAll" style="background: #4F46E5; color: white; border: none; padding: 8px 16px; border-radius: 20px; font-weight: 600; font-size: 14px; cursor: pointer;">
+      모두 읽음
+    </button>
+  </PageHeader>
 
 
 
@@ -156,37 +160,6 @@ const deleteNotification = (id)=>{
 
 
 
-  <!-- 하단 버튼 -->
-
-  <div class="action-buttons">
-
-
-    <button
-
-      @click="readAll"
-
-    >
-
-      모두 읽음
-
-    </button>
-
-
-
-    <button
-
-      class="delete"
-
-      @click="deleteAll"
-
-    >
-
-      전체 삭제
-
-    </button>
-
-
-  </div>
 
 
 
@@ -250,8 +223,9 @@ const deleteNotification = (id)=>{
 
   right:20px;
 
-  bottom:90px;
+  top:20px;
 
+  z-index:100;
 
   display:flex;
 

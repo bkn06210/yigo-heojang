@@ -33,7 +33,7 @@ watch(
   (newUser) => {
     if (newUser) {
       form.value = {
-        nickname: newUser.nickname ?? '',
+        nickname: newUser.nickname ?? newUser.name ?? '',
         profileImageUrl: newUser.profileImageUrl ?? '',
       };
     }

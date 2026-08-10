@@ -42,6 +42,18 @@ const selectedDate = ref({
   endDate: '',
 });
 
+// 적용된 필터
+const appliedFilter = ref({
+  approval: '승인',
+  cardType: '전체',
+  card: '전체',
+  region: '전체',
+  transactionType: '전체',
+  period: '이번달',
+  startDate: '',
+  endDate: '',
+});
+
 // 페이지네이션
 const currentPage = ref(1);
 const itemsPerPage = 15;
@@ -82,6 +94,30 @@ const allFilteredTransactions = computed(() => {
     result = result.filter(
       (transaction) => transaction.cardId === filterCardId.value,
     );
+  }
+
+  // 필터 적용
+  if (appliedFilter.value.cardType !== '전체') {
+    result = result.filter(
+      (transaction) => transaction.cardType === appliedFilter.value.cardType,
+    );
+  }
+
+  if (appliedFilter.value.transactionType !== '전체') {
+    result = result.filter(
+      (transaction) => transaction.installment === appliedFilter.value.transactionType,
+    );
+  }
+
+  if (appliedFilter.value.startDate && appliedFilter.value.endDate) {
+    const startDate = new Date(appliedFilter.value.startDate.replace(/\./g, '-'));
+    const endDate = new Date(appliedFilter.value.endDate.replace(/\./g, '-'));
+    endDate.setDate(endDate.getDate() + 1);
+
+    result = result.filter((transaction) => {
+      const transDate = new Date(transaction.date.split(' ')[0].replace(/\./g, '-'));
+      return transDate >= startDate && transDate <= endDate;
+    });
   }
 
   return result;
@@ -157,14 +193,9 @@ const applyDate = (date) => {
 
 // 조회조건 적용
 const applyFilter = (filter) => {
-
-  console.log(
-    '조회조건:',
-    filter
-  );
-
+  appliedFilter.value = filter;
+  currentPage.value = 1;
   showFilter.value = false;
-
 };
 
 // 페이지 이동
@@ -216,6 +247,38 @@ const closeDetail = () => {
 
   selectedTransaction.value = null;
 
+};
+
+// 현재 적용된 필터 태그
+const activeFilters = computed(() => {
+  const filters = [];
+
+  if (appliedFilter.value.cardType !== '전체') {
+    filters.push({ key: 'cardType', label: appliedFilter.value.cardType });
+  }
+
+  if (appliedFilter.value.transactionType !== '전체') {
+    filters.push({ key: 'transactionType', label: appliedFilter.value.transactionType });
+  }
+
+  if (appliedFilter.value.startDate && appliedFilter.value.endDate) {
+    filters.push({ key: 'date', label: `${appliedFilter.value.startDate} ~ ${appliedFilter.value.endDate}` });
+  }
+
+  return filters;
+});
+
+// 필터 제거
+const removeFilter = (filterKey) => {
+  if (filterKey === 'cardType') {
+    appliedFilter.value.cardType = '전체';
+  } else if (filterKey === 'transactionType') {
+    appliedFilter.value.transactionType = '전체';
+  } else if (filterKey === 'date') {
+    appliedFilter.value.startDate = '';
+    appliedFilter.value.endDate = '';
+  }
+  currentPage.value = 1;
 };
 
 // 카드타입 변환
@@ -307,6 +370,24 @@ watch(() => route.query.cardId, () => {
       <Icon name="filter" size="sm" />
     </button>
 
+  </div>
+
+  <!-- 적용된 필터 태그 -->
+  <div v-if="activeFilters.length > 0" class="filter-tags">
+    <span
+      v-for="filter in activeFilters"
+      :key="filter.key"
+      class="filter-tag"
+    >
+      {{ filter.label }}
+      <button
+        class="remove-filter-btn"
+        @click="removeFilter(filter.key)"
+        type="button"
+      >
+        ×
+      </button>
+    </span>
   </div>
 
 
@@ -596,6 +677,41 @@ color: var(--color-text-primary);
   color: var(--color-btn-primary-text);
   border-color: var(--color-primary);
   font-weight: var(--font-bold);
+}
+
+.filter-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+  margin-top: var(--space-md);
+}
+
+.filter-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: 6px 12px;
+  background: var(--color-point-bg);
+  border-radius: var(--radius-full);
+  font-size: var(--font-sm);
+  color: var(--color-text-primary);
+}
+
+.remove-filter-btn {
+  border: none;
+  background: none;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  font-size: 18px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition-fast);
+}
+
+.remove-filter-btn:hover {
+  color: var(--color-coral);
 }
 
 </style>

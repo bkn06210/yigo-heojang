@@ -638,53 +638,75 @@ color:var(--color-text-tertiary);
 }
 
 .calendar button.active {
-background:rgba(255, 214, 0, 0.2);
-color:var(--color-text-primary);
-border-radius:0;
-position:relative;
-z-index:2;
+  color: var(--color-text-primary);
+  border-radius: 0;
+  position: relative;
+  z-index: 2;
 }
 
 .calendar button.active::before {
-content:'';
-position:absolute;
-width:36px;
-height:36px;
-border-radius:50%;
-background:var(--color-primary);
-top:50%;
-left:50%;
-transform:translate(-50%, -50%);
-z-index:0;
+  content: '';
+  position: absolute;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 0;
 }
 
 .calendar button span {
-color:var(--color-text-primary);
+  color: var(--color-text-primary);
 }
 
 .calendar button.active span {
-position:relative;
-z-index:1;
-color:var(--color-btn-primary-text);
-font-weight:var(--font-semibold);
+  position: relative;
+  z-index: 1;
+  color: var(--color-btn-primary-text);
+  font-weight: var(--font-semibold);
 }
 
 .calendar button.between {
-background:rgba(255, 214, 0, 0.2) !important;
-border-radius:0 !important;
-color:var(--color-text-primary);
-height:36px !important;
-padding:0 !important;
-margin:3px 0 !important;
-line-height:normal !important;
+  background: transparent !important;
+  border-radius: 0 !important;
+  color: var(--color-text-primary);
+  height: 42px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  line-height: normal !important;
+  position: relative;
+}
+
+.calendar button.between::before {
+  content: '';
+  position: absolute;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(239, 221, 57, 0.3);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 0;
+}
+
+[data-theme="dark"] .calendar button.between::before {
+  background: rgba(239, 221, 57, 0.15);
+}
+
+.calendar button.between span {
+  position: relative;
+  z-index: 1;
 }
 
 .calendar button.between.range-start {
-border-radius:8px 0 0 8px;
+  border-radius: 0;
 }
 
 .calendar button.between.range-end {
-border-radius:0 8px 8px 0;
+  border-radius: 0;
 }
 
 .month-picker {

@@ -41,6 +41,10 @@ const updateAmount=(amount)=>{
 
 };
 
+const clearAmount = () => {
+  emit('update:modelValue', 0);
+};
+
 
 </script>
 
@@ -55,12 +59,23 @@ const updateAmount=(amount)=>{
 </h3>
 
 
-<input
- v-model="displayValue"
- type="text"
- placeholder="금액을 입력해주세요"
- inputmode="numeric"
-/>
+<div class="input-wrapper">
+  <input
+   v-model="displayValue"
+   type="text"
+   placeholder="금액을 입력해주세요"
+   inputmode="numeric"
+  />
+  <button
+   v-if="props.modelValue > 0"
+   @click="clearAmount"
+   class="clear-btn"
+   type="button"
+   aria-label="금액 초기화"
+  >
+    ✕
+  </button>
+</div>
 
 
 <div class="quick-list">
@@ -89,10 +104,15 @@ h3{
 
   margin: 0 0 var(--space-sm);
 
-  font-size: var(--font-md);
+  font-size: var(--font-sm);
   font-weight: var(--font-semibold);
   color: var(--color-text-primary);
 
+}
+
+.input-wrapper {
+  position: relative;
+  width: 100%;
 }
 
 input{
@@ -102,6 +122,7 @@ input{
   height: 56px;
 
   padding: 0 var(--space-md);
+  padding-right: 44px;
 
   box-sizing: border-box;
 
@@ -135,6 +156,40 @@ input::placeholder{
   font-weight: var(--font-regular);
   color: var(--color-text-tertiary);
 
+}
+
+.clear-btn {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(var(--color-text-secondary-rgb, 128, 128, 128), 0.1);
+  color: var(--color-text-secondary);
+  font-size: 18px;
+  font-weight: 300;
+  line-height: 1;
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  transition: all 0.2s;
+  padding: 0;
+}
+
+.clear-btn:hover {
+  background: rgba(var(--color-text-secondary-rgb, 128, 128, 128), 0.2);
+  color: var(--color-text-primary);
+}
+
+.clear-btn:active {
+  transform: translateY(-50%) scale(0.9);
 }
 
 .quick-list{
