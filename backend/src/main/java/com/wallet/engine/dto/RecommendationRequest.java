@@ -22,9 +22,7 @@ public class RecommendationRequest {
     private Long merchantId;
     private Long categoryId;
 
-    // 검증을 컨트롤러 진입 시점에 걸어 어느 필드가 잘못됐는지 응답에 담는다.
-    // 서비스도 같은 검사를 한 번 더 한다 — 컨트롤러를 거치지 않는 내부 호출 대비(이중 방어).
-    @NotNull(message = "expectedAmount는 필수입니다.")
+    // expectedAmount는 선택사항 — 금액이 있으면 더 정확한 추천을 제공한다
     @Positive(message = "expectedAmount는 0보다 커야 합니다.")
     private Long expectedAmount;
 

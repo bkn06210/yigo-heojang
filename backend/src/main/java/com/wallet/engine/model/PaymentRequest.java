@@ -21,8 +21,8 @@ public record PaymentRequest(
         if (target == null) {
             throw new IllegalArgumentException("target은 필수다 (장소 미정이면 PaymentTarget.unspecified())");
         }
-        if (paymentAmount <= 0) {
-            throw new IllegalArgumentException("결제금액은 양수여야 한다: " + paymentAmount);
+        if (paymentAmount < 0) {
+            throw new IllegalArgumentException("결제금액은 0 이상이어야 한다: " + paymentAmount);
         }
     }
 

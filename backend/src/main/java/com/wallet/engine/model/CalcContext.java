@@ -40,12 +40,12 @@ public final class CalcContext {
     private final long sharedLimitUsed;
 
     private CalcContext(Builder builder) {
-        if (builder.paymentAmount <= 0) {
-            throw new IllegalArgumentException("결제금액은 양수여야 한다: " + builder.paymentAmount);
+        if (builder.paymentAmount < 0) {
+            throw new IllegalArgumentException("결제금액은 0 이상이어야 한다: " + builder.paymentAmount);
         }
-        if (builder.usedPointAmount < 0 || builder.usedPointAmount >= builder.paymentAmount) {
+        if (builder.usedPointAmount < 0 || builder.usedPointAmount > builder.paymentAmount) {
             throw new IllegalArgumentException(
-                    "포인트 사용액은 0 이상, 결제금액 미만이어야 한다: " + builder.usedPointAmount);
+                    "포인트 사용액은 0 이상, 결제금액 이하여야 한다: " + builder.usedPointAmount);
         }
         if (builder.amountEstimated == null) {
             throw new IllegalArgumentException("amountEstimated는 명시가 필수다 (추천=true, 정산=false)");

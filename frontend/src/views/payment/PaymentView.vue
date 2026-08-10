@@ -172,12 +172,6 @@ const easeInOutCubic = (t) => {
 const getCardRecommendations = async () => {
   if (isRecommending.value) return;
 
-  // expectedAmount 검증
-  if (!paymentAmount.value || paymentAmount.value <= 0) {
-    console.error('결제 금액이 0보다 커야 합니다.');
-    return;
-  }
-
   try {
     isRecommending.value = true;
 
@@ -186,12 +180,14 @@ const getCardRecommendations = async () => {
       ? personalizationStore.categories.find(cat => cat.label === selectedCategory.value)?.id
       : null;
 
+    // 금액이 0보다 크면 전송, 아니면 null
+    const expectedAmount = (paymentAmount.value && paymentAmount.value > 0) ? paymentAmount.value : null;
 
     // API 호출: 선택한 가맹점 정보와 함께 추천 요청
     const response = await getRecommendations({
       categoryId: categoryId,
       merchantId: null,
-      expectedAmount: paymentAmount.value,
+      expectedAmount: expectedAmount,
       paymentType: 'CARD',
     });
 

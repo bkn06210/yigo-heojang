@@ -359,13 +359,13 @@ public class RecommendationService {
                 .build();
     }
 
-    /** 계산기에 넣기 전에 막는다 — PaymentRequest는 0 이하를 예외로 던지므로 400으로 바꿔 준다 */
+    /** 금액이 없으면 0으로 처리 — 금액은 추천의 선택사항 */
     private long validateExpectedAmount(RecommendationRequest request) {
         Long expectedAmount = request.getExpectedAmount();
-        if (expectedAmount == null || expectedAmount <= 0L) {
+        if (expectedAmount != null && expectedAmount <= 0L) {
             throw new BusinessException(ErrorCode.INPUT_INVALID);
         }
-        return expectedAmount;
+        return expectedAmount != null ? expectedAmount : 0L;
     }
 
     /**
