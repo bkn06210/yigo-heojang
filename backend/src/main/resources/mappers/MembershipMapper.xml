@@ -17,7 +17,17 @@
             CASE WHEN mr.membership_register_id IS NULL THEN 0 ELSE 1 END AS isRegistered,
             pp.default_recommend_yn AS defaultRecommendYn,
             pp.recommend_priority AS recommendPriority,
-            pp.recommend_message AS recommendMessage
+            pp.recommend_message AS recommendMessage,
+            <!-- 목록 카드에 "주요 사용처 3곳"을 미리보기로 깔아준다.
+                 이것 때문에 제공사마다 사용처 API를 다시 부르면 N+1이 되므로 여기서 붙여 보낸다.
+                 GROUP_CONCAT 기본 상한(1024바이트)에 걸릴 길이가 아니라 그대로 쓴다. -->
+            (SELECT GROUP_CONCAT(t.place_name ORDER BY t.point_usage_place_id SEPARATOR ',')
+               FROM (SELECT pup.point_usage_place_id, pup.place_name
+                       FROM point_usage_place pup
+                      WHERE pup.point_provider_id = pp.point_provider_id
+                        AND pup.use_yn = 'Y'
+                      ORDER BY pup.point_usage_place_id
+                      LIMIT 3) t) AS mainUsePlaces
         FROM point_provider pp
                  LEFT JOIN membership_register mr
                            ON pp.point_provider_id = mr.point_provider_id
@@ -220,7 +230,7 @@
             mr.point_provider_id AS pointProviderId,
             pp.point_provider_name AS providerName,
             pp.logo_image_url AS logoImage,
-            NULL AS officialSiteUrl,
+            pp.official_site_url AS officialSiteUrl,
             mr.register_status AS registerStatus,
             COALESCE(pw.total_point, 0) AS totalPoint,
             DATE_FORMAT(mr.registered_at, '%Y-%m-%dT%H:%i:%s') AS registeredAt
@@ -261,7 +271,7 @@
             mr.membership_register_id AS membershipRegisterId,
             pp.point_provider_id AS pointProviderId,
             pp.point_provider_name AS providerName,
-            NULL AS officialSiteUrl,
+            pp.official_site_url AS officialSiteUrl,
             pp.point_provider_type AS providerType,
             pp.logo_image_url AS logoImageUrl,
             COALESCE(pw.total_point, 0) AS totalPoint,
