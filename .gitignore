@@ -9,6 +9,7 @@ db.properties
 redis.properties
 .env
 .env.*
+!.env.example
 *.key
 *.pem
 

@@ -21,7 +21,7 @@ services:
     container_name: yigo-redis
     ports:
       - '6379:6379'
-    command: redis-server --requirepass changeme_local_dev
+    command: redis-server --requirepass ${REDIS_PASSWORD}
     volumes:
       - redis-data:/data
 
