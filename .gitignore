@@ -6,6 +6,7 @@ CLAUDE.md
 application.properties
 application-*.properties
 db.properties
+redis.properties
 .env
 .env.*
 *.key

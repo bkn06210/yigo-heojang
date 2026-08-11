@@ -16,7 +16,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.wallet.common.ApiResponse;
 import com.wallet.notification.dto.NotificationListResponse;
+import com.wallet.notification.dto.NotificationUnreadCountResponse;
 import com.wallet.notification.service.NotificationService;
+import com.wallet.notification.service.NotificationUnreadCountService;
 
 /**
  * @RestController : @Controller + @ResponseBody가 합쳐진 것이다.
@@ -31,6 +33,7 @@ import com.wallet.notification.service.NotificationService;
 public class NotificationController {
 
     private final NotificationService notificationService;
+    private final NotificationUnreadCountService notificationUnreadCountService;
 
     /**
      * 로그인 회원의 알림 목록을 조회한다.
@@ -75,5 +78,15 @@ public class NotificationController {
     ) {
         notificationService.deleteNotification(memberId, notificationId);
         return ResponseEntity.noContent().build();
+    }
+
+    /** 안 읽은 알림 수를 조회한다. Redis 캐시를 우선 확인하고, 없으면 MySQL로 계산한다. */
+    @GetMapping("/unread-count")
+    public ResponseEntity<ApiResponse<NotificationUnreadCountResponse>> getUnreadCount(
+        @RequestAttribute(AUTHENTICATED_MEMBER_ID) Long memberId
+    ) {
+        int unreadCount = notificationUnreadCountService.getUnreadCount(memberId);
+        return ResponseEntity.ok(
+            ApiResponse.success("안 읽은 알림 수 조회에 성공했습니다.", new NotificationUnreadCountResponse(unreadCount)));
     }
 }

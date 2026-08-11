@@ -26,6 +26,7 @@ import com.wallet.notification.batch.model.PerformanceShortageCandidate;
 import com.wallet.notification.batch.model.PerformanceShortageTrigger;
 import com.wallet.notification.domain.Notification;
 import com.wallet.notification.domain.NotificationType;
+import com.wallet.notification.redis.NotificationUnreadCountCacheRepository;
 import com.wallet.notification.repository.NotificationRepository;
 
 class NotificationComposerTest {
@@ -34,6 +35,7 @@ class NotificationComposerTest {
 
     private NotificationRepository notificationRepository;
     private NotificationComposer composer;
+    private NotificationUnreadCountCacheRepository unreadCountCacheRepository;
 
     @BeforeEach
     void setUp() {
@@ -41,7 +43,8 @@ class NotificationComposerTest {
         Clock clock = Clock.fixed(
             LocalDateTime.of(2026, 8, 24, 9, 0).atZone(KST).toInstant(), KST
         );
-        composer = new NotificationComposer(notificationRepository, clock);
+        unreadCountCacheRepository = mock(NotificationUnreadCountCacheRepository.class);
+        composer = new NotificationComposer(notificationRepository, clock, unreadCountCacheRepository);
     }
 
     private PerformanceShortageCandidate shortageCandidate(long memberId, long userCardId, String dedupKey) {

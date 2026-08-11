@@ -10,6 +10,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -18,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Component;
 
+import com.wallet.common.util.AfterCommitExecutor;
 import com.wallet.notification.batch.model.BenefitLimitCandidate;
 import com.wallet.notification.batch.model.BenefitLimitStatus;
 import com.wallet.notification.batch.model.BenefitLimitUnit;
@@ -25,6 +27,7 @@ import com.wallet.notification.batch.model.PerformanceShortageCandidate;
 import com.wallet.notification.domain.Notification;
 import com.wallet.notification.domain.NotificationStatus;
 import com.wallet.notification.domain.NotificationType;
+import com.wallet.notification.redis.NotificationUnreadCountCacheRepository;
 import com.wallet.notification.repository.NotificationRepository;
 
 /**
@@ -44,6 +47,7 @@ public class NotificationComposer {
 
     private final NotificationRepository notificationRepository;
     private final Clock clock;
+    private final NotificationUnreadCountCacheRepository unreadCountCacheRepository;
 
     /**
      * 후보를 알림으로 조립해 저장하고, 실제로 새로 저장된 건수를 반환한다.
@@ -55,7 +59,17 @@ public class NotificationComposer {
         List<BenefitLimitCandidate> limitCandidates
     ) {
         List<Notification> notifications = compose(shortageCandidates, limitCandidates);
-        return notificationRepository.saveAll(notifications);
+        int savedCount = notificationRepository.saveAll(notifications);
+
+        // 벌크 INSERT IGNORE는 "몇 건 저장됐는지"는 알려주지만 "정확히 어느 회원 몇 건인지"는
+        // 알려주지 않는다(일부는 unique 충돌로 스킵될 수 있어서). 회원별 정확한 증가분을 알 수 없으므로
+        // INCRBY로 어설프게 맞추지 않고, 이 배치가 건드린 회원들의 캐시를 통째로 무효화한다.
+        Set<Long> affectedMemberIds = notifications.stream()
+            .map(Notification::getMemberId)
+            .collect(Collectors.toSet());
+        AfterCommitExecutor.run(() -> affectedMemberIds.forEach(unreadCountCacheRepository::invalidate));
+
+        return savedCount;
     }
 
     /**

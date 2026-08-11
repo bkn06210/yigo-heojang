@@ -9,23 +9,34 @@ services:
     container_name: yigo-mysql
     environment:
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: wallet          # 초기 DB 자동 생성 (스키마 SQL은 다음 단계)
+      MYSQL_DATABASE: wallet # 초기 DB 자동 생성 (스키마 SQL은 다음 단계)
       TZ: Asia/Seoul
     ports:
-      - "3306:3306"                   # 로컬 포트 매핑 (host:container)
+      - '3306:3306' # 로컬 포트 매핑 (host:container)
     volumes:
       - mysql-data:/var/lib/mysql
 
+  redis:
+    image: redis:7.2-alpine
+    container_name: yigo-redis
+    ports:
+      - '6379:6379'
+    command: redis-server --requirepass changeme_local_dev
+    volumes:
+      - redis-data:/data
+
   tomcat:
-    image: tomcat:9-jdk17             # Tomcat 10(jakarta) 아님 — javax 스펙 유지
+    image: tomcat:9-jdk17 # Tomcat 10(jakarta) 아님 — javax 스펙 유지
     container_name: yigo-tomcat
     depends_on:
       - mysql
+      - redis
     ports:
-      - "8080:8080"
+      - '8080:8080'
     volumes:
       # 빌드된 WAR를 ROOT로 배포 → http://localhost:8080/api/health
       - ./target/ROOT.war:/usr/local/tomcat/webapps/ROOT.war
 
 volumes:
   mysql-data:
+  redis-data:

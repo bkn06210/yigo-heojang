@@ -9,9 +9,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.wallet.common.ErrorCode;
 import com.wallet.common.exception.BusinessException;
+import com.wallet.common.util.AfterCommitExecutor;
 import com.wallet.notification.domain.NotificationListItemResult;
 import com.wallet.notification.dto.NotificationListItemResponse;
 import com.wallet.notification.dto.NotificationListResponse;
+import com.wallet.notification.redis.NotificationUnreadCountCacheRepository;
 import com.wallet.notification.repository.NotificationRepository;
 
 @RequiredArgsConstructor
@@ -23,6 +25,7 @@ public class NotificationService {
     private static final int MAX_PAGE_SIZE = 10;
 
     private final NotificationRepository notificationRepository;
+    private final NotificationUnreadCountCacheRepository unreadCountCacheRepository;
 
     /**
      * @Transactional(readOnly = true) : 이 메서드 안의 DB 작업은 조회만 한다는 표시다.
@@ -62,6 +65,8 @@ public class NotificationService {
     public void markAsRead(Long memberId, Long notificationId) {
         int updated = notificationRepository.markAsRead(notificationId, memberId);
         if (updated == 1) {
+            // 실제로 안 읽음 → 읽음으로 전환된 게 확실하므로 정확히 1만큼 줄인다.
+            AfterCommitExecutor.run(() -> unreadCountCacheRepository.decrement(memberId, 1));
             return;
         }
 
@@ -85,6 +90,9 @@ public class NotificationService {
         if (updated != 1) {
             throw new BusinessException(ErrorCode.NOTIFICATION_NOT_FOUND);
         }
+        // 삭제 전에 읽음 상태였는지 확인하려면 추가 조회가 필요한데, 삭제는 자주 있는 동작이
+        // 아니라 정밀한 DECRBY의 이득보다 복잡도가 크다. 무효화로 단순화한다(6.2절 원칙과 동일).
+        AfterCommitExecutor.run(() -> unreadCountCacheRepository.invalidate(memberId));
     }
 
     private void validatePageRequest(int page, int size) {

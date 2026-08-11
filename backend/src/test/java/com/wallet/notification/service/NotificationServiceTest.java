@@ -2,6 +2,8 @@ package com.wallet.notification.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -19,17 +21,20 @@ import com.wallet.common.exception.BusinessException;
 import com.wallet.notification.domain.NotificationListItemResult;
 import com.wallet.notification.domain.NotificationType;
 import com.wallet.notification.dto.NotificationListResponse;
+import com.wallet.notification.redis.NotificationUnreadCountCacheRepository;
 import com.wallet.notification.repository.NotificationRepository;
 
 class NotificationServiceTest {
 
     private NotificationRepository notificationRepository;
     private NotificationService notificationService;
+    private NotificationUnreadCountCacheRepository unreadCountCacheRepository;
 
     @BeforeEach
     void setUp() {
         notificationRepository = mock(NotificationRepository.class);
-        notificationService = new NotificationService(notificationRepository);
+        unreadCountCacheRepository = mock(NotificationUnreadCountCacheRepository.class);
+        notificationService = new NotificationService(notificationRepository, unreadCountCacheRepository);
     }
 
     @Test
@@ -132,6 +137,7 @@ class NotificationServiceTest {
         // then
         verify(notificationRepository, never())
             .existsActiveByIdAndMemberId(notificationId, memberId);
+        verify(unreadCountCacheRepository).decrement(memberId, 1);
     }
 
     @Test
@@ -148,6 +154,8 @@ class NotificationServiceTest {
 
         // when & then (예외가 발생하지 않아야 한다)
         notificationService.markAsRead(memberId, notificationId);
+
+        verify(unreadCountCacheRepository, never()).decrement(anyLong(), anyInt());
     }
 
     @Test
@@ -184,6 +192,8 @@ class NotificationServiceTest {
 
         // when & then (예외가 발생하지 않아야 한다)
         notificationService.deleteNotification(memberId, notificationId);
+
+        verify(unreadCountCacheRepository).invalidate(memberId);
     }
 
     @Test
