@@ -74,7 +74,7 @@ padding:20px;
 
 border-radius:16px;
 
-border:1px solid #ddd;
+border: 1px solid var(--color-border);
 
 }
 

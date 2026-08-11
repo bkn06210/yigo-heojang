@@ -88,7 +88,7 @@ const openSheet = () => {
 
   width: 100%;
 
-  background: white;
+  background: var(--color-surface);
 
   border-radius: 16px;
 
@@ -115,7 +115,7 @@ const openSheet = () => {
 
   font-size: 14px;
 
-  color: #666;
+  color: var(--color-text-secondary);
 
 }
 
@@ -159,7 +159,7 @@ const openSheet = () => {
 
   font-size: 14px;
 
-  color: #666;
+  color: var(--color-text-secondary);
 
 }
 
@@ -179,7 +179,7 @@ const openSheet = () => {
 
   font-size: 13px;
 
-  color: #2563eb;
+  color: var(--color-primary-dark);
 
 }
 

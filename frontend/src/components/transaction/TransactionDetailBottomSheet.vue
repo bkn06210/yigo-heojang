@@ -170,10 +170,10 @@ const close = () => {
 
 };
 
-</script>
+</script> -->
 
 
-<template>
+<!-- <template>
 
 <div
   class="overlay"
@@ -324,11 +324,11 @@ class="apply-button"
 
 </div>
 
-</template>
+</template> -->
 
 
 
-<style scoped>
+<!-- <style scoped>
 
 .overlay {
 
@@ -352,7 +352,7 @@ z-index:1200;
 
 width:100%;
 
-background:white;
+background:var(--color-surface);
 
 border-radius:24px 24px 0 0;
 
@@ -368,7 +368,7 @@ width:40px;
 
 height:5px;
 
-background:#ddd;
+background:var(--color-border);
 
 border-radius:10px;
 
@@ -397,6 +397,8 @@ border:none;
 background:none;
 
 font-size:20px;
+
+color:var(--color-text-primary);
 
 }
 
@@ -428,7 +430,7 @@ display:block;
 
 font-size:13px;
 
-color:#777;
+color: var(--color-text-tertiary);
 
 }
 
@@ -439,6 +441,8 @@ color:#777;
 display:block;
 
 margin-top:6px;
+
+color:var(--color-text-primary);
 
 }
 
@@ -468,6 +472,8 @@ background:none;
 
 font-size:25px;
 
+color:var(--color-text-primary);
+
 }
 
 
@@ -491,7 +497,7 @@ text-align:center;
 
 font-size:13px;
 
-color:#777;
+color: var(--color-text-tertiary);
 
 }
 
@@ -503,9 +509,11 @@ height:40px;
 
 border-radius:50%;
 
-border:1px solid #eee;
+border:1px solid var(--color-border);
 
-background:white;
+background:var(--color-surface);
+
+color:var(--color-text-primary);
 
 }
 
@@ -513,9 +521,14 @@ background:white;
 
 .calendar button.selected {
 
-background:#4F46E5;
+background:
+  linear-gradient(
+    90deg,
+    var(--color-btn-primary-start),
+    var(--color-btn-primary-end)
+  );
 
-color:white;
+color:var(--color-btn-primary-text);
 
 border:none;
 
@@ -536,9 +549,14 @@ border:none;
 
 border-radius:12px;
 
-background:#4F46E5;
+background:
+  linear-gradient(
+    90deg,
+    var(--color-btn-primary-start),
+    var(--color-btn-primary-end)
+  );
 
-color:white;
+color:var(--color-btn-primary-text);
 
 font-size:16px;
 
@@ -547,6 +565,7 @@ font-size:16px;
 </style> -->
 
 <script setup>
+import Icon from '@/components/common/Icon.vue';
 
 const props = defineProps({
 
@@ -592,14 +611,14 @@ const close = () => {
 <div class="header">
 
 <h2>
-사용내역 상세
+상세 이용내역
 </h2>
 
 
 <button
 @click="close"
 >
-✕
+<Icon name="close" size="sm" />
 </button>
 
 
@@ -611,10 +630,21 @@ const close = () => {
 <div class="content">
 
 
+<div class="amount-box">
+
+<span>결제 금액</span>
+
+<strong class="amount">
+{{ props.transaction.amount.toLocaleString() }}원
+</strong>
+
+</div>
+
+
 <div class="row">
 
 <span>
-사용일자
+거래일
 </span>
 
 <strong>
@@ -624,11 +654,10 @@ const close = () => {
 </div>
 
 
-
 <div class="row">
 
 <span>
-가맹점
+가맹점명
 </span>
 
 <strong>
@@ -638,31 +667,67 @@ const close = () => {
 </div>
 
 
-
-
 <div class="row">
 
 <span>
-사용 카드
+카테고리
 </span>
 
 <strong>
-{{ props.transaction.cardName }}
+{{ props.transaction.category }}
 </strong>
 
 </div>
 
 
-
-
-<div class="row amount">
+<div class="row">
 
 <span>
-결제 금액
+이용카드
+</span>
+
+<div class="card-info">
+<strong>{{ props.transaction.cardName }}</strong>
+<span class="card-number">본인 {{ props.transaction.cardLastDigits.slice(0, 3) }}*</span>
+</div>
+
+</div>
+
+
+<div class="row">
+
+<span>
+거래구분
 </span>
 
 <strong>
--{{ props.transaction.amount.toLocaleString() }}원
+{{ props.transaction.installment }}
+</strong>
+
+</div>
+
+
+<div class="row">
+
+<span>
+승인번호
+</span>
+
+<strong>
+{{ props.transaction.approvalNumber }}
+</strong>
+
+</div>
+
+
+<div class="row">
+
+<span>
+거래상태
+</span>
+
+<strong>
+{{ props.transaction.status }}
 </strong>
 
 </div>
@@ -713,13 +778,19 @@ z-index:1300;
 
 .sheet {
 
-width:100%;
+width: 100%;
 
-background:white;
+height: 80vh;
 
-border-radius:24px 24px 0 0;
+display: flex;
 
-padding:20px;
+flex-direction: column;
+
+background: var(--color-surface);
+
+border-radius: 24px 24px 0 0;
+
+padding: 20px;
 
 }
 
@@ -731,7 +802,7 @@ width:40px;
 
 height:5px;
 
-background:#ddd;
+background:var(--color-border);
 
 border-radius:10px;
 
@@ -761,16 +832,64 @@ background:none;
 
 font-size:20px;
 
+color:var(--color-text-primary);
+
 }
 
 
 
 .content {
 
-margin-top:24px;
+margin-top: 24px;
+
+flex: 1;
+
+overflow-y: auto;
+
+padding-right: 8px;
 
 }
 
+
+.amount-box {
+
+background:var(--color-bg);
+
+border-radius:12px;
+
+padding:20px;
+
+text-align:center;
+
+margin-bottom:24px;
+
+}
+
+
+.amount-box span {
+
+display:block;
+
+font-size:14px;
+
+color:var(--color-text-secondary);
+
+margin-bottom:8px;
+
+}
+
+
+.amount-box strong {
+
+display:block;
+
+font-size:24px;
+
+color:var(--color-coral);
+
+font-weight:bold;
+
+}
 
 
 .row {
@@ -781,7 +900,7 @@ justify-content:space-between;
 
 padding:16px 0;
 
-border-bottom:1px solid #eee;
+border-bottom:1px solid var(--color-border);
 
 }
 
@@ -789,15 +908,32 @@ border-bottom:1px solid #eee;
 
 .row span {
 
-color:#777;
+color:var(--color-text-secondary);
 
+}
+
+.card-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  text-align: right;
+}
+
+.card-info strong {
+  font-weight: bold;
+  color: var(--color-text-primary);
+}
+
+.card-info .card-number {
+  font-size: var(--font-sm);
+  color: var(--color-text-secondary);
 }
 
 
 
 .amount strong {
 
-color:#e53935;
+color:var(--color-coral);
 
 font-size:18px;
 
@@ -817,11 +953,16 @@ border:none;
 
 border-radius:12px;
 
-background:#4F46E5;
+background:
+  linear-gradient(
+    90deg,
+    var(--color-btn-primary-start),
+    var(--color-btn-primary-end)
+  );
 
-color:white;
+color:var(--color-btn-primary-text);
 
 }
 
 
-</style>
+</style> -->

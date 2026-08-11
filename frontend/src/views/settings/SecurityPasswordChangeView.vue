@@ -1,12 +1,14 @@
-<script setup>
+﻿<script setup>
 import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import PageHeader from '@/components/common/PageHeader.vue';
 import PasswordInput from '@/components/common/PasswordInput.vue';
 import AppButton from '@/components/common/AppButton.vue';
 import AuthVerifyModal from '@/components/auth/AuthVerifyModal.vue';
+import { useToast } from '@/composables/useToast';
 
 const router = useRouter();
+const { showToast } = useToast();
 
 const form = ref({
   currentPassword: '',
@@ -36,7 +38,7 @@ const openVerifyModal = () => {
 
 const handleVerifySuccess = () => {
   isModalOpen.value = false;       // 인증 팝업 노출 여부 상태
-  alert('비밀번호가 안전하게 변경되었습니다.');
+  showToast('success', '비밀번호가 안전하게 변경되었습니다.');
   router.go(-1);
 };
 </script>
@@ -47,6 +49,8 @@ const handleVerifySuccess = () => {
     <PageHeader title="비밀번호 변경" @back="goBack" />
 
     <div class="content-container">
+      <h1 class="page-title">비밀번호 변경</h1>
+
       <div class="form-section">
         <!-- 1. 현재 비밀번호 입력 -->
         <div class="input-group">
@@ -87,24 +91,45 @@ const handleVerifySuccess = () => {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background-color: #f9f9f9;
+  background-color: var(--color-bg);
 }
 
 .content-container {
   flex: 1;
-  padding: 20px;
-  padding-bottom: 100px;
+  padding: var(--space-lg);
+  padding-bottom: calc(var(--space-xl) + var(--space-2xl) + var(--space-xl));
 }
 
+/* 타이틀 (Display Typography) */
+.page-title {
+  font-size: var(--typo-display-medium-size);
+  font-weight: var(--typo-display-medium-weight);
+  line-height: var(--typo-display-medium-line-height);
+  letter-spacing: var(--typo-display-medium-letter-spacing);
+  color: var(--color-text-primary);
+  margin: 0 0 var(--space-xl);
+}
+
+/* 입력 폼 (Soft Glassmorphism) */
 .form-section {
-  background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-  padding: 20px;
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+
+  background: linear-gradient(135deg, rgba(var(--color-primary-dark-rgb), 0.08) 0%, rgba(var(--color-primary-dark-rgb), 0.02) 100%);
+  border: 1px solid rgba(var(--color-primary-dark-rgb), 0.15);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+[data-theme="dark"] .form-section {
+  background: linear-gradient(135deg, rgba(var(--color-primary-dark-rgb), 0.16) 0%, rgba(var(--color-primary-dark-rgb), 0.05) 100%);
+  border: 1px solid rgba(var(--color-primary-dark-rgb), 0.22);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.06);
 }
 
 .input-group {
-  margin-bottom: 20px;
+  margin-bottom: var(--space-md);
 }
 .input-group:last-child {
   margin-bottom: 0;
@@ -112,20 +137,30 @@ const handleVerifySuccess = () => {
 
 .input-label {
   display: block;
-  font-size: 0.9rem;
-  font-weight: 500;
-  color: #333;
-  margin-bottom: 8px;
-} 
+  font-size: var(--font-sm);
+  font-weight: var(--font-medium);
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-xs);
+}
 
 .footer-button-area {
   position: fixed;
   bottom: 0;
   left: 0;
   width: 100%;
-  padding: 15px 20px;
-  background-color: white;
-  box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+  padding: var(--space-sm) var(--space-md);
   box-sizing: border-box;
+
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.5) 0%, var(--color-surface) 40%);
+  border-top: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.05);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+[data-theme="dark"] .footer-button-area {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.04) 0%, var(--color-surface) 40%);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.3);
 }
 </style>

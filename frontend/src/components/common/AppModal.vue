@@ -48,31 +48,73 @@ class="overlay"
 <style scoped>
 
 .overlay {
- position:fixed;
- inset:0;
+ position: fixed;
+ inset: 0;
 
- background:rgba(0,0,0,0.4);
+ background: rgba(0,0,0,0.4);
 
- display:flex;
- justify-content:center;
- align-items:center;
+ display: flex;
+ justify-content: center;
+ align-items: center;
+
+ z-index: var(--z-modal);
 }
 
 
 .modal {
- background:white;
+ background: var(--color-surface);
 
- width:320px;
- padding:24px;
+ width: 320px;
 
- border-radius:16px;
+ padding: var(--space-xl);
+
+ border-radius: var(--radius-lg);
+
+ box-shadow: var(--shadow-card);
+}
+
+
+h2 {
+ margin: 0 0 var(--space-md);
+
+ color: var(--color-text-primary);
+
+ font-size: var(--font-lg);
+ font-weight: var(--font-semibold);
 }
 
 
 button {
- width:100%;
- margin-top:20px;
- height:40px;
+ width: 100%;
+
+ margin-top: var(--space-lg);
+
+ height: 40px;
+
+ border: none;
+
+ border-radius: var(--radius-sm);
+
+ background:
+ linear-gradient(
+   90deg,
+   var(--color-btn-primary-start),
+   var(--color-btn-primary-end)
+ );
+
+ color: var(--color-btn-primary-text);
+
+ font-size: var(--font-md);
+ font-weight: var(--font-semibold);
+
+ cursor: pointer;
+
+ transition: var(--transition-fast);
+}
+
+
+button:hover {
+ opacity: 0.9;
 }
 
 </style>

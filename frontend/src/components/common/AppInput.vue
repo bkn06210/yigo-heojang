@@ -40,13 +40,11 @@ defineEmits([
 <template>
   <div class="input-wrapper">
 
-    <!-- 입력 제목 -->
     <label v-if="label">
       {{ label }}
     </label>
 
 
-    <!-- 입력창 -->
     <input
       :type="type"
       :value="modelValue"
@@ -61,7 +59,6 @@ defineEmits([
     />
 
 
-    <!-- 안내 문구 -->
     <p
       v-if="message"
       class="message"
@@ -77,16 +74,19 @@ defineEmits([
 <style scoped>
 .input-wrapper {
   width: 100%;
-  margin-bottom: 16px;
+  margin-bottom: var(--space-md);
 }
 
 
 label {
   display: block;
-  margin-bottom: 8px;
 
-  font-size: 14px;
-  font-weight: 600;
+  margin-bottom: var(--space-xs);
+
+  font-size: var(--font-sm);
+  font-weight: var(--font-semibold);
+
+  color: var(--color-text-primary);
 }
 
 
@@ -94,37 +94,50 @@ input {
   width: 100%;
   height: 48px;
 
-  padding: 0 14px;
-
-  border: 1px solid #ddd;
-  border-radius: 10px;
-
-  font-size: 14px;
+  padding: 0 var(--space-sm);
 
   box-sizing: border-box;
+
+  border: 1px solid var(--color-input-border);
+  border-radius: var(--radius-sm);
+
+  background: var(--color-surface);
+
+  color: var(--color-text-primary);
+
+  font-size: var(--font-sm);
+
+  transition: var(--transition-fast);
+}
+
+
+input::placeholder {
+  color: var(--color-text-secondary);
 }
 
 
 input:focus {
   outline: none;
-  border-color: #2563eb;
+
+  border-color: var(--color-input-focus);
 }
 
 
 input.error {
-  border-color: #ef4444;
+  border-color: var(--color-input-error);
 }
 
 
 .message {
-  margin-top: 6px;
+  margin-top: var(--space-xxs);
 
-  font-size: 12px;
-  color: #666;
+  font-size: var(--font-xs);
+
+  color: var(--color-text-secondary);
 }
 
 
 .errorText {
-  color: #ef4444;
+  color: var(--color-input-error);
 }
 </style>

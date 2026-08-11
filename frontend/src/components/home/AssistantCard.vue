@@ -21,7 +21,7 @@
   border-radius:20px;
 
 
-  background:#f5f5f5;
+  background: var(--color-bg);
 
 
 }
