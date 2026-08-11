@@ -1,0 +1,687 @@
+{
+  "card": {
+    "card_name": "KB ALL point 카드",
+    "card_type": "CREDIT",
+    "annual_fee": null,
+    "annual_fees": [
+      {
+        "brand": "K_WORLD",
+        "issue_type": "PLASTIC",
+        "base_fee": null,
+        "partner_fee": null,
+        "total_fee": 15000,
+        "_source": "◦ 연회비 / 구 분 K-WORLD 국내외겸용(Master) 국내외겸용(Visa) / 일반카드 1만5천원 1만5천원 2만원",
+        "_needs_review": ["base_fee", "partner_fee"]
+      },
+      {
+        "brand": "MASTERCARD",
+        "issue_type": "PLASTIC",
+        "base_fee": null,
+        "partner_fee": null,
+        "total_fee": 15000,
+        "_source": "◦ 연회비 / 구 분 K-WORLD 국내외겸용(Master) 국내외겸용(Visa) / 일반카드 1만5천원 1만5천원 2만원",
+        "_needs_review": ["base_fee", "partner_fee"]
+      },
+      {
+        "brand": "VISA",
+        "issue_type": "PLASTIC",
+        "base_fee": null,
+        "partner_fee": null,
+        "total_fee": 20000,
+        "_source": "◦ 연회비 / 구 분 K-WORLD 국내외겸용(Master) 국내외겸용(Visa) / 일반카드 1만5천원 1만5천원 2만원",
+        "_needs_review": ["base_fee", "partner_fee"]
+      },
+      {
+        "brand": "K_WORLD",
+        "issue_type": "MOBILE",
+        "base_fee": null,
+        "partner_fee": null,
+        "total_fee": 9000,
+        "_source": "◦ 연회비 / 모바일 단독카드 9천원 9천원 1만4천원",
+        "_needs_review": ["base_fee", "partner_fee"]
+      },
+      {
+        "brand": "MASTERCARD",
+        "issue_type": "MOBILE",
+        "base_fee": null,
+        "partner_fee": null,
+        "total_fee": 9000,
+        "_source": "◦ 연회비 / 모바일 단독카드 9천원 9천원 1만4천원",
+        "_needs_review": ["base_fee", "partner_fee"]
+      },
+      {
+        "brand": "VISA",
+        "issue_type": "MOBILE",
+        "base_fee": null,
+        "partner_fee": null,
+        "total_fee": 14000,
+        "_source": "◦ 연회비 / 모바일 단독카드 9천원 9천원 1만4천원",
+        "_needs_review": ["base_fee", "partner_fee"]
+      }
+    ],
+    "_source": {
+      "card_name": "KB ALL point 카드",
+      "card_type": "KB국민 신용카드 설명서 (개인)"
+    },
+    "_needs_review": ["annual_fee"]
+  },
+  "card_exclusions": [],
+  "performance_tiers": [
+    {
+      "period_type": "MONTH",
+      "min_performance_amount": 0,
+      "shared_monthly_limit": null,
+      "_source": "전월 이용실적 조건이 없는 적립 서비스(기본/추가 적립)가 존재하므로 0원 구간이 필요하다. 통합 월 할인한도 문구는 약관에 없다."
+    },
+    {
+      "period_type": "MONTH",
+      "min_performance_amount": 300000,
+      "shared_monthly_limit": null,
+      "_source": "■영화/놀이공원 할인 서비스(전월 이용실적 30만원 이상 시 제공)"
+    }
+  ],
+  "performance_exclusions": [
+    {
+      "exclusion_type": "TRANSACTION_ATTR",
+      "exclusion_value": "CASH_ADVANCE",
+      "_source": "단기카드대출(현금서비스), 장기카드대출(카드론), 상품권 및 선불카드 구입·충전금액, 정부지원금, 대학(대학원)등록금, 지방세, 각종 수수료 및 이자, 연체료, 연회비, 무승인전표(RF후불교통요금/자판기/터널이용료/항공기 내 이용 등), 취소금액"
+    },
+    {
+      "exclusion_type": "TRANSACTION_ATTR",
+      "exclusion_value": "CARD_LOAN",
+      "_source": "단기카드대출(현금서비스), 장기카드대출(카드론), 상품권 및 선불카드 구입·충전금액, 정부지원금, 대학(대학원)등록금, 지방세, 각종 수수료 및 이자, 연체료, 연회비, 무승인전표(RF후불교통요금/자판기/터널이용료/항공기 내 이용 등), 취소금액"
+    },
+    {
+      "exclusion_type": "TRANSACTION_ATTR",
+      "exclusion_value": "GIFT_CARD",
+      "_source": "상품권 및 선불카드 구입·충전금액"
+    },
+    {
+      "exclusion_type": "TRANSACTION_ATTR",
+      "exclusion_value": "GOV_SUBSIDY",
+      "_source": "정부지원금"
+    },
+    {
+      "exclusion_type": "CATEGORY",
+      "exclusion_value": "TUITION",
+      "_source": "대학(대학원)등록금"
+    },
+    {
+      "exclusion_type": "TRANSACTION_ATTR",
+      "exclusion_value": "TAX",
+      "_source": "지방세"
+    },
+    {
+      "exclusion_type": "TRANSACTION_ATTR",
+      "exclusion_value": "FEE_INTEREST",
+      "_source": "각종 수수료 및 이자, 연체료"
+    },
+    {
+      "exclusion_type": "TRANSACTION_ATTR",
+      "exclusion_value": "ANNUAL_FEE",
+      "_source": "연회비"
+    },
+    {
+      "exclusion_type": "TRANSACTION_ATTR",
+      "exclusion_value": "UNAPPROVED",
+      "_source": "무승인전표(RF후불교통요금/자판기/터널이용료/항공기 내 이용 등)"
+    },
+    {
+      "exclusion_type": "TRANSACTION_ATTR",
+      "exclusion_value": "POSTPAID_TRANSIT",
+      "_source": "무승인전표(RF후불교통요금/자판기/터널이용료/항공기 내 이용 등)"
+    },
+    {
+      "exclusion_type": "TRANSACTION_ATTR",
+      "exclusion_value": "CANCELED",
+      "_source": "취소금액"
+    }
+  ],
+  "benefits": [
+    {
+      "benefit_name": "국내 가맹점 포인트리 기본 적립",
+      "benefit_kind": "POINT",
+      "calc_method": "RATE",
+      "benefit_value": 0.7,
+      "step_count": null,
+      "apply_timing": null,
+      "target_type": "ALL",
+      "target_category_code": null,
+      "target_merchant_name": null,
+      "require_performance": "N",
+      "performance_period": "MONTH",
+      "require_payment_type": null,
+      "min_txn_amount": null,
+      "max_eligible_amount": null,
+      "max_benefit_per_txn": null,
+      "monthly_limit": null,
+      "limit_group_code": null,
+      "monthly_count_limit": null,
+      "daily_count_limit": null,
+      "daily_limit": null,
+      "yearly_count_limit": null,
+      "count_group_code": null,
+      "use_shared_limit": "N",
+      "exclude_from_performance": "N",
+      "option_group_code": null,
+      "option_key": null,
+      "description": "국내 가맹점 이용분 대상. 적립 포인트리는 해당 이용분의 신용공여기간에 따른 결제일 익영업일에 적립된다.",
+      "tier_limits": [],
+      "exclusions": [
+        {
+          "exclusion_type": "TRANSACTION_ATTR",
+          "exclusion_value": "OVERSEAS",
+          "_source": "▪ 국내 가맹점 0.7% 포인트리 기본 적립"
+        }
+      ],
+      "_source": {
+        "benefit_value": "▪ 국내 가맹점 0.7% 포인트리 기본 적립",
+        "target_type": "국내 가맹점"
+      },
+      "_needs_review": []
+    },
+    {
+      "benefit_name": "음식점 포인트리 적립(기본+추가)",
+      "benefit_kind": "POINT",
+      "calc_method": "RATE",
+      "benefit_value": 1.2,
+      "step_count": null,
+      "apply_timing": null,
+      "target_type": "CATEGORY",
+      "target_category_code": "RESTAURANT",
+      "target_merchant_name": null,
+      "require_performance": "N",
+      "performance_period": "MONTH",
+      "require_payment_type": null,
+      "min_txn_amount": null,
+      "max_eligible_amount": null,
+      "max_benefit_per_txn": null,
+      "monthly_limit": null,
+      "limit_group_code": null,
+      "monthly_count_limit": null,
+      "daily_count_limit": null,
+      "daily_limit": null,
+      "yearly_count_limit": null,
+      "count_group_code": null,
+      "use_shared_limit": "N",
+      "exclude_from_performance": "N",
+      "option_group_code": null,
+      "option_key": null,
+      "description": "기본 0.7% + 추가 0.5% = 1.2%. 원문: '국내 가맹점 0.7% 포인트리 기본 적립' + '음식점, 커피전문점 업종 0.5% 포인트리 추가 적립'. 음식: 일반음식점, 한식, 중식, 일식, 양식, 뷔페, 패밀리레스토랑 업종. KB국민 가맹점 업종코드상 적립 대상 업종으로 등록된 가맹점에 한해 추가 적립분이 제공된다.",
+      "tier_limits": [],
+      "exclusions": [],
+      "_source": {
+        "benefit_value": "▪ 국내 가맹점 0.7% 포인트리 기본 적립 / · 음식/커피 - 음식점, 커피전문점 업종 0.5% 포인트리 추가 작립",
+        "target_category_code": "음식: 일반음식점, 한식, 중식, 일식, 양식, 뷔페, 페밀리레스토랑 업종"
+      },
+      "_needs_review": []
+    },
+    {
+      "benefit_name": "커피전문점 포인트리 적립(기본+추가)",
+      "benefit_kind": "POINT",
+      "calc_method": "RATE",
+      "benefit_value": 1.2,
+      "step_count": null,
+      "apply_timing": null,
+      "target_type": "CATEGORY",
+      "target_category_code": "CAFE",
+      "target_merchant_name": null,
+      "require_performance": "N",
+      "performance_period": "MONTH",
+      "require_payment_type": null,
+      "min_txn_amount": null,
+      "max_eligible_amount": null,
+      "max_benefit_per_txn": null,
+      "monthly_limit": null,
+      "limit_group_code": null,
+      "monthly_count_limit": null,
+      "daily_count_limit": null,
+      "daily_limit": null,
+      "yearly_count_limit": null,
+      "count_group_code": null,
+      "use_shared_limit": "N",
+      "exclude_from_performance": "N",
+      "option_group_code": null,
+      "option_key": null,
+      "description": "기본 0.7% + 추가 0.5% = 1.2%. 원문: '국내 가맹점 0.7% 포인트리 기본 적립' + '음식점, 커피전문점 업종 0.5% 포인트리 추가 적립'. 커피: 커피전문점 업종(스타벅스, 커피빈 등). KB국민 가맹점 업종코드상 적립 대상 업종으로 등록된 가맹점에 한해 추가 적립분이 제공된다.",
+      "tier_limits": [],
+      "exclusions": [],
+      "_source": {
+        "benefit_value": "▪ 국내 가맹점 0.7% 포인트리 기본 적립 / · 음식/커피 - 음식점, 커피전문점 업종 0.5% 포인트리 추가 작립",
+        "target_category_code": "커피: 커피전문점 업종(스타벅스, 커피빈 등)"
+      },
+      "_needs_review": []
+    },
+    {
+      "benefit_name": "대중교통 포인트리 적립(기본+추가)",
+      "benefit_kind": "POINT",
+      "calc_method": "RATE",
+      "benefit_value": 1.2,
+      "step_count": null,
+      "apply_timing": null,
+      "target_type": "CATEGORY",
+      "target_category_code": "PUBLIC_TRANSPORT",
+      "target_merchant_name": null,
+      "require_performance": "N",
+      "performance_period": "MONTH",
+      "require_payment_type": null,
+      "min_txn_amount": null,
+      "max_eligible_amount": null,
+      "max_benefit_per_txn": null,
+      "monthly_limit": null,
+      "limit_group_code": null,
+      "monthly_count_limit": null,
+      "daily_count_limit": null,
+      "daily_limit": null,
+      "yearly_count_limit": null,
+      "count_group_code": null,
+      "use_shared_limit": "N",
+      "exclude_from_performance": "N",
+      "option_group_code": null,
+      "option_key": null,
+      "description": "기본 0.7% + 추가 0.5% = 1.2%. 원문: '국내 가맹점 0.7% 포인트리 기본 적립' + '대중교통(버스, 지하철), 택시 0.5%포인트리 추가 적립'. 시외버스·고속버스는 추가 적립 제외 대상이며, 그 경우 기본 0.7%만 적용된다. KB국민 가맹점 업종코드상 적립 대상 업종으로 등록된 가맹점에 한해 추가 적립분이 제공된다.",
+      "tier_limits": [],
+      "exclusions": [
+        {
+          "exclusion_type": "CATEGORY",
+          "exclusion_value": "EXPRESS_BUS",
+          "_source": "대중교통(버스, 지하철), 택시 0.5%포인트리 추가 적립 (단, 시외버스, 고속버스 제외)"
+        }
+      ],
+      "_source": {
+        "benefit_value": "▪ 국내 가맹점 0.7% 포인트리 기본 적립 / · 대중교통/택시 - 대중교통(버스, 지하철), 택시 0.5%포인트리 추가 적립",
+        "target_category_code": "대중교통(버스, 지하철)"
+      },
+      "_needs_review": []
+    },
+    {
+      "benefit_name": "택시 포인트리 적립(기본+추가)",
+      "benefit_kind": "POINT",
+      "calc_method": "RATE",
+      "benefit_value": 1.2,
+      "step_count": null,
+      "apply_timing": null,
+      "target_type": "CATEGORY",
+      "target_category_code": "TAXI",
+      "target_merchant_name": null,
+      "require_performance": "N",
+      "performance_period": "MONTH",
+      "require_payment_type": null,
+      "min_txn_amount": null,
+      "max_eligible_amount": null,
+      "max_benefit_per_txn": null,
+      "monthly_limit": null,
+      "limit_group_code": null,
+      "monthly_count_limit": null,
+      "daily_count_limit": null,
+      "daily_limit": null,
+      "yearly_count_limit": null,
+      "count_group_code": null,
+      "use_shared_limit": "N",
+      "exclude_from_performance": "N",
+      "option_group_code": null,
+      "option_key": null,
+      "description": "기본 0.7% + 추가 0.5% = 1.2%. 원문: '국내 가맹점 0.7% 포인트리 기본 적립' + '대중교통(버스, 지하철), 택시 0.5%포인트리 추가 적립'. KB국민 가맹점 업종코드상 적립 대상 업종으로 등록된 가맹점에 한해 추가 적립분이 제공된다.",
+      "tier_limits": [],
+      "exclusions": [],
+      "_source": {
+        "benefit_value": "▪ 국내 가맹점 0.7% 포인트리 기본 적립 / · 대중교통/택시 - 대중교통(버스, 지하철), 택시 0.5%포인트리 추가 적립",
+        "target_category_code": "택시"
+      },
+      "_needs_review": []
+    },
+    {
+      "benefit_name": "SKT 이동통신요금 포인트리 적립(기본+추가)",
+      "benefit_kind": "POINT",
+      "calc_method": "RATE",
+      "benefit_value": 1.2,
+      "step_count": null,
+      "apply_timing": null,
+      "target_type": "MERCHANT",
+      "target_category_code": null,
+      "target_merchant_name": "SKT",
+      "require_performance": "N",
+      "performance_period": "MONTH",
+      "require_payment_type": null,
+      "min_txn_amount": null,
+      "max_eligible_amount": null,
+      "max_benefit_per_txn": null,
+      "monthly_limit": null,
+      "limit_group_code": null,
+      "monthly_count_limit": null,
+      "daily_count_limit": null,
+      "daily_limit": null,
+      "yearly_count_limit": null,
+      "count_group_code": null,
+      "use_shared_limit": "N",
+      "exclude_from_performance": "N",
+      "option_group_code": null,
+      "option_key": null,
+      "description": "기본 0.7% + 추가 0.5% = 1.2%. 원문: '국내 가맹점 0.7% 포인트리 기본 적립' + '이동통신요금(SKT, KT Olleh, LG U+) 0.5%포인트리 추가 적립'. 자동납부 등록 시 제공. 열거된 3개 통신사만 대상이라 TELECOM 카테고리로 묶지 않고 통신사별 행으로 나눴다.",
+      "tier_limits": [],
+      "exclusions": [],
+      "_source": {
+        "benefit_value": "▪ 국내 가맹점 0.7% 포인트리 기본 적립 / · 이동통신요금 - 이동통신요금(SKT, KT Olleh, LG U+) 0.5%포인트리 추가 적립",
+        "target_merchant_name": "이동통신요금(SKT, KT Olleh, LG U+)"
+      },
+      "_needs_review": []
+    },
+    {
+      "benefit_name": "KT 이동통신요금 포인트리 적립(기본+추가)",
+      "benefit_kind": "POINT",
+      "calc_method": "RATE",
+      "benefit_value": 1.2,
+      "step_count": null,
+      "apply_timing": null,
+      "target_type": "MERCHANT",
+      "target_category_code": null,
+      "target_merchant_name": "KT",
+      "require_performance": "N",
+      "performance_period": "MONTH",
+      "require_payment_type": null,
+      "min_txn_amount": null,
+      "max_eligible_amount": null,
+      "max_benefit_per_txn": null,
+      "monthly_limit": null,
+      "limit_group_code": null,
+      "monthly_count_limit": null,
+      "daily_count_limit": null,
+      "daily_limit": null,
+      "yearly_count_limit": null,
+      "count_group_code": null,
+      "use_shared_limit": "N",
+      "exclude_from_performance": "N",
+      "option_group_code": null,
+      "option_key": null,
+      "description": "기본 0.7% + 추가 0.5% = 1.2%. 원문: '국내 가맹점 0.7% 포인트리 기본 적립' + '이동통신요금(SKT, KT Olleh, LG U+) 0.5%포인트리 추가 적립'. 자동납부 등록 시 제공. 열거된 3개 통신사만 대상이라 TELECOM 카테고리로 묶지 않고 통신사별 행으로 나눴다.",
+      "tier_limits": [],
+      "exclusions": [],
+      "_source": {
+        "benefit_value": "▪ 국내 가맹점 0.7% 포인트리 기본 적립 / · 이동통신요금 - 이동통신요금(SKT, KT Olleh, LG U+) 0.5%포인트리 추가 적립",
+        "target_merchant_name": "이동통신요금(SKT, KT Olleh, LG U+)"
+      },
+      "_needs_review": []
+    },
+    {
+      "benefit_name": "LG U+ 이동통신요금 포인트리 적립(기본+추가)",
+      "benefit_kind": "POINT",
+      "calc_method": "RATE",
+      "benefit_value": 1.2,
+      "step_count": null,
+      "apply_timing": null,
+      "target_type": "MERCHANT",
+      "target_category_code": null,
+      "target_merchant_name": "LG U+",
+      "require_performance": "N",
+      "performance_period": "MONTH",
+      "require_payment_type": null,
+      "min_txn_amount": null,
+      "max_eligible_amount": null,
+      "max_benefit_per_txn": null,
+      "monthly_limit": null,
+      "limit_group_code": null,
+      "monthly_count_limit": null,
+      "daily_count_limit": null,
+      "daily_limit": null,
+      "yearly_count_limit": null,
+      "count_group_code": null,
+      "use_shared_limit": "N",
+      "exclude_from_performance": "N",
+      "option_group_code": null,
+      "option_key": null,
+      "description": "기본 0.7% + 추가 0.5% = 1.2%. 원문: '국내 가맹점 0.7% 포인트리 기본 적립' + '이동통신요금(SKT, KT Olleh, LG U+) 0.5%포인트리 추가 적립'. 자동납부 등록 시 제공. 열거된 3개 통신사만 대상이라 TELECOM 카테고리로 묶지 않고 통신사별 행으로 나눴다.",
+      "tier_limits": [],
+      "exclusions": [],
+      "_source": {
+        "benefit_value": "▪ 국내 가맹점 0.7% 포인트리 기본 적립 / · 이동통신요금 - 이동통신요금(SKT, KT Olleh, LG U+) 0.5%포인트리 추가 적립",
+        "target_merchant_name": "이동통신요금(SKT, KT Olleh, LG U+)"
+      },
+      "_needs_review": []
+    },
+    {
+      "benefit_name": "메가박스 영화 예매 청구할인",
+      "benefit_kind": "DISCOUNT",
+      "calc_method": "FIXED",
+      "benefit_value": 3500,
+      "step_count": null,
+      "apply_timing": "BILLED",
+      "target_type": "MERCHANT",
+      "target_category_code": null,
+      "target_merchant_name": "메가박스",
+      "require_performance": "Y",
+      "performance_period": "MONTH",
+      "require_payment_type": null,
+      "min_txn_amount": null,
+      "max_eligible_amount": null,
+      "max_benefit_per_txn": null,
+      "monthly_limit": null,
+      "limit_group_code": null,
+      "monthly_count_limit": 4,
+      "daily_count_limit": 2,
+      "daily_limit": null,
+      "yearly_count_limit": 10,
+      "count_group_code": "MOVIE_TICKET_COUNT",
+      "use_shared_limit": "N",
+      "exclude_from_performance": "N",
+      "option_group_code": null,
+      "option_key": null,
+      "description": "승인건당 3,500원 청구할인. 메가박스·CGV 홈페이지/App 예약 시 할인 가능. 횟수 한도(1일 2회, 월 4회, 연 10회)는 두 극장이 함께 소진한다. 금액 한도가 없어 limit_group_code는 두지 않고 횟수만 count_group_code로 묶었다.",
+      "tier_limits": [],
+      "exclusions": [],
+      "_source": {
+        "benefit_value": "ㅇ메가박스/CGV 영화 예매 승인건당 3,500원 청구할인",
+        "daily_count_limit": "- 1일 2회, 월 4회, 연 10회 (메가박스, CGV 홈페이지/App 예약 시 할인 가능)",
+        "monthly_count_limit": "- 1일 2회, 월 4회, 연 10회",
+        "yearly_count_limit": "- 1일 2회, 월 4회, 연 10회",
+        "count_group_code": "메가박스/CGV 영화 예매 ... 1일 2회, 월 4회, 연 10회",
+        "require_performance": "■영화/놀이공원 할인 서비스(전월 이용실적 30만원 이상 시 제공)"
+      },
+      "_needs_review": []
+    },
+    {
+      "benefit_name": "CGV 영화 예매 청구할인",
+      "benefit_kind": "DISCOUNT",
+      "calc_method": "FIXED",
+      "benefit_value": 3500,
+      "step_count": null,
+      "apply_timing": "BILLED",
+      "target_type": "MERCHANT",
+      "target_category_code": null,
+      "target_merchant_name": "CGV",
+      "require_performance": "Y",
+      "performance_period": "MONTH",
+      "require_payment_type": null,
+      "min_txn_amount": null,
+      "max_eligible_amount": null,
+      "max_benefit_per_txn": null,
+      "monthly_limit": null,
+      "limit_group_code": null,
+      "monthly_count_limit": 4,
+      "daily_count_limit": 2,
+      "daily_limit": null,
+      "yearly_count_limit": 10,
+      "count_group_code": "MOVIE_TICKET_COUNT",
+      "use_shared_limit": "N",
+      "exclude_from_performance": "N",
+      "option_group_code": null,
+      "option_key": null,
+      "description": "승인건당 3,500원 청구할인. 메가박스·CGV 홈페이지/App 예약 시 할인 가능. 횟수 한도(1일 2회, 월 4회, 연 10회)는 두 극장이 함께 소진한다. 금액 한도가 없어 limit_group_code는 두지 않고 횟수만 count_group_code로 묶었다.",
+      "tier_limits": [],
+      "exclusions": [],
+      "_source": {
+        "benefit_value": "ㅇ메가박스/CGV 영화 예매 승인건당 3,500원 청구할인",
+        "daily_count_limit": "- 1일 2회, 월 4회, 연 10회 (메가박스, CGV 홈페이지/App 예약 시 할인 가능)",
+        "monthly_count_limit": "- 1일 2회, 월 4회, 연 10회",
+        "yearly_count_limit": "- 1일 2회, 월 4회, 연 10회",
+        "count_group_code": "메가박스/CGV 영화 예매 ... 1일 2회, 월 4회, 연 10회",
+        "require_performance": "■영화/놀이공원 할인 서비스(전월 이용실적 30만원 이상 시 제공)"
+      },
+      "_needs_review": []
+    },
+    {
+      "benefit_name": "롯데월드 어드벤처 종합이용권 현장할인",
+      "benefit_kind": "DISCOUNT",
+      "calc_method": "RATE",
+      "benefit_value": 50,
+      "step_count": null,
+      "apply_timing": "IMMEDIATE",
+      "target_type": "MERCHANT",
+      "target_category_code": null,
+      "target_merchant_name": "롯데월드 어드벤처",
+      "require_performance": "Y",
+      "performance_period": "MONTH",
+      "require_payment_type": null,
+      "min_txn_amount": null,
+      "max_eligible_amount": null,
+      "max_benefit_per_txn": null,
+      "monthly_limit": null,
+      "limit_group_code": null,
+      "monthly_count_limit": 2,
+      "daily_count_limit": 1,
+      "daily_limit": null,
+      "yearly_count_limit": 5,
+      "count_group_code": null,
+      "use_shared_limit": "N",
+      "exclude_from_performance": "N",
+      "option_group_code": null,
+      "option_key": null,
+      "description": "종합이용권 구매 건에만 적용되는 현장할인이다. 회원별 1일 1매, 월 2매, 연간 5매. 대상이 가맹점까지만 내려가므로 이용권 종류는 판별되지 않는다.",
+      "tier_limits": [],
+      "exclusions": [],
+      "_source": {
+        "benefit_value": "- 롯데월드 어드벤처 종합이용권 50% 현장할인 (회원별 1일 1매, 월 2매, 연간 5매 할인 제공)",
+        "daily_count_limit": "회원별 1일 1매, 월 2매, 연간 5매 할인 제공",
+        "monthly_count_limit": "회원별 1일 1매, 월 2매, 연간 5매 할인 제공",
+        "yearly_count_limit": "회원별 1일 1매, 월 2매, 연간 5매 할인 제공",
+        "require_performance": "■영화/놀이공원 할인 서비스(전월 이용실적 30만원 이상 시 제공)"
+      },
+      "_needs_review": []
+    },
+    {
+      "benefit_name": "에버랜드 페스티벌 월드 자유이용권 현장할인",
+      "benefit_kind": "DISCOUNT",
+      "calc_method": "RATE",
+      "benefit_value": 50,
+      "step_count": null,
+      "apply_timing": "IMMEDIATE",
+      "target_type": "MERCHANT",
+      "target_category_code": null,
+      "target_merchant_name": "에버랜드",
+      "require_performance": "Y",
+      "performance_period": "MONTH",
+      "require_payment_type": null,
+      "min_txn_amount": null,
+      "max_eligible_amount": null,
+      "max_benefit_per_txn": null,
+      "monthly_limit": null,
+      "limit_group_code": null,
+      "monthly_count_limit": null,
+      "daily_count_limit": 1,
+      "daily_limit": null,
+      "yearly_count_limit": 10,
+      "count_group_code": null,
+      "use_shared_limit": "N",
+      "exclude_from_performance": "N",
+      "option_group_code": null,
+      "option_key": null,
+      "description": "페스티벌 월드 자유이용권 구매 건에만 적용되는 현장할인이다. 1일 1매는 카드별(가족카드 포함), 연간 10매는 회원별 기준이다. 대상이 가맹점까지만 내려가므로 이용권 종류는 판별되지 않는다.",
+      "tier_limits": [],
+      "exclusions": [],
+      "_source": {
+        "benefit_value": "- 에버랜드 페스티벌 월드 자유이용권 50% 현장할인 (카드별(가족카드 포함) 1일1매, 회원별 연간 10매 할인 제공)",
+        "daily_count_limit": "카드별(가족카드 포함) 1일1매",
+        "yearly_count_limit": "회원별 연간 10매 할인 제공",
+        "require_performance": "■영화/놀이공원 할인 서비스(전월 이용실적 30만원 이상 시 제공)"
+      },
+      "_needs_review": []
+    },
+    {
+      "benefit_name": "캐리비안베이 입장권 현장할인",
+      "benefit_kind": "DISCOUNT",
+      "calc_method": "RATE",
+      "benefit_value": 30,
+      "step_count": null,
+      "apply_timing": "IMMEDIATE",
+      "target_type": "MERCHANT",
+      "target_category_code": null,
+      "target_merchant_name": "캐리비안베이",
+      "require_performance": "Y",
+      "performance_period": "MONTH",
+      "require_payment_type": null,
+      "min_txn_amount": null,
+      "max_eligible_amount": null,
+      "max_benefit_per_txn": null,
+      "monthly_limit": null,
+      "limit_group_code": null,
+      "monthly_count_limit": null,
+      "daily_count_limit": 1,
+      "daily_limit": null,
+      "yearly_count_limit": null,
+      "count_group_code": null,
+      "use_shared_limit": "N",
+      "exclude_from_performance": "N",
+      "option_group_code": null,
+      "option_key": null,
+      "description": "입장권 구매 건에만 적용되는 현장할인이다. 1일 1매는 카드별(가족카드 포함) 기준. 대상이 가맹점까지만 내려가므로 상품 종류는 판별되지 않는다.",
+      "tier_limits": [],
+      "exclusions": [],
+      "_source": {
+        "benefit_value": "- 캐리비안베이 입장권 30% 현장할인 (카드별(가족카드 포함) 1일 1매 할인 제공",
+        "daily_count_limit": "카드별(가족카드 포함) 1일 1매 할인 제공",
+        "require_performance": "■영화/놀이공원 할인 서비스(전월 이용실적 30만원 이상 시 제공)"
+      },
+      "_needs_review": []
+    }
+  ],
+  "unmapped": [
+    {
+      "text": "· 주말/공휴일 -국내 가맹점 0.5% 포인트리 추가 적립 단, 대중교통(버스,지하철), 이동통신요금 자동납부는 추가 적립 제외 (단, 택시는 추가 적립 가능)",
+      "why": "요일·공휴일 조건은 지금 스키마의 범위 밖이다. 조건 컬럼이 없어 이 혜택을 행으로 넣으면 평일 결제에도 적용된다. 주말이면 다른 추가 적립분과 겹쳐 최대 1.7%가 되지만 그 값도 표현할 수 없다."
+    },
+    {
+      "text": "■ 해외 이용 할인 캐시백 서비스 ▪ 해외이용금액은 1.7%할인 캐시백 (월 100만원 이용금액까지) - 할인금액은 다음달 둘째 주에 결제계좌로 입금 - 해외이용금액은 일시불 매입 완료된 금액 기준",
+      "why": "해외 결제 혜택은 범위 밖이다. 해외 가맹점 데이터가 없어 추천 계산 대상이 아니다."
+    },
+    {
+      "text": "※KB ALL point 카드로 자동납부 등록 시 서비스 제공",
+      "why": "자동납부 등록 여부는 결제 채널·납부방식 조건이라 범위 밖이다. 통신요금 적립 행은 남겼으나 자동납부가 아닌 건도 추가 적립 대상으로 계산된다."
+    },
+    {
+      "text": "- 롯데월드 어드벤처 종합이용권 50% 현장할인 / - 에버랜드 페스티벌 월드 자유이용권 50% 현장할인 / - 캐리비안베이 입장권 30% 현장할인",
+      "why": "종합이용권·자유이용권·입장권이라는 상품 단위 조건은 범위 밖이다. 대상이 가맹점까지만 내려가므로 같은 가맹점의 다른 상품 결제에도 할인이 적용된다."
+    },
+    {
+      "text": "카드별(가족카드 포함) 1일1매, 회원별 연간 10매 할인 제공 / 카드별(가족카드 포함) 1일 1매 할인 제공",
+      "why": "가족카드 합산은 범위 밖이다. 회원별 한도와 카드별 한도를 구분하는 축이 없어 둘 다 카드 단위로만 집계된다."
+    },
+    {
+      "text": "• KB ALL point 카드 서비스 기본/추가 적립 포인트리는 해당 이용분의 신용공여기간에 따른 신용카드 결제일 익영업일에 적립되며, 연체 시에는 포인트리 사용이 일부 제한됩니다. • 카드 사용 후 취소할 경우 취소한 금액에 대해 적립된 포인트리는 기 적립된 포인트리에서 해당 분만큼 차감됩니다. 단, 적립된 포인트리가 없는 경우 향후 적립되는 포인트리에서 차감됩니다. • 적립시점 기준 60개월이 경과한 포인트리는 선입선출 방식으로 월단위 소멸됩니다.",
+      "why": "포인트 지급 시점·차감·소멸 규칙은 혜택 계산 규칙이 아니라 포인트 원장 운영 규칙이다. benefit 행으로 표현할 대상이 아니다."
+    },
+    {
+      "text": "• 음식/커피, 대중교통/택시, 이동통신 자동납부 추가 적립서비스는 대상 가맹점이 KB국민 가맹점 업종코드상 적립 대상 가맹점업종으로 등록된 경우에 한하여 제공됩니다.",
+      "why": "카드사 내부 업종코드 등록 여부는 우리 쪽 데이터에 없다. 카테고리 매핑으로 근사할 뿐 정확히 판정할 수 없다."
+    },
+    {
+      "text": "• KB ALL point 카드는 상품별 포인트리가 적립되므로 카드 등급별(플래티늄 등) 포인트리가 적립되지 않습니다. • 단, KB국민카드 스타샵 가맹점에서 제공하는 포인트리는 적립됩니다.",
+      "why": "카드 등급별 적립·스타샵 제휴 적립은 이 카드의 혜택 규칙이 아니라 카드사 공통 포인트 정책이다. 담을 대상 컬럼이 없다."
+    }
+  ],
+  "_schema_gap": [
+    {
+      "text": "▪ 최초 카드 사용등록일로부터 다음달 말일까지 KB ALL point 카드 이용실적이 없는 경우에도 할인 제공됩니다.",
+      "missing": "user_card의 발급일(또는 최초 사용등록일) 컬럼과 실적 판정 시의 면제 기간 처리",
+      "why": "발급일 정보가 없어 '발급 후 다음달 말일까지'라는 기간을 판정할 수 없다. 신규 회원이 실적 미달로 판정되어 영화·놀이공원 할인이 적용되지 않는다."
+    },
+    {
+      "text": "구 분 K-WORLD 국내외겸용(Master) 국내외겸용(Visa) / 일반카드 1만5천원 1만5천원 2만원 / 모바일 단독카드 9천원 9천원 1만4천원",
+      "missing": "annual_fees[].brand 열거값에 K-WORLD(JCB 계열)",
+      "why": "브랜드 표준값이 LOCAL/VISA/MASTERCARD/AMEX뿐이라 K-WORLD를 담을 값이 없다. LOCAL에 넣으면 국내전용 카드로 잘못 표시된다."
+    },
+    {
+      "text": "• 2026년 5월 6일부터 KB ALL point카드를 발급(발급 안내 메시지 수신 기준)한 고객의 해당 카드 연회비 (기본연회비+제휴연회비)는 카드별로 청구됩니다.",
+      "missing": "annual_fees 행의 총액 필드(기본연회비·제휴연회비 분리 표기가 없는 약관용)",
+      "why": "약관이 기본연회비와 제휴연회비를 합친 금액만 제시해 base_fee/partner_fee를 채울 근거가 없다. 총액을 담을 자리가 없어 total_fee 키를 임시로 넣었다."
+    }
+  ]
+}

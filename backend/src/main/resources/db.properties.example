@@ -1,0 +1,32 @@
+# DB 접속 설정 예시.
+# 이 파일을 같은 폴더에 db.properties 로 복사한 뒤, 자기 환경 값으로 채운다.
+#   - 로컬 Tomcat + 로컬 MySQL 실행: host = localhost
+#   - docker-compose 풀도커 실행:    host = mysql  (docker-compose 서비스명)
+db.driver=com.mysql.cj.jdbc.Driver
+db.url=jdbc:mysql://localhost:3306/wallet?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+db.username=root
+db.password=변경하세요
+
+# CORS 허용 도메인 (로컬: http://localhost:5173, 운영: 실제 운영 도메인)
+app.cors.allowed-origin=http://localhost:5173
+
+# 카드 이미지를 둔 폴더의 절대 경로. 이 아래 cards/ 폴더에 이미지 파일이 들어간다.
+# servlet-context.xml 의 <mvc:resources mapping="/images/**"> 가 이 경로를 노출한다.
+# 값이 비어 있으면 플레이스홀더가 풀리지 않아 애플리케이션이 기동하지 않는다.
+# 경로 구분자는 역슬래시가 아니라 '/' 를 쓴다.
+app.image.storage-path=C:/Users/변경하세요/Desktop/wallet-images
+
+# --- SMTP server settings ---
+mail.host=smtp.gmail.com
+mail.port=587
+mail.username=변경하세요
+mail.password=변경하세요
+mail.from=변경하세요@example.com
+
+# --- SMTP options ---
+mail.smtp.auth=true
+mail.smtp.starttls.enable=true
+mail.smtp.connectiontimeout=5000
+mail.smtp.timeout=5000
+mail.smtp.writetimeout=5000
+mail.debug=false

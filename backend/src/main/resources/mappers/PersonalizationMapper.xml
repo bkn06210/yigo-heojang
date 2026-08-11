@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.wallet.personalization.mapper.PersonalizationMapper">
+    <select id="findCatalog"
+            resultType="com.wallet.personalization.mapper.PersonalizationCatalogRow">
+        SELECT parent.category_id AS parentCategoryId,
+               parent.category_code AS parentCategoryCode,
+               parent.category_name AS parentCategoryName,
+               child.category_id AS categoryId,
+               child.category_code AS categoryCode,
+               child.category_name AS categoryName,
+               CASE WHEN personalization_category.category_key IS NULL THEN FALSE ELSE TRUE END AS selected,
+               merchant.merchant_id AS merchantId,
+               merchant.merchant_name AS merchantName,
+               FALSE AS merchantSelected,
+               NULL AS priority
+        FROM category parent
+        JOIN category child ON child.parent_category_id = parent.category_id
+        LEFT JOIN merchant ON merchant.category_id = child.category_id
+        LEFT JOIN member_personalization_category personalization_category
+               ON personalization_category.member_id = #{memberId}
+              AND (personalization_category.category_key = child.category_code
+                   OR personalization_category.category_key = CASE child.category_code
+                    WHEN 'CAFE' THEN 'cafe'
+                    WHEN 'CONVENIENCE_STORE' THEN 'convenience'
+                    WHEN 'RESTAURANT' THEN 'food'
+                    WHEN 'DELIVERY' THEN 'restaurant'
+                    WHEN 'LARGE_MART' THEN 'mart'
+                    WHEN 'DEPARTMENT_STORE' THEN 'department'
+                    WHEN 'BEAUTY' THEN 'beauty'
+                    WHEN 'CULTURE_LEISURE' THEN 'culture'
+                    WHEN 'PUBLIC_TRANSPORT' THEN 'transport'
+                    WHEN 'FUEL' THEN 'gas'
+                    ELSE child.category_code
+                  END)
+        WHERE parent.parent_category_id IS NULL
+        ORDER BY parent.display_order, child.display_order,
+                 merchant.merchant_id
+    </select>
+
+    <select id="findPersonalizationBrands"
+            resultType="com.wallet.personalization.mapper.PersonalizationBrandRow">
+        SELECT child.category_id AS categoryId,
+               brand.brand_name AS brandName,
+               brand.priority AS priority
+        FROM member_personalization_brand brand
+        JOIN category child
+          ON (brand.category_key = child.category_code
+              OR brand.category_key = CASE child.category_code
+                WHEN 'CAFE' THEN 'cafe'
+                WHEN 'CONVENIENCE_STORE' THEN 'convenience'
+                WHEN 'RESTAURANT' THEN 'food'
+                WHEN 'DELIVERY' THEN 'restaurant'
+                WHEN 'LARGE_MART' THEN 'mart'
+                WHEN 'DEPARTMENT_STORE' THEN 'department'
+                WHEN 'BEAUTY' THEN 'beauty'
+                WHEN 'CULTURE_LEISURE' THEN 'culture'
+                WHEN 'PUBLIC_TRANSPORT' THEN 'transport'
+                WHEN 'FUEL' THEN 'gas'
+                ELSE child.category_code
+             END)
+        WHERE brand.member_id = #{memberId}
+        ORDER BY child.category_id, brand.priority
+    </select>
+
+    <delete id="deletePersonalizationCategories">
+        DELETE FROM member_personalization_category WHERE member_id = #{memberId}
+    </delete>
+
+    <insert id="insertPersonalizationCategory">
+        INSERT INTO member_personalization_category (member_id, category_key)
+        VALUES (#{memberId}, #{categoryKey})
+    </insert>
+
+    <insert id="insertPersonalizationBrand">
+        INSERT INTO member_personalization_brand
+            (member_id, category_key, priority, brand_name)
+        VALUES (#{memberId}, #{categoryKey}, #{priority}, #{brandName})
+    </insert>
+</mapper>
