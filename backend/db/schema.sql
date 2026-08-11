@@ -831,6 +831,10 @@ CREATE TABLE point_provider (
     point_provider_name  VARCHAR(100) NOT NULL COMMENT '포인트사명 (포인트리, CJ ONE 등)',
     point_provider_type  VARCHAR(30)  NOT NULL COMMENT '포인트 구분: FINANCIAL_POINT | MEMBERSHIP',
     logo_image_url       VARCHAR(255) NULL COMMENT '로고 이미지',
+    -- 멤버십 상세의 "공식 사이트 이동" 버튼이 쓰는 주소.
+    -- 제휴사 로그인 주소는 OAuth 파라미터가 통째로 붙는 경우가 있어 255자로는 잘린다
+    -- (현재 최장은 뷰티포인트 1157자). 잘린 URL은 열리지 않으므로 넉넉히 잡는다.
+    official_site_url    VARCHAR(1500) NULL COMMENT '공식 사이트 URL',
     use_yn               CHAR(1)      NOT NULL DEFAULT 'Y' COMMENT '사용 여부: Y | N',
     default_recommend_yn CHAR(1)      NOT NULL DEFAULT 'N' COMMENT '기본 추천 여부: Y | N',
     recommend_priority   INT          NULL COMMENT '추천 우선순위',
