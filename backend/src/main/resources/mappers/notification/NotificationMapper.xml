@@ -6,8 +6,8 @@
         <constructor>
             <idArg column="notification_setting_id" javaType="Long"/>
             <arg column="member_id" javaType="Long"/>
-            <arg column="performance_shortage_enabled" javaType="boolean"/>
-            <arg column="benefit_limit_enabled" javaType="boolean"/>
+            <arg column="performance_shortage_enabled" javaType="_boolean"/>
+            <arg column="benefit_limit_enabled" javaType="_boolean"/>
             <arg column="updated_at" javaType="java.time.LocalDateTime"/>
         </constructor>
     </resultMap>
