@@ -9,6 +9,7 @@ import { createPaymentQr, getPaymentQr } from '@/api/paymentQrApi';
 import { getPayment } from '@/api/walletApi';
 import { getRecommendations } from '@/api/paymentApi';
 import { usePersonalizationStore } from '@/stores/personalization';
+import { useToast } from '@/composables/useToast';
 import PageHeader from '@/components/common/PageHeader.vue';
 import BottomNavigation from '@/components/layout/BottomNavigation.vue';
 import ToastNotification from '@/components/common/ToastNotification.vue';
@@ -23,21 +24,66 @@ const router = useRouter();
 const authStore = useAuthStore();
 const cardStore = useCardStore();
 const personalizationStore = usePersonalizationStore();
+const { showToast: displayToast } = useToast();
 
 const { user } = storeToRefs(authStore);
 const { cards: storeCards } = storeToRefs(cardStore);
-const isLoggedIn = computed(() => !!user.value);
 const hasCards = computed(() => storeCards.value.length > 0);
+
+// 로그인 상태
+const isLogin = computed(() => authStore.isLogin());
 
 // 카드 등록 페이지로 이동
 const goToCardRegister = () => {
   router.push('/cards/register');
 };
 
+// 로그인 페이지로 이동
+const goLogin = () => {
+  router.push('/auth/login');
+};
+
 const CAROUSEL_CONFIG = {
+  // Flip 관련 임계값
   FLIP_THRESHOLD: 100,
+  FLIP_COMPLETE_THRESHOLD: 0.5,
+  FLIP_MAX_OFFSET: 300,
+
+  // Swipe 관련 임계값
   HORIZONTAL_SWIPE_THRESHOLD: 50,
+  SWIPE_DIRECTION_THRESHOLD: 10,
+  SWIPE_COMPLETE_THRESHOLD: 0.2,
+  SWIPE_BASE_DIVISOR: 300,
+
+  // 타이밍 (ms)
   MODAL_SHOW_DELAY: 400,
+  SWIPE_GUIDE_DELAY: 1000,
+  SWIPE_GUIDE_DURATION: 3000,
+  SWIPE_ANIMATION_DURATION: 400,
+  RECOMMENDATION_MERGE_DURATION: 800,
+  PASSWORD_SUBMIT_DELAY: 200,
+
+  // 카드 각도 (degrees)
+  CARD_ANGLE_TWO_SIDE: 40,
+  CARD_ANGLE_DEPTH_1: 45,
+  CARD_ANGLE_DEPTH_2: 90,
+
+  // 카드 간격 (px)
+  CARD_SPREAD_TWO: 100,
+  CARD_SPREAD_DEPTH_1: 70,
+  CARD_SPREAD_DEPTH_2: 60,
+
+  // 카드 높이 (px)
+  CARD_LIFT_DEFAULT: 80,
+  CARD_LIFT_RECOMMEND: 100,
+  CARD_LIFT_TWO: 50,
+  CARD_LIFT_DEPTH_1: 60,
+  CARD_LIFT_DEPTH_2: 0,
+
+  // 기타
+  CARD_SCALE_INACTIVE: 0.9,
+  CARD_OPACITY_INACTIVE: 0.7,
+  SWIPE_SMOOTHING_FACTOR: 0.3,
 };
 
 const cards = computed(() => storeCards.value);
@@ -69,17 +115,27 @@ watch(() => storeCards.value.length, (newLen) => {
     selectedIndexFloat.value = Math.floor(newLen / 2);
   }
 }, { immediate: true });
-const flipProgress = ref(0); // 0 ~ 1
-const flippingIndex = ref(null);
-const showPasswordModal = ref(false);
-const showQRModal = ref(false);
-const showTimeoutModal = ref(false);
-const qrToken = ref(null);
-const qrImageUrl = ref(null);
+
+// 모달 상태 통합
+const modalState = ref({
+  password: false,
+  qr: false,
+  timeout: false,
+});
+
+// 플립/인터랙션 상태 통합
+const flipState = ref({
+  progress: 0,
+  index: null,
+  offset: 0,
+  isActive: false,
+});
+
 const cardUpOffset = ref(0);
 const showToast = ref(false);
 const toastMessage = ref('');
-const isFlipping = ref(false);
+const qrToken = ref(null);
+const qrImageUrl = ref(null);
 const showPaymentAmountInput = ref(false);
 const isRecommendationMode = ref(false);
 const isAnimatingToCenter = ref(false); // 모든 카드가 중앙에 합쳐지는 중
@@ -112,10 +168,10 @@ const getCardStyle = (index) => {
   const cardCount = cards.value.length;
 
   // 플립 중인 카드: 올라가면서 점점 뒤집어짐
-  if (index === flippingIndex.value && flipProgress.value > 0) {
-    const flipAngle = flipProgress.value * 180;
+  if (index === flipState.value.index && flipState.value.progress > 0) {
+    const flipAngle = flipState.value.progress * 180;
     return {
-      transform: `translate(-50%, -100%) translateY(-${80 + cardUpOffset.value}px) rotateY(${flipAngle}deg)`,
+      transform: `translate(-50%, -100%) translateY(-${CAROUSEL_CONFIG.CARD_LIFT_DEFAULT + cardUpOffset.value}px) rotateY(${flipAngle}deg)`,
       opacity: 1,
       zIndex: 100,
     };
@@ -140,30 +196,29 @@ const getCardStyle = (index) => {
     // 1장: 중앙 고정
     angle = 0;
     spread = 0;
-    yLift = isRecommending.value ? 100 : 80;
+    yLift = isRecommending.value ? CAROUSEL_CONFIG.CARD_LIFT_RECOMMEND : CAROUSEL_CONFIG.CARD_LIFT_DEFAULT;
   } else if (cardCount === 2) {
     // 2장: 좌우 균형 배치
-    angle = offset * 40; // -40도, 40도
-    spread = 100;
-    yLift = isRecommending.value ? 100 : 50;
+    angle = offset * CAROUSEL_CONFIG.CARD_ANGLE_TWO_SIDE;
+    spread = CAROUSEL_CONFIG.CARD_SPREAD_TWO;
+    yLift = isRecommending.value ? CAROUSEL_CONFIG.CARD_LIFT_RECOMMEND : CAROUSEL_CONFIG.CARD_LIFT_TWO;
   } else {
     // 3장 이상: 부채꼴 배치
     const maxOffset = Math.floor(cardCount / 2);
     const depthFactor = Math.abs(offset);
 
-    // 1번은 90도, 2번은 45도
     if (depthFactor === 0) {
       angle = 0;
       spread = 0;
-      yLift = 80;
+      yLift = CAROUSEL_CONFIG.CARD_LIFT_DEFAULT;
     } else if (depthFactor === 1) {
-      angle = offset > 0 ? 45 : -45;
-      spread = 70;
-      yLift = 60;
+      angle = offset > 0 ? CAROUSEL_CONFIG.CARD_ANGLE_DEPTH_1 : -CAROUSEL_CONFIG.CARD_ANGLE_DEPTH_1;
+      spread = CAROUSEL_CONFIG.CARD_SPREAD_DEPTH_1;
+      yLift = CAROUSEL_CONFIG.CARD_LIFT_DEPTH_1;
     } else {
-      angle = offset > 0 ? 90 : -90;
-      spread = 60;
-      yLift = 0;
+      angle = offset > 0 ? CAROUSEL_CONFIG.CARD_ANGLE_DEPTH_2 : -CAROUSEL_CONFIG.CARD_ANGLE_DEPTH_2;
+      spread = CAROUSEL_CONFIG.CARD_SPREAD_DEPTH_2;
+      yLift = CAROUSEL_CONFIG.CARD_LIFT_DEPTH_2;
     }
   }
 
@@ -171,10 +226,10 @@ const getCardStyle = (index) => {
   const yCorrection = Math.abs(angle) * 0.3;
 
   // 플립 중일 때 다른 카드들은 고정 (cardUpOffset 무시)
-  if (flipProgress.value > 0 && index !== flippingIndex.value) {
+  if (flipState.value.progress > 0 && index !== flipState.value.index) {
     return {
-      transform: `translate(-50%, -100%) translate(${x}px, -${yCorrection + yLift}px) rotate(${angle}deg) scale(${index === centerIndex ? 1 : 0.9})`,
-      opacity: index === centerIndex ? 1 : 0.7,
+      transform: `translate(-50%, -100%) translate(${x}px, -${yCorrection + yLift}px) rotate(${angle}deg) scale(${index === centerIndex ? 1 : CAROUSEL_CONFIG.CARD_SCALE_INACTIVE})`,
+      opacity: index === centerIndex ? 1 : CAROUSEL_CONFIG.CARD_OPACITY_INACTIVE,
       zIndex: 10 - Math.abs(offset),
     };
   }
@@ -182,8 +237,8 @@ const getCardStyle = (index) => {
   // isAnimatingToCenter 상태에서는 cardUpOffset 무시
   const upOffset = isAnimatingToCenter.value ? 0 : (index === centerIndex ? cardUpOffset.value : 0);
   const isCenter = isAnimatingToCenter.value || index === centerIndex;
-  const scale = isCenter ? 1 : 0.9;
-  const opacity = isCenter ? 1 : 0.7;
+  const scale = isCenter ? 1 : CAROUSEL_CONFIG.CARD_SCALE_INACTIVE;
+  const opacity = isCenter ? 1 : CAROUSEL_CONFIG.CARD_OPACITY_INACTIVE;
   const zIndex = 10 - Math.abs(offset);
 
   return {
@@ -201,122 +256,117 @@ const easeInOutCubic = (t) => {
     : 1 - Math.pow(-2 * t + 2, 3) / 2;
 };
 
+// 추천 응답을 파싱하여 필요한 정보 추출
+const parseRecommendationResponse = (recommendations) => {
+  const cardIds = recommendations.map(item => item.userCardId).slice(0, 3);
+  const info = {};
+
+  recommendations.slice(0, 3).forEach((item, idx) => {
+    info[item.userCardId] = {
+      rank: item.rank ?? idx + 1,
+      reason: item.reason || '',
+      expectedBenefit: Number(item.expectedBenefit || 0),
+      isEstimate: Boolean(item.isEstimate),
+    };
+  });
+
+  return { cardIds, info };
+};
+
+// 추천 상태 업데이트 및 카드 재정렬
+const updateRecommendationState = (cardIds, info) => {
+  recommendedCardIds.value = cardIds;
+  recommendedInfo.value = info;
+  cardStore.reorderCardsByRecommendation(cardIds);
+};
+
+// 추천 애니메이션 실행
+const animateToRecommendation = (targetCardId) => {
+  if (recommendedCardIds.value.length === 0) {
+    isRecommending.value = false;
+    console.error('추천 카드가 없습니다.');
+    return;
+  }
+
+  const targetIndex = cards.value.findIndex(c => Number(c.id) === Number(targetCardId));
+
+  if (targetIndex === -1) {
+    isRecommending.value = false;
+    console.error('목표 카드를 찾을 수 없습니다.');
+    return;
+  }
+
+  const cardCount = cards.value.length;
+  const startIndex = selectedIndexFloat.value;
+  const centerValue = Math.floor(cardCount / 2);
+
+  isAnimatingToCenter.value = true;
+  const stage1Start = Date.now();
+  const stage1Duration = CAROUSEL_CONFIG.RECOMMENDATION_MERGE_DURATION;
+
+  const animate1 = () => {
+    const elapsed = Date.now() - stage1Start;
+    const progress = Math.min(elapsed / stage1Duration, 1);
+    const eased = easeInOutCubic(progress);
+
+    const newIndex = startIndex + (centerValue - startIndex) * eased;
+    selectedIndexFloat.value = newIndex;
+
+    if (progress < 1) {
+      requestAnimationFrame(animate1);
+    } else {
+      selectedIndexFloat.value = centerValue;
+      setTimeout(() => {
+        cardStore.reorderCardsByRecommendation(recommendedCardIds.value);
+        selectedIndexFloat.value = 0;
+        isAnimatingToCenter.value = false;
+        isRecommendationMode.value = true;
+        showRecommendationResult.value = true;
+      }, CAROUSEL_CONFIG.RECOMMENDATION_MERGE_DURATION);
+      isRecommending.value = false;
+    }
+  };
+
+  animate1();
+};
+
 // 카드 추천 받기
 const getCardRecommendations = async () => {
   if (isRecommending.value) return;
 
   try {
     isRecommending.value = true;
+    showRecommendationResult.value = true;
 
-    // 카테고리 라벨로 id 찾기 (백엔드는 숫자 ID를 기대)
     const categoryId = selectedCategory.value
       ? personalizationStore.categories.find(cat => cat.label === selectedCategory.value)?.id
       : null;
 
-    // 금액은 선택이다. 비워 두면 서버가 회원의 최근 평균 결제액으로 채워 계산한다.
     const expectedAmount = (paymentAmount.value && paymentAmount.value > 0) ? paymentAmount.value : null;
 
-    // API 호출: 선택한 가맹점 정보와 함께 추천 요청
     const response = await getRecommendations({
-      categoryId: categoryId,
+      categoryId,
       merchantId: null,
-      expectedAmount: expectedAmount,
+      expectedAmount,
       paymentType: 'CARD',
     });
 
-
-    // 추천 카드 ID 리스트 저장 (최대 3장) + 추천 정보
-    // 응답 형식(RecommendationItem):
-    //   { rank, userCardId, cardName, expectedBenefit, isEstimate, benefitKind, reason, dynamicSwitch }
     const recommendations = response?.data?.recommendations || [];
-    console.log('API 추천 응답:', recommendations);
+    const { cardIds, info } = parseRecommendationResponse(recommendations);
 
-    recommendedCardIds.value = recommendations
-      .map(item => item.userCardId)
-      .slice(0, 3);
+    updateRecommendationState(cardIds, info);
 
-    // 추천 정보 저장.
-    // 필드명은 RecommendationItem 그대로다 — rank / reason / expectedBenefit / benefitKind.
-    // 예전에는 benefitReason·benefitsSummary 를 읽었는데 응답에 없는 이름이라
-    // 언제나 '최적의 선택' 기본값만 나왔다.
-    recommendedInfo.value = {};
-    recommendations.slice(0, 3).forEach((item, idx) => {
-      recommendedInfo.value[item.userCardId] = {
-        rank: item.rank ?? idx + 1,
-        reason: item.reason || '',
-        expectedBenefit: Number(item.expectedBenefit || 0),
-        // 정률·구간 대표금액으로 낸 값은 확정이 아니라 예상이다. 화면이 그렇게 밝혀야 한다.
-        isEstimate: Boolean(item.isEstimate),
-      };
-    });
-    console.log('저장된 추천 카드 ID들:', recommendedCardIds.value);
-    console.log('추천 정보:', recommendedInfo.value);
-
-    // 카드를 추천 순서대로 재정렬
-    cardStore.reorderCardsByRecommendation(recommendedCardIds.value);
-
-    // 스와이프 가이드 톨팁 표시 (1초 후 자동 표시, 3초 후 자동 숨김)
+    // 스와이프 가이드 톨팁 표시
     setTimeout(() => {
       showSwipeGuide.value = true;
       setTimeout(() => {
         showSwipeGuide.value = false;
-      }, 3000);
-    }, 1000);
+      }, CAROUSEL_CONFIG.SWIPE_GUIDE_DURATION);
+    }, CAROUSEL_CONFIG.SWIPE_GUIDE_DELAY);
 
-    // 목표 카드 인덱스 계산
-    if (recommendedCardIds.value.length > 0) {
-      const topRecommendedId = recommendedCardIds.value[0];
-
-      // 디버깅: 현재 카드들 출력
-
-      console.log('추천된 카드 ID:', topRecommendedId, '타입:', typeof topRecommendedId);
-      console.log('현재 보유한 카드들:', cards.value.map(c => ({ id: c.id, id타입: typeof c.id, name: c.name })));
-      const targetIndex = cards.value.findIndex(c => Number(c.id) === Number(topRecommendedId));
-
-
-      if (targetIndex !== -1) {
-        const cardCount = cards.value.length;
-        const startIndex = selectedIndexFloat.value;
-        const centerValue = Math.floor(cardCount / 2);
-
-        // 1단계: 모든 카드가 중앙으로 합쳐지기 (800ms - 여유롭게)
-        isAnimatingToCenter.value = true;
-        const stage1Start = Date.now();
-        const stage1Duration = 800;
-
-        const animate1 = () => {
-          const elapsed = Date.now() - stage1Start;
-          const progress = Math.min(elapsed / stage1Duration, 1);
-          const eased = easeInOutCubic(progress);
-
-          const newIndex = startIndex + (centerValue - startIndex) * eased;
-          selectedIndexFloat.value = newIndex;
-
-          if (progress < 1) {
-            requestAnimationFrame(animate1);
-          } else {
-            selectedIndexFloat.value = centerValue;
-            // 1단계 완료: 잠깐 여유 후 2단계 펼쳐짐
-            setTimeout(() => {
-              cardStore.reorderCardsByRecommendation(recommendedCardIds.value);
-              selectedIndexFloat.value = 0; // 1순위가 중앙에
-              isAnimatingToCenter.value = false;
-              isRecommendationMode.value = true;
-              showRecommendationResult.value = true; // 추천 결과 헤더 표시
-              // CSS transition이 자동으로 펼쳐짐 애니메이션 처리
-            }, 800); // 1단계 duration과 같음
-            isRecommending.value = false;
-          }
-        };
-
-        animate1();
-      } else {
-        isRecommending.value = false;
-        console.error('목표 카드를 찾을 수 없습니다.');
-      }
-    } else {
-      isRecommending.value = false;
-      console.error('추천 카드가 없습니다.');
+    // 추천 애니메이션 시작
+    if (cardIds.length > 0) {
+      animateToRecommendation(cardIds[0]);
     }
   } catch (error) {
     console.error('카드 추천 API 에러:', error?.response?.data || error.message);
@@ -325,15 +375,6 @@ const getCardRecommendations = async () => {
 };
 
 // 스와이프 끝났을 때 처리
-const handleSwipeEnd = (deltaY) => {
-  const FLIP_THRESHOLD = 120; // 위로 스와이프 임계값(px)
-
-  if (deltaY > FLIP_THRESHOLD) {
-    flippingIndex.value = selectedIndex.value;
-    isFlipping.value = true;
-  }
-};
-
 // 터치 이벤트
 const handleTouchStart = (e) => {
   touchStartX = e.touches[0].clientX;
@@ -352,8 +393,9 @@ const handleTouchMove = (e) => {
   // 스무딩: 현재 값 30% + 이전 값 70% (불규칙한 터치 입력을 부드럽게)
   const prevDeltaX = swipeDirection?.deltaX || 0;
   const prevDeltaY = swipeDirection?.deltaY || 0;
-  const deltaX = rawDeltaX * 0.3 + prevDeltaX * 0.7;
-  const deltaY = rawDeltaY * 0.3 + prevDeltaY * 0.7;
+  const smoothFactor = CAROUSEL_CONFIG.SWIPE_SMOOTHING_FACTOR;
+  const deltaX = rawDeltaX * smoothFactor + prevDeltaX * (1 - smoothFactor);
+  const deltaY = rawDeltaY * smoothFactor + prevDeltaY * (1 - smoothFactor);
 
   swipeDirection = { deltaX, deltaY };
 
@@ -367,20 +409,20 @@ const handleTouchMove = (e) => {
 
   // 위로 드래그할 때: 카드 플립
   if (deltaY > 0) {
-    cardUpOffset.value = Math.min(deltaY, 300);
-    flipProgress.value = Math.min(deltaY / 300, 1);
+    cardUpOffset.value = Math.min(deltaY, CAROUSEL_CONFIG.FLIP_MAX_OFFSET);
+    flipState.value.progress = Math.min(deltaY / CAROUSEL_CONFIG.FLIP_MAX_OFFSET, 1);
 
-    if (deltaY > CAROUSEL_CONFIG.FLIP_THRESHOLD && !flippingIndex.value) {
-      flippingIndex.value = selectedIndex.value;
+    if (deltaY > CAROUSEL_CONFIG.FLIP_THRESHOLD && !flipState.value.index) {
+      flipState.value.index = selectedIndex.value;
     }
 
-    if (flipProgress.value >= 0.5) {
-      showPasswordModal.value = true;
+    if (flipState.value.progress >= 0.5) {
+      modalState.value.password = true;
     }
   }
   // 좌우로 드래그할 때: 카드 회전
-  else if (Math.abs(deltaX) > 10) {
-    swipeProgress.value = deltaX / 300; // 300px를 기준으로 -1 ~ 1
+  else if (Math.abs(deltaX) > CAROUSEL_CONFIG.SWIPE_DIRECTION_THRESHOLD) {
+    swipeProgress.value = deltaX / CAROUSEL_CONFIG.SWIPE_BASE_DIVISOR;
   }
 };
 
@@ -394,16 +436,13 @@ const handleTouchEnd = () => {
   }
   const { deltaX, deltaY } = swipeDirection;
 
-  console.log('🎯 Swipe detected:', { deltaX, deltaY, FLIP_THRESHOLD: CAROUSEL_CONFIG.FLIP_THRESHOLD });
 
   // 가로 스와이프로 카드 회전
-  if (Math.abs(swipeProgress.value) > 0.2 && flipProgress.value === 0) {
-    console.log('→ Horizontal swipe - rotating cards');
+  if (Math.abs(swipeProgress.value) > CAROUSEL_CONFIG.SWIPE_COMPLETE_THRESHOLD && flipState.value.progress === 0) {
     isSwipeAnimating.value = true;
 
     // 추천 모드 진입: 모든 카드가 겹쳐있는 상태에서 스와이프하면 펼쳐짐
     if (isAnimatingToCenter.value && !isRecommendationMode.value) {
-      console.log('→ Expanding recommendation cards');
       cardStore.reorderCardsByRecommendation(recommendedCardIds.value);
       selectedIndexFloat.value = 0; // 재정렬 후 1순위가 중앙에
       isAnimatingToCenter.value = false;
@@ -415,12 +454,14 @@ const handleTouchEnd = () => {
       } else {
         selectedIndexFloat.value = selectedIndexFloat.value + 1;
       }
+      isRecommendationMode.value = false;
+      showRecommendationResult.value = false;
     }
 
     setTimeout(() => {
       swipeProgress.value = 0;
       isSwipeAnimating.value = false;
-    }, 400);
+    }, CAROUSEL_CONFIG.SWIPE_ANIMATION_DURATION);
     return;
   }
 
@@ -430,49 +471,41 @@ const handleTouchEnd = () => {
   }
 
   // 50% 이상 올렸으면 자동으로 1까지 완성 (spring animation)
-  if (flipProgress.value >= 0.5) {
-    console.log('🎉 Auto complete - showing modal!');
+  if (flipState.value.progress >= 0.5) {
     cardUpOffset.value = 0;
-    flipProgress.value = 1; // 자동으로 완성
+    flipState.value.progress = 1;
     setTimeout(() => {
-      showPasswordModal.value = true;
+      modalState.value.password = true;
     }, CAROUSEL_CONFIG.MODAL_SHOW_DELAY);
   } else {
     // 50% 미만이면 자동으로 0으로 복원 (spring back)
-    console.log('↩ Auto restore to start');
     cardUpOffset.value = 0;
-    flipProgress.value = 0;
-    flippingIndex.value = null;
+    flipState.value.progress = 0;
+    flipState.value.index = null;
   }
 };
 
 const selectCard = (index) => {
   selectedIndexFloat.value = index;
+  isRecommendationMode.value = false;
+  showRecommendationResult.value = false;
 };
 
 const handlePasswordSuccess = async () => {
-  showPasswordModal.value = false;
+  modalState.value.password = false;
 
   try {
     if (!currentCard.value || !currentCard.value.id) {
       throw new Error('카드를 선택해주세요');
     }
 
-    // 디버그: 전송 데이터 확인
-    console.log('QR 생성 요청:', {
-      userCardId: currentCard.value.id,
-      paymentAmount: paymentAmount.value,
-      card: currentCard.value
-    });
-
     // QR 코드 생성
     const response = await createPaymentQr(currentCard.value.id, paymentAmount.value);
-    console.log('QR 생성 응답:', response);
 
     qrToken.value = response.qrToken || response.token;
     qrImageUrl.value = response.qrImage || response.imageUrl;
 
-    showQRModal.value = true;
+    modalState.value.qr = true;
   } catch (error) {
     const errorMsg = error?.response?.data?.message || error?.message || 'QR 생성에 실패했습니다';
     console.error('QR 생성 실패:', {
@@ -487,10 +520,10 @@ const handlePasswordSuccess = async () => {
 };
 
 const getModalStyle = () => {
-  if (flipProgress.value < 0.5) {
+  if (flipState.value.progress < CAROUSEL_CONFIG.FLIP_COMPLETE_THRESHOLD) {
     return { opacity: 0, pointerEvents: 'none' };
   }
-  const modalProgress = (flipProgress.value - 0.5) / 0.5; // 0.5~1을 0~1로 정규화 (더 넓은 범위 = 더 부드러움)
+  const modalProgress = (flipState.value.progress - CAROUSEL_CONFIG.FLIP_COMPLETE_THRESHOLD) / CAROUSEL_CONFIG.FLIP_COMPLETE_THRESHOLD;
   return {
     opacity: modalProgress,
     transform: `translateY(${(1 - modalProgress) * 50}px)`,
@@ -499,83 +532,80 @@ const getModalStyle = () => {
   };
 };
 
-const handlePasswordClose = () => {
-  showPasswordModal.value = false;
-  flipProgress.value = 0;
+// 인터랙션 상태 초기화 (중복 제거)
+const resetInteractionState = () => {
+  flipState.value = { progress: 0, index: null, offset: 0, isActive: false };
   cardUpOffset.value = 0;
-  flippingIndex.value = null;
-  isFlipping.value = false; //추가
   isDragging = false;
   swipeDirection = null;
+};
 
-  
+const resetModalState = () => {
+  modalState.value = { password: false, qr: false, timeout: false };
+};
+
+const handlePasswordClose = () => {
+  modalState.value.password = false;
+  resetInteractionState();
 };
 
 const handleQRClose = () => {
-  showQRModal.value = false;
-  // 카드를 원위치로 복원 (간편비번 취소와 동일)
-  flipProgress.value = 0;
-  cardUpOffset.value = 0;
-  flippingIndex.value = null;
-  isFlipping.value = false;
-  isDragging = false;
-  swipeDirection = null;
+  modalState.value.qr = false;
+  resetInteractionState();
 };
 
 const handleQRSuccess = () => {
-  showQRModal.value = false;
+  modalState.value.qr = false;
+  resetInteractionState(); // 카드를 원래 자리로 돌려놓기
   toastMessage.value = '결제 성공';
   showToast.value = true;
-  // 토스트가 자동으로 닫힐 때까지 모달 상태 유지
 };
 
 const handleQRCancel = () => {
-  // 결제 취소 처리 로직...
-  showPasswordModal.value = false;
-  flipProgress.value = 0;
-  flippingIndex.value = null;
-  cardUpOffset.value = 0;
-  isFlipping.value = false; //추가
-  isDragging = false;        
-  swipeDirection = null;  
-
+  modalState.value.password = false;
+  resetInteractionState();
 };
 
 const handleQRTimeout = () => {
-  showQRModal.value = false;
-  showTimeoutModal.value = true;
+  modalState.value.qr = false;
+  modalState.value.timeout = true;
 };
 
 const handleTimeoutRegenerate = () => {
-  showTimeoutModal.value = false;
-  showQRModal.value = true;
+  modalState.value.timeout = false;
+  modalState.value.qr = true;
 };
 
 const handleTimeoutCancel = () => {
-  showTimeoutModal.value = false;
+  modalState.value.timeout = false;
 };
 
 const payment = async () => {
   try {
     if (!currentCard.value?.id) return;
     const qrData = await createPaymentQr(currentCard.value.id, 10000);
-    flipProgress.value = 1;
-    showPasswordModal.value = true;
+    flipState.value.progress = 1;
+    modalState.value.password = true;
   } catch (error) {
     console.error('결제 QR 생성 실패:', error);
   }
 };
 
 const closeModal = () => {
-  showPasswordModal.value = false;
-  flipProgress.value = 0;
-  flippingIndex.value = null;
-  cardUpOffset.value = 0;
-  isFlipping.value = false;
+  modalState.value.password = false;
+  resetInteractionState();
 };
 
 onMounted(async () => {
+  if (!isLogin.value) return;
+
   await cardStore.loadCards();
+
+  // 카드 스와이프 힌트 (처음 1회만)
+  if (!localStorage.getItem('paymentSwipeHintShown') && cards.value.length > 0) {
+    displayToast('info', '💡 카드를 스와이프해서 선택하세요');
+    localStorage.setItem('paymentSwipeHintShown', 'true');
+  }
 });
 </script>
 
@@ -584,16 +614,28 @@ onMounted(async () => {
     <PageHeader title="결제" :show-back="false" />
 
     <!-- 이용 장소 선택 -->
-    <div v-if="hasCards" class="merchant-section" style="margin-top: var(--space-sd); margin-bottom: var(--space-md);">
-      <h3 style="margin: 0 0 12px 0; font-size: 16px; font-weight: 700; color: var(--color-text-primary);">이용 장소</h3>
+    <div v-if="isLogin && hasCards" class="merchant-section" style="margin-top: var(--space-sd); margin-bottom: var(--space-md);">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+        <h3 style="margin: 0; font-size: 16px; font-weight: 700; color: var(--color-text-primary);">이용 장소</h3>
+        <button
+          @click="router.push('/settings/personalization')"
+          style="background: none; border: none; color: var(--color-text-secondary); font-size: 12px; cursor: pointer; padding: 4px 8px; text-decoration: underline; transition: color 0.2s;"
+          @mouseover="$event.target.style.color = 'var(--color-text-primary)'"
+          @mouseleave="$event.target.style.color = 'var(--color-text-secondary)'"
+        >
+          개인화 설정
+        </button>
+      </div>
+      <!-- 업종 선택 (개인화 설정에서 카테고리를 저장한 경우만 표시) -->
       <MerchantSelector
+        v-if="personalizationStore.getActiveCategories().length > 0"
         v-model:category="selectedCategory"
         v-model:merchant="selectedMerchant"
       />
     </div>
 
     <!-- 결제 금액 입력 -->
-    <div v-if="hasCards" class="payment-amount-section" style="margin-bottom: var(--space-md);">
+    <div v-if="hasCards" id="payment-info-section" class="payment-amount-section" style="margin-bottom: var(--space-md);">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
         <h3 style="margin: 0; font-size: 16px; font-weight: 700; color: var(--color-text-primary);">결제 금액</h3>
         <button
@@ -610,23 +652,31 @@ onMounted(async () => {
     </div>
 
     <!-- 카드 추천 받기 -->
-    <div v-if="hasCards" style="margin-bottom: var(--space-md); padding: 0 var(--space-md);">
+    <div id="recommendation-section" v-if="hasCards" style="margin-bottom: var(--space-md); padding: 0 var(--space-md);">
       <div style="background: linear-gradient(135deg, rgba(var(--color-primary-rgb), 0.1) 0%, rgba(var(--color-primary-rgb), 0.05) 100%); border-radius: var(--radius-lg); padding: 16px; margin-bottom: 12px;">
         <h4 style="margin: 0 0 8px 0; font-size: 14px; font-weight: 700; color: var(--color-text-primary);">🎯 추천 카드 찾기</h4>
         <p style="margin: 0 0 12px 0; font-size: 12px; color: var(--color-text-secondary);">카테고리와 금액에 맞는 최적의 카드를 추천받으세요</p>
         <button
           @click="getCardRecommendations"
           :disabled="isRecommending"
-          style="width: 100%; padding: 12px 16px; background: var(--color-primary); color: var(--color-btn-primary-text); border: none; border-radius: var(--radius-md); font-weight: 700; font-size: 14px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px;"
+          style="width: 100%; padding: 12px 16px; background: var(--color-primary); color: var(--color-btn-primary-text); border: none; border-radius: var(--radius-md); font-weight: 700; font-size: 14px; cursor: pointer; transition: all 0.2s;"
           :style="{ opacity: isRecommending ? 0.7 : 1 }"
         >
-          <span v-if="!isRecommending">✨ 카드 추천</span>
-          <span v-else>⏳ 추천 중...</span>
+          {{ isRecommending ? '추천 중...' : '카드 추천' }}
         </button>
       </div>
     </div>
 
-    <main style="flex: 1; display: flex; flex-direction: column;">
+    <!-- 비로그인 -->
+    <div v-if="!isLogin" style="flex: 1; display: flex; align-items: center; justify-content: center;">
+      <div style="text-align: center; display: flex; flex-direction: column; gap: 16px;">
+        <h2 style="margin: 0; font-size: 18px; font-weight: 700; color: var(--color-text-primary);">로그인이 필요합니다</h2>
+        <p style="margin: 0; font-size: 14px; color: var(--color-text-secondary);">결제하려면 로그인해주세요.</p>
+        <button @click="goLogin" style="padding: 12px 20px; background: var(--color-primary); color: var(--color-btn-primary-text); border: none; border-radius: var(--radius-full); font-weight: 600; cursor: pointer;">로그인</button>
+      </div>
+    </div>
+
+    <main v-else style="flex: 1; display: flex; flex-direction: column;">
       <!-- 카드 없을 때 -->
       <div v-if="!hasCards" style="flex: 1; display: flex; align-items: center; justify-content: center;">
         <div style="text-align: center; display: flex; flex-direction: column; gap: 16px; width: 100%; padding: 0 var(--space-md); box-sizing: border-box;">
@@ -634,12 +684,6 @@ onMounted(async () => {
           <p style="margin: 0; font-size: 14px; color: var(--color-text-secondary);">카드를 등록하면 혜택과 소비 관리를 시작할 수 있습니다.</p>
           <button @click="$router.push('/cards/register')" style="width: 100%; padding: 12px 20px; background: var(--color-primary); color: var(--color-btn-primary-text); border: none; border-radius: var(--radius-full); font-weight: 600; cursor: pointer; box-sizing: border-box;">카드 등록</button>
         </div>
-      </div>
-
-      <!-- 추천 결과 헤더 (추천 완료 후에만) -->
-      <div v-if="showRecommendationResult" style="margin-bottom: 8px; padding: 0 16px;">
-        <h3 style="margin: 0; font-size: 16px; font-weight: 700; color: var(--color-text-primary);">✨ 추천 결과</h3>
-        <p style="margin: 4px 0 0 0; font-size: 11px; color: var(--color-text-secondary);">당신을 위한 최적의 카드</p>
       </div>
 
       <!-- 혜택 패널.
@@ -653,8 +697,12 @@ onMounted(async () => {
              카드가 원래 가진 "주요 혜택" 목록이 아니라, 이번 결제 조건으로 엔진이 계산한 값이다. -->
         <div v-show="hasCards && recommendedCardIds.length > 0 && currentCard && recommendedInfo?.[currentCard?.id]"
              class="benefits-section">
+          <p style="margin: 0 0 12px 0; font-size: 14px; font-weight: 600; color: var(--color-text-primary);">추천 결과</p>
           <h3 class="benefits-title">
             {{ recommendedInfo?.[currentCard?.id]?.rank }}위 · {{ currentCard?.name }}
+            <span style="font-size: 12px; font-weight: 500; color: var(--color-text-secondary); margin-left: 8px;">
+              [본인] {{ currentCard?.cardNumber?.slice(-4, -1) }}*
+            </span>
           </h3>
           <p class="benefits-benefit">
             예상 혜택 {{ recommendedInfo?.[currentCard?.id]?.expectedBenefit.toLocaleString('ko-KR') }}원
@@ -670,12 +718,13 @@ onMounted(async () => {
              추천 결과와 카드 소개가 번갈아 뜨면 무엇을 보고 있는지 알 수 없다. -->
         <div v-show="hasCards && recommendedCardIds.length === 0 && currentCard"
              class="benefits-section">
+          <p style="margin: 0 0 12px 0; font-size: 14px; font-weight: 600; color: var(--color-text-primary);">카드 주요 혜택</p>
           <h3 class="benefits-title">
-            💳 카드 주요 혜택
+            {{ currentCard?.name }}
+            <span style="font-size: 12px; font-weight: 500; color: var(--color-text-secondary); margin-left: 8px;">
+              [본인] {{ currentCard?.cardNumber?.slice(-4, -1) }}*
+            </span>
           </h3>
-          <p class="benefits-benefit">
-            {{ currentCard?.name }} 본인 100*
-          </p>
           <ul v-if="currentBenefits.length > 0" class="benefits-list">
             <li v-for="(benefit, idx) in currentBenefits" :key="idx" class="benefits-item">
               💡 {{ typeof benefit === 'string' ? benefit : benefit.benefitName }}
@@ -696,11 +745,11 @@ onMounted(async () => {
           💡 좌측으로 스와이프하면 다른 카드를 볼 수 있습니다
         </div>
 
-        <div class="cards-container">
+        <div id="cards-container" class="cards-container">
           <div v-for="(card, index) in cards" :key="card.id"
                class="card-item"
                :class="{
-                 flipping: isFlipping && index === flippingIndex,
+                 flipping: flipState.isActive && index === flipState.index,
                  recommended: recommendedCardIds.some(id => Number(id) === Number(card.id))
                }"
                :style="{
@@ -709,14 +758,9 @@ onMounted(async () => {
                }"
                @click="selectCard(index)">
             <!-- 추천 배지 (카드 위) -->
-            <div v-if="recommendedInfo[card.id]" class="card-rank-badge">
-              {{ ['🥇', '🥈', '🥉'][recommendedInfo[card.id].rank - 1] }}
-              {{ recommendedInfo[card.id].rank }}위
-            </div>
-
-            <!-- 추천 근거 (카드 위) -->
-            <div v-if="recommendedInfo[card.id]" class="card-reason-text">
-              {{ recommendedInfo[card.id].reason }}
+            <div v-if="recommendedInfo?.[card?.id]" class="card-rank-badge">
+              {{ ['🥇', '🥈', '🥉'][recommendedInfo?.[card?.id]?.rank - 1] }}
+              {{ recommendedInfo?.[card?.id]?.rank }}위
             </div>
 
             <div class="card-flip">
@@ -733,7 +777,7 @@ onMounted(async () => {
 
           <!-- 카드 추가 버튼 (추천 중이 아닐 때만 표시) -->
           <button
-            v-show="!isRecommending && !showRecommendationResult"
+            v-if="!isRecommending && !showRecommendationResult"
             class="card-add-button"
             :style="{
               ...getCardStyle(cards.length),
@@ -750,17 +794,17 @@ onMounted(async () => {
       </div>
 
       <!-- 모달들 -->
-      <PaymentPasswordModal v-if="showPasswordModal"
+      <PaymentPasswordModal v-if="modalState.password"
                             :style="getModalStyle()"
                             @success="handlePasswordSuccess"
                             @close="handlePasswordClose" />
-      <PaymentQRModal v-if="showQRModal"
+      <PaymentQRModal v-if="modalState.qr"
                       :qr-token="qrToken"
                       :qr-image-url="qrImageUrl"
                       @close="handleQRClose"
                       @timeout="handleQRTimeout"
                       @success="handleQRSuccess" />
-      <PaymentTimeoutModal v-if="showTimeoutModal"
+      <PaymentTimeoutModal v-if="modalState.timeout"
                            @regenerate="handleTimeoutRegenerate"
                            @cancel="handleTimeoutCancel" />
 
@@ -802,6 +846,36 @@ main {
   width: 100%;
   overflow-y: auto;
   gap: var(--space-md);
+}
+
+/* ===== 섹션 스타일 ===== */
+.merchant-section,
+.payment-amount-section {
+  width: 100%;
+  padding: var(--space-md);
+  border-bottom: 1px solid var(--color-border);
+  box-sizing: border-box;
+}
+
+.merchant-section {
+  background: rgba(var(--color-primary-rgb), 0.02);
+}
+
+.recommendation-section {
+  width: 100%;
+  padding: var(--space-md);
+  background: rgba(var(--color-primary-rgb), 0.05);
+  border-radius: var(--radius-md);
+  margin-top: var(--space-md);
+  margin-bottom: var(--space-md);
+  box-sizing: border-box;
+}
+
+.section-title {
+  margin: 0 0 var(--space-sm) 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--color-text-primary);
 }
 
 /* ===== 부채꼴 캐러셀 ===== */
@@ -851,7 +925,7 @@ main {
     0 12px 32px rgba(0, 0, 0, 0.18);
 }
 
-/* 카드 추가 버튼 */
+/* 카드 추가 버튼 - 약한 강조 */
 .card-add-button {
   position: absolute;
   width: clamp(140px, 20vw, 180px);
@@ -861,13 +935,13 @@ main {
   cursor: pointer;
   top: 50%;
   left: 55%;
-  border: none;
+  border: 2px solid var(--color-primary);
   border-radius: 16px;
   box-sizing: border-box;
   will-change: transform;
   backface-visibility: hidden;
   transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94), background 0.3s ease;
-  background: var(--color-primary);
+  background: rgba(var(--color-primary-rgb), 0.1);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -875,7 +949,8 @@ main {
 }
 
 .card-add-button:hover {
-  background: rgba(var(--color-primary-dark-rgb), 0.8);
+  background: rgba(var(--color-primary-rgb), 0.15);
+  border-color: var(--color-primary-dark);
 }
 
 .add-icon {
@@ -1065,11 +1140,11 @@ main {
 }
 
 .benefits-section {
-  margin-top: 24px;
-  margin-bottom: 15px;
+  margin-top: var(--space-md);
+  margin-bottom: var(--space-md);
   padding: 0 var(--space-md);
   flex-shrink: 0;
-  height: 150px;
+  min-height: 150px;
   overflow: hidden;
 }
 
@@ -1089,8 +1164,8 @@ main {
 }
 
 .benefits-title {
-  margin: 0 0 var(--space-xs) 0;
-  font-size: var(--font-sm);
+  margin: 0 0 var(--space-sm) 0;
+  font-size: var(--font-md);
   font-weight: var(--font-bold);
   color: var(--color-text-primary);
 }
@@ -1101,12 +1176,22 @@ main {
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: var(--space-xs);
+  gap: var(--space-sm);
 }
 
 .benefits-item {
-  font-size: var(--font-xs);
+  font-size: var(--font-sm);
   color: var(--color-text-secondary);
+  line-height: 1.5;
+}
+
+.benefits-reason {
+  margin: 0;
+  font-size: var(--font-sm);
+  color: var(--color-text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .recommend-btn {

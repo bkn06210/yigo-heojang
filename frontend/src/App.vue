@@ -1,11 +1,21 @@
 <script setup>
 import { onMounted } from 'vue';
 import { useToast } from '@/composables/useToast';
+import { useAuthStore } from '@/stores/authStore';
+import { useTutorialStore } from '@/stores/tutorialStore';
 import ToastNotification from '@/components/common/ToastNotification.vue';
+import TutorialOverlay from '@/components/common/TutorialOverlay.vue';
+
+const authStore = useAuthStore();
+const tutorialStore = useTutorialStore();
 
 onMounted(() => {
   const savedTheme = localStorage.getItem('theme') || 'light';
   document.documentElement.setAttribute('data-theme', savedTheme);
+
+  if (authStore.isLogin() && !tutorialStore.isCompleted) {
+    tutorialStore.startTutorial();
+  }
 });
 
 // 전역 토스트 — 어느 화면에서 showToast()를 호출하든 여기 하나로 렌더링됨
@@ -20,6 +30,8 @@ const { toast, closeToast } = useToast();
       </transition>
     </router-view>
   </div>
+
+  <TutorialOverlay />
 
   <ToastNotification
     v-if="toast"

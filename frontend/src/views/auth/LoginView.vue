@@ -31,6 +31,8 @@ const email = ref('');
 const password = ref('');
 const passwordValid = ref(true);
 const showPassword = ref(false);
+const emailError = ref('');
+const passwordError = ref('');
 
 
 // 로그인 요청 처리 함수
@@ -208,23 +210,24 @@ const verifyPasswordFind = (data) => {
 
         <!-- 이메일 입력 -->
         <div class="input-field">
-          <label class="field-label">아이디(E-Mail)</label>
+          <label class="field-label">아이디</label>
           <input
             v-model="email"
             type="email"
-            class="text-input"
+            :class="['text-input', { error: emailError }]"
             placeholder="name@example.com"
           />
+          <p v-if="emailError" class="field-error">{{ emailError }}</p>
         </div>
 
         <!-- 비밀번호 입력 -->
         <div class="input-field">
-          <label class="field-label">비밀번호(PASSWORD)</label>
+          <label class="field-label">비밀번호</label>
           <div class="password-wrapper">
             <input
               v-model="password"
               :type="showPassword ? 'text' : 'password'"
-              class="text-input password-input"
+              :class="['text-input', 'password-input', { error: passwordError }]"
               placeholder="비밀번호를 입력해주세요"
             />
             <button
@@ -241,7 +244,7 @@ const verifyPasswordFind = (data) => {
               </svg>
             </button>
           </div>
-        
+          <p v-if="passwordError" class="field-error">{{ passwordError }}</p>
         </div>
 
         <!-- 비밀번호 찾기 -->
@@ -331,13 +334,11 @@ const verifyPasswordFind = (data) => {
   width: 100%;
   max-width: 480px;
   background: var(--color-surface);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
   padding: var(--space-xl);
   box-sizing: border-box;
-  box-shadow: var(--shadow-lg);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 .login-header {
@@ -405,11 +406,9 @@ const verifyPasswordFind = (data) => {
 }
 
 .field-label {
-  font-size: var(--font-xs);
+  font-size: var(--font-sm);
   font-weight: var(--font-semibold);
-  color: var(--color-text-secondary);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+  color: var(--color-text-primary);
   margin: 0;
   text-align: left;
 }
@@ -435,6 +434,23 @@ const verifyPasswordFind = (data) => {
   outline: none;
   border-color: var(--color-primary);
   background: var(--color-surface);
+}
+
+.text-input.error {
+  border-color: var(--color-coral);
+  background: rgba(255, 107, 107, 0.05);
+}
+
+.text-input.error:focus {
+  border-color: var(--color-coral);
+  background: rgba(255, 107, 107, 0.05);
+}
+
+.field-error {
+  font-size: var(--font-xs);
+  color: var(--color-coral);
+  margin: var(--space-xs) 0 0 0;
+  text-align: left;
 }
 
 .password-wrapper {
@@ -547,12 +563,14 @@ const verifyPasswordFind = (data) => {
   font-size: var(--font-sm);
   color: var(--color-primary-dark);
   cursor: pointer;
-  font-weight: var(--font-semibold);
-  transition: color var(--transition-fast);
+  font-weight: var(--font-bold);
+  transition: all var(--transition-fast);
+  text-decoration: none;
 }
 
 .signup-link:hover {
   color: var(--color-primary-dark);
+  text-decoration: underline;
 }
 
 .or-section {
@@ -577,20 +595,25 @@ const verifyPasswordFind = (data) => {
 
 .later-section {
   text-align: center;
-  margin-top: var(--space-sm);
+  margin-top: var(--space-md);
 }
 
 .later-link {
-  background: none;
+  background: transparent;
   border: none;
-  padding: 0;
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-md);
   font-size: var(--font-sm);
-  color: var(--color-text-secondary);
+  color: var(--color-primary-dark);
   cursor: pointer;
-  transition: color var(--transition-fast);
+  transition: all var(--transition-fast);
+  font-weight: var(--font-semibold);
+  display: inline-block;
 }
 
 .later-link:hover {
+  background: rgba(var(--color-primary-dark-rgb), 0.08);
+  border-color: rgba(var(--color-primary-dark-rgb), 0.7);
   color: var(--color-primary-dark);
 }
 

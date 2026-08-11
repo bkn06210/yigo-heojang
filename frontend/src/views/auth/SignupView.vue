@@ -393,13 +393,11 @@ const nextStep = async () => {
   width: 100%;
   max-width: 480px;
   background: var(--color-surface);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
   padding: var(--space-xl);
   box-sizing: border-box;
-  box-shadow: var(--shadow-lg);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 .signup-header {
@@ -445,21 +443,21 @@ const nextStep = async () => {
 }
 
 .form-label {
-  font-size: var(--font-xs);
+  font-size: var(--font-sm);
   font-weight: var(--font-semibold);
-  color: var(--color-text-secondary);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+  color: var(--color-text-primary);
   text-align: left;
 }
 
 .label-hint {
   font-size: var(--font-xs);
   font-weight: var(--font-normal);
-  color: var(--color-text-tertiary);
+  color: var(--color-text-secondary);
   text-transform: none;
   letter-spacing: normal;
-  margin-left: 4px;
+  display: block;
+  margin-top: var(--space-xs);
+  margin-left: 0;
 }
 
 .text-input {
@@ -486,11 +484,11 @@ const nextStep = async () => {
 }
 
 .input-error {
-  border-color: var(--color-error, #e74c3c) !important;
+  border-color: var(--color-coral) !important;
 }
 
 .input-error:focus {
-  border-color: var(--color-error, #e74c3c) !important;
+  border-color: var(--color-coral) !important;
 }
 
 .form-help {
@@ -502,12 +500,12 @@ const nextStep = async () => {
 }
 
 .form-help-error {
-  color: var(--color-error, #e74c3c);
+  color: var(--color-coral);
 }
 
 .form-error {
   font-size: var(--font-xs);
-  color: var(--color-error, #e74c3c);
+  color: var(--color-coral);
   margin: 8px 0 0 0;
   text-align: left;
 }
@@ -533,10 +531,10 @@ const nextStep = async () => {
 .verify-button {
   padding: 0 var(--space-md);
   height: 44px;
-  border: 1px solid var(--color-border);
+  border: 1px solid rgba(var(--color-primary-dark-rgb), 0.5);
   border-radius: var(--radius-md);
-  background: var(--color-surface);
-  color: var(--color-text-primary);
+  background: transparent;
+  color: var(--color-primary-dark);
   font-size: var(--font-xs);
   font-weight: var(--font-semibold);
   cursor: pointer;
@@ -545,7 +543,8 @@ const nextStep = async () => {
 }
 
 .verify-button:hover {
-  background: var(--color-bg);
+  background: rgba(var(--color-primary-dark-rgb), 0.08);
+  border-color: rgba(var(--color-primary-dark-rgb), 0.7);
 }
 
 .password-wrapper {
@@ -613,12 +612,14 @@ const nextStep = async () => {
   font-size: var(--font-sm);
   color: var(--color-primary-dark);
   cursor: pointer;
-  font-weight: var(--font-semibold);
-  transition: color var(--transition-fast);
+  font-weight: var(--font-bold);
+  transition: all var(--transition-fast);
+  text-decoration: none;
 }
 
 .login-link:hover {
   color: var(--color-primary-dark);
+  text-decoration: underline;
 }
 
 .or-section {
@@ -643,20 +644,24 @@ const nextStep = async () => {
 
 .later-section {
   text-align: center;
-  margin-top: var(--space-sm);
+  margin-top: var(--space-md);
 }
 
 .later-link {
-  background: none;
+  background: transparent;
   border: none;
-  padding: 0;
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-md);
   font-size: var(--font-sm);
-  color: var(--color-text-secondary);
+  color: var(--color-primary-dark);
   cursor: pointer;
-  transition: color var(--transition-fast);
+  transition: all var(--transition-fast);
+  font-weight: var(--font-semibold);
+  display: inline-block;
 }
 
 .later-link:hover {
+  background: rgba(var(--color-primary-dark-rgb), 0.08);
   color: var(--color-primary-dark);
 }
 

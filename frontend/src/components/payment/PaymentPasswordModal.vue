@@ -195,7 +195,7 @@ const closeModal = () => {
 .modal{
   width:90%;
   max-width:320px;
-  padding: 20px;
+  padding: 24px;
   border-radius: var(--radius-xl);
   text-align:center;
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, var(--color-surface) 60%);

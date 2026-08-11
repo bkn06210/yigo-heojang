@@ -18,13 +18,6 @@
 
     <context:property-placeholder location="classpath:db.properties"/>
 
-    <!-- 카드 이미지 정적 서빙. 이미지를 WAR 안에 넣으면 재배포마다 같이 말려들어가고 용량도 커지므로
-         서버 바깥 폴더(app.image.storage-path)를 그대로 노출한다.
-         예) app.image.storage-path=D:/KB/wallet-images 이면
-             /images/cards/All_Point_Card.png → D:/KB/wallet-images/cards/All_Point_Card.png
-         location 은 반드시 '/' 로 끝나야 하위 경로가 붙는다. -->
-    <mvc:resources mapping="/images/**" location="file:${app.image.storage-path}/"/>
-
     <!-- CORS 전역 설정. 프론트(Vue 개발서버)는 다른 오리진(포트)이라 브라우저가 교차 출처 요청을
          막는데, 여기서 허용 오리진을 명시해 풀어준다.
          allowed-headers="*" 로 JWT의 Authorization 헤더까지 허용해야 토큰 요청의 preflight가 통과한다.
@@ -42,7 +35,14 @@
          use-default-filters=false + @Controller 포함 → @RestController도 함께 등록됨. -->
     <context:component-scan base-package="com.wallet" use-default-filters="false">
         <context:include-filter type="annotation"
-            expression="org.springframework.stereotype.Controller"/>
+                                expression="org.springframework.stereotype.Controller"/>
     </context:component-scan>
 
+    <!-- 카드/이미지 정적 리소스 매핑.
+         location을 "file:" 접두사로 주면 WAR/classpath 내부가 아닌
+         서버의 실제 파일시스템 경로에서 파일을 읽어 서빙한다.
+         → 재배포(WAR 재생성)해도 이미지가 사라지지 않는다.
+         경로는 db.properties의 app.image.storage-path 값을 사용하며,
+         값 끝에 반드시 슬래시가 오도록 뒤에 "/"를 붙여준다. -->
+    <mvc:resources mapping="/images/**" location="/resources/images/"/>
 </beans>

@@ -37,11 +37,8 @@ const handleCardImageLoad = (event) => {
 // 수정 대상
 const editType = ref('');
 
-// 카드 별칭
-const cardAlias = ref('월급 생활비 카드');
-
-// 카드 메모
-const cardMemo = ref('카페 할인용으로 사용하는 카드');
+// 카드 메모 (별칭 + 메모 통합)
+const cardMemo = ref('');
 
 // 입력 임시 값
 const editValue = ref('');
@@ -51,18 +48,7 @@ const openMenu = () => {
   showMenu.value = !showMenu.value;
 };
 
-// 별칭 수정 열기
-const editAlias = () => {
-  editType.value = 'alias';
-
-  editValue.value = cardAlias.value;
-
-  showEditModal.value = true;
-
-  showMenu.value = false;
-};
-
-// 메모 수정 열기
+// 메모 추가/수정 열기
 const editMemo = () => {
   editType.value = 'memo';
 
@@ -73,12 +59,13 @@ const editMemo = () => {
   showMenu.value = false;
 };
 
+// 메모 삭제
+const deleteMemo = () => {
+  cardMemo.value = '';
+};
+
 // 수정 저장
 const saveEdit = () => {
-  if (editType.value === 'alias') {
-    cardAlias.value = editValue.value;
-  }
-
   if (editType.value === 'memo') {
     cardMemo.value = editValue.value;
   }
@@ -187,13 +174,6 @@ const goTransaction = () => {
   });
 };
 
-// 메모 표시 여부
-const showMemo = ref(false);
-
-// 별칭 클릭 시 메모 열기/닫기
-const toggleMemo = () => {
-  showMemo.value = !showMemo.value;
-};
 </script>
 
 
@@ -222,13 +202,8 @@ const toggleMemo = () => {
       class="menu-popover"
     >
 
-      <button @click="editAlias">
-        별칭 수정
-      </button>
-
-
       <button @click="editMemo">
-        메모 수정
+        {{ cardMemo ? '메모 수정' : '메모 추가' }}
       </button>
 
 
@@ -263,41 +238,37 @@ const toggleMemo = () => {
 <section class="card-info">
 
   <div class="card-header">
-    <div class="alias-section">
-
-      <button
-        class="alias-tag"
-        @click="toggleMemo"
-      >
-        {{ cardAlias }}
-      </button>
-
-      <!-- 별칭 아래 메모 -->
-      <div
-        v-if="showMemo"
-        class="memo-box"
-      >
-        {{ cardMemo }}
+    <div class="card-title-row">
+      <div class="card-left">
+        <h1 class="card-name">
+          {{ card.name }}
+        </h1>
+        <span class="number">
+          [{{ card.owner }}] {{ maskCardNumber(card.maskedCardNumber) }}
+        </span>
       </div>
 
+      <div class="card-divider">|</div>
+
+      <div class="card-right">
+        <!-- 카드사명 항상 표시 -->
+        <div class="company-display">
+          {{ card.company }}
+        </div>
+      </div>
     </div>
 
-    <p class="number">
-      {{ card.owner }} {{ maskCardNumber(card.maskedCardNumber) }}
-    </p>
-
+    <!-- 메모가 있으면 아래에 메모 + 삭제버튼 표시 -->
+    <div v-if="cardMemo" class="memo-display">
+      <span>{{ cardMemo }}</span>
+      <button class="delete-memo-btn" @click="deleteMemo">×</button>
+    </div>
   </div>
 
   <div class="card-details">
-
-    <h1>
-      {{ card.name }}
-    </h1>
-
     <p class="company">
       {{ card.company }}
     </p>
-
   </div>
 
 </section>
@@ -363,32 +334,22 @@ const toggleMemo = () => {
       <button class="more-button" @click="goTransaction">+ 더보기</button>
     </section>
 
-    <!-- 별칭/메모 수정 모달 -->
+    <!-- 메모 추가/수정 모달 -->
     <div v-if="showEditModal" class="modal-overlay">
       <div class="edit-modal">
-        <h3>
-          {{ editType === 'alias' ? '별칭' : '메모' }}
-        </h3>
+        <h3>메모</h3>
 
         <input
           v-model="editValue"
           placeholder="내용을 입력해주세요"
-          :maxlength="editType === 'memo' ? 25 : editType === 'alias' ? 15 : undefined"
+          maxlength="100"
         />
 
-        <div v-if="editType === 'memo'" class="input-info">
+        <div class="input-info">
           <span
-            :class="{ 'warning': editValue.length > 25 }"
+            :class="{ 'warning': editValue.length > 100 }"
           >
-            {{ editValue.length }}/25
-          </span>
-        </div>
-
-        <div v-if="editType === 'alias'" class="input-info">
-          <span
-            :class="{ 'warning': editValue.length > 15 }"
-          >
-            {{ editValue.length }}/15
+            {{ editValue.length }}/100
           </span>
         </div>
 
@@ -483,10 +444,47 @@ const toggleMemo = () => {
 
 .card-header {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  flex-direction: column;
   gap: var(--space-sm);
   margin-bottom: var(--space-sm);
+}
+
+.card-title-row {
+  display: flex;
+  align-items: stretch;
+  gap: 2px;
+  width: 100%;
+}
+
+.card-left {
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+.card-right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: var(--space-xs);
+  position: relative;
+}
+
+.card-divider {
+  color: var(--color-border);
+  font-size: var(--font-md);
+  display: flex;
+  align-items: center;
+}
+
+.card-name {
+  margin: 0;
+  font-weight: var(--font-semibold);
 }
 
 .alias-section {
@@ -515,45 +513,57 @@ const toggleMemo = () => {
 }
 
 .company {
-  margin: 0;
+  display: none;
+}
+
+.company-display {
+  color: var(--color-text-secondary);
+  font-size: var(--font-md);
+  font-weight: var(--font-semibold);
+  white-space: nowrap;
+}
+
+.card-company {
+  margin-top: var(--space-xs);
   color: var(--color-text-secondary);
   font-size: var(--font-sm);
+  white-space: nowrap;
 }
 
 .number {
   margin: 0;
   color: var(--color-text-secondary);
   font-size: var(--font-sm);
-  padding: var(--space-xs) var(--space-sm);
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-full);
   white-space: nowrap;
 }
 
-/* ---------------- 별칭 ---------------- */
+/* ---------------- 메모 ---------------- */
 
-.alias-tag {
-  border: none;
-  background: var(--color-bg);
-
+.memo-display {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
   color: var(--color-text-secondary);
-
-  border-radius: var(--radius-full);
-
-  padding: var(--space-xxs) var(--space-sm);
-
   font-size: var(--font-md);
   font-weight: var(--font-semibold);
-
-  cursor: pointer;
-
-  display: inline-block;
   white-space: nowrap;
 }
 
-.arrow {
-  font-size: 10px;
+.delete-memo-btn {
+  border: none;
+  background: none;
+  color: var(--color-text-tertiary);
+  font-size: var(--font-lg);
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.delete-memo-btn:hover {
+  color: var(--color-coral);
 }
 
 /* ---------------- 메모 (포스트잇) ---------------- */

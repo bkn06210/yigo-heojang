@@ -100,6 +100,8 @@ const refreshPoint = async () => {
 
 // 페이지 로드 시 데이터 조회
 onMounted(async () => {
+  if (!isLogin.value) return;
+
   await cardStore.loadCards();
   await cardStore.loadPoints();
   await cardStore.loadMemberships();
@@ -159,8 +161,8 @@ const showMoreMembership = () => {
           <!-- 카드 없음 -->
           <EmptyStateCard
             v-if="cardList.length === 0"
-            title="등록된 카드가 없어요"
-            description="카드를 등록하면 혜택 리포트를 확인할 수 있습니다."
+            title="아직 혜택 정보가 없어요"
+            description="카드를 등록하고 실제 사용하면, 혜택 리포트를 확인할 수 있습니다."
             buttonText="카드 등록"
             @click="goCardRegister"
           />
@@ -181,7 +183,7 @@ const showMoreMembership = () => {
           <EmptyStateCard
             v-if="cardList.length === 0"
             title="카드를 등록해 주세요"
-            description="카드 등록 후 금융 포인트를 확인할 수 있습니다."
+            description="카드를 등록하면 각 은행의 금융 포인트를 관리할 수 있습니다."
             buttonText="카드 등록"
             @click="goCardRegister"
           />
@@ -189,8 +191,8 @@ const showMoreMembership = () => {
           <!-- 포인트 없음 -->
           <EmptyStateCard
             v-else-if="pointList.length === 0"
-            title="등록된 포인트가 없어요"
-            description="카드 등록 후 포인트를 확인할 수 있습니다."
+            title="아직 포인트 정보가 없어요"
+            description="등록한 카드를 사용하면 포인트가 쌓입니다."
           />
 
           <!-- 카드 있고 포인트도 있음 -->
@@ -214,8 +216,8 @@ const showMoreMembership = () => {
           <!-- 멤버십 없음 -->
           <EmptyStateCard
             v-if="membershipList.length === 0"
-            title="등록된 멤버십이 없어요"
-            description="멤버십을 등록하면 포인트와 혜택을 확인할 수 있습니다."
+            title="아직 등록한 멤버십이 없어요"
+            description="자주 방문하는 카페, 마트, 쇼핑몰의 멤버십을 등록해 혜택을 챙겨보세요."
             buttonText="멤버십 등록"
             @click="goMembershipRegister"
           />
@@ -296,35 +298,39 @@ main.login-required {
 .content {
   display: flex;
   flex-direction: column;
-  gap: var(--space-lg);
+  gap: var(--space-xl);
 }
 
 /* 섹션 공통 */
 
 section {
   width: 100%;
+  padding: var(--space-md);
+  box-sizing: border-box;
+  border-radius: var(--radius-lg);
+  background: rgba(var(--color-primary-rgb), 0.04);
+  border: 1px solid rgba(var(--color-primary-rgb), 0.1);
 }
 
-h2 {
+section h2 {
   margin: 0 0 var(--space-md);
-
   font-size: var(--font-lg);
   font-weight: var(--font-bold);
   letter-spacing: -0.3px;
-
   color: var(--color-text-primary);
 }
 
 /* 혜택 리포트 */
 
 .benefit-report-section {
-  margin-top: -14px;
-  margin-bottom: 0;
+  background: rgba(var(--color-primary-rgb), 0.04);
+  border: 1px solid rgba(var(--color-primary-rgb), 0.1);
+  margin: 0;
 }
 
 .benefit-report-section h2 {
-  padding-top: 8px;
   margin-top: 0;
+  margin-bottom: var(--space-md);
 }
 
 /* BenefitReportCard 내부 카드 느낌 */
@@ -346,7 +352,9 @@ h2 {
 /* 금융 포인트 */
 
 .point-section {
-  margin-top: 0;
+  background: rgba(var(--color-primary-rgb), 0.04);
+  border: 1px solid rgba(var(--color-primary-rgb), 0.1);
+  margin: 0;
 }
 
 .point-section :deep(.financial-point-card) {
@@ -355,7 +363,9 @@ h2 {
 
 /* 멤버십 */
 .membership-section {
-  margin-top: 0;
+  background: rgba(var(--color-primary-rgb), 0.05);
+  border: 1px solid rgba(var(--color-primary-rgb), 0.12);
+  margin: 0;
 }
 
 .section-header {
@@ -402,24 +412,26 @@ h2 {
   margin-bottom: var(--space-sm);
 }
 
-/* 더보기 버튼 */
+/* 더보기 버튼 - 아웃라인 스타일 */
 
 .more-button {
   width: 100%;
 
-  margin-top: var(--space-xs);
+  margin-top: var(--space-md);
 
   height: 44px;
 
-  border: none;
+  border: 1.5px solid var(--color-primary);
 
-  background: none;
+  background: transparent;
 
-  color: var(--color-text-secondary);
+  color: var(--color-primary-dark);
 
   font-size: var(--font-sm);
 
-  font-weight: var(--font-medium);
+  font-weight: var(--font-semibold);
+
+  border-radius: var(--radius-md);
 
   cursor: pointer;
 
@@ -427,7 +439,9 @@ h2 {
 }
 
 .more-button:hover {
-  color: var(--color-text-primary);
+  background: var(--color-primary);
+  color: var(--color-btn-primary-text);
+  border-color: var(--color-primary);
 }
 
 /* 안내 문구 */

@@ -97,7 +97,7 @@ const goSignup = () => {
       <h1>약관 동의</h1>
 
 
-    <label>
+    <label class="agree-all-label">
       <input
         type="checkbox"
         v-model="agreeAll"
@@ -123,8 +123,9 @@ const goSignup = () => {
           @change="updateAgreeAll"
         >
 
-
-        {{ term.required ? '(필수)' : '(선택)' }}
+        <span :class="{ 'required-badge': term.required, 'optional-badge': !term.required }">
+          {{ term.required ? '(필수)' : '(선택)' }}
+        </span>
 
         {{ term.title }}
 
@@ -173,19 +174,19 @@ const goSignup = () => {
   width: 100%;
   max-width: 480px;
   background: var(--color-surface);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
   padding: var(--space-xl);
   box-sizing: border-box;
-  box-shadow: var(--shadow-lg);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 .terms-container > button {
+  width: 100%;
+  height: 48px;
   margin-top: var(--space-lg);
-  padding: var(--space-md) var(--space-lg);
   font-size: var(--font-md);
+  background: linear-gradient(90deg, var(--color-btn-primary-start), var(--color-btn-primary-end));
 }
 
 h1 {
@@ -204,29 +205,62 @@ label {
   cursor: pointer;
 }
 
+.agree-all-label {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: var(--space-sm);
+  padding: var(--space-md) 0;
+  margin-bottom: var(--space-md);
+  background: rgba(var(--color-primary-rgb), 0.05);
+  border-radius: var(--radius-md);
+  font-weight: var(--font-semibold);
+  border: 1px solid rgba(var(--color-primary-rgb), 0.1);
+}
+
 label input[type="checkbox"] {
   width: 20px;
   height: 20px;
   cursor: pointer;
 }
 
+.required-badge {
+  font-weight: var(--font-bold);
+  color: var(--color-coral);
+}
+
+.optional-badge {
+  font-weight: var(--font-semibold);
+  color: var(--color-text-secondary);
+}
+
 .term-item {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  gap: var(--space-md);
   margin-top: var(--space-lg);
   padding: var(--space-md) 0;
   border-bottom: 1px solid var(--color-border);
 }
 
 .term-item label {
+  flex: 1;
   gap: var(--space-sm);
 }
 
 .term-item button {
-  padding: 6px 12px;
+  padding: var(--space-xs) var(--space-sm);
   font-size: var(--font-xs);
   white-space: nowrap;
+  background: transparent;
+  border: 1px solid rgba(var(--color-primary-dark-rgb), 0.5);
+  color: var(--color-primary-dark);
+}
+
+.term-item button:hover {
+  background: rgba(var(--color-primary-dark-rgb), 0.08);
+  border-color: rgba(var(--color-primary-dark-rgb), 0.7);
 }
 
 button {

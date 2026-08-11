@@ -276,8 +276,8 @@ onMounted(async () => {
 
         <!-- 우측 상단 버튼들 -->
         <div class="profile-header-buttons">
-          <button @click="goChatBot" class="header-btn" title="채팅" data-tour="chat-button">
-            <Icon name="chat" size="md" />
+          <button @click="goChatBot" class="header-btn" title="AI 챗봇" data-tour="chat-button">
+            <Icon name="aibot" size="md" />
           </button>
           <button @click="goNotification" class="header-btn notification-btn" :class="{ 'has-notification': hasUnreadNotification }" title="알림" data-tour="notification-button">
             <Icon name="bell" size="md" />

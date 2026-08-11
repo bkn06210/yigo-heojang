@@ -231,7 +231,8 @@ const selectSuggestion = (membership) => {
       자주 사용하는 멤버십을 추가해보세요
     </p>
 
-
+    <!-- 에러 메시지 -->
+    <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
 
     <!-- 검색 -->
     <div class="search-box">
@@ -246,46 +247,47 @@ const selectSuggestion = (membership) => {
 
 
 
-   <!-- 자동완성 제안 -->
-<div
-  v-if="searchResult.length"
-  class="suggestion-box"
->
-
-  <div
-  v-for="membership in searchResult"
-  :key="membership.id"
-  class="suggestion-item"
-  @click="selectSuggestion(membership)"
->
-
-    <div class="suggestion-text">
-      <span
-        v-html="highlightKeyword(membership.name, keyword)"
-      ></span>
-
-      <span
-        v-if="getMatchedAlias(membership, keyword)"
-        class="suggestion-alias"
+    <!-- 자동완성 제안 -->
+    <div v-if="keyword.trim()" class="search-result-area">
+      <div
+        v-if="searchResult.length"
+        class="suggestion-box"
       >
-        (
-        <span
-          v-html="highlightKeyword(getMatchedAlias(membership, keyword), keyword)"
-        ></span>
-        )
-      </span>
+        <div
+          v-for="membership in searchResult"
+          :key="membership.id"
+          class="suggestion-item"
+          @click="selectSuggestion(membership)"
+        >
+          <div class="suggestion-text">
+            <span
+              v-html="highlightKeyword(membership.name, keyword)"
+            ></span>
+
+            <span
+              v-if="getMatchedAlias(membership, keyword)"
+              class="suggestion-alias"
+            >
+              (
+              <span
+                v-html="highlightKeyword(getMatchedAlias(membership, keyword), keyword)"
+              ></span>
+              )
+            </span>
+          </div>
+
+          <button
+            @click.stop="addMembership(membership)"
+          >
+            추가
+          </button>
+        </div>
+      </div>
+
+      <div v-else class="empty-search">
+        <p>검색 결과가 없습니다</p>
+      </div>
     </div>
-
-
-    <button
-      @click.stop="addMembership(membership)"
-    >
-      추가
-    </button>
-
-  </div>
-
-</div>
 
 
 
@@ -428,7 +430,33 @@ h1 {
 
 }
 
+.error-message {
+  margin-bottom: var(--space-md);
+  padding: var(--space-sm) var(--space-md);
+  background: rgba(255, 107, 107, 0.1);
+  border: 1px solid rgba(255, 107, 107, 0.3);
+  border-radius: var(--radius-md);
+  font-size: var(--font-sm);
+  color: var(--color-coral);
+  line-height: 1.5;
+}
 
+.search-result-area {
+  margin-top: var(--space-sm);
+}
+
+.empty-search {
+  padding: var(--space-lg) var(--space-md);
+  text-align: center;
+  border-radius: var(--radius-md);
+  background: rgba(var(--color-text-tertiary-rgb, 128, 128, 128), 0.05);
+}
+
+.empty-search p {
+  margin: 0;
+  font-size: var(--font-sm);
+  color: var(--color-text-secondary);
+}
 
 .search-box {
 
@@ -524,38 +552,6 @@ h2 {
 
 }
 
-/* 1위 멤버십 (Soft Glassmorphism 강조) */
-.membership-item.is-featured {
-
-  padding: var(--space-lg);
-
-  background: linear-gradient(135deg, rgba(var(--color-primary-dark-rgb), 0.12) 0%, rgba(var(--color-primary-dark-rgb), 0.04) 100%);
-
-  border: 1px solid rgba(var(--color-primary-dark-rgb), 0.22);
-
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.4);
-
-  backdrop-filter: blur(10px);
-
-  -webkit-backdrop-filter: blur(10px);
-
-}
-
-.membership-item.is-featured span {
-
-  font-weight: var(--font-bold);
-
-}
-
-[data-theme="dark"] .membership-item.is-featured {
-
-  background: linear-gradient(135deg, rgba(var(--color-primary-dark-rgb), 0.22) 0%, rgba(var(--color-primary-dark-rgb), 0.08) 100%);
-
-  border: 1px solid rgba(var(--color-primary-dark-rgb), 0.3);
-
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.06);
-
-}
 
 
 
@@ -567,7 +563,7 @@ button {
 
   color: var(--color-btn-primary-text);
 
-  border-radius: var(--radius-xs);
+  border-radius: var(--radius-md);
 
   padding: var(--space-xs) var(--space-sm);
 
@@ -588,43 +584,61 @@ button:hover {
 
 
 .modal-background {
-
   position: fixed;
-
-  inset: 0;
-
-  background: rgba(0,0,0,0.4);
-
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 100%;
+  max-width: 480px;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.4);
   display: flex;
-
   justify-content: center;
-
   align-items: center;
-
-  z-index: var(--z-modal);
-
+  z-index: 1000;
+  animation: overlay-fade-in 0.3s ease-out;
 }
 
-
+@keyframes overlay-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
 
 .modal {
-
-  width: 80%;
-
-  border-radius: var(--radius-lg);
-
-  padding: var(--space-xl);
-
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.85) 0%, var(--color-surface) 60%);
-
-  border: 1px solid rgba(255, 255, 255, 0.3);
-
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.4);
-
+  width: 90%;
+  max-width: 320px;
+  padding: 24px;
+  border-radius: var(--radius-xl);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, var(--color-surface) 60%);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
   backdrop-filter: blur(12px);
-
   -webkit-backdrop-filter: blur(12px);
+  animation: modal-emerge 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-sizing: border-box;
+  max-height: 90vh;
+  overflow-y: auto;
+}
 
+@keyframes modal-emerge {
+  from {
+    opacity: 0;
+    transform: scale(0.85) translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+[data-theme="dark"] .modal {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.06) 0%, var(--color-surface) 60%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
 
 [data-theme="dark"] .modal {
@@ -702,68 +716,40 @@ button:hover {
 }
 
 .more-button {
-
   width: 100%;
-
   height: 44px;
-
   margin-top: var(--space-xs);
-
-  background: none;
-
-  color: var(--color-text-secondary);
-
-  border: none;
-
-  font-weight: var(--font-medium);
-
+  background: transparent;
+  color: var(--color-primary);
+  border: 1px solid rgba(var(--color-primary-rgb), 0.4);
+  border-radius: var(--radius-md);
+  font-weight: var(--font-semibold);
   cursor: pointer;
-
   transition: var(--transition-fast);
-
 }
 
 .more-button:hover {
-
-  opacity: 1;
-
-  color: var(--color-text-primary);
-
+  background: rgba(var(--color-primary-rgb), 0.05);
+  border-color: rgba(var(--color-primary-rgb), 0.6);
+  color: var(--color-primary);
 }
 
 /* 자동완성 (Soft Glassmorphism) */
 .suggestion-box {
-
   width: 100%;
-
-  margin-top: var(--space-xs);
-
+  margin-top: var(--space-sm);
   border-radius: var(--radius-md);
-
   overflow: hidden;
-
   box-sizing: border-box;
-
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0.2) 100%);
-
-  border: 1px solid rgba(255, 255, 255, 0.3);
-
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.4);
-
-  backdrop-filter: blur(10px);
-
-  -webkit-backdrop-filter: blur(10px);
-
+  background: var(--color-surface);
+  border: 1px solid rgba(var(--color-primary-rgb), 0.2);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 [data-theme="dark"] .suggestion-box {
-
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.02) 100%);
-
-  border: 1px solid rgba(255, 255, 255, 0.08);
-
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.05);
-
+  background: var(--color-surface);
+  border: 1px solid rgba(var(--color-primary-rgb), 0.15);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 
