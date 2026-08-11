@@ -647,37 +647,47 @@ onMounted(async () => {
            그래서 화면 맨 위 "결제" 제목까지 밀고 올라갔다.
            정상 흐름으로 빼면 카드 위에 자연스럽게 쌓이고 겹칠 일이 없다. -->
 
-      <!-- 추천 결과 (추천 받았을 때).
-           카드가 원래 가진 "주요 혜택" 목록이 아니라, 이번 결제 조건으로 엔진이 계산한 값이다. -->
-      <div v-if="hasCards && recommendedCardIds.length > 0 && currentCard && recommendedInfo[currentCard.id]"
-           class="benefits-section">
-        <h3 class="benefits-title">
-          {{ recommendedInfo[currentCard.id].rank }}위 · {{ currentCard.name }}
-        </h3>
-        <p class="benefits-benefit">
-          예상 혜택 {{ recommendedInfo[currentCard.id].expectedBenefit.toLocaleString('ko-KR') }}원
-          <span v-if="recommendedInfo[currentCard.id].isEstimate" class="benefits-estimate">(예상)</span>
-        </p>
-        <p v-if="recommendedInfo[currentCard.id].reason" class="benefits-reason">
-          💡 {{ recommendedInfo[currentCard.id].reason }}
-        </p>
-      </div>
+      <!-- 혜택 + 캐러셀 통합 영역 -->
+      <div class="payment-carousel-area">
+        <!-- 추천 결과 (추천 받았을 때).
+             카드가 원래 가진 "주요 혜택" 목록이 아니라, 이번 결제 조건으로 엔진이 계산한 값이다. -->
+        <div v-show="hasCards && recommendedCardIds.length > 0 && currentCard && recommendedInfo?.[currentCard?.id]"
+             class="benefits-section">
+          <h3 class="benefits-title">
+            {{ recommendedInfo?.[currentCard?.id]?.rank }}위 · {{ currentCard?.name }}
+          </h3>
+          <p class="benefits-benefit">
+            예상 혜택 {{ recommendedInfo?.[currentCard?.id]?.expectedBenefit.toLocaleString('ko-KR') }}원
+            <span v-if="recommendedInfo?.[currentCard?.id]?.isEstimate" class="benefits-estimate">(예상)</span>
+          </p>
+          <p v-if="recommendedInfo?.[currentCard?.id]?.reason" class="benefits-reason">
+            💡 {{ recommendedInfo?.[currentCard?.id]?.reason }}
+          </p>
+        </div>
 
-      <!-- 주요 혜택 (추천 전에만).
-           추천을 받은 뒤에는 추천 카드가 아닌 카드로 넘겨도 이 패널이 튀어나오지 않게 한다 —
-           추천 결과와 카드 소개가 번갈아 뜨면 무엇을 보고 있는지 알 수 없다. -->
-      <div v-else-if="hasCards && recommendedCardIds.length === 0 && currentCard && currentBenefits.length > 0"
-           class="benefits-section">
-        <h3 class="benefits-title">{{ currentCard.name }} 주요 혜택</h3>
-        <ul class="benefits-list">
-          <li v-for="(benefit, idx) in currentBenefits" :key="idx" class="benefits-item">
-            • {{ typeof benefit === 'string' ? benefit : benefit.benefitName }}
-          </li>
-        </ul>
-      </div>
+        <!-- 주요 혜택 (추천 전에만).
+             추천을 받은 뒤에는 추천 카드가 아닌 카드로 넘겨도 이 패널이 튀어나오지 않게 한다 —
+             추천 결과와 카드 소개가 번갈아 뜨면 무엇을 보고 있는지 알 수 없다. -->
+        <div v-show="hasCards && recommendedCardIds.length === 0 && currentCard"
+             class="benefits-section">
+          <h3 class="benefits-title">
+            💳 카드 주요 혜택
+          </h3>
+          <p class="benefits-benefit">
+            {{ currentCard?.name }} 본인 100*
+          </p>
+          <ul v-if="currentBenefits.length > 0" class="benefits-list">
+            <li v-for="(benefit, idx) in currentBenefits" :key="idx" class="benefits-item">
+              💡 {{ typeof benefit === 'string' ? benefit : benefit.benefitName }}
+            </li>
+          </ul>
+          <p v-else class="benefits-reason">
+            💡 적용 가능한 혜택 없음
+          </p>
+        </div>
 
-      <!-- 부채꼴 캐러셀 -->
-      <div v-if="hasCards" ref="cardsContainerRef" class="cards-carousel"
+        <!-- 부채꼴 캐러셀 -->
+        <div v-if="hasCards" ref="cardsContainerRef" class="cards-carousel"
            @touchstart="handleTouchStart"
            @touchmove="handleTouchMove"
            @touchend="handleTouchEnd">
@@ -736,6 +746,7 @@ onMounted(async () => {
           </button>
         </div>
 
+      </div>
       </div>
 
       <!-- 모달들 -->
@@ -796,7 +807,7 @@ main {
 /* ===== 부채꼴 캐러셀 ===== */
 .cards-carousel {
   width: 100%;
-  min-height: 450px;
+  min-height: 350px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -805,8 +816,8 @@ main {
 
 .cards-container {
   position: absolute;
-  bottom: 80px; 
-  left: 42%;
+  bottom: 60px; 
+  left: 44.5%;   
   width: 100%;
   transform: translateX(-50%);
   height: 40px;
@@ -1055,9 +1066,11 @@ main {
 
 .benefits-section {
   margin-top: 24px;
-  margin-bottom: var(--space-md);
+  margin-bottom: 15px;
   padding: 0 var(--space-md);
   flex-shrink: 0;
+  height: 150px;
+  overflow: hidden;
 }
 
 /* 추천 결과의 예상 혜택액. 카드 이름 다음으로 눈에 들어와야 하는 값이다. */
@@ -1121,7 +1134,7 @@ main {
 .payment-btn {
    position: absolute;
   /* 카드와 붙여 놓는다. 값을 키울수록 버튼이 위로(카드 쪽으로) 올라온다. */
-  bottom: 96px;
+  bottom: 65px;
   width: clamp(80px, 12vw, 100px);
   height: clamp(80px, 12vw, 100px);
   border-radius: 50%;
@@ -1161,11 +1174,8 @@ main {
 /* 인증 모달 */
 .modal-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1174,12 +1184,15 @@ main {
 
 .password-modal {
   background: white;
-  border-radius: var(--radius-xl);
-  padding: var(--space-2xl);
+  border-radius: 16px;
+  padding: 24px;
   width: 90%;
   max-width: 320px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
   transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-sizing: border-box;
+  max-height: 85vh;
+  overflow-y: auto;
 }
 
 [data-theme='dark'] .password-modal {

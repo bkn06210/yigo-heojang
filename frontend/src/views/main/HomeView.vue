@@ -562,7 +562,7 @@ onMounted(async () => {
   justify-content: space-between;
   gap: var(--space-lg);
   margin: 0;
-  padding: var(--space-lg) var(--space-md) var(--space-md);
+  padding: var(--space-lg) var(--space-md) var(--space-md) 0;
   background: transparent;
 }
 

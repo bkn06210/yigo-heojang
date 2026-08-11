@@ -760,26 +760,28 @@ h2 {
 .modal-overlay {
   position: fixed;
   inset: 0;
-
+  width: 100%;
+  max-width: 480px;
+  left: 50%;
+  transform: translateX(-50%);
+  margin: 0 auto;
   background: rgba(0, 0, 0, 0.4);
-
   display: flex;
-
   align-items: center;
-
   justify-content: center;
-
   z-index: var(--z-modal);
 }
 
 .edit-modal {
-  width: 85%;
-
+  width: 90%;
+  max-width: 480px;
   background: var(--color-surface);
-
-  border-radius: var(--radius-lg);
-
-  padding: var(--space-xl);
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  box-sizing: border-box;
+  max-height: 70vh;
+  overflow-y: auto;
 }
 
 .edit-modal h3 {

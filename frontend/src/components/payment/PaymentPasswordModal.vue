@@ -179,11 +179,6 @@ const closeModal = () => {
   align-items:center;
   position: fixed;
   inset: 0;
-  width: 100%;
-  max-width: 480px;
-  left: 50%;
-  transform: translateX(-50%);
-  margin: 0 auto;
   z-index: 1000;
   animation: overlay-fade-in 0.3s ease-out;
 }
@@ -199,8 +194,8 @@ const closeModal = () => {
 
 .modal{
   width:90%;
-  max-width:480px;
-  padding: var(--space-xl);
+  max-width:320px;
+  padding: 20px;
   border-radius: var(--radius-xl);
   text-align:center;
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, var(--color-surface) 60%);
@@ -210,6 +205,8 @@ const closeModal = () => {
   -webkit-backdrop-filter: blur(12px);
   animation: modal-emerge 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
   box-sizing: border-box;
+  max-height: 90vh;
+  overflow-y: auto;
 }
 
 @keyframes modal-emerge {
