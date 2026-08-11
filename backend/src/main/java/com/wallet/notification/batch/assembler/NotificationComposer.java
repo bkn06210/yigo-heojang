@@ -5,6 +5,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.Clock;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.HexFormat;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -81,6 +82,8 @@ public class NotificationComposer {
     ) {
         LocalDateTime now = LocalDateTime.now(clock);
 
+        List<BenefitLimitCandidate> effectiveLimitCandidates = suppressNearAfterExhausted(limitCandidates);
+
         // 규칙 문서 4장: "실적 부족과 혜택 월 한도 후보는 서로 섞이지 않는다."
         // 같은 회원이라도 두 유형을 하나의 다이제스트로 합치지 않고, 유형별로 따로 그룹핑·판단한다.
         List<Notification> shortageNotifications = groupByMember(shortageCandidates, PerformanceShortageCandidate::memberId)
@@ -88,12 +91,51 @@ public class NotificationComposer {
             .flatMap(candidates -> composeShortageGroup(candidates, now).stream())
             .toList();
 
-        List<Notification> limitNotifications = groupByMember(limitCandidates, BenefitLimitCandidate::memberId)
+        List<Notification> limitNotifications = groupByMember(effectiveLimitCandidates, BenefitLimitCandidate::memberId)
             .values().stream()
             .flatMap(candidates -> composeLimitGroup(candidates, now).stream())
             .toList();
 
         return Stream.concat(shortageNotifications.stream(), limitNotifications.stream()).toList();
+    }
+
+    /**
+     * 규칙 문서 3.6절: 같은 한도·연월에 EXHAUSTED가 이미 발송된 적 있으면 NEAR 후보를 제거한다.
+     * <p>
+     * "제거"이지 "건너뛰기"가 아니다 — 이 필터를 개별/다이제스트 판단보다
+     * 먼저 적용해야, 걸러진 후보가 ">3건" 다이제스트 임계값 계산에도 애초에 들어가지 않는다.
+     */
+    private List<BenefitLimitCandidate> suppressNearAfterExhausted(List<BenefitLimitCandidate> candidates) {
+        List<BenefitLimitCandidate> nearCandidates = candidates.stream()
+            .filter(c -> c.status() == BenefitLimitStatus.NEAR)
+            .toList();
+
+        if (nearCandidates.isEmpty()) {
+            return candidates;
+        }
+
+        List<String> keysToCheck = nearCandidates.stream()
+            .map(this::toMemberExhaustedKey)
+            .toList();
+
+        Set<String> existingExhaustedKeys = new HashSet<>(
+            notificationRepository.findExistingMemberDedupKeys(keysToCheck)
+        );
+
+        return candidates.stream()
+            .filter(c -> c.status() != BenefitLimitStatus.NEAR
+                || !existingExhaustedKeys.contains(toMemberExhaustedKey(c)))
+            .toList();
+    }
+
+    /** 후보의 NEAR 자리에 EXHAUSTED가 있었다면 가질 dedup key를, member_id와 함께 조립한다. */
+    private String toMemberExhaustedKey(BenefitLimitCandidate c) {
+        String exhaustedKey = switch (c.unit()) {
+            case INDIVIDUAL -> "BENEFIT_LIMIT:B:%d:%d:%s:EXHAUSTED".formatted(c.userCardId(), c.benefitId(), c.yearMonth());
+            case GROUP -> "BENEFIT_LIMIT:G:%d:%s:%s:EXHAUSTED".formatted(c.userCardId(), c.limitGroupCode(), c.yearMonth());
+            case SHARED -> "BENEFIT_LIMIT:S:%d:%s:EXHAUSTED".formatted(c.userCardId(), c.yearMonth());
+        };
+        return "%d:%s".formatted(c.memberId(), exhaustedKey);
     }
 
     private <T> Map<Long, List<T>> groupByMember(List<T> candidates, Function<T, Long> memberIdExtractor) {

@@ -70,4 +70,11 @@ public interface NotificationMapper {
         @Param("notificationId") Long notificationId,
         @Param("memberId") Long memberId
     );
+
+    /**
+     * "member_id:deduplication_key" 형태로 합친 후보 목록 중, 실제로 notification 테이블에
+     * 존재하는 것만 골라 돌려준다. NEAR 알림을 만들기 전 같은 한도의 EXHAUSTED가 이미
+     * 발송됐는지 한 번에 확인하는 용도(3.6절).
+     */
+    List<String> findExistingMemberDedupKeys(@Param("memberDedupKeys") List<String> memberDedupKeys);
 }

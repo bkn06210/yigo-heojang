@@ -124,4 +124,21 @@
           AND deleted_at IS NULL
     </update>
 
+    <!--
+        member_id와 deduplication_key를 CONCAT으로 합쳐서 비교한다. UNIQUE 제약이
+        (member_id, deduplication_key) 조합이라, 후보가 어느 회원 것인지까지 같이 맞춰야
+        "다른 회원이 우연히 같은 dedup key 문자열을 가진" 경우를 EXHAUSTED로 착각하지 않는다.
+        deleted_at을 필터링하지 않는다 — 사용자가 알림함에서 지웠어도 "발송된 적 있다"는
+        사실 자체는 남아 있어야 하고, UNIQUE 제약도 삭제된 행을 무시하지 않기 때문에
+        이 조회도 같은 기준으로 맞춘다.
+    -->
+    <select id="findExistingMemberDedupKeys" resultType="string">
+        SELECT CONCAT(member_id, ':', deduplication_key)
+        FROM notification
+        WHERE CONCAT(member_id, ':', deduplication_key) IN
+        <foreach collection="memberDedupKeys" item="key" open="(" separator="," close=")">
+            #{key}
+        </foreach>
+    </select>
+
 </mapper>

@@ -2,6 +2,7 @@ package com.wallet.notification.batch.assembler;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -40,6 +41,8 @@ class NotificationComposerTest {
     @BeforeEach
     void setUp() {
         notificationRepository = mock(NotificationRepository.class);
+        when(notificationRepository.findExistingMemberDedupKeys(org.mockito.ArgumentMatchers.anyList()))
+            .thenReturn(List.of());
         Clock clock = Clock.fixed(
             LocalDateTime.of(2026, 8, 24, 9, 0).atZone(KST).toInstant(), KST
         );
@@ -249,5 +252,77 @@ class NotificationComposerTest {
         } catch (NoSuchAlgorithmException e) {
             throw new IllegalStateException(e);
         }
+    }
+
+    @Test
+    @DisplayName("같은 한도의 EXHAUSTED가 이미 발송됐으면 NEAR 후보를 만들지 않는다")
+    void compose_limit_suppressesNearWhenExhaustedAlreadySent() {
+        // given
+        BenefitLimitCandidate near = individualLimitCandidate(1L, 20L, 100L, "BENEFIT_LIMIT:B:20:100:2026-08:NEAR");
+        when(notificationRepository.findExistingMemberDedupKeys(
+            List.of("1:BENEFIT_LIMIT:B:20:100:2026-08:EXHAUSTED")
+        )).thenReturn(List.of("1:BENEFIT_LIMIT:B:20:100:2026-08:EXHAUSTED"));
+
+        // when
+        List<Notification> result = composer.compose(List.of(), List.of(near));
+
+        // then
+        assertThat(result).isEmpty();
+    }
+
+    @Test
+    @DisplayName("EXHAUSTED가 없거나 다른 회원 것이면 NEAR 후보를 그대로 생성한다")
+    void compose_limit_keepsNearWhenNoMatchingExhausted() {
+        // given: DB에 같은 dedup key가 없으므로 정상적으로 NEAR 후보가 살아남아야 한다.
+        BenefitLimitCandidate near = individualLimitCandidate(1L, 20L, 100L, "BENEFIT_LIMIT:B:20:100:2026-08:NEAR");
+        when(notificationRepository.findExistingMemberDedupKeys(
+            List.of("1:BENEFIT_LIMIT:B:20:100:2026-08:EXHAUSTED")
+        )).thenReturn(List.of());
+
+        // when
+        List<Notification> result = composer.compose(List.of(), List.of(near));
+
+        // then
+        assertThat(result).hasSize(1);
+    }
+
+    @Test
+    @DisplayName("EXHAUSTED 후보 자체는 이 필터의 영향을 받지 않는다")
+    void compose_limit_exhaustedCandidateNeverSuppressed() {
+        // given
+        BenefitLimitCandidate exhausted = new BenefitLimitCandidate(
+            1L, 21L, 21L, "카드C", BenefitLimitUnit.INDIVIDUAL, 101L, "혜택B", null,
+            10_000L, 10_000L, 100.0, BenefitLimitStatus.EXHAUSTED, "2026-08",
+            "BENEFIT_LIMIT:B:21:101:2026-08:EXHAUSTED"
+        );
+        // EXHAUSTED 후보는 findExistingMemberDedupKeys 조회 대상에 애초에 포함되지 않는다
+        // (nearCandidates가 비어 있으면 저장소를 아예 호출하지 않는다).
+
+        // when
+        List<Notification> result = composer.compose(List.of(), List.of(exhausted));
+
+        // then
+        assertThat(result).hasSize(1);
+        verify(notificationRepository, never()).findExistingMemberDedupKeys(org.mockito.ArgumentMatchers.anyList());
+    }
+
+    @Test
+    @DisplayName("일부 NEAR만 억제되면 남은 후보 수로 개별/다이제스트를 다시 판단한다")
+    void compose_limit_suppressionAffectsDigestThreshold() {
+        // given: NEAR 4건 중 1건이 억제되면 3건만 남아 개별 알림이어야 한다(다이제스트 X).
+        BenefitLimitCandidate suppressed = individualLimitCandidate(1L, 20L, 100L, "BENEFIT_LIMIT:B:20:100:2026-08:NEAR");
+        BenefitLimitCandidate kept1 = individualLimitCandidate(1L, 21L, 101L, "BENEFIT_LIMIT:B:21:101:2026-08:NEAR");
+        BenefitLimitCandidate kept2 = individualLimitCandidate(1L, 22L, 102L, "BENEFIT_LIMIT:B:22:102:2026-08:NEAR");
+        BenefitLimitCandidate kept3 = individualLimitCandidate(1L, 23L, 103L, "BENEFIT_LIMIT:B:23:103:2026-08:NEAR");
+
+        when(notificationRepository.findExistingMemberDedupKeys(org.mockito.ArgumentMatchers.anyList()))
+            .thenReturn(List.of("1:BENEFIT_LIMIT:B:20:100:2026-08:EXHAUSTED"));
+
+        // when
+        List<Notification> result = composer.compose(List.of(), List.of(suppressed, kept1, kept2, kept3));
+
+        // then: 3건 모두 개별 알림으로 남아야 한다(다이제스트로 뭉치지 않음).
+        assertThat(result).hasSize(3);
+        assertThat(result).noneMatch(n -> n.getNotificationType() == NotificationType.BENEFIT_LIMIT_DIGEST);
     }
 }

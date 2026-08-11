@@ -48,6 +48,14 @@ public class NotificationRepository {
         return notificationMapper.insertAll(notifications);
     }
 
+    /** 빈 목록으로 IN ()을 만들면 SQL 문법 오류가 나므로, SQL을 타기 전에 여기서 막는다. */
+    public List<String> findExistingMemberDedupKeys(List<String> memberDedupKeys) {
+        if (memberDedupKeys == null || memberDedupKeys.isEmpty()) {
+            return List.of();
+        }
+        return notificationMapper.findExistingMemberDedupKeys(memberDedupKeys);
+    }
+
     public int countUnread(Long memberId) {
         return notificationMapper.countUnread(memberId);
     }
