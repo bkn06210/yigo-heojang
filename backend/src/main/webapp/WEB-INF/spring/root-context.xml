@@ -3,13 +3,16 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:task="http://www.springframework.org/schema/task"
        xsi:schemaLocation="
            http://www.springframework.org/schema/beans
            http://www.springframework.org/schema/beans/spring-beans.xsd
            http://www.springframework.org/schema/context
            http://www.springframework.org/schema/context/spring-context.xsd
            http://www.springframework.org/schema/tx
-           http://www.springframework.org/schema/tx/spring-tx.xsd">
+           http://www.springframework.org/schema/tx/spring-tx.xsd
+           http://www.springframework.org/schema/task
+           http://www.springframework.org/schema/task/spring-task.xsd">
 
     <!-- DB 접속값은 코드/설정에 직접 쓰지 않고 db.properties에서 읽어 ${...}로 참조.
          db.properties는 .gitignore로 제외, db.properties.example를 복사해 채운다. + redis.properties -->
@@ -105,4 +108,9 @@
         <constructor-arg value="${redis.timeout-millis}" type="int"/>
         <constructor-arg value="${redis.password}"/>
     </bean>
+
+    <!-- @Scheduled 처리기. pool-size는 동시에 실행될 수 있는 배치 개수(실적 부족·혜택 한도 등)만큼
+     넉넉히 잡아둔다 — 하나가 오래 걸려도 다른 배치가 그 뒤에서 대기하지 않도록. -->
+    <task:scheduler id="notificationTaskScheduler" pool-size="4"/>
+    <task:annotation-driven scheduler="notificationTaskScheduler"/>
 </beans>
