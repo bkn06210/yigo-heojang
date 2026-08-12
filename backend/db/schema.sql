@@ -171,6 +171,12 @@ CREATE TABLE refresh_token (
 CREATE TABLE term (
     term_id     BIGINT       NOT NULL AUTO_INCREMENT COMMENT '약관 ID',
     term_code   VARCHAR(50)  NOT NULL COMMENT '약관 코드',
+    -- 이 약관이 어느 화면(시점)에 노출되는지 구분하는 값이다.
+    -- SIGNUP = 회원가입 화면에서 동의를 받는 약관 (기존 약관 전부 여기 해당)
+    -- WITHDRAWAL = 회원 탈퇴 화면에서 고지하고 동의를 받는 약관
+    -- DEFAULT 'SIGNUP'으로 둔 이유: 기존 4개 약관 행이 전부 회원가입용이므로,
+    -- 값을 안 넣어도 자동으로 기존 동작(회원가입 필수 약관 검사)이 그대로 유지된다.
+    term_scope  VARCHAR(20)  NOT NULL DEFAULT 'SIGNUP' COMMENT '약관 노출 시점: SIGNUP(가입 시) | WITHDRAWAL(탈퇴 시)',
     term_name   VARCHAR(100) NOT NULL COMMENT '약관명',
     is_required TINYINT(1)   NOT NULL COMMENT '필수 동의 여부',
     term_status ENUM('ACTIVE','INACTIVE') NOT NULL DEFAULT 'ACTIVE' COMMENT '약관 상태',

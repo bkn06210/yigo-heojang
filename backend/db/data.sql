@@ -101,10 +101,9 @@ INSERT INTO refresh_token (
 INSERT INTO term (
     term_id, term_code, term_name, is_required, term_status
 ) VALUES
-    (1, 'SERVICE_TERMS', '서비스 이용약관', 1, 'ACTIVE'),
-    (2, 'PRIVACY_POLICY', '개인정보 수집 및 이용 동의', 1, 'ACTIVE'),
-    (3, 'MARKETING_CONSENT', '마케팅 정보 수신 동의', 0, 'ACTIVE'),
-    (4, 'LOCATION_TERMS', '위치정보 이용약관', 0, 'INACTIVE');
+      (1, 'SERVICE_TERMS', 'SIGNUP', '서비스 이용약관', 1, 'ACTIVE'),
+      (2, 'PRIVACY_POLICY', 'SIGNUP', '개인정보 수집 및 이용 동의', 1, 'ACTIVE'),
+      (3, 'MARKETING_CONSENT', 'SIGNUP', '마케팅 정보 수신 동의', 0, 'ACTIVE');
 
 INSERT INTO term_version (
     term_version_id, term_id, version, content,
