@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.wallet.notification.mapper.BenefitLimitCandidateMapper">
+    <!--
+        rt(performance_tier)는 "지금 이 카드에 적용 중인 MONTH 실적구간"을 고른다.
+        판정 규칙(3.2절)은 전월실적 이하인 구간 중 최댓값이고, 전월실적은
+        CardStateAssembler.resolvePrevPerformanceAmount와 같은 규칙으로 구한다:
+          기준월(s_curr) 행이 있으면 그 행의 prev_performance_amount,
+          없고 직전월(s_prev) 행만 있으면 그 행의 current_performance_amount,
+          둘 다 없으면 0.
+        COALESCE(s_curr.prev_performance_amount, s_prev.current_performance_amount, 0)이
+        그 규칙 그대로다 — s_curr 행이 없으면 LEFT JOIN이 NULL을 주므로 자연스럽게 다음
+        우선순위로 넘어간다.
+
+        btl(benefit_tier_limit)은 그 구간에서 이 혜택의 개별 한도(tier_monthly_limit)를
+        찾는다. 없으면 NULL이 되고, 바깥에서 benefit.monthly_limit으로 대체한다(3.2절).
+    -->
+    <select id="findBenefitCandidateRows"
+            resultType="com.wallet.notification.batch.model.BenefitCandidateRow">
+        SELECT
+            uc.user_card_id AS user_card_id,
+            uc.member_id AS member_id,
+            uc.card_id AS card_id,
+            c.card_name AS card_name,
+            b.benefit_id AS benefit_id,
+            b.benefit_name AS benefit_name,
+            b.limit_group_code AS limit_group_code,
+            b.require_performance AS require_performance,
+            b.performance_period AS performance_period,
+            COALESCE(btl.tier_monthly_limit, b.monthly_limit) AS effective_monthly_limit,
+            (COALESCE(rt.min_performance_amount, 0) > 0) AS month_performance_met,
+            COALESCE(u.used_amount, 0) AS used_amount
+        FROM user_card uc
+        JOIN member m
+            ON m.member_id = uc.member_id
+            AND m.member_status = 'ACTIVE'
+        JOIN card c
+            ON c.card_id = uc.card_id
+        JOIN benefit b
+            ON b.card_id = uc.card_id
+            AND b.is_active = 'Y'
+            AND b.benefit_kind NOT IN ('GIFT', 'INSTALLMENT_FREE', 'RETROACTIVE')
+        LEFT JOIN notification_setting ns
+            ON ns.member_id = uc.member_id
+
+        <!-- 기준월 상태. 있으면 여기의 prev_performance_amount를 전월 실적으로 사용한다. -->
+        LEFT JOIN user_card_monthly_state s_curr
+            ON s_curr.user_card_id = uc.user_card_id
+            AND s_curr.base_year_month = #{baseYearMonth}
+
+        <!-- 기준월 상태가 없을 때 대체로 사용할 직전월 상태. -->
+        LEFT JOIN user_card_monthly_state s_prev
+            ON s_prev.user_card_id = uc.user_card_id
+            AND s_prev.base_year_month = #{prevYearMonth}
+
+        <!-- 전월 실적 기준으로 현재 적용 중인 MONTH 실적 구간을 찾는다. -->
+        LEFT JOIN performance_tier rt
+            ON rt.card_id = uc.card_id
+            AND rt.period_type = 'MONTH'
+            AND rt.min_performance_amount = (
+                SELECT
+                    MAX(pt2.min_performance_amount)
+                FROM performance_tier pt2
+                WHERE pt2.card_id = uc.card_id
+                    AND pt2.period_type = 'MONTH'
+                    AND pt2.min_performance_amount &lt;= COALESCE(
+                        s_curr.prev_performance_amount,
+                        s_prev.current_performance_amount,
+                        0
+                    )
+            )
+
+        <!-- 적용 구간별 혜택 월 한도. 없으면 SELECT에서 benefit.monthly_limit으로 대체한다. -->
+        LEFT JOIN benefit_tier_limit btl
+            ON btl.benefit_id = b.benefit_id
+            AND btl.tier_id = rt.tier_id
+
+        <!-- 기준월의 개별 혜택 사용 금액. 행이 없으면 0원으로 본다. -->
+        LEFT JOIN user_benefit_usage u
+            ON u.user_card_id = uc.user_card_id
+            AND u.benefit_id = b.benefit_id
+            AND u.base_year_month = #{baseYearMonth}
+
+        <!-- 선택형 혜택인 경우, 사용자가 기준월에 선택한 옵션만 후보로 남긴다. -->
+        LEFT JOIN user_card_benefit_selection sel
+            ON sel.user_card_id = uc.user_card_id
+            AND sel.base_year_month = #{baseYearMonth}
+            AND sel.option_group_code = b.option_group_code
+
+        WHERE uc.card_status = 'ACTIVE'
+            AND COALESCE(ns.benefit_limit_enabled, 1) = 1
+            AND (
+                    b.option_group_code IS NULL
+                    OR sel.selected_option_key = b.option_key
+            )
+    </select>
+
+    <!--
+        카드 통합할인한도는 개별 혜택과 무관하게 카드 하나당 한 행이다. rt 서브쿼리는
+        위 쿼리와 같은 "지금 적용 중인 MONTH 구간" 규칙을 그대로 쓴다.
+        shared_monthly_limit이 NULL이거나 0 이하인 카드는 WHERE에서 걸러
+        "평가 대상 자체가 아닌 카드"를 계산기까지 보내지 않는다(3.5절).
+    -->
+    <select id="findSharedLimitCandidateRows"
+            resultType="com.wallet.notification.batch.model.SharedLimitCandidateRow">
+        SELECT
+            uc.user_card_id AS user_card_id,
+            uc.member_id AS member_id,
+            uc.card_id AS card_id,
+            c.card_name AS card_name,
+            rt.shared_monthly_limit AS shared_monthly_limit,
+            COALESCE(s_curr.shared_limit_used, 0) AS shared_limit_used
+        FROM user_card uc
+        JOIN member m
+            ON m.member_id = uc.member_id
+            AND m.member_status = 'ACTIVE'
+        JOIN card c
+            ON c.card_id = uc.card_id
+        LEFT JOIN notification_setting ns
+            ON ns.member_id = uc.member_id
+
+        <!-- 기준월 상태. 카드 통합 한도 사용액과 전월 실적 값을 가져올 수 있다. -->
+        LEFT JOIN user_card_monthly_state s_curr
+            ON s_curr.user_card_id = uc.user_card_id
+            AND s_curr.base_year_month = #{baseYearMonth}
+
+        <!-- 기준월 상태가 없을 때 전월 실적 판단에 사용할 직전월 상태. -->
+        LEFT JOIN user_card_monthly_state s_prev
+            ON s_prev.user_card_id = uc.user_card_id
+            AND s_prev.base_year_month = #{prevYearMonth}
+
+        <!-- 전월 실적 기준으로 현재 적용 중인 MONTH 실적 구간을 찾는다. -->
+        LEFT JOIN performance_tier rt
+            ON rt.card_id = uc.card_id
+            AND rt.period_type = 'MONTH'
+            AND rt.min_performance_amount = (
+                SELECT
+                    MAX(pt2.min_performance_amount)
+                FROM performance_tier pt2
+                WHERE pt2.card_id = uc.card_id
+                    AND pt2.period_type = 'MONTH'
+                    AND pt2.min_performance_amount &lt;= COALESCE(
+                        s_curr.prev_performance_amount,
+                        s_prev.current_performance_amount,
+                        0
+                    )
+            )
+
+        WHERE uc.card_status = 'ACTIVE'
+            AND COALESCE(ns.benefit_limit_enabled, 1) = 1
+            AND rt.shared_monthly_limit IS NOT NULL
+            AND rt.shared_monthly_limit > 0
+    </select>
+</mapper>

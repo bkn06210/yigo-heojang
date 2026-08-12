@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.wallet.notification.mapper.PerformanceShortageCandidateMapper">
+    <!--
+        t 서브쿼리: 카드별 MONTH 구간 중 양수 구간의 최솟값(=기본 실적 목표, 2.2절)을 미리 구해서
+        JOIN한다. 이 서브쿼리와 매칭되는 카드만 결과에 남으므로, "MONTH 구간표가 없는 카드"와
+        "양수 실적 구간이 없는 카드"(2.1절 제외 대상)는 INNER JOIN 한 번으로 자동 제외된다.
+
+        s(user_card_monthly_state)는 LEFT JOIN이다. 기준월 상태 행이 없는 카드도 배치 대상에서
+        빠지면 안 되기 때문이다(3.2절과 같은 원칙: "기준월 상태 행을 INNER JOIN하여 행이 없는
+        카드를 배치 대상에서 제외하지 않는다"). 행이 없으면 COALESCE로 현재 실적을 0으로 본다.
+
+        ns(notification_setting)도 LEFT JOIN + COALESCE(...,1)이다. 설정 행이 없는 회원은
+        두 알림 모두 활성화된 것으로 본다는 1.4절 규칙을 SQL에서 그대로 처리한다.
+    -->
+    <select id="findCandidateRows"
+            resultType="com.wallet.notification.batch.model.PerformanceShortageCandidateRow">
+        SELECT
+            uc.user_card_id AS user_card_id,
+            uc.member_id AS member_id,
+            uc.card_id AS card_id,
+            c.card_name AS card_name,
+            t.target_performance AS target_performance,
+            COALESCE(s.current_performance_amount, 0) AS current_performance_amount
+        FROM user_card uc
+        JOIN member m
+            ON m.member_id = uc.member_id
+            AND m.member_status = 'ACTIVE'
+        JOIN card c
+            ON c.card_id = uc.card_id
+
+        <!-- 카드별 MONTH 기준 양수 실적 구간 중 가장 작은 금액을 기본 목표 실적으로 사용한다. -->
+        JOIN (
+            SELECT
+                card_id,
+                MIN(min_performance_amount) AS target_performance
+            FROM performance_tier
+            WHERE period_type = 'MONTH'
+                AND min_performance_amount > 0
+            GROUP BY card_id
+        ) t
+            ON t.card_id = uc.card_id
+
+        <!-- 기준월 상태 행이 없어도 배치 대상에서 제외하지 않고, 현재 실적은 0으로 본다. -->
+        LEFT JOIN user_card_monthly_state s
+            ON s.user_card_id = uc.user_card_id
+            AND s.base_year_month = #{baseYearMonth}
+
+        <!-- 알림 설정 행이 없으면 기본값으로 실적 부족 알림이 켜져 있다고 본다. -->
+        LEFT JOIN notification_setting ns
+            ON ns.member_id = uc.member_id
+
+        WHERE uc.card_status = 'ACTIVE'
+        AND COALESCE(ns.performance_shortage_enabled, 1) = 1
+    </select>
+
+</mapper>
