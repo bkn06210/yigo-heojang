@@ -3,7 +3,9 @@ package com.wallet.auth.mapper;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
+import com.wallet.auth.domain.TermScope;
 import com.wallet.auth.dto.TermResponse;
 
 @Mapper
@@ -17,5 +19,5 @@ public interface TermsMapper {
      * 2. 시행 시작일이 현재 시각보다 이전이며
      * 3. 시행 종료일이 없거나 아직 지나지 않은 약관 버전을 의미한다.
      */
-    List<TermResponse> findActiveTerms();
+    List<TermResponse> findActiveTerms(@Param("termScope") TermScope termScope);
 }
