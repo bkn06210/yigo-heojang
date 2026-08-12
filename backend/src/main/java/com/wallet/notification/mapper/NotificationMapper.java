@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import com.wallet.notification.batch.model.MemberDedupKeyLookup;
 import com.wallet.notification.domain.Notification;
 import com.wallet.notification.domain.NotificationListItemResult;
 import com.wallet.notification.domain.NotificationSetting;
@@ -76,5 +77,5 @@ public interface NotificationMapper {
      * 존재하는 것만 골라 돌려준다. NEAR 알림을 만들기 전 같은 한도의 EXHAUSTED가 이미
      * 발송됐는지 한 번에 확인하는 용도(3.6절).
      */
-    List<String> findExistingMemberDedupKeys(@Param("memberDedupKeys") List<String> memberDedupKeys);
+    List<String> findExistingMemberDedupKeys(@Param("lookups") List<MemberDedupKeyLookup> lookups);
 }

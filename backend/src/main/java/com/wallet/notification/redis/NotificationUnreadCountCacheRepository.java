@@ -1,10 +1,13 @@
 package com.wallet.notification.redis;
 
+import java.time.Instant;
 import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Repository;
 
 import redis.clients.jedis.Jedis;
@@ -20,18 +23,24 @@ import redis.clients.jedis.exceptions.JedisException;
  */
 @Repository
 public class NotificationUnreadCountCacheRepository {
-
     private static final Logger log = LoggerFactory.getLogger(NotificationUnreadCountCacheRepository.class);
+
+    // 이중 삭제 지연 시간. 이 값보다 느린 요청(트래픽 폭주, 느린 쿼리 등)이 있으면 그 사이의
+    // 경쟁은 여전히 놓칠 수 있다 — 완전한 해결이 아니라 실전에서 대부분의 경쟁 창을 닫는 완화책이다.
+    private static final long DOUBLE_DELETE_DELAY_MILLIS = 500;
 
     private final JedisPool jedisPool;
     private final int ttlSeconds;
+    private final TaskScheduler taskScheduler;
 
     public NotificationUnreadCountCacheRepository(
         JedisPool jedisPool,
-        @Value("${redis.unread-count.ttl-seconds}") int ttlSeconds
+        @Value("${redis.unread-count.ttl-seconds}") int ttlSeconds,
+        @Qualifier("notificationTaskScheduler") TaskScheduler taskScheduler
     ) {
         this.jedisPool = jedisPool;
         this.ttlSeconds = ttlSeconds;
+        this.taskScheduler = taskScheduler;
     }
 
     /**
@@ -93,17 +102,38 @@ public class NotificationUnreadCountCacheRepository {
             // 증감이 실제로 반영됐는지 알 수 없는 상태다. "불확실하면 삭제" 원칙을 그대로 따른다.
             log.warn("Redis 안 읽은 수 캐시 증감 실패 - 캐시를 무효화합니다. memberId={}", memberId, e);
             invalidate(memberId);
+            return;
         }
+
+        // 증감 자체는 성공했다 — 다만 이 값이 써지기 직전에 시작된
+        // "옛날 값을 읽어 캐시에 채우려는" 조회가 뒤늦게 도착해 이 값을 덮어쓸 수 있으니,
+        // 500ms 뒤에 한 번 더 지워서 혹시 덮인 옛날 값을 청소한다(이중 삭제).
+        scheduleDelayedInvalidate(memberId);
     }
 
     /**
      * 캐시 값을 신뢰할 수 없을 때(불확실한 갱신, 벌크 INSERT 등) 통째로 지운다.
      */
     public void invalidate(long memberId) {
+        boolean deleted = rawDelete(memberId);
+        if (deleted) {
+            scheduleDelayedInvalidate(memberId);
+        }
+    }
+
+    private boolean rawDelete(long memberId) {
         try (Jedis jedis = jedisPool.getResource()) {
             jedis.del(RedisKeys.unreadCountKey(memberId));
+            return true;
         } catch (JedisException e) {
             log.warn("Redis 안 읽은 수 캐시 무효화 실패 - 다음 조회에서 다시 MySQL로 채워집니다. memberId={}", memberId, e);
+            return false;
         }
+    }
+
+    private void scheduleDelayedInvalidate(long memberId) {
+        // rawDelete만 예약한다(invalidate가 아니라) — invalidate를 예약하면 그 안에서 또
+        // scheduleDelayedInvalidate를 부르면서 영원히 반복 예약되는 문제가 생긴다.
+        taskScheduler.schedule(() -> rawDelete(memberId), Instant.now().plusMillis(DOUBLE_DELETE_DELAY_MILLIS));
     }
 }

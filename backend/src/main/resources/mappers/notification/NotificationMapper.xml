@@ -133,12 +133,15 @@
         이 조회도 같은 기준으로 맞춘다.
     -->
     <select id="findExistingMemberDedupKeys" resultType="string">
-        SELECT CONCAT(member_id, ':', deduplication_key)
-        FROM notification
-        WHERE CONCAT(member_id, ':', deduplication_key) IN
-        <foreach collection="memberDedupKeys" item="key" open="(" separator="," close=")">
-            #{key}
+        SELECT CONCAT(n.member_id, ':', n.deduplication_key)
+        FROM notification n
+        JOIN (
+        <foreach collection="lookups" item="lookup" separator=" UNION ALL ">
+            SELECT #{lookup.memberId} AS member_id, #{lookup.deduplicationKey} AS deduplication_key
         </foreach>
+        ) candidates
+        ON n.member_id = candidates.member_id
+        AND n.deduplication_key = candidates.deduplication_key
     </select>
 
 </mapper>
