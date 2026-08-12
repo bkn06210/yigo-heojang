@@ -18,6 +18,8 @@ from .load import connect
 
 _STRUCTURED_DIR = Path(__file__).resolve().parent / "out" / "structured"
 _MERCHANTS_PATH = Path(__file__).resolve().parent / "out" / "merchants.json"
+# 사람이 손으로 관리하는 입력이다. 구조화 결과와 달리 약관에서 나오지 않는다.
+_ALIASES_PATH = Path(__file__).resolve().parent / "aliases.json"
 _OUTPUT_PATH = (
     Path(__file__).resolve().parent.parent.parent / "backend" / "db" / "91_seed_card_benefit.sql"
 )
@@ -109,6 +111,7 @@ def build() -> str:
 
     # ── 가맹점 ──────────────────────────────────────────────
     merchant_ids: Dict[str, int] = {}
+    merchant_code_ids: Dict[str, int] = {}
     rows = []
     for index, m in enumerate(merchants, start=1):
         category_id = category_ids.get(m["category_code"])
@@ -116,6 +119,7 @@ def build() -> str:
             warnings.append(f"카테고리 없음: {m['merchant_name']} → {m['category_code']}")
             continue
         merchant_ids[m["merchant_name"]] = index
+        merchant_code_ids[m["merchant_code"]] = index
         rows.append(
             f"    ({index}, {sql_value(m['merchant_code'])}, "
             f"{sql_value(m['merchant_name'])}, {category_id})"
@@ -322,7 +326,7 @@ def build() -> str:
 
             benefit_rows.append(
                 "    ({}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {},"
-                " {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {})".format(
+                " {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {})".format(
                     benefit_seq, card_id,
                     sql_value(benefit.get("benefit_name")),
                     sql_value(kind), sql_value(calc), value,
@@ -348,6 +352,11 @@ def build() -> str:
                     sql_value(benefit.get("daily_limit")),
                     sql_value(benefit.get("use_shared_limit") or "N"),
                     sql_value(benefit.get("exclude_from_performance") or "N"),
+                    # 선택형 혜택(매월 택1)은 이 두 값이 있어야 그달에 고른 선택지만 적용된다.
+                    # 비우면 엔진이 "선택형이 아니다"로 보고 묶음의 모든 선택지를 동시에 켜서,
+                    # 고르지도 않은 혜택이 추천 계산과 카드 상세 화면에 함께 나온다.
+                    sql_value(benefit.get("option_group_code")),
+                    sql_value(benefit.get("option_key")),
                 )
             )
 
@@ -390,7 +399,8 @@ def build() -> str:
         " min_txn_amount, max_eligible_amount, max_benefit_per_txn, monthly_limit,"
         " limit_group_code, monthly_count_limit, daily_count_limit, yearly_count_limit,"
         " quarterly_count_limit, quarterly_limit, yearly_limit, count_group_code,"
-        " daily_limit, use_shared_limit, exclude_from_performance) VALUES"
+        " daily_limit, use_shared_limit, exclude_from_performance,"
+        " option_group_code, option_key) VALUES"
     )
     lines.append(",\n".join(benefit_rows) + ";")
     lines.append("")
@@ -410,7 +420,74 @@ def build() -> str:
         lines.append(",\n".join(exclusion_rows) + ";")
         lines.append("")
 
+    # ── 별칭 ────────────────────────────────────────────────
+    alias_lines, alias_warnings = build_alias_sql(
+        merchant_code_ids, set(merchant_ids), card_ids
+    )
+    lines.extend(alias_lines)
+    warnings.extend(alias_warnings)
+
     return "\n".join(lines), warnings, (category_ids, merchant_ids, card_ids, tier_ids, cards)
+
+
+def build_alias_sql(
+    merchant_code_ids: Dict[str, int],
+    merchant_names: set,
+    card_ids: Dict[str, int],
+) -> tuple:
+    """별칭 INSERT 문.
+
+    별칭이 겹치면 UNIQUE 제약에 걸려 시드 적재가 통째로 실패한다. 그러면 어느 줄이
+    문제인지 MySQL 오류만 보고 되짚어야 하므로, 생성 단계에서 걸러 경고로 알린다.
+    """
+    if not _ALIASES_PATH.exists():
+        return [], [f"별칭 파일 없음: {_ALIASES_PATH.name}"]
+
+    data = json.loads(_ALIASES_PATH.read_text(encoding="utf-8"))
+    lines: List[str] = []
+    warnings: List[str] = []
+
+    def collect(mapping: Dict[str, List[str]], resolve: Dict[str, int], label: str) -> List[str]:
+        rows: List[str] = []
+        seen: Dict[str, str] = {}
+        for key, aliases in mapping.items():
+            target_id = resolve.get(key)
+            if target_id is None:
+                warnings.append(f"{label} 별칭의 대상을 찾을 수 없음: {key}")
+                continue
+            for alias in aliases:
+                # 대소문자를 무시하는 콜레이션이라 'iD ON'과 'id on'이 DB에서는 같은 값이다.
+                normalized = alias.strip().casefold()
+                if normalized in seen:
+                    warnings.append(f"{label} 별칭 중복: {alias} ({seen[normalized]} ↔ {key})")
+                    continue
+                seen[normalized] = key
+                rows.append(f"    ({target_id}, {sql_value(alias.strip())})")
+        return rows
+
+    merchant_rows = collect(data.get("merchant") or {}, merchant_code_ids, "가맹점")
+    card_rows = collect(data.get("card") or {}, card_ids, "카드")
+
+    # 정식 명칭과 같은 별칭은 이름 정확 일치로 이미 잡히므로 행만 늘린다.
+    for key, aliases in (data.get("merchant") or {}).items():
+        for alias in aliases:
+            if alias.strip() in merchant_names:
+                warnings.append(f"가맹점 별칭이 정식 명칭과 같음: {alias}")
+    for key, aliases in (data.get("card") or {}).items():
+        for alias in aliases:
+            if alias.strip() in card_ids:
+                warnings.append(f"카드 별칭이 정식 명칭과 같음: {alias}")
+
+    if merchant_rows:
+        lines.append("INSERT INTO merchant_alias (merchant_id, alias) VALUES")
+        lines.append(",\n".join(merchant_rows) + ";")
+        lines.append("")
+    if card_rows:
+        lines.append("INSERT INTO card_alias (card_id, alias) VALUES")
+        lines.append(",\n".join(card_rows) + ";")
+        lines.append("")
+
+    return lines, warnings
 
 
 def main() -> None:

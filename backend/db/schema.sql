@@ -58,6 +58,8 @@ DROP TABLE IF EXISTS benefit;
 DROP TABLE IF EXISTS performance_exclusion;
 DROP TABLE IF EXISTS performance_tier;
 DROP TABLE IF EXISTS user_card;
+DROP TABLE IF EXISTS card_alias;
+DROP TABLE IF EXISTS merchant_alias;
 DROP TABLE IF EXISTS merchant;
 DROP TABLE IF EXISTS category;
 DROP TABLE IF EXISTS card_annual_fee;
@@ -306,6 +308,35 @@ CREATE TABLE merchant (
     KEY idx_merchant_category (category_id),
     CONSTRAINT fk_merchant_category FOREIGN KEY (category_id) REFERENCES category (category_id)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT '가맹점(브랜드)';
+
+-- 사람이 부르는 이름을 정식 명칭에 잇는다. 챗봇이 "스벅에서 얼마 썼어?" 같은 질문을
+-- 처리하려면 필요하다.
+-- 이름 유사도로 대신할 수 없다. "스벅"과 "스타벅스"는 글자가 '스' 하나만 겹쳐
+-- 어떤 문자열 거리로도 가까워지지 않는다. 축약·별명은 등록해두는 것 말고 방법이 없다.
+-- alias를 UNIQUE로 잡은 것은 판단이다. 한 별칭이 두 가맹점을 가리키면 어느 쪽인지
+-- 알 수 없어 조용히 틀린 답이 나간다. 모호한 별칭은 아예 등록하지 않고, 못 찾은 것으로
+-- 두어 되묻게 한다. 후보를 여럿 보여주고 고르게 하려면 이 제약을 풀고 복수 반환으로 바꾼다.
+CREATE TABLE merchant_alias (
+    merchant_alias_id BIGINT      NOT NULL AUTO_INCREMENT COMMENT '가맹점 별칭 ID',
+    merchant_id       BIGINT      NOT NULL COMMENT '가맹점 ID',
+    alias             VARCHAR(50) NOT NULL COMMENT '사용자가 부르는 표현 (예: 스벅)',
+    PRIMARY KEY (merchant_alias_id),
+    UNIQUE KEY uk_merchant_alias (alias),
+    KEY idx_merchant_alias_merchant (merchant_id),
+    CONSTRAINT fk_merchant_alias_merchant FOREIGN KEY (merchant_id) REFERENCES merchant (merchant_id)
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT '가맹점 별칭';
+
+-- 카드명은 길고 사람은 줄여 부른다("신한카드 핏(Fit)" → "핏카드", "신한 핏").
+-- merchant_alias와 같은 이유로 필요하고 같은 규칙을 따른다.
+CREATE TABLE card_alias (
+    card_alias_id BIGINT      NOT NULL AUTO_INCREMENT COMMENT '카드 별칭 ID',
+    card_id       BIGINT      NOT NULL COMMENT '카드 ID',
+    alias         VARCHAR(50) NOT NULL COMMENT '사용자가 부르는 표현 (예: 핏카드)',
+    PRIMARY KEY (card_alias_id),
+    UNIQUE KEY uk_card_alias (alias),
+    KEY idx_card_alias_card (card_id),
+    CONSTRAINT fk_card_alias_card FOREIGN KEY (card_id) REFERENCES card (card_id)
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT '카드 별칭';
 
 -- 카드사가 공시한 약관 원문. benefit으로 구조화하기 전의 원본이다.
 -- 원문을 DB에 두는 이유: 혜택 규칙과 약관이 같은 곳에서 관리돼야 카드를 추가할 때
