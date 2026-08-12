@@ -60,7 +60,6 @@ const handleWithdrawal = () => {
     <div class="content-container">
       <!-- 안내 타이틀 및 문구 -->
       <div class="notice-section">
-        <h2 class="notice-title">회원 탈퇴</h2>
         <p class="notice-subtitle">탈퇴 전 확인해주세요.</p>
       </div>
 

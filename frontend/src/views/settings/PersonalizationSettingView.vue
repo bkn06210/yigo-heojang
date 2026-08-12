@@ -691,9 +691,11 @@ onMounted(() => {
   position: fixed;
 
   bottom: 0;
-  left: 0;
+  left: 50%;
+  transform: translateX(-50%);
 
   width: 100%;
+  max-width: 480px;
 
   padding: var(--space-sm) var(--space-md);
 

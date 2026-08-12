@@ -41,9 +41,6 @@ watch(notifications, (newVal) => {
     <PageHeader title="알림 설정" @back="goBack" />
 
     <div class="content-container">
-      <!-- 안내 타이틀 -->
-      <h1 class="page-title">알림 설정</h1>
-
       <!-- 알림 설정 토글 리스트 (Bento: ON 항목 강조) -->
       <div class="setting-list">
         <!-- 1. 실적 부족 알림 -->

@@ -124,9 +124,6 @@ const navigateTo = (path) => {
 
     <div class="content-container">
 
-      <h1 class="page-title">계정 및 보안</h1>
-
-
       <!-- 가입 정보 -->
       <div class="section-group">
 

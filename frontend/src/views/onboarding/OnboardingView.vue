@@ -159,11 +159,13 @@ const skip = () => {
 .onboarding-container {
 
   width: 100%;
+  max-width: 480px;
   height: 100vh;
 
   display: flex;
   flex-direction: column;
 
+  margin: 0 auto;
   padding: var(--space-xl);
   background: var(--color-bg);
 
