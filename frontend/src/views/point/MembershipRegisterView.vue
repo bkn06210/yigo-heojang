@@ -1,10 +1,29 @@
 ﻿<script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { getMembershipProviders, registerMembership } from '@/api/walletApi'
 
 import PageHeader from '@/components/common/PageHeader.vue'
 
 const router = useRouter()
+const errorMessage = ref('')
+
+const loadProviders = async () => {
+  try {
+    const data = await getMembershipProviders()
+    membershipList.value = (data?.providers || data || [])
+      .filter((provider) => !provider.isRegistered)
+      .map((provider) => ({
+        id: Number(provider.pointProviderId),
+        name: provider.providerName,
+        logo: provider.logoImageUrl || '',
+        // 서버가 주요 사용처 3곳을 쉼표로 이어 보낸다. 없으면 빈 배열.
+        mainUses: (provider.mainUsePlaces || '').split(',').filter(Boolean),
+      }))
+  } catch (error) {
+    errorMessage.value = error?.response?.data?.message || error?.message || '제휴 멤버십을 불러오지 못했습니다.'
+  }
+}
 
 
 // 검색어
@@ -19,40 +38,8 @@ const showModal = ref(false)
 const selectedMembership = ref(null)
 
 
-// 임시 멤버십 데이터
-// 추후 API 응답 데이터로 교체 예정
-const membershipList = ref([
-  {
-    id: 1,
-    name: 'CJ ONE',
-    alias: ['cj one', 'cjone', '씨제이원', '씨제이'],
-    mainUses: [
-      '뚜레쥬르',
-      '올리브영',
-      'CGV'
-    ]
-  },
-  {
-    id: 2,
-    name: '해피포인트',
-    alias: ['happy point', 'happypoint'],
-    mainUses: [
-      '파리바게뜨',
-      '던킨',
-      '배스킨라빈스'
-    ]
-  },
-  {
-    id: 3,
-    name: 'KT 멤버십',
-    alias: ['kt membership', 'kt멤버십', '케이티', '케이티 멤버십'],
-    mainUses: [
-      '편의점',
-      '영화관',
-      '카페'
-    ]
-  }
-])
+// API에서 로드된 멤버십 데이터
+const membershipList = ref([])
 
 
 // 한글 초성만 추출 (예: "스타벅스" → "ㅅㅌㅂㅅ")
@@ -173,17 +160,15 @@ const popularMemberships = computed(() => {
 })
 
 
-// 멤버십 추가 클릭
-// TODO: 백엔드 연동 필요 - 현재는 완료 팝업만 띄우고 실제로 저장하지 않음.
-// PointListView.vue의 membershipList(로컬 빈 배열)와 연결되어 있지 않아서
-// 여기서 "추가"를 눌러도 혜택 목록 페이지에는 반영되지 않음.
-// 혜택 API 연동 작업(다른 팀원 담당)이 끝나면, 그 응답을 받아오는 방식으로 교체할 것.
-const addMembership = (membership) => {
-
-  selectedMembership.value = membership
-
-  showModal.value = true
-
+const addMembership = async (membership) => {
+  try {
+    await registerMembership(membership.id)
+    selectedMembership.value = membership
+    showModal.value = true
+    membershipList.value = membershipList.value.filter((item) => item.id !== membership.id)
+  } catch (error) {
+    errorMessage.value = error?.response?.data?.message || error?.message || '멤버십 추가에 실패했습니다.'
+  }
 }
 
 
@@ -219,6 +204,8 @@ const selectMembership = (membership) => {
   keyword.value = membership.name
 
 }
+
+onMounted(loadProviders)
 
 // 자동완성 선택
 const selectSuggestion = (membership) => {
