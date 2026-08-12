@@ -10,6 +10,16 @@ public class MembershipProviderResponse {
     private String defaultRecommendYn;
     private Integer recommendPriority;
     private String recommendMessage;
+    /** 목록 카드 미리보기용 주요 사용처 3곳. 쉼표로 이어 붙인 값이다. 사용처가 없으면 null. */
+    private String mainUsePlaces;
+
+    public String getMainUsePlaces() {
+        return mainUsePlaces;
+    }
+
+    public void setMainUsePlaces(String mainUsePlaces) {
+        this.mainUsePlaces = mainUsePlaces;
+    }
 
     public Long getPointProviderId() {
         return pointProviderId;
