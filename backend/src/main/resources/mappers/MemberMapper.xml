@@ -60,6 +60,21 @@
         WHERE member_id = #{memberId}
     </select>
 
+    <update id="anonymizeMember">
+        UPDATE member
+        SET
+            email = #{anonymizedEmail},
+            name = #{anonymizedName},
+            nickname = #{anonymizedNickname},
+            password_hash = #{anonymizedPasswordHash},
+            member_status = 'WITHDRAWN',
+            withdrawn_at = #{withdrawnAt},
+            updated_at = CURRENT_TIMESTAMP
+        WHERE member_id = #{memberId}
+          AND member_status = 'ACTIVE'
+          AND withdrawn_at IS NULL
+    </update>
+
     <!--
         useGeneratedKeys="true":
         - MySQL의 AUTO_INCREMENT로 생성된 member_id를 자바 객체에 다시 채워준다.
