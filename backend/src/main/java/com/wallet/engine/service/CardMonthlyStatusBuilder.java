@@ -4,6 +4,7 @@ import com.wallet.engine.calculator.PerformanceTierResolver;
 import com.wallet.engine.dao.dto.BenefitRow;
 import com.wallet.engine.dto.BenefitUsageStatus;
 import com.wallet.engine.dto.CardMonthlyStatus;
+import com.wallet.engine.model.PerformancePeriod;
 import com.wallet.engine.model.PerformanceProgress;
 import com.wallet.engine.model.PerformanceStatus;
 import com.wallet.engine.model.PerformanceTier;
@@ -25,7 +26,7 @@ import java.util.Map;
  * 세 축을 함께 얹는다:
  *   · 전월실적 축(judge)   → performanceMet, sharedLimit (현재 구간의 통합한도)
  *   · 당월누적 축(progressOf) → targetPerformance, remainingPerformance, achievementRate
- *   · 혜택별 이용 현황       → benefits[] (묶음 한도는 그룹 합산)
+ *   · 혜택별 이용 현황       → benefits[] (묶음 한도는 그룹 합산, 실적 충족은 혜택의 축 기준)
  */
 @Component
 public class CardMonthlyStatusBuilder {
@@ -47,11 +48,15 @@ public class CardMonthlyStatusBuilder {
      * @param tiers                    카드의 실적구간 목록 (0원 구간 포함, 최소 1행)
      * @param benefitRows              카드의 활성 혜택(판정 구간의 개별한도 조인됨, GIFT·RETROACTIVE 제외)
      * @param usedAmountByBenefit      혜택 id → 이번 달 누적 혜택액(user_benefit_usage.used_amount)
+     * @param quarterStatus            전분기 실적으로 판정한 구간. 분기 구간표가 없는 카드면 null.
+     *                                 전분기 축을 쓰는 혜택의 실적 충족 판정에만 쓴다 — 진행률(달성률·남은실적)은
+     *                                 전월 축 하나로 유지한다
      */
     public CardMonthlyStatus build(long userCardId, String cardName, String yearMonth,
                                    long prevPerformanceAmount, long currentPerformanceAmount,
                                    long sharedLimitUsed, List<PerformanceTier> tiers,
-                                   List<BenefitRow> benefitRows, Map<Long, Long> usedAmountByBenefit) {
+                                   List<BenefitRow> benefitRows, Map<Long, Long> usedAmountByBenefit,
+                                   PerformanceStatus quarterStatus) {
         // 전월실적 축 — 현재 적용 구간과 통합한도, 실적 충족 여부
         PerformanceStatus status = tierResolver.judge(tiers, prevPerformanceAmount);
         // 당월누적 축 — 다음 목표까지의 진행률
@@ -69,7 +74,7 @@ public class CardMonthlyStatusBuilder {
                 status.performanceMet(),
                 status.sharedMonthlyLimit(),
                 sharedLimitUsed,
-                buildBenefits(benefitRows, usedAmountByBenefit));
+                buildBenefits(benefitRows, usedAmountByBenefit, status, quarterStatus));
     }
 
     /**
@@ -82,12 +87,14 @@ public class CardMonthlyStatusBuilder {
      * 화면이 혜택마다 따로 더하면 한도가 그룹 혜택 수만큼 배로 보이므로, 묶인 혜택들은 같은 값을 갖는다.
      *
      * <b>실적 조건으로 걸러내지는 않는다.</b> 카드 상세는 "이 카드에 어떤 혜택이 있나"를 보는 자리라
-     * 지금 못 쓰는 혜택도 보여야 한다. 대신 {@code requirePerformance}를 함께 내려, 카드의
-     * {@code performanceMet}과 묶어 보면 "지금 받을 수 있나"를 판단할 수 있게 한다.
+     * 지금 못 쓰는 혜택도 보여야 한다. 대신 {@code requirePerformance}와 {@code performanceMet}을
+     * 함께 내려, 둘을 보면 "지금 받을 수 있나"를 판단할 수 있게 한다.
      * 홈 요약(#2)이 "지금 쓸 수 있는 것"만 남기는 필터는 CardStatusOverviewBuilder가 수행한다.
      */
     private List<BenefitUsageStatus> buildBenefits(List<BenefitRow> benefitRows,
-                                                   Map<Long, Long> usedAmountByBenefit) {
+                                                   Map<Long, Long> usedAmountByBenefit,
+                                                   PerformanceStatus monthStatus,
+                                                   PerformanceStatus quarterStatus) {
         List<BenefitUsageStatus> result = new ArrayList<>();
         for (BenefitRow row : benefitRows) {
             Long monthlyLimit = effectiveMonthlyLimit(row);
@@ -98,9 +105,29 @@ public class CardMonthlyStatusBuilder {
             result.add(new BenefitUsageStatus(
                     row.getBenefitId(), row.getBenefitName(), row.getLimitGroupCode(),
                     usedAmount, monthlyLimit, remainingLimit, usageRate(monthlyLimit, usedAmount),
-                    "Y".equals(row.getRequirePerformance())));
+                    "Y".equals(row.getRequirePerformance()),
+                    performanceMet(row, monthStatus, quarterStatus),
+                    "Y".equals(row.getUseSharedLimit())));
         }
         return result;
+    }
+
+    /**
+     * 이 혜택의 실적 축으로 충족 여부를 판정한다.
+     *
+     * 한 카드가 전월 축과 전분기 축을 함께 쓸 수 있다(일상 혜택은 전월 40만원, Flex 혜택은
+     * 전분기 100만원). 축을 가리지 않고 전월 충족 여부 하나로 판정하면, 분기 실적이 모자란
+     * 상태에서도 분기 혜택을 받을 수 있다고 응답하게 된다.
+     *
+     * 분기 구간표가 없는 카드에 분기 축 혜택이 들어 있으면 판정할 근거가 없다. 그때는
+     * 미충족으로 본다 — 받을 수 있다고 말했다가 실제로 안 나오는 쪽이 반대보다 나쁘다.
+     */
+    private boolean performanceMet(BenefitRow row, PerformanceStatus monthStatus,
+                                   PerformanceStatus quarterStatus) {
+        if (PerformancePeriod.QUARTER.name().equals(row.getPerformancePeriod())) {
+            return quarterStatus != null && quarterStatus.performanceMet();
+        }
+        return monthStatus.performanceMet();
     }
 
     /**

@@ -460,6 +460,6 @@ public class SettlementService {
         return statusBuilder.build(
                 statusRow.getUserCardId(), statusRow.getCardName(), baseYearMonth,
                 statusRow.getPrevPerformanceAmount(), statusRow.getCurrentPerformanceAmount(),
-                statusRow.getSharedLimitUsed(), tiers, benefitRows, usedAmountByBenefit);
+                statusRow.getSharedLimitUsed(), tiers, benefitRows, usedAmountByBenefit, quarterStatus);
     }
 }

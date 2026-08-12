@@ -3,6 +3,7 @@ package com.wallet.engine.service;
 import com.wallet.engine.dao.dto.BenefitRow;
 import com.wallet.engine.dto.BenefitUsageStatus;
 import com.wallet.engine.dto.CardMonthlyStatus;
+import com.wallet.engine.model.PerformanceStatus;
 import com.wallet.engine.model.PerformanceTier;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -33,7 +34,7 @@ class CardMonthlyStatusBuilderTest {
         // 전월 35만 → 30만 구간 충족(통합한도 2만). 당월 24만 → 목표 30만, 달성률 80%
         CardMonthlyStatus status = builder.build(
                 12, "삼성 iD ON", "2026-08",
-                350_000, 240_000, 8_000, TIERS, List.of(), Map.of());
+                350_000, 240_000, 8_000, TIERS, List.of(), Map.of(), null);
 
         assertThat(status.performanceMet()).isTrue();
         assertThat(status.sharedLimit()).isEqualTo(20_000L);
@@ -49,7 +50,7 @@ class CardMonthlyStatusBuilderTest {
         List<PerformanceTier> onlyZeroTier = List.of(new PerformanceTier(1, 0, null));
 
         CardMonthlyStatus status = builder.build(
-                1, "기본카드", "2026-08", 0, 0, 0, onlyZeroTier, List.of(), Map.of());
+                1, "기본카드", "2026-08", 0, 0, 0, onlyZeroTier, List.of(), Map.of(), null);
 
         assertThat(status.performanceMet()).isFalse();
         assertThat(status.achievementRate()).isNull();
@@ -62,7 +63,7 @@ class CardMonthlyStatusBuilderTest {
 
         CardMonthlyStatus status = builder.build(
                 1, "카드", "2026-08", 350_000, 0, 0, TIERS,
-                List.of(row), Map.of(10L, 2_000L));
+                List.of(row), Map.of(10L, 2_000L), null);
 
         BenefitUsageStatus benefit = only(status);
         assertThat(benefit.benefitId()).isEqualTo(10L);
@@ -81,7 +82,7 @@ class CardMonthlyStatusBuilderTest {
 
         CardMonthlyStatus status = builder.build(
                 1, "카드", "2026-08", 350_000, 0, 0, TIERS,
-                List.of(telecom, utility), Map.of(20L, 1_000L, 21L, 2_000L));
+                List.of(telecom, utility), Map.of(20L, 1_000L, 21L, 2_000L), null);
 
         // 두 혜택 모두 그룹 합산(3,000) 기준으로 같은 값을 갖는다 — 화면이 배로 더하지 않게
         assertThat(status.benefits()).hasSize(2);
@@ -100,7 +101,7 @@ class CardMonthlyStatusBuilderTest {
 
         CardMonthlyStatus status = builder.build(
                 1, "카드", "2026-08", 350_000, 0, 0, TIERS,
-                List.of(limited, unlimited), Map.of(10L, 1_000L, 30L, 5_000L));
+                List.of(limited, unlimited), Map.of(10L, 1_000L, 30L, 5_000L), null);
 
         assertThat(status.benefits()).extracting(BenefitUsageStatus::benefitId)
                 .containsExactly(10L, 30L);
@@ -119,7 +120,7 @@ class CardMonthlyStatusBuilderTest {
         BenefitRow row = benefitRow(60, "그룹 한도 초과 혜택", null, 10_000L, null);
 
         CardMonthlyStatus status = builder.build(
-                1, "카드", "2026-08", 350_000, 0, 0, TIERS, List.of(row), Map.of(60L, 11_600L));
+                1, "카드", "2026-08", 350_000, 0, 0, TIERS, List.of(row), Map.of(60L, 11_600L), null);
 
         BenefitUsageStatus benefit = only(status);
         // 잔여는 0으로 깎으면서 이용률만 116%를 내보내면 응답이 자기모순이다
@@ -133,7 +134,7 @@ class CardMonthlyStatusBuilderTest {
         BenefitRow row = benefitRow(50, "구간 미달로 한도 0", null, 0L, null);
 
         CardMonthlyStatus status = builder.build(
-                1, "카드", "2026-08", 350_000, 0, 0, TIERS, List.of(row), Map.of());
+                1, "카드", "2026-08", 350_000, 0, 0, TIERS, List.of(row), Map.of(), null);
 
         BenefitUsageStatus benefit = only(status);
         assertThat(benefit.monthlyLimit()).isZero();
@@ -153,12 +154,64 @@ class CardMonthlyStatusBuilderTest {
         // 전월실적 0 → 0원 구간 → 실적 미충족. 상세는 그래도 둘 다 보여준다
         CardMonthlyStatus status = builder.build(
                 1, "카드", "2026-08", 0, 0, 0, TIERS,
-                List.of(conditional, unconditional), Map.of());
+                List.of(conditional, unconditional), Map.of(), null);
 
         assertThat(status.performanceMet()).isFalse();
         assertThat(status.benefits()).hasSize(2);
         assertThat(status.benefits().get(0).requirePerformance()).isTrue();
         assertThat(status.benefits().get(1).requirePerformance()).isFalse();
+        // 둘 다 전월 축이라 카드의 충족 여부를 그대로 따른다
+        assertThat(status.benefits()).allMatch(benefit -> !benefit.performanceMet());
+    }
+
+    @Test
+    @DisplayName("전분기 실적을 쓰는 혜택은 전월이 아니라 분기 구간으로 충족을 판정한다")
+    void 분기_혜택은_분기_구간으로_판정한다() {
+        BenefitRow monthly = benefitRow(10, "일상 혜택", null, 5_000L, null);
+        monthly.setPerformancePeriod("MONTH");
+        BenefitRow quarterly = benefitRow(20, "Flex 혜택", null, 50_000L, null);
+        quarterly.setPerformancePeriod("QUARTER");
+
+        // 전월 35만 → 전월 축 충족. 전분기는 0원 구간이라 미충족.
+        // 축을 가리지 않으면 Flex 혜택까지 충족으로 응답해 "받을 수 있다"가 사실과 달라진다.
+        CardMonthlyStatus status = builder.build(
+                1, "핏카드", "2026-08", 350_000, 0, 0, TIERS,
+                List.of(monthly, quarterly), Map.of(),
+                new PerformanceStatus(9, 0, null));
+
+        assertThat(status.performanceMet()).isTrue();
+        assertThat(status.benefits().get(0).performanceMet()).isTrue();
+        assertThat(status.benefits().get(1).performanceMet()).isFalse();
+    }
+
+    @Test
+    @DisplayName("분기 구간표가 없는 카드의 분기 축 혜택은 미충족으로 본다")
+    void 분기_구간표가_없으면_미충족이다() {
+        // 판정할 근거가 없다. 받을 수 있다고 했다가 안 나오는 쪽이 반대보다 나쁘다.
+        BenefitRow quarterly = benefitRow(20, "Flex 혜택", null, 50_000L, null);
+        quarterly.setPerformancePeriod("QUARTER");
+
+        CardMonthlyStatus status = builder.build(
+                1, "카드", "2026-08", 350_000, 0, 0, TIERS, List.of(quarterly), Map.of(), null);
+
+        assertThat(status.performanceMet()).isTrue();
+        assertThat(only(status).performanceMet()).isFalse();
+    }
+
+    @Test
+    @DisplayName("통합할인한도를 쓰는 혜택인지 응답에 표시한다")
+    void 통합한도_사용_여부를_표시한다() {
+        // 개별 잔여만으로는 "받을 수 있나"를 알 수 없다 — 통합 지갑이 비면 못 받는다
+        BenefitRow shared = benefitRow(10, "통합한도 혜택", null, 5_000L, null);
+        shared.setUseSharedLimit("Y");
+        BenefitRow own = benefitRow(20, "개별한도 혜택", null, 5_000L, null);
+        own.setUseSharedLimit("N");
+
+        CardMonthlyStatus status = builder.build(
+                1, "카드", "2026-08", 350_000, 0, 0, TIERS, List.of(shared, own), Map.of(), null);
+
+        assertThat(status.benefits().get(0).useSharedLimit()).isTrue();
+        assertThat(status.benefits().get(1).useSharedLimit()).isFalse();
     }
 
     @Test
@@ -169,7 +222,7 @@ class CardMonthlyStatusBuilderTest {
 
         CardMonthlyStatus status = builder.build(
                 1, "카드", "2026-08", 350_000, 0, 0, TIERS,
-                List.of(row), Map.of(40L, 5_000L));
+                List.of(row), Map.of(40L, 5_000L), null);
 
         BenefitUsageStatus benefit = only(status);
         assertThat(benefit.monthlyLimit()).isEqualTo(10_000L);

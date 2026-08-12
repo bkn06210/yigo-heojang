@@ -54,7 +54,7 @@ public class CardStatusOverviewBuilder {
                 status.performanceMet(),
                 status.sharedLimit(),
                 status.sharedLimitUsed(),
-                toBenefitsSummary(status.benefits(), status.performanceMet()));
+                toBenefitsSummary(status.benefits(), status.sharedLimit(), status.sharedLimitUsed()));
     }
 
     /**
@@ -62,8 +62,8 @@ public class CardStatusOverviewBuilder {
      *
      * 카드 상세(#3)와 목적이 달라 기준도 다르다. 상세는 "이 카드에 어떤 혜택이 있나"라서 전부
      * 보여주지만, 홈 위젯은 "지금 뭘 받을 수 있나"를 보는 자리다. 그래서 여기서만 두 가지를 뺀다.
-     *   · 한도를 다 쓴 혜택(잔여 0)
-     *   · 실적 미충족 카드의 실적 조건부 혜택 — 이번 달엔 계산기가 아예 적용하지 않는다.
+     *   · 한도를 다 쓴 혜택(개별 잔여 0, 또는 통합한도를 쓰는데 카드의 통합 잔여가 0)
+     *   · 실적 미충족 혜택 — 이번 달엔 계산기가 아예 적용하지 않는다.
      *     남겨두면 "남은 혜택 5,000원"과 "실적 미달"이 한 화면에 같이 뜨는 모순이 된다.
      *     그 카드는 브리핑이 "이 카드부터 채우라"고 안내하므로 정보가 사라지지는 않는다.
      *
@@ -73,16 +73,21 @@ public class CardStatusOverviewBuilder {
      * 묶음을 접지 않으면 화면이 같은 지갑을 여러 번 더한다. 대신 접히면서 사라지는 혜택명은
      * "외 N건"으로 표시에 남긴다 — 정보를 지우지 않으면서 금액은 한 번만 노출하기 위함이다.
      *
-     * <b>여기 잔여액에 통합할인한도는 반영하지 않는다.</b> 통합 잔여는 카드 단위 값이라
+     * <b>잔여액 자체에 통합할인한도를 섞지는 않는다.</b> 통합 잔여는 카드 단위 값이라
      * (sharedLimit − sharedLimitUsed) 응답에 이미 따로 있고, 성격이 다른 두 잔액이라 합치지 않는다.
      * 화면은 통합 잔여를 카드 단위로 한 줄 두고 그 안에서 개별 잔여를 보여준다.
+     * 다만 통합 잔여가 0이면 그 한도를 쓰는 혜택은 <b>목록에서 뺀다</b> — 개별 잔액이 남아 있어도
+     * 실제로는 못 받으므로, 위의 "한도를 다 쓴 혜택"과 같은 경우다. 금액을 합치는 것과 다르다.
      *
-     * @param performanceMet 이 카드의 전월실적 충족 여부
+     * @param card 이 카드의 요약. 실적 충족은 혜택마다 축이 달라 혜택 쪽 값을 쓰고,
+     *             통합 잔여만 카드 단위로 본다
      */
     private List<BenefitSummary> toBenefitsSummary(List<BenefitUsageStatus> benefits,
-                                                   boolean performanceMet) {
+                                                   Long sharedLimit, long sharedLimitUsed) {
+        boolean sharedLimitExhausted = sharedLimitExhausted(sharedLimit, sharedLimitUsed);
         List<BenefitUsageStatus> usableBenefits = benefits.stream()
-                .filter(benefit -> performanceMet || !benefit.requirePerformance())
+                .filter(benefit -> !benefit.requirePerformance() || benefit.performanceMet())
+                .filter(benefit -> !benefit.useSharedLimit() || !sharedLimitExhausted)
                 .toList();
 
         List<BenefitSummary> result = new ArrayList<>();
@@ -173,11 +178,16 @@ public class CardStatusOverviewBuilder {
      * 여기서는 현재 상태만 보고 <b>앞으로 무엇을 하면 되는지</b>만 말한다.
      *
      * 걸러내는 것:
-     *   · 이번 달 계산에 안 잡히는 혜택 — 실적 미충족 카드의 실적 조건부 혜택.
-     *     권해봐야 적용되지 않아 "이 카드로 결제하세요"가 거짓말이 된다
+     *   · 이번 달 계산에 안 잡히는 혜택 — 실적 조건을 못 채운 혜택.
+     *     권해봐야 적용되지 않아 "이 카드로 결제하세요"가 거짓말이 된다.
+     *     <b>카드가 아니라 혜택의 실적 축으로 본다</b> — 한 카드가 전월 축과 전분기 축을 함께 쓸 수 있어,
+     *     전월 실적만 보면 분기 실적이 모자란 혜택을 권하게 된다
      *   · 이미 받고 있는 혜택(소진액 &gt; 0) — 안 쓰는 것이 아니다
-     *   · 한도를 다 쓴 혜택(잔여 0) — 더 결제해도 안 나온다. 잔여 null은 제약이 없다는 뜻이라 남긴다
+     *   · 한도를 다 쓴 혜택 — 더 결제해도 안 나온다. 개별 잔여 0뿐 아니라 <b>통합할인한도를 쓰는데
+     *     카드의 통합 잔여가 0</b>인 경우도 여기다(개별 한도가 아예 없는 혜택이 여기 걸린다).
+     *     잔여 null은 제약이 없다는 뜻이라 남긴다
      *   · 업종을 겨냥하지 않는 혜택 — 소비 업종과 맞춰볼 기준이 없다
+     *   · 제외된 업종의 소비 — 대상 업종에 속해도 그 혜택이 배제하는 업종이면 근거가 못 된다
      *
      * 후보가 여럿이면 <b>소비가 큰 업종</b>을 고른다. 그래야 안내가 실제 생활에 가깝다.
      * 금액까지 같으면 benefitId 오름차순 — 같은 입력에 같은 답이 나오게 하는 재현성 규칙이다.
@@ -187,8 +197,10 @@ public class CardStatusOverviewBuilder {
         UnusedBenefit best = null;
 
         for (CardMonthlyStatus status : statuses) {
+            boolean sharedLimitExhausted =
+                    sharedLimitExhausted(status.sharedLimit(), status.sharedLimitUsed());
             for (BenefitUsageStatus benefit : status.benefits()) {
-                if (benefit.requirePerformance() && !status.performanceMet()) {
+                if (benefit.requirePerformance() && !benefit.performanceMet()) {
                     continue;
                 }
                 if (benefit.usedAmount() > 0) {
@@ -198,11 +210,14 @@ public class CardStatusOverviewBuilder {
                 if (remainingLimit != null && remainingLimit == 0L) {
                     continue;
                 }
-                Long targetCategoryId = context.benefitTargetCategories().get(benefit.benefitId());
-                if (targetCategoryId == null) {
+                if (benefit.useSharedLimit() && sharedLimitExhausted) {
                     continue;
                 }
-                CategorySpendingRow spending = findSpending(context.spending(), targetCategoryId);
+                BriefingBenefitTarget target = context.benefitTargets().get(benefit.benefitId());
+                if (target == null) {
+                    continue;
+                }
+                CategorySpendingRow spending = findSpending(context.spending(), target);
                 if (spending == null) {
                     continue;
                 }
@@ -235,14 +250,31 @@ public class CardStatusOverviewBuilder {
      *
      * 상위 분류도 함께 본다. 혜택이 대분류(외식)를 겨냥하면 하위 중분류(카페) 결제도 대상이라,
      * 중분류만 대조하면 대분류 혜택이 통째로 안 잡힌다. 혜택 매칭 규칙과 같은 방향이다.
+     *
+     * <b>제외 업종은 건너뛴다.</b> 대분류를 겨냥하면서 그 아래 한 중분류를 빼는 혜택이 있어
+     * ("교통 10%, 단 고속시외버스 제외"), 대상만 대조하면 제외된 소비를 근거로 카드를 권하게 된다.
+     * 제외에 걸린 줄은 버리고 <b>다음 후보를 계속 본다</b> — 같은 혜택이 다른 업종 소비로는
+     * 근거가 될 수 있기 때문이다. 소비가 금액 내림차순이라 남은 것 중 첫 줄이 여전히 가장 큰 업종이다.
      */
-    private CategorySpendingRow findSpending(List<CategorySpendingRow> spending, long targetCategoryId) {
+    private CategorySpendingRow findSpending(List<CategorySpendingRow> spending,
+                                             BriefingBenefitTarget target) {
         return spending.stream()
-                .filter(row -> targetCategoryId == row.getCategoryId()
+                .filter(row -> target.targetCategoryId() == row.getCategoryId()
                         || (row.getParentCategoryId() != null
-                            && targetCategoryId == row.getParentCategoryId()))
+                            && target.targetCategoryId() == row.getParentCategoryId()))
+                .filter(row -> target.covers(row.getCategoryCode(), row.getParentCategoryCode()))
                 .findFirst()
                 .orElse(null);
+    }
+
+    /**
+     * 카드의 통합할인한도가 바닥났는가.
+     *
+     * null은 "통합한도가 없는 카드"라 막을 것이 없다(NULL≠0). 0은 "그 구간엔 혜택이 없다"는 뜻이라
+     * 처음부터 바닥난 것과 같다.
+     */
+    private boolean sharedLimitExhausted(Long sharedLimit, long sharedLimitUsed) {
+        return sharedLimit != null && sharedLimit - sharedLimitUsed <= 0;
     }
 
     /** 안 쓰고 있는 혜택 후보 하나. 고르는 기준이 두 값에 걸쳐 있어 묶어 둔다. */

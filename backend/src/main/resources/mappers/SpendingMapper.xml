@@ -16,20 +16,28 @@
 
         묶음 단위는 거래에 기록된 카테고리 그대로다(대개 중분류). 대분류로 올려 묶으면
         "카페" 소비가 "외식"으로 뭉개져, 어느 혜택을 권할지 고를 근거가 사라진다.
+
+        코드(category_code)를 id와 함께 내리는 이유는 혜택의 제외 규칙과 대조하기 위해서다.
+        benefit_exclusion.exclusion_value는 id가 아니라 코드 문자열이라 id만으로는 맞춰볼 수 없다.
+        상위 코드는 LEFT JOIN이다 — 대분류 거래는 상위가 없다.
     -->
     <select id="findMonthlySpendingByCategory"
             resultType="com.wallet.engine.dao.dto.CategorySpendingRow">
         SELECT c.category_id        AS categoryId,
                c.category_name      AS categoryName,
+               c.category_code      AS categoryCode,
                c.parent_category_id AS parentCategoryId,
+               p.category_code      AS parentCategoryCode,
                COUNT(*)             AS paymentCount,
                SUM(e.amount)        AS totalAmount
           FROM expense e
           JOIN category c ON c.category_id = e.category_id
+          LEFT JOIN category p ON p.category_id = c.parent_category_id
          WHERE e.member_id = #{memberId}
            AND e.payment_status = 'APPROVED'
            AND DATE_FORMAT(e.payment_date, '%Y-%m') = #{yearMonth}
-         GROUP BY c.category_id, c.category_name, c.parent_category_id
+         GROUP BY c.category_id, c.category_name, c.category_code,
+                  c.parent_category_id, p.category_code
          ORDER BY SUM(e.amount) DESC, c.category_id
     </select>
 
