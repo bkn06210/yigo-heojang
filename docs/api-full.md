@@ -2295,6 +2295,217 @@ GET /api/cards/{userCardId}/monthly-status
 
 `NOT_FOUND(404)` — 없는 카드와 타인 소유 카드를 구분 없이 404 (존재 비노출)
 
+### 31-A. 가맹점·업종별 카드 혜택 조회
+
+```
+GET /api/cards/applicable-benefits
+```
+
+• 사용 목적: 특정 가맹점·업종에서 보유 카드가 갖는 혜택과 그 조건을 반환한다. 챗봇의 "스타벅스 가면 어느 카드가 좋아?" 같은 질문에 쓴다.
+• 주의사항:
+◦ **29번(결제 직전 추천)과 답하는 질문이 다르다.** 29번은 "지금 8,000원 결제하면 어느 카드가 얼마 유리한가"이고 이 API는 "이 가맹점에 걸린 혜택이 무엇이고 어떤 조건인가"다. 앞은 금액이 있어야 성립하지만 뒤는 금액 없이 답할 수 있다. 금액을 정해 묻는 사용자는 결제 화면에서 29번을 쓴다.
+◦ **혜택액을 계산하지 않는다.** 금액이 정해지지 않았으므로 조건(적립률·실적조건·건당 최소금액·월 한도)만 내려준다.
+◦ **지금 못 받는 혜택도 목록에서 빼지 않는다.** `available: false` + `unavailableReason`으로 표시한다. "혜택이 없다"보다 "실적을 채우면 받을 수 있다"가 쓸모 있는 정보다.
+◦ **혜택이 하나도 없는 카드도 목록에 담는다.** "이 카드는 여기서 혜택이 없다"도 사용자가 알아야 하는 답이다.
+◦ `merchantId`를 주면 그 가맹점 혜택과 소속 업종 혜택을 함께 본다. `categoryId`만 주면 업종·전체(ALL) 혜택까지만 본다 — 어느 가맹점인지 모르면 가맹점 전용 혜택을 받는다고 말할 수 없다. 둘 다 없으면 전 가맹점(ALL) 혜택만 나온다.
+◦ `benefitValue`는 판정된 실적구간의 값이다(`benefit_tier_limit` 반영). `calcMethod`가 `RATE`면 퍼센트, `FIXED`·`COUNT_STEP`이면 원.
+◦ `monthlyLimit`은 `int|null`. **null = 한도 제약 없음**, 0 = 혜택 없음. 둘을 뭉개면 안 된다.
+◦ `requiredPerformanceAmount`가 null이면 실적 조건이 없는 카드다(0원 구간 하나뿐).
+◦ 한도 소진은 담지 않는다. 30·31번이 이미 내려주고, 여기서 또 계산하면 같은 값이 두 경로로 나가 어긋날 여지가 생긴다.
+
+**권한** USER · **담당** 현준 고 · **상태 코드** 200 OK
+
+**Request**
+
+쿼리 파라미터 `merchantId`(선택), `categoryId`(선택). `merchantId`가 있으면 `categoryId`는 무시된다.
+
+**Response**
+
+```json
+{
+  "success": true,
+  "code": "SUCCESS",
+  "data": {
+    "cards": [
+      {
+        "userCardId": 12,
+        "cardName": "ALL point 카드",
+        "prevPerformanceAmount": 36600,
+        "requiredPerformanceAmount": 300000,
+        "performanceMet": false,
+        "benefits": [
+          {
+            "benefitId": 10,
+            "benefitName": "커피전문점 포인트리 적립",
+            "benefitKind": "POINT",
+            "calcMethod": "RATE",
+            "benefitValue": 1.20,
+            "requirePerformance": true,
+            "available": false,
+            "unavailableReason": "전월 실적 미달",
+            "minTxnAmount": null,
+            "monthlyLimit": null,
+            "stepCount": null,
+            "optionGroupCode": null
+          }
+        ]
+      },
+      {
+        "userCardId": 13,
+        "cardName": "YOU Wish 카드",
+        "prevPerformanceAmount": 0,
+        "requiredPerformanceAmount": null,
+        "performanceMet": false,
+        "benefits": []
+      }
+    ]
+  },
+  "message": null
+}
+```
+
+**고유 에러**
+
+`NOT_FOUND(404)` — 없는 `merchantId`·`categoryId`
+
+### 31-B. 월별 혜택 리포트
+
+```
+GET /api/benefits/report
+```
+
+• 사용 목적: 한 달 동안 실제로 받은 혜택을 총액·부문별 합계·거래 목록으로 반환한다. 홈의 혜택 리포트 카드(총액 + 최대 혜택 부문)와 바텀시트(부문 목록 → 부문 상세)가 이 하나로 그려진다.
+• 주의사항:
+◦ **계산이 아니라 집계다.** 혜택액은 결제 시점에 엔진이 확정해 `expense.discount_amount`에 적어 둔 값을 합산한다. 다시 계산하지 않는다 — 그 시점의 한도 소진 상태를 재현할 수 없어 실제와 달라진다.
+◦ **요약·목록·상세를 한 응답에 담는다.** 화면이 단계적으로 파고들지만 조회를 나누면 그 사이 결제가 일어났을 때 합계와 상세가 어긋난다. 담기는 거래는 실제로 혜택을 받은 건뿐이라 한 달치라도 목록이 길지 않다.
+◦ **부문은 거래에 기록된 카테고리 그대로다**(대개 중분류). 대분류로 올려 묶으면 "카페에서 3,000원 받았다"가 "외식에서 3,000원"이 되어 다음에 무엇을 할지 판단할 근거가 사라진다. 혜택을 받은 부문만 담기므로 목록이 길어지지 않는다. `parentCategoryName`을 함께 내려주므로 화면은 "외식 > 카페"로 보여줄 수 있다(대분류 거래는 null).
+◦ **혜택을 받지 않은 거래는 담지 않는다.** 취소된 거래(`payment_status='CANCELED'`)와 혜택액 0원 거래를 뺀다. 담기면 총액이 부풀고 목록에 받지도 않은 거래가 섞인다.
+◦ 부문은 혜택 금액 내림차순, 동점이면 `categoryId` 오름차순. `topCategory*`는 1위와 같은 값이다.
+◦ 받은 혜택이 없으면 에러가 아니라 `totalBenefitAmount: 0`, `categories: []`, `topCategory*: null`.
+◦ `merchantName`은 가맹점 마스터를 우선한다. `expense.merchant_name`은 미등록 가맹점용 폴백이다.
+◦ `yearMonth` 형식이 `YYYY-MM`이 아니면 `INPUT_INVALID(400)`.
+
+**화면** 홈 혜택 리포트 카드 · 혜택 리포트 바텀시트 · **권한** USER · **담당** 현준 고 · **상태 코드** 200 OK
+
+**Request**
+
+쿼리 파라미터 `yearMonth`(선택, `YYYY-MM`). 생략하면 이번 달.
+
+**Response**
+
+```json
+{
+  "success": true,
+  "code": "SUCCESS",
+  "data": {
+    "yearMonth": "2026-08",
+    "totalBenefitAmount": 12500,
+    "topCategoryId": 502,
+    "topCategoryName": "구독스트리밍",
+    "topCategoryBenefitAmount": 5000,
+    "categories": [
+      {
+        "categoryId": 502,
+        "categoryName": "구독스트리밍",
+        "parentCategoryName": "문화여가",
+        "benefitAmount": 5000,
+        "details": [
+          {
+            "expenseId": 41,
+            "merchantName": "넷플릭스",
+            "cardName": "ALL point 카드",
+            "paymentAmount": 17000,
+            "benefitAmount": 2000,
+            "benefitName": "OTT 10% 청구할인",
+            "paymentDate": "2026-08-10T12:00:00"
+          }
+        ]
+      }
+    ]
+  },
+  "message": null
+}
+```
+
+**고유 에러**
+
+`INPUT_INVALID(400)` — `yearMonth` 형식 오류
+
+### 31-C. 챗봇 질의
+
+```
+POST /api/chat
+```
+
+• 사용 목적: 카드·혜택에 대한 자연어 질문에 답한다. 프론트는 이 엔드포인트만 호출하고, 챗봇 서버(Python)는 외부에 노출되지 않는다.
+• 주의사항:
+◦ **응답이 수 초 걸린다.** 답변 생성에 LLM 호출이 두 번(질문 분류 + 문장 작성) 들어간다. 다른 API보다 느린 것이 정상이므로 프론트는 로딩 상태를 둔다.
+◦ **회원 id는 요청 본문으로 받지 않는다.** 인증 정보에서 꺼낸다.
+◦ **`answer`의 숫자는 계산 엔진이 낸 값이다.** 챗봇은 그 값을 문장으로 옮길 뿐이고 금액을 계산하지 않는다. 화면 표기는 "AI 추천/AI 브리핑" 대신 "추천 결과/추천 근거".
+◦ **대상을 특정하지 못하면 답 대신 되묻는다.** 이때 `followUpQuestion`이 채워지고 `pendingContext`가 함께 내려온다. **프론트는 그 값을 다음 요청에 그대로 실어 보낸다** — 그래야 "스벅에서 어느 카드가 좋아?" → "어디에서 결제하실 예정인가요?" → "스벅" 같은 대화가 이어진다. 내용을 해석하거나 수정하지 않는다.
+◦ 서버가 대화 상태를 보관하지 않는 것은 의도다. 보관하면 서버 재시작 때 대화가 끊기고 서버가 여러 대가 되면 요청마다 다른 곳으로 가 맥락을 잃는다.
+◦ `intent`는 프론트가 답변 표시 방식을 나눌 때 쓴다: `CARD_STATUS`(실적·한도) / `RECOMMEND_CARD`(카드 추천) / `BENEFIT_SUM`(받은 혜택) / `TERM_QA`(약관) / `UNKNOWN`.
+◦ `sources`는 답변의 숫자가 어디서 나왔는지다. 근거로 화면에 표시할 수 있다.
+
+**화면** 챗봇 · **권한** USER · **담당** 현준 고 · **상태 코드** 200 OK
+
+**Request**
+
+```json
+{
+  "question": "스벅에서 어느 카드가 좋아?",
+  "pendingContext": null
+}
+```
+
+`pendingContext`는 직전 응답이 내려준 값을 그대로 넣는다. 첫 질문이면 생략하거나 `null`.
+
+**Response**
+
+```json
+{
+  "success": true,
+  "code": "SUCCESS",
+  "data": {
+    "answer": "스타벅스에서는 신한카드 핏(Fit)이 가장 좋은 선택입니다. 커피 5회마다 2,000원 적립이 가능하며, 건당 5,000원 이상 결제해야 합니다. 나머지 카드들은 전월 실적 미달로 혜택이 적용되지 않습니다.",
+    "intent": "RECOMMEND_CARD",
+    "sources": ["가맹점별 카드 혜택 조회"],
+    "followUpQuestion": null,
+    "pendingContext": null
+  },
+  "message": null
+}
+```
+
+되묻는 경우:
+
+```json
+{
+  "success": true,
+  "code": "SUCCESS",
+  "data": {
+    "answer": "어디에서 결제하실 예정인가요?",
+    "intent": "RECOMMEND_CARD",
+    "sources": [],
+    "followUpQuestion": "어디에서 결제하실 예정인가요?",
+    "pendingContext": {
+      "intent": "RECOMMEND_CARD",
+      "merchantText": null,
+      "categoryText": null,
+      "cardText": null,
+      "periodText": null,
+      "amount": 5000
+    }
+  },
+  "message": null
+}
+```
+
+**고유 에러**
+
+`INPUT_INVALID(400)` — 빈 질문·500자 초과
+`CHATBOT_UNAVAILABLE(503)` — 챗봇 서버 연결 실패·응답 지연
+
 ### 32. 결제 취소 상태 갱신
 
 ```
