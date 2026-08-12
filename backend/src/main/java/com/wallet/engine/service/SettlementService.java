@@ -461,6 +461,6 @@ public class SettlementService {
                 statusRow.getUserCardId(), statusRow.getCardName(), baseYearMonth,
                 statusRow.getPrevPerformanceAmount(), statusRow.getCurrentPerformanceAmount(),
                 statusRow.getSharedLimitUsed(), tiers, benefitRows, usedAmountByBenefit,
-                loadOptionSelections(userCardId, baseYearMonth));
+                loadOptionSelections(userCardId, baseYearMonth), quarterStatus);
     }
 }
