@@ -9,13 +9,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.wallet.auth.domain.RefreshToken;
 import com.wallet.auth.mapper.RefreshTokenMapper;
-import com.wallet.auth.support.TokenHashUtil;
+import com.wallet.common.util.Sha256Hasher;
 
 @RequiredArgsConstructor
 @Service
 public class RefreshTokenService {
     private final RefreshTokenMapper refreshTokenMapper;
-    private final TokenHashUtil tokenHashUtil;
+    private final Sha256Hasher sha256Hasher;
 
     @Transactional
     public void replace(Long memberId, String refreshToken, LocalDateTime expiresAt) {
@@ -23,21 +23,21 @@ public class RefreshTokenService {
             memberId,
             RefreshToken.REVOKE_REASON_REISSUED);
 
-        String tokenHash = tokenHashUtil.sha256(refreshToken);
+        String tokenHash = sha256Hasher.sha256(refreshToken);
 
         refreshTokenMapper.insert(memberId, tokenHash, expiresAt);
     }
 
     @Transactional(readOnly = true)
     public RefreshToken findValidToken(String refreshToken) {
-        String tokenHash = tokenHashUtil.sha256(refreshToken);
+        String tokenHash = sha256Hasher.sha256(refreshToken);
 
         return refreshTokenMapper.findValidTokenByHash(tokenHash);
     }
 
     @Transactional
     public void revokeByToken(String refreshToken) {
-        String tokenHash = tokenHashUtil.sha256(refreshToken);
+        String tokenHash = sha256Hasher.sha256(refreshToken);
 
         refreshTokenMapper.revokeByHash(
             tokenHash,

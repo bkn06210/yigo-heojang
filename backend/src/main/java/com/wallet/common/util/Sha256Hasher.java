@@ -1,4 +1,4 @@
-package com.wallet.auth.support;
+package com.wallet.common.util;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -8,14 +8,13 @@ import java.util.HexFormat;
 import org.springframework.stereotype.Component;
 
 @Component
-public class TokenHashUtil {
-
+public class Sha256Hasher {
     private static final String SHA_256 = "SHA-256";
 
     /**
      * 전달받은 원문 값을 SHA-256 해시 문자열로 변환한다.
      *
-     * @param rawValue 인증 코드 또는 토큰 원문
+     * @param rawValue 해시할 원문
      * @return SHA-256 hex 문자열
      */
     public String sha256(String rawValue) {
