@@ -74,7 +74,11 @@ def _card_status(intent: Intent, conn, engine: EngineClient) -> RouteResult:
     if intent.card_text and not card.found:
         return RouteResult(follow_up=_ask_again("카드", intent.card_text, card))
 
-    year_month = _to_year_month(intent.period_text)
+    period = _to_period(intent.period_text)
+    if not period.supported:
+        return RouteResult(follow_up=_period_not_supported(intent.period_text))
+
+    year_month = period.year_month
     try:
         data = engine.monthly_status(year_month)
     except EngineError as error:
@@ -139,7 +143,11 @@ def _benefit_text(benefit: Dict[str, Any]) -> str:
 
 
 def _benefit_sum(intent: Intent, conn, engine: EngineClient) -> RouteResult:
-    year_month = _to_year_month(intent.period_text)
+    period = _to_period(intent.period_text)
+    if not period.supported:
+        return RouteResult(follow_up=_period_not_supported(intent.period_text))
+
+    year_month = period.year_month
     try:
         data = engine.benefit_report(year_month)
     except EngineError as error:
@@ -362,15 +370,45 @@ def _engine_failed(error: EngineError) -> str:
     return "카드 정보를 조회하지 못했습니다. 잠시 후 다시 시도해 주세요."
 
 
-def _to_year_month(period_text: Optional[str]) -> Optional[str]:
-    """기간 표현을 YYYY-MM 으로. 모르는 표현이면 None(이번 달)."""
+# 일·주 단위 기간 표현. 엔진 조회가 월 단위(yearMonth)라 이 표현들은 답할 수 없다.
+#
+# 조용히 이번 달로 바꾸면 "오늘 얼마 아꼈어?"에 한 달치 금액이 나간다. 사용자는 그 값이
+# 오늘 것인 줄 알고, 틀린 답인지 알 방법이 없다. 못 하는 것은 못 한다고 말한다.
+_SUB_MONTH_PERIODS = (
+    "오늘", "금일", "어제", "그제", "그저께", "엊그제", "내일",
+    "이번주", "금주", "지난주", "저번주", "이번한주",
+)
+
+
+@dataclass(frozen=True)
+class Period:
+    """기간 표현 해석 결과."""
+
+    year_month: Optional[str] = None
+    """조회할 연월(YYYY-MM). None 이면 이번 달."""
+
+    supported: bool = True
+    """월 단위로 답할 수 있는 기간인가. False 면 되묻는다."""
+
+
+def _to_period(period_text: Optional[str]) -> Period:
+    """기간 표현을 조회 연월로. 월 단위로 못 담는 표현은 supported=False 로 돌려준다."""
     if not period_text:
-        return None
-    if period_text.replace(" ", "") in ("지난달", "저번달"):
+        return Period()
+
+    normalized = period_text.replace(" ", "")
+    if normalized in _SUB_MONTH_PERIODS:
+        return Period(supported=False)
+    if normalized in ("지난달", "저번달"):
         today = date.today()
         year, month = (today.year - 1, 12) if today.month == 1 else (today.year, today.month - 1)
-        return f"{year:04d}-{month:02d}"
-    return None
+        return Period(year_month=f"{year:04d}-{month:02d}")
+    # 모르는 표현은 이번 달로 본다. "요즘"·"최근" 같은 말은 월 단위로 읽어도 어긋나지 않는다.
+    return Period()
+
+
+def _period_not_supported(period_text: str) -> str:
+    return f"'{period_text}' 기준으로는 아직 조회할 수 없습니다. 이번 달·지난달처럼 월 단위로 물어봐 주세요."
 
 
 def _won(amount) -> str:

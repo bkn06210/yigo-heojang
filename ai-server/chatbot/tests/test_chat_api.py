@@ -309,6 +309,34 @@ def test_받은_혜택은_총액과_최대_부문을_알려준다(fake_engine):
 
 
 @needs_db
+def test_일_단위_기간은_이번_달로_바꾸지_않고_되묻는다(fake_engine):
+    # 엔진 조회가 월 단위라 "오늘"에 답할 수 없다. 조용히 이번 달로 바꾸면
+    # 한 달치 금액이 오늘 것인 양 나간다.
+    body = _ask("오늘 얼마 아꼈어?")
+
+    assert body["intent"] == IntentName.BENEFIT_SUM
+    assert "오늘" in body["answer"]
+    assert "월 단위" in body["answer"]
+    assert "3,500원" not in body["answer"]
+
+
+@needs_db
+def test_주_단위_기간도_현황_조회에서_되묻는다(fake_engine):
+    body = _ask("이번 주 실적 채웠어?")
+
+    assert body["intent"] == IntentName.CARD_STATUS
+    assert "월 단위" in body["answer"]
+
+
+@needs_db
+def test_월_단위_기간은_그대로_조회한다(fake_engine):
+    body = _ask("지난달 얼마 아꼈어?")
+
+    assert body["intent"] == IntentName.BENEFIT_SUM
+    assert "총 3,500원" in body["answer"]
+
+
+@needs_db
 def test_가맹점을_짚어_물으면_그_가맹점_거래만_합산한다(fake_engine):
     body = _ask("스벅에서 얼마 아꼈어?")
 
