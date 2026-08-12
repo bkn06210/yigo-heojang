@@ -8,6 +8,7 @@ import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,6 +21,7 @@ import com.wallet.auth.service.TermsService;
 import com.wallet.common.ApiResponse;
 import com.wallet.member.dto.MemberMeResponse;
 import com.wallet.member.dto.MemberUpdateRequest;
+import com.wallet.member.dto.MemberWithdrawRequest;
 import com.wallet.member.service.MemberService;
 
 @RequiredArgsConstructor
@@ -51,6 +53,21 @@ public class MemberController {
 
         return ResponseEntity.ok(
             ApiResponse.success("회원정보 수정에 성공했습니다.", response)
+        );
+    }
+
+    // 응답 바디에 데이터가 필요 없어 ApiResponse<Void>로 응답한다.
+    @DeleteMapping("/me")
+    public ResponseEntity<ApiResponse<Void>> withdraw(
+        HttpServletRequest request,
+        @Valid @RequestBody MemberWithdrawRequest withdrawRequest
+    ) {
+        Long memberId = (Long) request.getAttribute(AUTHENTICATED_MEMBER_ID);
+
+        memberService.withdraw(memberId, withdrawRequest);
+
+        return ResponseEntity.ok(
+            ApiResponse.success("회원 탈퇴가 완료되었습니다.", null)
         );
     }
 
