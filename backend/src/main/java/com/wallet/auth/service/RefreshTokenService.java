@@ -52,4 +52,13 @@ public class RefreshTokenService {
             RefreshToken.REVOKE_REASON_PASSWORD_RESET
         );
     }
+
+    // 회원 탈퇴 시 이 회원의 모든 refresh token을 폐기
+    @Transactional
+    public void revokeAllByWithdrawal(Long memberId) {
+        refreshTokenMapper.revokeAllByMemberId(
+            memberId,
+            RefreshToken.REVOKE_REASON_MEMBER_WITHDRAWN
+        );
+    }
 }
