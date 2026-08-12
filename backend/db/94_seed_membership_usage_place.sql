@@ -27,7 +27,22 @@ PREPARE add_col FROM @ddl;
 EXECUTE add_col;
 DEALLOCATE PREPARE add_col;
 
+-- 여기부터는 한 덩어리로 처리한다.
+-- 사용처 교체가 DELETE 후 INSERT 라서, 중간에 실패하면(제공사 이름 불일치로
+-- 서브쿼리가 NULL 을 돌려주는 경우가 대부분이다) 기존 사용처만 사라진 DB 가 남는다.
+-- ALTER TABLE 은 암묵적 커밋을 일으켜 트랜잭션을 끊으므로 반드시 위 DDL 블록 다음에 시작한다.
+--
+-- 배치 모드(`mysql ... < setup.sql`)에서는 에러가 나면 클라이언트가 즉시 종료하고,
+-- COMMIT 전에 연결이 끊기면 InnoDB 가 전부 롤백한다.
+-- 대화형 클라이언트에서 SOURCE 로 실행할 때는 에러가 나도 그냥 다음 문장으로 넘어가므로
+-- `mysql --abort-source-on-error ...` 로 실행해야 같은 보호를 받는다.
+START TRANSACTION;
+
 -- 2) 공식 사이트 URL
+--    주소창에서 복사한 URL 을 그대로 넣지 마라. 로그인 도중의 주소에는
+--    sessionDataKey, state, sid, connector_session_key 같은 1회용 세션 값이 들어 있어
+--    며칠 뒤면 만료되고 인증 요청이 거부된다.
+--    항상 세션 값이 없는 랜딩 페이지나 로그인 시작 주소를 쓴다.
 UPDATE point_provider SET official_site_url = 'https://www.cjone.com/cjmweb/login.do'
   WHERE point_provider_name = 'CJ ONE';
 UPDATE point_provider SET official_site_url = 'https://www.happypointcard.com/sso/login.jsp?returnUrl=/page/presentation/membership.spc'
@@ -46,7 +61,7 @@ UPDATE point_provider SET official_site_url = 'https://www.elandretail.com/m/epo
   WHERE point_provider_name = 'E.POINT';
 UPDATE point_provider SET official_site_url = 'https://www.nhmembers.co.kr/nhweb/join/joinMbSelectCert.nh'
   WHERE point_provider_name = 'NH멤버스';
-UPDATE point_provider SET official_site_url = 'https://one-ap.amorepacific.com/auth/login?channelCd=030&cid=1836821967.1785287602&client_id=HkJyP7_EGWntx06NtszdlhWO8vAa&commonAuthCallerPath=%2Foauth2%2Fauthorize&forceAuth=false&passiveAuth=false&redirect_uri=https%3A%2F%2Fwww.beautypoint.co.kr%2Fapi%2Foauth2client&response_type=code&scope=openid&sid=s1785744992%24o2%24g1%24t1785744997%24j55%24l0%24h0&state=%7BredirectUri%3Dhttps%3A%2F%2Fwww.beautypoint.co.kr%2Fapi%2Flogin%3FreturnUrl%3Dhttps%3A%2F%2Fwww.beautypoint.co.kr%2Ffo-api%2Flogin%2FeyJyZWRpcmVjdFVybCI6Imh0dHBzOi8vd3d3LmJlYXV0eXBvaW50LmNvLmtyL21lbWJlcnNoaXAiLCJzZXNzaW9uSWQiOiIifQ%3D%3D%2C+gid%3Dnull%2C+channelCd%3D030%2C+ot%3Dnull%2C+sid%3Ds1785744992%24o2%24g1%24t1785744997%24j55%24l0%24h0%2C+dt%3Dnull%2C+popup%3Dnull%2C+cancelUri%3D%2C+kakaoEmbedded%3Dnull%2C+join%3Dnull%2C+prompt%3Dnull%2C+vt%3Dnull%2C+cid%3D1836821967.1785287602%7D&sessionDataKey=89f75dfa-b077-4172-9e90-31f475ae9393&relyingParty=HkJyP7_EGWntx06NtszdlhWO8vAa&type=oidc&sp=030&spId=cfbe4ea9-4aad-4e9e-b6be-188aa27ee1d4&isSaaSApp=false&authenticators=NAVER%3ANA%3BKAKAO%3AKA%3BAppleID%3AAP%3BMobileVerifier%3ALOCAL%3BBasicAuthenticator%3ALOCAL%3BISKVerifier%3ALOCAL'
+UPDATE point_provider SET official_site_url = 'https://www.beautypoint.co.kr/'
   WHERE point_provider_name = '뷰티포인트';
 UPDATE point_provider SET official_site_url = 'https://shop.tworld.co.kr/exhibition/view?exhibitionId=P00000494&utm_source=tworld&utm_medium=pc_banner&utm_campaign=foldable8'
   WHERE point_provider_name = 'T 멤버십';
@@ -64,9 +79,9 @@ UPDATE point_provider SET official_site_url = 'https://www.lfmembers.co.kr:4441/
   WHERE point_provider_name = 'LF Members';
 UPDATE point_provider SET official_site_url = 'https://m.thehandsome.com/ko/MK/event/24743'
   WHERE point_provider_name = '한섬 THE 클럽';
-UPDATE point_provider SET official_site_url = 'https://idpconnect-kr.hyundai.com/auth/api/v2/user/oauth2/authorize?client_id=2b6b3d2d-5ccc-497f-8e8b-e9b2d7582097&redirect_uri=https%3A%2F%2Fwww.hyundai.com%2Fkr%2Fko%2Fccspcallback.html%3Fhmgid%3D2&response_type=code&scope=&state=login&connector_client_id=hmgid1.0-2b6b3d2d-5ccc-497f-8e8b-e9b2d7582097&ui_locales=&connector_scope=&connector_session_key=3dba3d13-92ad-4c72-acc3-462184770a7f'
+UPDATE point_provider SET official_site_url = 'https://www.hyundai.com/kr/ko/service-membership/bluemembers/bluemembers-benefit'
   WHERE point_provider_name = '블루멤버스';
-UPDATE point_provider SET official_site_url = 'https://idpconnect-kr.kia.com/auth/api/v2/user/oauth2/authorize?client_id=8a98de01-a5ca-442a-a4aa-9127647f9c7b&redirect_uri=https%3A%2F%2Fmembers.kia.com%2Fkr%2Fview%2Fhmgidredirect.do&response_type=code&scope=&state=1&connector_client_id=hmgid1.0-8a98de01-a5ca-442a-a4aa-9127647f9c7b&ui_locales=&connector_scope=&connector_session_key=f1026214-d10b-4dce-a750-9a941f79e63d'
+UPDATE point_provider SET official_site_url = 'https://members.kia.com/'
   WHERE point_provider_name = '기아멤버스';
 
 -- 3) 주요 사용처. 재실행해도 중복이 쌓이지 않도록 멤버십 제공사의 기존 행을 먼저 지운다.
@@ -316,3 +331,6 @@ INSERT INTO point_usage_place (point_provider_id, place_name, use_yn) VALUES
     ((SELECT point_provider_id FROM point_provider WHERE point_provider_name = '기아멤버스'), 'GS칼텍스', 'Y'),
     ((SELECT point_provider_id FROM point_provider WHERE point_provider_name = '기아멤버스'), '해비치호텔앤드리조트', 'Y'),
     ((SELECT point_provider_id FROM point_provider WHERE point_provider_name = '기아멤버스'), '마이기아', 'Y');
+
+-- 여기까지 전부 성공했을 때만 반영된다.
+COMMIT;
