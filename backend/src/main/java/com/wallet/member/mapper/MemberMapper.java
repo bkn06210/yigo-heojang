@@ -12,6 +12,12 @@ public interface MemberMapper {
     Member findById(@Param("memberId") Long memberId);
 
     boolean existsByEmail(@Param("email") String email);
+
+    /**JwtAuthenticationFilter가 매 요청마다 "이 회원이 지금 탈퇴 상태인지"만
+     * 확인하기 위한 조회 쿼리.
+     * 존재하지 않는 회원이면 null을 반환한다 (member_status 값 자체가 없으므로).
+     */
+    String findStatusById(@Param("memberId") Long memberId);
     
     int insertMember(Member member);
 
