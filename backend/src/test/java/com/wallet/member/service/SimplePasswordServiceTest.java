@@ -24,6 +24,7 @@ import com.wallet.common.exception.BusinessException;
 import com.wallet.member.domain.Member;
 import com.wallet.member.domain.SimplePasswordVerification;
 import com.wallet.member.dto.SimplePasswordUpdateRequest;
+import com.wallet.member.dto.SimplePasswordVerifyRequest;
 import com.wallet.member.mapper.MemberMapper;
 import com.wallet.member.mapper.SimplePasswordVerificationMapper;
 
@@ -144,6 +145,60 @@ class SimplePasswordServiceTest {
         assertThat(exception.getErrorCode())
             .isEqualTo(ErrorCode.SIMPLE_PASSWORD_CHANGE_TOKEN_ALREADY_USED);
         verify(memberMapper, never()).updateSimplePassword(any(), any());
+    }
+
+    @Test
+    @DisplayName("간편비밀번호 검사 성공 - 입력값이 저장된 BCrypt 해시와 일치한다")
+    void verifySimplePassword_success_whenMatched() {
+        Member member = member(1L);
+        ReflectionTestUtils.setField(
+            member,
+            "simplePasswordHash",
+            passwordEncoder.encode("012345")
+        );
+        when(memberMapper.findById(1L)).thenReturn(member);
+
+        var response = service.verifySimplePassword(
+            1L,
+            new SimplePasswordVerifyRequest("012345")
+        );
+
+        assertThat(response.matched()).isTrue();
+    }
+
+    @Test
+    @DisplayName("간편비밀번호 검사 성공 - 입력값이 다르면 matched false를 반환한다")
+    void verifySimplePassword_success_whenMismatched() {
+        Member member = member(1L);
+        ReflectionTestUtils.setField(
+            member,
+            "simplePasswordHash",
+            passwordEncoder.encode("012345")
+        );
+        when(memberMapper.findById(1L)).thenReturn(member);
+
+        var response = service.verifySimplePassword(
+            1L,
+            new SimplePasswordVerifyRequest("999999")
+        );
+
+        assertThat(response.matched()).isFalse();
+    }
+
+    @Test
+    @DisplayName("간편비밀번호 검사 실패 - 간편비밀번호가 설정되지 않았다")
+    void verifySimplePassword_fail_whenNotSet() {
+        when(memberMapper.findById(1L)).thenReturn(member(1L));
+
+        BusinessException exception = assertThrows(
+            BusinessException.class,
+            () -> service.verifySimplePassword(
+                1L,
+                new SimplePasswordVerifyRequest("012345")
+            )
+        );
+
+        assertThat(exception.getErrorCode()).isEqualTo(ErrorCode.SIMPLE_PASSWORD_NOT_SET);
     }
 
     private SimplePasswordUpdateRequest request(String password, String confirmation) {

@@ -15,6 +15,8 @@ import com.wallet.common.exception.BusinessException;
 import com.wallet.member.domain.Member;
 import com.wallet.member.domain.SimplePasswordVerification;
 import com.wallet.member.dto.SimplePasswordUpdateRequest;
+import com.wallet.member.dto.SimplePasswordVerifyRequest;
+import com.wallet.member.dto.SimplePasswordVerifyResponse;
 import com.wallet.member.mapper.MemberMapper;
 import com.wallet.member.mapper.SimplePasswordVerificationMapper;
 
@@ -66,6 +68,39 @@ public class SimplePasswordService {
              */
             throw new BusinessException(ErrorCode.SIMPLE_PASSWORD_CHANGE_TOKEN_INVALID);
         }
+    }
+
+    @Transactional(readOnly = true)
+    public SimplePasswordVerifyResponse verifySimplePassword(
+        Long memberId,
+        SimplePasswordVerifyRequest request
+    ) {
+        validateAuthenticatedMemberId(memberId);
+
+        Member member = memberMapper.findById(memberId);
+        if (member == null) {
+            throw new BusinessException(ErrorCode.MEMBER_NOT_FOUND);
+        }
+        if ("WITHDRAWN".equals(member.getMemberStatus())) {
+            throw new BusinessException(ErrorCode.MEMBER_WITHDRAWN);
+        }
+        if (!"ACTIVE".equals(member.getMemberStatus())) {
+            throw new BusinessException(ErrorCode.MEMBER_SUSPENDED);
+        }
+        if (member.getSimplePasswordHash() == null) {
+            throw new BusinessException(ErrorCode.SIMPLE_PASSWORD_NOT_SET);
+        }
+
+        /*
+         * BCrypt는 같은 원문도 매번 다른 해시가 만들어지므로 문자열끼리 비교하면 안 된다.
+         * matches()가 요청 원문을 저장된 해시의 salt와 비용 설정으로 다시 계산해 비교한다.
+         */
+        boolean matched = passwordEncoder.matches(
+            request.simplePassword(),
+            member.getSimplePasswordHash()
+        );
+
+        return new SimplePasswordVerifyResponse(matched);
     }
 
     private void validateAuthenticatedMemberId(Long memberId) {

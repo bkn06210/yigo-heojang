@@ -34,6 +34,7 @@ import com.wallet.member.dto.MemberMeResponse;
 import com.wallet.member.dto.MemberUpdateRequest;
 import com.wallet.member.dto.SimplePasswordEmailVerificationResponse;
 import com.wallet.member.dto.SimplePasswordEmailVerificationVerifyResponse;
+import com.wallet.member.dto.SimplePasswordVerifyResponse;
 import com.wallet.member.service.MemberService;
 import com.wallet.member.service.SimplePasswordService;
 import com.wallet.member.service.SimplePasswordVerificationService;
@@ -81,6 +82,7 @@ class MemberControllerTest {
             "user@example.com",
             "이재혁",
             "별명A",
+            true,
             "ACTIVE",
             LocalDateTime.of(2026, 7, 18, 11, 0),
             LocalDateTime.of(2026, 7, 20, 12, 30)
@@ -102,6 +104,7 @@ class MemberControllerTest {
             .andExpect(jsonPath("$.data.email").value("user@example.com"))
             .andExpect(jsonPath("$.data.name").value("이재혁"))
             .andExpect(jsonPath("$.data.nickname").value("별명A"))
+            .andExpect(jsonPath("$.data.simplePasswordSet").value(true))
             .andExpect(jsonPath("$.data.memberStatus").value("ACTIVE"))
             .andExpect(jsonPath("$.data.createdAt").exists())
             .andExpect(jsonPath("$.data.updatedAt").exists())
@@ -129,6 +132,7 @@ class MemberControllerTest {
             "user@example.com",
             "이재혁",
             "새닉네임",
+            false,
             "ACTIVE",
             LocalDateTime.of(2026, 7, 18, 11, 0),
             LocalDateTime.of(2026, 7, 28, 10, 30)
@@ -155,6 +159,7 @@ class MemberControllerTest {
             .andExpect(jsonPath("$.data.email").value("user@example.com"))
             .andExpect(jsonPath("$.data.name").value("이재혁"))
             .andExpect(jsonPath("$.data.nickname").value("새닉네임"))
+            .andExpect(jsonPath("$.data.simplePasswordSet").value(false))
             .andExpect(jsonPath("$.data.memberStatus").value("ACTIVE"))
             .andExpect(jsonPath("$.data.createdAt").exists())
             .andExpect(jsonPath("$.data.updatedAt").exists())
@@ -330,5 +335,38 @@ class MemberControllerTest {
             .andExpect(jsonPath("$.code").value("INPUT_INVALID"));
 
         verify(simplePasswordService, never()).updateSimplePassword(any(), any());
+    }
+
+    @Test
+    @DisplayName("간편비밀번호 일치 검사 성공")
+    void verifySimplePassword_success() throws Exception {
+        when(simplePasswordService.verifySimplePassword(eq(1L), any()))
+            .thenReturn(new SimplePasswordVerifyResponse(true));
+
+        mockMvc.perform(
+                post("/api/members/me/simple-password/verifications")
+                    .requestAttr(AUTHENTICATED_MEMBER_ID, 1L)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content("{\"simplePassword\":\"012345\"}")
+            )
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.data.matched").value(true));
+
+        verify(simplePasswordService).verifySimplePassword(eq(1L), any());
+    }
+
+    @Test
+    @DisplayName("간편비밀번호 일치 검사 실패 - 6자리 숫자가 아니면 요청을 거부한다")
+    void verifySimplePassword_fail_whenFormatInvalid() throws Exception {
+        mockMvc.perform(
+                post("/api/members/me/simple-password/verifications")
+                    .requestAttr(AUTHENTICATED_MEMBER_ID, 1L)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content("{\"simplePassword\":\"12345A\"}")
+            )
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.code").value("INPUT_INVALID"));
+
+        verify(simplePasswordService, never()).verifySimplePassword(any(), any());
     }
 }

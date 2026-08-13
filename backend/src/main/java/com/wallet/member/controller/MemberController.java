@@ -23,6 +23,8 @@ import com.wallet.member.dto.SimplePasswordEmailVerificationResponse;
 import com.wallet.member.dto.SimplePasswordEmailVerificationVerifyRequest;
 import com.wallet.member.dto.SimplePasswordEmailVerificationVerifyResponse;
 import com.wallet.member.dto.SimplePasswordUpdateRequest;
+import com.wallet.member.dto.SimplePasswordVerifyRequest;
+import com.wallet.member.dto.SimplePasswordVerifyResponse;
 import com.wallet.member.service.MemberService;
 import com.wallet.member.service.SimplePasswordService;
 import com.wallet.member.service.SimplePasswordVerificationService;
@@ -100,6 +102,21 @@ public class MemberController {
 
         return ResponseEntity.ok(
             ApiResponse.success("간편비밀번호 설정 또는 변경이 완료되었습니다.", null)
+        );
+    }
+
+    @PostMapping("/me/simple-password/verifications")
+    public ResponseEntity<ApiResponse<SimplePasswordVerifyResponse>> verifySimplePassword(
+        HttpServletRequest request,
+        @Valid @RequestBody SimplePasswordVerifyRequest verifyRequest
+    ) {
+        Long memberId = (Long) request.getAttribute(AUTHENTICATED_MEMBER_ID);
+
+        SimplePasswordVerifyResponse response =
+            simplePasswordService.verifySimplePassword(memberId, verifyRequest);
+
+        return ResponseEntity.ok(
+            ApiResponse.success("간편비밀번호 검사에 성공했습니다.", response)
         );
     }
 
