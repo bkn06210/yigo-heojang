@@ -118,7 +118,7 @@ INSERT INTO refresh_token (
 -- ============================================================
 
 INSERT INTO term (
-    term_id, term_code, term_name, is_required, term_status
+    term_id, term_code, term_scope, term_name, is_required, term_status
 ) VALUES
       (1, 'SERVICE_TERMS', 'SIGNUP', '서비스 이용약관', 1, 'ACTIVE'),
       (2, 'PRIVACY_POLICY', 'SIGNUP', '개인정보 수집 및 이용 동의', 1, 'ACTIVE'),
