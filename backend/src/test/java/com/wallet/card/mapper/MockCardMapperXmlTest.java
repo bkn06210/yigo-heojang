@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Map;
 
 import org.apache.ibatis.builder.xml.XMLMapperBuilder;
 import org.apache.ibatis.io.Resources;
@@ -34,5 +35,16 @@ class MockCardMapperXmlTest {
         }
 
         assertThat(configuration.hasStatement(FIND_ACTIVE_STATEMENT)).isTrue();
+
+        String sql = configuration.getMappedStatement(FIND_ACTIVE_STATEMENT)
+            .getBoundSql(Map.of("cardNumber", "1234567800000006"))
+            .getSql()
+            .replaceAll("\\s+", " ");
+
+        assertThat(sql)
+            .contains("mc.card_number = ?")
+            .contains("mc.is_active = 'Y'")
+            .contains("c.is_active = 'Y'")
+            .contains("cc.is_active = 'Y'");
     }
 }

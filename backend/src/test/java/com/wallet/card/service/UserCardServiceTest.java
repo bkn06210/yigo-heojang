@@ -15,8 +15,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.dao.DuplicateKeyException;
 
-import com.wallet.card.domain.Card;
-import com.wallet.card.domain.CardBin;
+import com.wallet.card.domain.MockCard;
 import com.wallet.card.domain.UserCard;
 import com.wallet.card.domain.UserCardDetailResult;
 import com.wallet.card.domain.UserCardListResult;
@@ -27,31 +26,27 @@ import com.wallet.card.dto.UserCardListItemResponse;
 import com.wallet.card.dto.UserCardListResponse;
 import com.wallet.card.dto.UserCardRegisterRequest;
 import com.wallet.card.dto.UserCardRegisterResponse;
-import com.wallet.card.mapper.CardMapper;
+import com.wallet.card.mapper.MockCardMapper;
 import com.wallet.card.mapper.UserCardMapper;
-import com.wallet.card.support.CardBinFinder;
 import com.wallet.common.ErrorCode;
 import com.wallet.common.exception.BusinessException;
 import com.wallet.member.mapper.MemberMapper;
 
 class UserCardServiceTest {
-    private CardMapper cardMapper;
+    private MockCardMapper mockCardMapper;
     private UserCardMapper userCardMapper;
-    private CardBinFinder cardBinFinder;
     private MemberMapper memberMapper;
     private UserCardService userCardService;
 
     @BeforeEach
     void setUp() {
-        cardMapper = mock(CardMapper.class);
+        mockCardMapper = mock(MockCardMapper.class);
         userCardMapper = mock(UserCardMapper.class);
-        cardBinFinder = mock(CardBinFinder.class);
         memberMapper = mock(MemberMapper.class);
 
         userCardService = new UserCardService(
-            cardMapper,
+            mockCardMapper,
             userCardMapper,
-            cardBinFinder,
             memberMapper
         );
     }
@@ -64,24 +59,9 @@ class UserCardServiceTest {
         Long cardId = 10L;
 
         UserCardRegisterRequest request =
-            new UserCardRegisterRequest(cardId, "1234-5678-0000-0006");
+            new UserCardRegisterRequest("1234-5678-0000-0006");
 
-        Card card = new Card(
-            cardId,
-            100L,
-            "KB국민카드",
-            "KB 국민 나라사랑카드",
-            "CHECK",
-            "https://example.com/kb.png",
-            "생활 혜택 체크카드"
-        );
-
-        CardBin cardBin = new CardBin(
-            1L,
-            100L,
-            "12345678",
-            8
-        );
+        MockCard mockCard = new MockCard(1L, cardId);
 
         UserCardRegistrationResult result =
             new UserCardRegistrationResult(
@@ -93,11 +73,8 @@ class UserCardServiceTest {
                 false
             );
 
-        when(cardMapper.findActiveById(cardId))
-            .thenReturn(card);
-
-        when(cardBinFinder.findCardBin("1234567800000006"))
-            .thenReturn(cardBin);
+        when(mockCardMapper.findActiveByCardNumber("1234567800000006"))
+            .thenReturn(mockCard);
 
         when(userCardMapper.findByMemberIdAndCardId(memberId, cardId))
             .thenReturn(null);
@@ -132,24 +109,9 @@ class UserCardServiceTest {
         Long cardId = 10L;
 
         UserCardRegisterRequest request =
-            new UserCardRegisterRequest(cardId, "1234-5678-0000-0006");
+            new UserCardRegisterRequest("1234-5678-0000-0006");
 
-        Card card = new Card(
-            cardId,
-            100L,
-            "KB국민카드",
-            "KB 국민 나라사랑카드",
-            "CHECK",
-            "https://example.com/kb.png",
-            "생활 혜택 체크카드"
-        );
-
-        CardBin cardBin = new CardBin(
-            1L,
-            100L,
-            "12345678",
-            8
-        );
+        MockCard mockCard = new MockCard(1L, cardId);
 
         UserCard deletedUserCard = new UserCard(
             50L,
@@ -170,11 +132,8 @@ class UserCardServiceTest {
                 false
             );
 
-        when(cardMapper.findActiveById(cardId))
-            .thenReturn(card);
-
-        when(cardBinFinder.findCardBin("1234567800000006"))
-            .thenReturn(cardBin);
+        when(mockCardMapper.findActiveByCardNumber("1234567800000006"))
+            .thenReturn(mockCard);
 
         when(userCardMapper.findByMemberIdAndCardId(memberId, cardId))
             .thenReturn(deletedUserCard);
@@ -210,7 +169,7 @@ class UserCardServiceTest {
         Long memberId = 1L;
 
         UserCardRegisterRequest request =
-            new UserCardRegisterRequest(10L, "1234-5678-0000-0001");
+            new UserCardRegisterRequest("1234-5678-0000-0001");
 
         // when
         BusinessException exception = assertThrows(
@@ -222,22 +181,21 @@ class UserCardServiceTest {
         assertThat(exception.getErrorCode())
             .isEqualTo(ErrorCode.CARD_NUMBER_INVALID);
 
-        verify(cardMapper, never()).findActiveById(10L);
-        verify(cardBinFinder, never()).findCardBin("1234567800000006");
+        verify(mockCardMapper, never())
+            .findActiveByCardNumber("1234567800000001");
         verify(userCardMapper, never()).findByMemberIdAndCardId(memberId, 10L);
     }
 
     @Test
-    @DisplayName("보유 카드 등록 실패 - 선택한 카드 상품이 존재하지 않으면 예외가 발생한다")
-    void registerUserCard_fail_cardNotFound() {
+    @DisplayName("보유 카드 등록 실패 - Mock 목록에 없는 카드번호면 예외가 발생한다")
+    void registerUserCard_fail_cardNotSupported() {
         // given
         Long memberId = 1L;
-        Long cardId = 10L;
 
         UserCardRegisterRequest request =
-            new UserCardRegisterRequest(cardId, "1234-5678-0000-0006");
+            new UserCardRegisterRequest("1234-5678-0000-0006");
 
-        when(cardMapper.findActiveById(cardId))
+        when(mockCardMapper.findActiveByCardNumber("1234567800000006"))
             .thenReturn(null);
 
         // when
@@ -248,38 +206,24 @@ class UserCardServiceTest {
 
         // then
         assertThat(exception.getErrorCode())
-            .isEqualTo(ErrorCode.CARD_NOT_FOUND);
+            .isEqualTo(ErrorCode.CARD_NOT_SUPPORTED);
 
-        verify(cardMapper).findActiveById(cardId);
-        verify(cardBinFinder, never()).findCardBin("1234567800000006");
-        verify(userCardMapper, never()).findByMemberIdAndCardId(memberId, cardId);
+        verify(mockCardMapper).findActiveByCardNumber("1234567800000006");
+        verify(userCardMapper, never()).findByMemberIdAndCardId(memberId, 10L);
     }
 
     @Test
-    @DisplayName("보유 카드 등록 실패 - BIN 데이터가 없으면 예외가 발생한다")
-    void registerUserCard_fail_binNotFound() {
+    @DisplayName("보유 카드 등록 실패 - 비활성 Mock 카드번호면 예외가 발생한다")
+    void registerUserCard_fail_inactiveMockCard() {
         // given
         Long memberId = 1L;
-        Long cardId = 10L;
 
         UserCardRegisterRequest request =
-            new UserCardRegisterRequest(cardId, "1234-5678-0000-0006");
+            new UserCardRegisterRequest("1234-5678-0000-0006");
 
-        Card card = new Card(
-            cardId,
-            100L,
-            "KB국민카드",
-            "KB 국민 나라사랑카드",
-            "CHECK",
-            "https://example.com/kb.png",
-            "생활 혜택 체크카드"
-        );
-
-        when(cardMapper.findActiveById(cardId))
-            .thenReturn(card);
-
-        when(cardBinFinder.findCardBin("1234567800000006"))
-            .thenThrow(new BusinessException(ErrorCode.CARD_BIN_NOT_FOUND));
+        // Mapper가 is_active = 'Y' 조건으로 조회하므로 비활성 행은 조회 결과가 없는 것과 같다.
+        when(mockCardMapper.findActiveByCardNumber("1234567800000006"))
+            .thenReturn(null);
 
         // when
         BusinessException exception = assertThrows(
@@ -289,58 +233,10 @@ class UserCardServiceTest {
 
         // then
         assertThat(exception.getErrorCode())
-            .isEqualTo(ErrorCode.CARD_BIN_NOT_FOUND);
+            .isEqualTo(ErrorCode.CARD_NOT_SUPPORTED);
 
-        verify(cardBinFinder).findCardBin("1234567800000006");
-        verify(userCardMapper, never()).findByMemberIdAndCardId(memberId, cardId);
-    }
-
-    @Test
-    @DisplayName("보유 카드 등록 실패 - BIN 카드사와 선택 카드 상품의 카드사가 다르면 예외가 발생한다")
-    void registerUserCard_fail_cardCompanyMismatch() {
-        // given
-        Long memberId = 1L;
-        Long cardId = 10L;
-
-        UserCardRegisterRequest request =
-            new UserCardRegisterRequest(cardId, "1234-5678-0000-0006");
-
-        Card selectedCard = new Card(
-            cardId,
-            100L,
-            "KB국민카드",
-            "KB 국민 나라사랑카드",
-            "CHECK",
-            "https://example.com/kb.png",
-            "생활 혜택 체크카드"
-        );
-
-        CardBin cardBin = new CardBin(
-            1L,
-            200L,
-            "12345678",
-            8
-        );
-
-        when(cardMapper.findActiveById(cardId))
-            .thenReturn(selectedCard);
-
-        when(cardBinFinder.findCardBin("1234567800000006"))
-            .thenReturn(cardBin);
-
-        // when
-        BusinessException exception = assertThrows(
-            BusinessException.class,
-            () -> userCardService.registerUserCard(memberId, request)
-        );
-
-        // then
-        assertThat(exception.getErrorCode())
-            .isEqualTo(ErrorCode.CARD_COMPANY_MISMATCH);
-
-        verify(userCardMapper, never()).findByMemberIdAndCardId(memberId, cardId);
-        verify(userCardMapper, never())
-            .insertUserCard(memberId, cardId, "****-****-****-0006");
+        verify(mockCardMapper).findActiveByCardNumber("1234567800000006");
+        verify(userCardMapper, never()).findByMemberIdAndCardId(memberId, 10L);
     }
 
     @Test
@@ -351,24 +247,9 @@ class UserCardServiceTest {
         Long cardId = 10L;
 
         UserCardRegisterRequest request =
-            new UserCardRegisterRequest(cardId, "1234-5678-0000-0006");
+            new UserCardRegisterRequest("1234-5678-0000-0006");
 
-        Card card = new Card(
-            cardId,
-            100L,
-            "KB국민카드",
-            "KB 국민 나라사랑카드",
-            "CHECK",
-            "https://example.com/kb.png",
-            "생활 혜택 체크카드"
-        );
-
-        CardBin cardBin = new CardBin(
-            1L,
-            100L,
-            "12345678",
-            8
-        );
+        MockCard mockCard = new MockCard(1L, cardId);
 
         UserCard activeUserCard = new UserCard(
             50L,
@@ -379,11 +260,8 @@ class UserCardServiceTest {
             UserCardStatus.ACTIVE
         );
 
-        when(cardMapper.findActiveById(cardId))
-            .thenReturn(card);
-
-        when(cardBinFinder.findCardBin("1234567800000006"))
-            .thenReturn(cardBin);
+        when(mockCardMapper.findActiveByCardNumber("1234567800000006"))
+            .thenReturn(mockCard);
 
         when(userCardMapper.findByMemberIdAndCardId(memberId, cardId))
             .thenReturn(activeUserCard);
@@ -413,30 +291,12 @@ class UserCardServiceTest {
         Long cardId = 10L;
 
         UserCardRegisterRequest request =
-            new UserCardRegisterRequest(cardId, "1234-5678-0000-0006");
+            new UserCardRegisterRequest("1234-5678-0000-0006");
 
-        Card card = new Card(
-            cardId,
-            100L,
-            "KB국민카드",
-            "KB 국민 나라사랑카드",
-            "CHECK",
-            "https://example.com/kb.png",
-            "생활 혜택 체크카드"
-        );
+        MockCard mockCard = new MockCard(1L, cardId);
 
-        CardBin cardBin = new CardBin(
-            1L,
-            100L,
-            "12345678",
-            8
-        );
-
-        when(cardMapper.findActiveById(cardId))
-            .thenReturn(card);
-
-        when(cardBinFinder.findCardBin("1234567800000006"))
-            .thenReturn(cardBin);
+        when(mockCardMapper.findActiveByCardNumber("1234567800000006"))
+            .thenReturn(mockCard);
 
         when(userCardMapper.findByMemberIdAndCardId(memberId, cardId))
             .thenReturn(null);
@@ -472,24 +332,9 @@ class UserCardServiceTest {
         Long cardId = 10L;
 
         UserCardRegisterRequest request =
-            new UserCardRegisterRequest(cardId, "1234-5678-0000-0006");
+            new UserCardRegisterRequest("1234-5678-0000-0006");
 
-        Card card = new Card(
-            cardId,
-            100L,
-            "KB국민카드",
-            "KB 국민 나라사랑카드",
-            "CHECK",
-            "https://example.com/kb.png",
-            "생활 혜택 체크카드"
-        );
-
-        CardBin cardBin = new CardBin(
-            1L,
-            100L,
-            "12345678",
-            8
-        );
+        MockCard mockCard = new MockCard(1L, cardId);
 
         UserCard deletedUserCard = new UserCard(
             50L,
@@ -500,11 +345,8 @@ class UserCardServiceTest {
             UserCardStatus.DELETED
         );
 
-        when(cardMapper.findActiveById(cardId))
-            .thenReturn(card);
-
-        when(cardBinFinder.findCardBin("1234567800000006"))
-            .thenReturn(cardBin);
+        when(mockCardMapper.findActiveByCardNumber("1234567800000006"))
+            .thenReturn(mockCard);
 
         when(userCardMapper.findByMemberIdAndCardId(memberId, cardId))
             .thenReturn(deletedUserCard);
@@ -537,30 +379,12 @@ class UserCardServiceTest {
         Long cardId = 10L;
 
         UserCardRegisterRequest request =
-            new UserCardRegisterRequest(cardId, "1234-5678-0000-0006");
+            new UserCardRegisterRequest("1234-5678-0000-0006");
 
-        Card card = new Card(
-            cardId,
-            100L,
-            "KB국민카드",
-            "KB 국민 나라사랑카드",
-            "CHECK",
-            "https://example.com/kb.png",
-            "생활 혜택 체크카드"
-        );
+        MockCard mockCard = new MockCard(1L, cardId);
 
-        CardBin cardBin = new CardBin(
-            1L,
-            100L,
-            "12345678",
-            8
-        );
-
-        when(cardMapper.findActiveById(cardId))
-            .thenReturn(card);
-
-        when(cardBinFinder.findCardBin("1234567800000006"))
-            .thenReturn(cardBin);
+        when(mockCardMapper.findActiveByCardNumber("1234567800000006"))
+            .thenReturn(mockCard);
 
         when(userCardMapper.findByMemberIdAndCardId(memberId, cardId))
             .thenReturn(null);
