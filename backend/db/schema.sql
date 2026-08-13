@@ -58,6 +58,7 @@ DROP TABLE IF EXISTS benefit;
 DROP TABLE IF EXISTS performance_exclusion;
 DROP TABLE IF EXISTS performance_tier;
 DROP TABLE IF EXISTS user_card;
+DROP TABLE IF EXISTS mock_card;
 DROP TABLE IF EXISTS card_alias;
 DROP TABLE IF EXISTS merchant_alias;
 DROP TABLE IF EXISTS merchant;
@@ -277,6 +278,24 @@ CREATE TABLE card (
     KEY idx_card_company_active (card_company_id, is_active),
     CONSTRAINT fk_card_company FOREIGN KEY (card_company_id) REFERENCES card_company (card_company_id)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT '카드 마스터';
+
+-- 시연 환경에서 전체 카드번호를 카드 상품에 정확히 연결하기 위한 Mock 카드다.
+-- 화면 표시에는 입력값에서 만든 마스킹 번호 또는 아래 끝 4자리만 사용한다.
+CREATE TABLE mock_card (
+    mock_card_id     BIGINT     NOT NULL AUTO_INCREMENT COMMENT 'Mock 카드 ID',
+    card_id          BIGINT     NOT NULL COMMENT '연결할 카드 상품 ID',
+
+    - 사용자가 입력한 카드번호에서 공백과 하이픈을 제거한 값이다.
+    -- 실제 발급 카드번호가 아니라 개발 및 시연 목적으로 만든 번호만 저장한다.
+    card_number      VARCHAR(19)   NOT NULL COMMENT '정규화된 전체 카드번호',
+    is_active        CHAR(1)    NOT NULL DEFAULT 'Y' COMMENT '등록 허용 여부: Y | N',
+    created_at       DATETIME   NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '생성일시',
+    PRIMARY KEY (mock_card_id),
+    UNIQUE KEY uk_mock_card_number_hash (card_number),
+    KEY idx_mock_card_card_active (card_id, is_active),
+    CONSTRAINT fk_mock_card_card FOREIGN KEY (card_id) REFERENCES card (card_id),
+    CONSTRAINT chk_mock_card_active CHECK (is_active IN ('Y', 'N'))
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT '시연용 카드번호와 카드 상품 매핑';
 
 -- 연회비는 하나가 아니다. 국제브랜드(국내전용/VISA/Mastercard)와 발급 형태(실물/모바일단독)에
 -- 따라 갈리고, 기본연회비와 제휴연회비가 따로 청구된다.
