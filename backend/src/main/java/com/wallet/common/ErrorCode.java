@@ -391,27 +391,6 @@ public enum ErrorCode {
         "카드사를 확인할 수 없는 카드번호입니다."
     ),
 
-    /** BIN으로 카드사는 식별했지만, 해당 카드사의 등록 가능한 활성 카드 상품이 없는 경우 */
-    CARD_CANDIDATE_NOT_FOUND(
-        HttpStatus.NOT_FOUND,
-        "CARD_CANDIDATE_NOT_FOUND",
-        "등록 가능한 카드 상품을 찾을 수 없습니다."
-    ),
-
-    /** 사용자가 선택한 cardId가 존재하지 않거나 비활성 카드 상품인 경우 */
-    CARD_NOT_FOUND(
-        HttpStatus.NOT_FOUND,
-        "CARD_NOT_FOUND",
-        "등록 가능한 카드 상품을 찾을 수 없습니다."
-    ),
-
-    /** 카드번호의 BIN으로 식별한 카드사와 사용자가 선택한 카드 상품의 카드사가 다른 경우 */
-    CARD_COMPANY_MISMATCH(
-        HttpStatus.BAD_REQUEST,
-        "CARD_COMPANY_MISMATCH",
-        "카드번호와 선택한 카드 상품의 카드사가 일치하지 않습니다."
-    ),
-
     /** 이미 ACTIVE 상태로 등록된 보유 카드를 다시 등록하려는 경우. */
     USER_CARD_ALREADY_EXISTS(
         HttpStatus.CONFLICT,
