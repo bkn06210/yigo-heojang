@@ -66,8 +66,10 @@ class UserCardServiceTest {
         UserCardRegistrationResult result =
             new UserCardRegistrationResult(
                 50L,
+                cardId,
                 "KB 국민 나라사랑카드",
                 "KB국민카드",
+                "CHECK",
                 "****-****-****-0006",
                 "https://example.com/kb.png",
                 false
@@ -88,8 +90,10 @@ class UserCardServiceTest {
 
         // then
         assertThat(response.userCardId()).isEqualTo(50L);
+        assertThat(response.cardId()).isEqualTo(cardId);
         assertThat(response.cardName()).isEqualTo("KB 국민 나라사랑카드");
         assertThat(response.issuerName()).isEqualTo("KB국민카드");
+        assertThat(response.cardType()).isEqualTo("CHECK");
         assertThat(response.maskedCardNumber()).isEqualTo("****-****-****-0006");
         assertThat(response.imageUrl()).isEqualTo("https://example.com/kb.png");
         assertThat(response.representative()).isFalse();
@@ -125,8 +129,10 @@ class UserCardServiceTest {
         UserCardRegistrationResult result =
             new UserCardRegistrationResult(
                 50L,
+                cardId,
                 "KB 국민 나라사랑카드",
                 "KB국민카드",
+                "CHECK",
                 "****-****-****-0006",
                 "https://example.com/kb.png",
                 false
@@ -153,6 +159,8 @@ class UserCardServiceTest {
 
         // then
         assertThat(response.userCardId()).isEqualTo(50L);
+        assertThat(response.cardId()).isEqualTo(cardId);
+        assertThat(response.cardType()).isEqualTo("CHECK");
         assertThat(response.maskedCardNumber()).isEqualTo("****-****-****-0006");
 
         verify(userCardMapper, never())

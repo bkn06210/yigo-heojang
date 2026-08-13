@@ -21,8 +21,10 @@
                type="com.wallet.card.domain.UserCardRegistrationResult">
         <constructor>
             <idArg column="userCardId" javaType="Long"/>
+            <arg column="cardId" javaType="Long"/>
             <arg column="cardName" javaType="String"/>
             <arg column="companyName" javaType="String"/>
+            <arg column="cardType" javaType="String"/>
             <arg column="maskedCardNumber" javaType="String"/>
             <arg column="imageUrl" javaType="String"/>
             <arg column="representative" javaType="Boolean"/>
@@ -87,8 +89,10 @@
             resultMap="userCardRegistrationResultMap">
         SELECT
             uc.user_card_id AS userCardId,
+            c.card_id AS cardId,
             c.card_name AS cardName,
             cc.company_name AS companyName,
+            c.card_type AS cardType,
             uc.masked_card_number AS maskedCardNumber,
             c.image_url AS imageUrl,
             uc.is_representative AS representative
