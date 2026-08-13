@@ -14,6 +14,10 @@ public interface SimplePasswordVerificationMapper {
         @Param("memberId") Long memberId
     );
 
+    SimplePasswordVerification findByChangeTokenHashForUpdate(
+        @Param("changeTokenHash") String changeTokenHash
+    );
+
     int expireActiveByMemberId(@Param("memberId") Long memberId);
 
     int insert(SimplePasswordVerification verification);
@@ -30,5 +34,9 @@ public interface SimplePasswordVerificationMapper {
         @Param("simplePasswordVerificationId") Long simplePasswordVerificationId,
         @Param("changeTokenHash") String changeTokenHash,
         @Param("changeTokenExpiresAt") LocalDateTime changeTokenExpiresAt
+    );
+
+    int markAsUsed(
+        @Param("simplePasswordVerificationId") Long simplePasswordVerificationId
     );
 }

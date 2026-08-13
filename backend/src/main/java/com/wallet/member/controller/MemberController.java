@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,7 +22,9 @@ import com.wallet.member.dto.MemberUpdateRequest;
 import com.wallet.member.dto.SimplePasswordEmailVerificationResponse;
 import com.wallet.member.dto.SimplePasswordEmailVerificationVerifyRequest;
 import com.wallet.member.dto.SimplePasswordEmailVerificationVerifyResponse;
+import com.wallet.member.dto.SimplePasswordUpdateRequest;
 import com.wallet.member.service.MemberService;
+import com.wallet.member.service.SimplePasswordService;
 import com.wallet.member.service.SimplePasswordVerificationService;
 
 @RequiredArgsConstructor
@@ -30,6 +33,7 @@ import com.wallet.member.service.SimplePasswordVerificationService;
 public class MemberController {
     private final MemberService memberService;
     private final SimplePasswordVerificationService simplePasswordVerificationService;
+    private final SimplePasswordService simplePasswordService;
 
     @GetMapping("/me")
     public ResponseEntity<ApiResponse<MemberMeResponse>> getMyInfo(HttpServletRequest request) {
@@ -82,6 +86,20 @@ public class MemberController {
 
         return ResponseEntity.ok(
             ApiResponse.success("간편비밀번호 변경 이메일 인증이 완료되었습니다.", response)
+        );
+    }
+
+    @PutMapping("/me/simple-password")
+    public ResponseEntity<ApiResponse<Void>> updateSimplePassword(
+        HttpServletRequest request,
+        @Valid @RequestBody SimplePasswordUpdateRequest updateRequest
+    ) {
+        Long memberId = (Long) request.getAttribute(AUTHENTICATED_MEMBER_ID);
+
+        simplePasswordService.updateSimplePassword(memberId, updateRequest);
+
+        return ResponseEntity.ok(
+            ApiResponse.success("간편비밀번호 설정 또는 변경이 완료되었습니다.", null)
         );
     }
 

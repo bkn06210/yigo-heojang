@@ -318,6 +318,36 @@ public enum ErrorCode {
         "간편비밀번호 변경 인증 처리에 실패했습니다."
     ),
 
+    SIMPLE_PASSWORD_CHANGE_TOKEN_INVALID(
+        HttpStatus.BAD_REQUEST,
+        "SIMPLE_PASSWORD_CHANGE_TOKEN_INVALID",
+        "간편비밀번호 변경 토큰이 유효하지 않습니다."
+    ),
+
+    SIMPLE_PASSWORD_CHANGE_TOKEN_EXPIRED(
+        HttpStatus.BAD_REQUEST,
+        "SIMPLE_PASSWORD_CHANGE_TOKEN_EXPIRED",
+        "간편비밀번호 변경 토큰이 만료되었습니다."
+    ),
+
+    SIMPLE_PASSWORD_CHANGE_TOKEN_ALREADY_USED(
+        HttpStatus.CONFLICT,
+        "SIMPLE_PASSWORD_CHANGE_TOKEN_ALREADY_USED",
+        "이미 사용 완료된 간편비밀번호 변경 토큰입니다."
+    ),
+
+    SIMPLE_PASSWORD_CONFIRMATION_MISMATCH(
+        HttpStatus.BAD_REQUEST,
+        "SIMPLE_PASSWORD_CONFIRMATION_MISMATCH",
+        "간편비밀번호와 간편비밀번호 확인이 일치하지 않습니다."
+    ),
+
+    SIMPLE_PASSWORD_UPDATE_FAILED(
+        HttpStatus.INTERNAL_SERVER_ERROR,
+        "SIMPLE_PASSWORD_UPDATE_FAILED",
+        "간편비밀번호 저장에 실패했습니다."
+    ),
+
     // =========================================================================
     //  9. 카드 관리 (Card)
     // =========================================================================

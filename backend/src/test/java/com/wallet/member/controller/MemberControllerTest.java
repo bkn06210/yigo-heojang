@@ -11,6 +11,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
@@ -34,6 +35,7 @@ import com.wallet.member.dto.MemberUpdateRequest;
 import com.wallet.member.dto.SimplePasswordEmailVerificationResponse;
 import com.wallet.member.dto.SimplePasswordEmailVerificationVerifyResponse;
 import com.wallet.member.service.MemberService;
+import com.wallet.member.service.SimplePasswordService;
 import com.wallet.member.service.SimplePasswordVerificationService;
 
 class MemberControllerTest {
@@ -42,13 +44,19 @@ class MemberControllerTest {
     private final MemberService memberService = mock(MemberService.class);
     private final SimplePasswordVerificationService simplePasswordVerificationService =
         mock(SimplePasswordVerificationService.class);
+    private final SimplePasswordService simplePasswordService =
+        mock(SimplePasswordService.class);
 
     private final ObjectMapper objectMapper = new ObjectMapper()
         .registerModule(new JavaTimeModule())
         .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
     private final MockMvc mockMvc = MockMvcBuilders
-        .standaloneSetup(new MemberController(memberService, simplePasswordVerificationService))
+        .standaloneSetup(new MemberController(
+            memberService,
+            simplePasswordVerificationService,
+            simplePasswordService
+        ))
         .setControllerAdvice(new GlobalExceptionHandler())
         .setMessageConverters(new MappingJackson2HttpMessageConverter(objectMapper))
         .setValidator(validator())
@@ -278,5 +286,49 @@ class MemberControllerTest {
             .andExpect(jsonPath("$.code").value("INPUT_INVALID"));
 
         verify(simplePasswordVerificationService, never()).verifyCode(any(), any());
+    }
+
+    @Test
+    @DisplayName("간편비밀번호 설정·변경 성공")
+    void updateSimplePassword_success() throws Exception {
+        mockMvc.perform(
+                put("/api/members/me/simple-password")
+                    .requestAttr(AUTHENTICATED_MEMBER_ID, 1L)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content("""
+                        {
+                          "simplePasswordChangeToken": "change-token",
+                          "simplePassword": "012345",
+                          "simplePasswordConfirm": "012345"
+                        }
+                        """)
+            )
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.success").value(true))
+            .andExpect(jsonPath("$.message")
+                .value("간편비밀번호 설정 또는 변경이 완료되었습니다."));
+
+        verify(simplePasswordService).updateSimplePassword(eq(1L), any());
+    }
+
+    @Test
+    @DisplayName("간편비밀번호 설정·변경 실패 - 6자리 숫자가 아니면 요청을 거부한다")
+    void updateSimplePassword_fail_whenFormatInvalid() throws Exception {
+        mockMvc.perform(
+                put("/api/members/me/simple-password")
+                    .requestAttr(AUTHENTICATED_MEMBER_ID, 1L)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content("""
+                        {
+                          "simplePasswordChangeToken": "change-token",
+                          "simplePassword": "12345A",
+                          "simplePasswordConfirm": "12345A"
+                        }
+                        """)
+            )
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.code").value("INPUT_INVALID"));
+
+        verify(simplePasswordService, never()).updateSimplePassword(any(), any());
     }
 }
