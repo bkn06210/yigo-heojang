@@ -96,6 +96,7 @@ class MemberControllerTest {
              * 응답 DTO를 분리한 목적이 민감정보 노출 방지이므로 테스트에서도 이를 확인합니다.
              */
             .andExpect(jsonPath("$.data.password").doesNotExist())
+            .andExpect(jsonPath("$.data.simplePasswordHash").doesNotExist())
             .andExpect(jsonPath("$.data.withdrawnAt").doesNotExist());
 
         verify(memberService).getMyInfo(memberId);
@@ -148,6 +149,7 @@ class MemberControllerTest {
              * password는 해시값이어도 클라이언트 응답에 노출되면 안 됩니다.
              */
             .andExpect(jsonPath("$.data.password").doesNotExist())
+            .andExpect(jsonPath("$.data.simplePasswordHash").doesNotExist())
             .andExpect(jsonPath("$.data.withdrawnAt").doesNotExist());
 
         verify(memberService).updateMyInfo(

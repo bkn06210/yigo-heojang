@@ -73,6 +73,7 @@ DROP TABLE IF EXISTS term;
 DROP TABLE IF EXISTS refresh_token;
 DROP TABLE IF EXISTS signup_email_verification;
 DROP TABLE IF EXISTS password_reset_verification;
+DROP TABLE IF EXISTS simple_password_verification;
 DROP TABLE IF EXISTS member_withdrawal;
 DROP TABLE IF EXISTS member;
 
@@ -83,15 +84,18 @@ SET FOREIGN_KEY_CHECKS = 1;
 -- ════════════════════════════════════════════════════════════
 
 CREATE TABLE member (
-    member_id     BIGINT       NOT NULL AUTO_INCREMENT COMMENT '회원 ID',
-    email         VARCHAR(255) NOT NULL COMMENT '이메일(로그인 ID)',
-    password_hash VARCHAR(255) NOT NULL COMMENT '비밀번호 해시',
-    name          VARCHAR(50)  NOT NULL COMMENT '회원명',
-    nickname      VARCHAR(50) NOT NULL COMMENT '닉네임',
-    member_status ENUM('ACTIVE','SUSPENDED','WITHDRAWN') NOT NULL DEFAULT 'ACTIVE' COMMENT '회원 상태',
-    created_at    DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '생성일시',
-    updated_at    DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '수정일시',
-    withdrawn_at  DATETIME     NULL COMMENT '탈퇴일시. 상태가 WITHDRAWN이면 필수',
+    member_id            BIGINT       NOT NULL AUTO_INCREMENT COMMENT '회원 ID',
+    email                VARCHAR(255) NOT NULL COMMENT '이메일(로그인 ID)',
+    password_hash        VARCHAR(255) NOT NULL COMMENT '비밀번호 해시',
+    -- 기존 회원은 간편비밀번호를 설정하지 않았으므로 NULL을 허용한다.
+    -- 6자리 원문은 저장하지 않고, 서버에서 BCrypt로 만든 해시만 저장한다.
+    simple_password_hash VARCHAR(255) NULL COMMENT '간편비밀번호 해시',
+    name                 VARCHAR(50)  NOT NULL COMMENT '회원명',
+    nickname             VARCHAR(50)  NOT NULL COMMENT '닉네임',
+    member_status        ENUM('ACTIVE','SUSPENDED','WITHDRAWN') NOT NULL DEFAULT 'ACTIVE' COMMENT '회원 상태',
+    created_at           DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '생성일시',
+    updated_at           DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '수정일시',
+    withdrawn_at         DATETIME     NULL COMMENT '탈퇴일시. 상태가 WITHDRAWN이면 필수',
     PRIMARY KEY (member_id),
     UNIQUE KEY uk_member_email (email)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT '회원';
@@ -148,6 +152,28 @@ CREATE TABLE password_reset_verification (
     KEY idx_password_reset_code_expiry (verification_code_expires_at),
     CONSTRAINT fk_password_reset_member FOREIGN KEY (member_id) REFERENCES member (member_id)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT '비밀번호 재설정 인증';
+
+-- 이메일 인증 코드와 변경 토큰은 유효 기간이 다르므로 만료일시를 따로 관리한다.
+-- 코드와 토큰의 원문을 DB에 남기지 않아 DB 노출 시 즉시 악용되는 것을 방지한다.
+CREATE TABLE simple_password_verification (
+    simple_password_verification_id BIGINT       NOT NULL AUTO_INCREMENT COMMENT '간편비밀번호 변경 인증 ID',
+    member_id                       BIGINT       NOT NULL COMMENT '회원 ID',
+    verification_code_hash          VARCHAR(255) NOT NULL COMMENT '이메일 인증 코드 단방향 해시',
+    verification_status             ENUM('PENDING','VERIFIED','USED','EXPIRED') NOT NULL DEFAULT 'PENDING' COMMENT '인증 상태',
+    failed_attempt_count            INT          NOT NULL DEFAULT 0 COMMENT '인증 코드 검증 실패 횟수',
+    verification_code_expires_at    DATETIME     NOT NULL COMMENT '인증 코드 만료일시',
+    change_token_hash               VARCHAR(255) NULL COMMENT '간편비밀번호 변경 토큰 단방향 해시',
+    change_token_expires_at         DATETIME     NULL COMMENT '변경 토큰 만료일시',
+    verified_at                     DATETIME     NULL COMMENT '이메일 인증 완료일시',
+    used_at                         DATETIME     NULL COMMENT '간편비밀번호 설정·변경에 사용된 일시',
+    created_at                      DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '생성일시',
+    updated_at                      DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '수정일시',
+    PRIMARY KEY (simple_password_verification_id),
+    UNIQUE KEY uk_simple_password_change_token (change_token_hash),
+    KEY idx_simple_password_verification_member_status (member_id, verification_status),
+    KEY idx_simple_password_verification_code_expiry (verification_code_expires_at),
+    CONSTRAINT fk_simple_password_verification_member FOREIGN KEY (member_id) REFERENCES member (member_id)
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT '간편비밀번호 변경 이메일 인증';
 
 -- 원문은 저장하지 않는다. revoked_at과 revoke_reason은 함께 NULL이거나 함께 값이 있어야 한다.
 CREATE TABLE refresh_token (
