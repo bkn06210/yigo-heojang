@@ -253,8 +253,10 @@ public class UserCardService {
     private UserCardRegisterResponse toResponse(UserCardRegistrationResult result) {
         return new UserCardRegisterResponse(
             result.getUserCardId(),
+            result.getCardId(),
             result.getCardName(),
             result.getCompanyName(),
+            result.getCardType(),
             result.getMaskedCardNumber(),
             result.getImageUrl(),
             result.getRepresentative()
