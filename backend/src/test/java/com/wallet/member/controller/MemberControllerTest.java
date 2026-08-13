@@ -10,6 +10,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
@@ -30,19 +31,24 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import com.wallet.common.exception.GlobalExceptionHandler;
 import com.wallet.member.dto.MemberMeResponse;
 import com.wallet.member.dto.MemberUpdateRequest;
+import com.wallet.member.dto.SimplePasswordEmailVerificationResponse;
+import com.wallet.member.dto.SimplePasswordEmailVerificationVerifyResponse;
 import com.wallet.member.service.MemberService;
+import com.wallet.member.service.SimplePasswordVerificationService;
 
 class MemberControllerTest {
     private static final String AUTHENTICATED_MEMBER_ID = "authenticatedMemberId";
 
     private final MemberService memberService = mock(MemberService.class);
+    private final SimplePasswordVerificationService simplePasswordVerificationService =
+        mock(SimplePasswordVerificationService.class);
 
     private final ObjectMapper objectMapper = new ObjectMapper()
         .registerModule(new JavaTimeModule())
         .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
     private final MockMvc mockMvc = MockMvcBuilders
-        .standaloneSetup(new MemberController(memberService))
+        .standaloneSetup(new MemberController(memberService, simplePasswordVerificationService))
         .setControllerAdvice(new GlobalExceptionHandler())
         .setMessageConverters(new MappingJackson2HttpMessageConverter(objectMapper))
         .setValidator(validator())
@@ -214,5 +220,63 @@ class MemberControllerTest {
             .andExpect(jsonPath("$.message").value("닉네임은 필수입니다."));
 
         verify(memberService, never()).updateMyInfo(any(), any());
+    }
+
+    @Test
+    @DisplayName("간편비밀번호 변경 인증 코드 발송 성공")
+    void sendSimplePasswordVerificationCode_success() throws Exception {
+        Long memberId = 1L;
+        when(simplePasswordVerificationService.sendVerificationCode(memberId))
+            .thenReturn(new SimplePasswordEmailVerificationResponse(
+                "us***@example.com",
+                300
+            ));
+
+        mockMvc.perform(
+                post("/api/members/me/simple-password/email-verifications")
+                    .requestAttr(AUTHENTICATED_MEMBER_ID, memberId)
+            )
+            .andExpect(status().isAccepted())
+            .andExpect(jsonPath("$.data.email").value("us***@example.com"))
+            .andExpect(jsonPath("$.data.expiresIn").value(300));
+
+        verify(simplePasswordVerificationService).sendVerificationCode(memberId);
+    }
+
+    @Test
+    @DisplayName("간편비밀번호 변경 인증 코드 검증 성공")
+    void verifySimplePasswordVerificationCode_success() throws Exception {
+        Long memberId = 1L;
+        when(simplePasswordVerificationService.verifyCode(eq(memberId), any()))
+            .thenReturn(new SimplePasswordEmailVerificationVerifyResponse(
+                "simple-password-change-token",
+                600
+            ));
+
+        mockMvc.perform(
+                post("/api/members/me/simple-password/email-verifications/verify")
+                    .requestAttr(AUTHENTICATED_MEMBER_ID, memberId)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content("{\"verificationCode\":\"482913\"}")
+            )
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.data.simplePasswordChangeToken")
+                .value("simple-password-change-token"))
+            .andExpect(jsonPath("$.data.expiresIn").value(600));
+    }
+
+    @Test
+    @DisplayName("간편비밀번호 변경 인증 코드 검증 실패 - 6자리 숫자가 아니면 요청을 거부한다")
+    void verifySimplePasswordVerificationCode_fail_whenCodeFormatInvalid() throws Exception {
+        mockMvc.perform(
+                post("/api/members/me/simple-password/email-verifications/verify")
+                    .requestAttr(AUTHENTICATED_MEMBER_ID, 1L)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content("{\"verificationCode\":\"12AB\"}")
+            )
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.code").value("INPUT_INVALID"));
+
+        verify(simplePasswordVerificationService, never()).verifyCode(any(), any());
     }
 }
