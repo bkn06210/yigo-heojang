@@ -1,5 +1,6 @@
 package com.wallet.member.service;
 
+import java.time.Clock;
 import java.time.LocalDateTime;
 
 import lombok.RequiredArgsConstructor;
@@ -23,10 +24,14 @@ import com.wallet.member.mapper.SimplePasswordVerificationMapper;
 @RequiredArgsConstructor
 @Service
 public class SimplePasswordService {
+    private static final int MAX_FAILED_ATTEMPT_COUNT = 5;
+    private static final long LOCK_MINUTES = 5;
+
     private final MemberMapper memberMapper;
     private final SimplePasswordVerificationMapper simplePasswordVerificationMapper;
     private final TokenHashUtil tokenHashUtil;
     private final PasswordEncoder passwordEncoder;
+    private final Clock clock;
 
     @Transactional
     public void updateSimplePassword(Long memberId, SimplePasswordUpdateRequest request) {
@@ -70,12 +75,18 @@ public class SimplePasswordService {
         }
     }
 
-    @Transactional(readOnly = true)
+    /* 실패 횟수 증가와 잠금 상태를 저장해야 하므로 읽기 전용 트랜잭션을 사용하지 않는다. */
+    @Transactional(noRollbackFor = BusinessException.class)
     public SimplePasswordVerifyResponse verifySimplePassword(
         Long memberId,
         SimplePasswordVerifyRequest request
     ) {
         validateAuthenticatedMemberId(memberId);
+
+        /* 회원 행을 잠가 동시에 들어온 검사 요청이 실패 횟수를 덮어쓰지 못하게 한다. */
+        if (memberMapper.lockActiveMemberById(memberId) == null) {
+            throw new BusinessException(ErrorCode.MEMBER_NOT_FOUND);
+        }
 
         Member member = memberMapper.findById(memberId);
         if (member == null) {
@@ -91,6 +102,16 @@ public class SimplePasswordService {
             throw new BusinessException(ErrorCode.SIMPLE_PASSWORD_NOT_SET);
         }
 
+        LocalDateTime now = LocalDateTime.now(clock);
+        validateNotLocked(member, now);
+
+        int failedAttemptCount = currentFailedAttemptCount(member);
+        boolean expiredLockState = isExpiredLockState(member, now);
+        if (expiredLockState) {
+            resetVerificationFailure(memberId);
+            failedAttemptCount = 0;
+        }
+
         /*
          * BCrypt는 같은 원문도 매번 다른 해시가 만들어지므로 문자열끼리 비교하면 안 된다.
          * matches()가 요청 원문을 저장된 해시의 salt와 비용 설정으로 다시 계산해 비교한다.
@@ -100,7 +121,65 @@ public class SimplePasswordService {
             member.getSimplePasswordHash()
         );
 
-        return new SimplePasswordVerifyResponse(matched);
+        if (matched) {
+            if (!expiredLockState
+                && (failedAttemptCount > 0 || member.getSimplePasswordLockedUntil() != null)) {
+                resetVerificationFailure(memberId);
+            }
+            return new SimplePasswordVerifyResponse(true);
+        }
+
+        handleMismatch(memberId, failedAttemptCount, now);
+
+        return new SimplePasswordVerifyResponse(false);
+    }
+
+    private void validateNotLocked(Member member, LocalDateTime now) {
+        if (member.getSimplePasswordLockedUntil() != null
+            && member.getSimplePasswordLockedUntil().isAfter(now)) {
+            throw new BusinessException(ErrorCode.SIMPLE_PASSWORD_ATTEMPT_LIMIT_EXCEEDED);
+        }
+    }
+
+    private boolean isExpiredLockState(Member member, LocalDateTime now) {
+        return member.getSimplePasswordLockedUntil() != null
+            && !member.getSimplePasswordLockedUntil().isAfter(now);
+    }
+
+    private int currentFailedAttemptCount(Member member) {
+        return member.getSimplePasswordFailedAttemptCount() == null
+            ? 0
+            : member.getSimplePasswordFailedAttemptCount();
+    }
+
+    private void handleMismatch(
+        Long memberId,
+        int failedAttemptCount,
+        LocalDateTime now
+    ) {
+        int updatedCount;
+        if (failedAttemptCount + 1 >= MAX_FAILED_ATTEMPT_COUNT) {
+            updatedCount = memberMapper.lockSimplePasswordVerification(
+                memberId,
+                now.plusMinutes(LOCK_MINUTES)
+            );
+        } else {
+            updatedCount = memberMapper.increaseSimplePasswordFailedAttemptCount(memberId);
+        }
+
+        if (updatedCount == 0) {
+            throw new BusinessException(ErrorCode.SIMPLE_PASSWORD_ATTEMPT_UPDATE_FAILED);
+        }
+
+        if (failedAttemptCount + 1 >= MAX_FAILED_ATTEMPT_COUNT) {
+            throw new BusinessException(ErrorCode.SIMPLE_PASSWORD_ATTEMPT_LIMIT_EXCEEDED);
+        }
+    }
+
+    private void resetVerificationFailure(Long memberId) {
+        if (memberMapper.resetSimplePasswordVerificationFailure(memberId) == 0) {
+            throw new BusinessException(ErrorCode.SIMPLE_PASSWORD_ATTEMPT_UPDATE_FAILED);
+        }
     }
 
     private void validateAuthenticatedMemberId(Long memberId) {

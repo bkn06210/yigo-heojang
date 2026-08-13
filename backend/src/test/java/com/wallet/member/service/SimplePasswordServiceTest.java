@@ -10,6 +10,9 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDateTime;
+import java.time.Clock;
+import java.time.Instant;
+import java.time.ZoneId;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -34,6 +37,10 @@ class SimplePasswordServiceTest {
         mock(SimplePasswordVerificationMapper.class);
     private final TokenHashUtil tokenHashUtil = new TokenHashUtil();
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    private final Clock clock = Clock.fixed(
+        Instant.parse("2026-08-13T05:00:00Z"),
+        ZoneId.of("Asia/Seoul")
+    );
 
     private SimplePasswordService service;
 
@@ -43,7 +50,8 @@ class SimplePasswordServiceTest {
             memberMapper,
             verificationMapper,
             tokenHashUtil,
-            passwordEncoder
+            passwordEncoder,
+            clock
         );
     }
 
@@ -156,6 +164,7 @@ class SimplePasswordServiceTest {
             "simplePasswordHash",
             passwordEncoder.encode("012345")
         );
+        when(memberMapper.lockActiveMemberById(1L)).thenReturn(1L);
         when(memberMapper.findById(1L)).thenReturn(member);
 
         var response = service.verifySimplePassword(
@@ -175,7 +184,9 @@ class SimplePasswordServiceTest {
             "simplePasswordHash",
             passwordEncoder.encode("012345")
         );
+        when(memberMapper.lockActiveMemberById(1L)).thenReturn(1L);
         when(memberMapper.findById(1L)).thenReturn(member);
+        when(memberMapper.increaseSimplePasswordFailedAttemptCount(1L)).thenReturn(1);
 
         var response = service.verifySimplePassword(
             1L,
@@ -183,11 +194,13 @@ class SimplePasswordServiceTest {
         );
 
         assertThat(response.matched()).isFalse();
+        verify(memberMapper).increaseSimplePasswordFailedAttemptCount(1L);
     }
 
     @Test
     @DisplayName("간편비밀번호 검사 실패 - 간편비밀번호가 설정되지 않았다")
     void verifySimplePassword_fail_whenNotSet() {
+        when(memberMapper.lockActiveMemberById(1L)).thenReturn(1L);
         when(memberMapper.findById(1L)).thenReturn(member(1L));
 
         BusinessException exception = assertThrows(
@@ -201,6 +214,100 @@ class SimplePasswordServiceTest {
         assertThat(exception.getErrorCode()).isEqualTo(ErrorCode.SIMPLE_PASSWORD_NOT_SET);
     }
 
+    @Test
+    @DisplayName("간편비밀번호 검사 실패 - 다섯 번째 불일치에서 5분간 잠근다")
+    void verifySimplePassword_fail_whenFifthAttemptFails() {
+        Member member = memberWithVerificationState(
+            4,
+            null,
+            passwordEncoder.encode("012345")
+        );
+        when(memberMapper.lockActiveMemberById(1L)).thenReturn(1L);
+        when(memberMapper.findById(1L)).thenReturn(member);
+        when(memberMapper.lockSimplePasswordVerification(eq(1L), any())).thenReturn(1);
+
+        BusinessException exception = assertThrows(
+            BusinessException.class,
+            () -> service.verifySimplePassword(
+                1L,
+                new SimplePasswordVerifyRequest("999999")
+            )
+        );
+
+        assertThat(exception.getErrorCode())
+            .isEqualTo(ErrorCode.SIMPLE_PASSWORD_ATTEMPT_LIMIT_EXCEEDED);
+        verify(memberMapper).lockSimplePasswordVerification(
+            1L,
+            LocalDateTime.of(2026, 8, 13, 14, 5)
+        );
+    }
+
+    @Test
+    @DisplayName("간편비밀번호 검사 실패 - 잠금 시간 중에는 BCrypt 비교 전에 차단한다")
+    void verifySimplePassword_fail_whenLocked() {
+        Member member = memberWithVerificationState(
+            5,
+            LocalDateTime.of(2026, 8, 13, 14, 1),
+            passwordEncoder.encode("012345")
+        );
+        when(memberMapper.lockActiveMemberById(1L)).thenReturn(1L);
+        when(memberMapper.findById(1L)).thenReturn(member);
+
+        BusinessException exception = assertThrows(
+            BusinessException.class,
+            () -> service.verifySimplePassword(
+                1L,
+                new SimplePasswordVerifyRequest("012345")
+            )
+        );
+
+        assertThat(exception.getErrorCode())
+            .isEqualTo(ErrorCode.SIMPLE_PASSWORD_ATTEMPT_LIMIT_EXCEEDED);
+        verify(memberMapper, never()).resetSimplePasswordVerificationFailure(any());
+    }
+
+    @Test
+    @DisplayName("간편비밀번호 검사 성공 - 이전 실패 횟수를 초기화한다")
+    void verifySimplePassword_success_resetsPreviousFailures() {
+        Member member = memberWithVerificationState(
+            2,
+            null,
+            passwordEncoder.encode("012345")
+        );
+        when(memberMapper.lockActiveMemberById(1L)).thenReturn(1L);
+        when(memberMapper.findById(1L)).thenReturn(member);
+        when(memberMapper.resetSimplePasswordVerificationFailure(1L)).thenReturn(1);
+
+        var response = service.verifySimplePassword(
+            1L,
+            new SimplePasswordVerifyRequest("012345")
+        );
+
+        assertThat(response.matched()).isTrue();
+        verify(memberMapper).resetSimplePasswordVerificationFailure(1L);
+    }
+
+    @Test
+    @DisplayName("간편비밀번호 검사 성공 - 잠금 만료 후 실패 상태를 초기화하고 다시 검사한다")
+    void verifySimplePassword_success_afterLockExpired() {
+        Member member = memberWithVerificationState(
+            5,
+            LocalDateTime.of(2026, 8, 13, 13, 59),
+            passwordEncoder.encode("012345")
+        );
+        when(memberMapper.lockActiveMemberById(1L)).thenReturn(1L);
+        when(memberMapper.findById(1L)).thenReturn(member);
+        when(memberMapper.resetSimplePasswordVerificationFailure(1L)).thenReturn(1);
+
+        var response = service.verifySimplePassword(
+            1L,
+            new SimplePasswordVerifyRequest("012345")
+        );
+
+        assertThat(response.matched()).isTrue();
+        verify(memberMapper).resetSimplePasswordVerificationFailure(1L);
+    }
+
     private SimplePasswordUpdateRequest request(String password, String confirmation) {
         return new SimplePasswordUpdateRequest("change-token", password, confirmation);
     }
@@ -209,6 +316,22 @@ class SimplePasswordServiceTest {
         Member member = new Member();
         ReflectionTestUtils.setField(member, "memberId", memberId);
         ReflectionTestUtils.setField(member, "memberStatus", "ACTIVE");
+        return member;
+    }
+
+    private Member memberWithVerificationState(
+        int failedAttemptCount,
+        LocalDateTime lockedUntil,
+        String simplePasswordHash
+    ) {
+        Member member = member(1L);
+        ReflectionTestUtils.setField(member, "simplePasswordHash", simplePasswordHash);
+        ReflectionTestUtils.setField(
+            member,
+            "simplePasswordFailedAttemptCount",
+            failedAttemptCount
+        );
+        ReflectionTestUtils.setField(member, "simplePasswordLockedUntil", lockedUntil);
         return member;
     }
 

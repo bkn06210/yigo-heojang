@@ -90,6 +90,8 @@ CREATE TABLE member (
     -- 기존 회원은 간편비밀번호를 설정하지 않았으므로 NULL을 허용한다.
     -- 6자리 원문은 저장하지 않고, 서버에서 BCrypt로 만든 해시만 저장한다.
     simple_password_hash VARCHAR(255) NULL COMMENT '간편비밀번호 해시',
+    simple_password_failed_attempt_count INT NOT NULL DEFAULT 0 COMMENT '간편비밀번호 연속 검증 실패 횟수',
+    simple_password_locked_until DATETIME NULL COMMENT '간편비밀번호 검증 잠금 만료일시',
     name                 VARCHAR(50)  NOT NULL COMMENT '회원명',
     nickname             VARCHAR(50)  NOT NULL COMMENT '닉네임',
     member_status        ENUM('ACTIVE','SUSPENDED','WITHDRAWN') NOT NULL DEFAULT 'ACTIVE' COMMENT '회원 상태',

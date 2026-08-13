@@ -11,6 +11,8 @@
             email,
             password_hash AS password,
             simple_password_hash AS simplePasswordHash,
+            simple_password_failed_attempt_count AS simplePasswordFailedAttemptCount,
+            simple_password_locked_until AS simplePasswordLockedUntil,
             name,
             nickname,
             member_status AS memberStatus,
@@ -28,6 +30,8 @@
             email,
             password_hash AS password,
             simple_password_hash AS simplePasswordHash,
+            simple_password_failed_attempt_count AS simplePasswordFailedAttemptCount,
+            simple_password_locked_until AS simplePasswordLockedUntil,
             name,
             nickname,
             member_status AS memberStatus,
@@ -104,6 +108,41 @@
         UPDATE member
         SET
             simple_password_hash = #{simplePasswordHash},
+            simple_password_failed_attempt_count = 0,
+            simple_password_locked_until = NULL,
+            updated_at = CURRENT_TIMESTAMP
+        WHERE member_id = #{memberId}
+          AND member_status = 'ACTIVE'
+          AND withdrawn_at IS NULL
+    </update>
+
+    <update id="increaseSimplePasswordFailedAttemptCount">
+        UPDATE member
+        SET
+            simple_password_failed_attempt_count = simple_password_failed_attempt_count + 1,
+            updated_at = CURRENT_TIMESTAMP
+        WHERE member_id = #{memberId}
+          AND member_status = 'ACTIVE'
+          AND withdrawn_at IS NULL
+    </update>
+
+    <!-- 다섯 번째 실패를 기록하는 동시에 잠금 만료시각을 저장한다. -->
+    <update id="lockSimplePasswordVerification">
+        UPDATE member
+        SET
+            simple_password_failed_attempt_count = 5,
+            simple_password_locked_until = #{lockedUntil},
+            updated_at = CURRENT_TIMESTAMP
+        WHERE member_id = #{memberId}
+          AND member_status = 'ACTIVE'
+          AND withdrawn_at IS NULL
+    </update>
+
+    <update id="resetSimplePasswordVerificationFailure">
+        UPDATE member
+        SET
+            simple_password_failed_attempt_count = 0,
+            simple_password_locked_until = NULL,
             updated_at = CURRENT_TIMESTAMP
         WHERE member_id = #{memberId}
           AND member_status = 'ACTIVE'

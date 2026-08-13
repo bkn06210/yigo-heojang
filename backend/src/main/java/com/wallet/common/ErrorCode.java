@@ -354,6 +354,18 @@ public enum ErrorCode {
         "간편비밀번호가 설정되어 있지 않습니다."
     ),
 
+    SIMPLE_PASSWORD_ATTEMPT_LIMIT_EXCEEDED(
+        HttpStatus.TOO_MANY_REQUESTS,
+        "SIMPLE_PASSWORD_ATTEMPT_LIMIT_EXCEEDED",
+        "간편비밀번호 입력 시도 횟수를 초과했습니다. 5분 후 다시 시도해 주세요."
+    ),
+
+    SIMPLE_PASSWORD_ATTEMPT_UPDATE_FAILED(
+        HttpStatus.INTERNAL_SERVER_ERROR,
+        "SIMPLE_PASSWORD_ATTEMPT_UPDATE_FAILED",
+        "간편비밀번호 입력 시도 상태를 저장하지 못했습니다."
+    ),
+
     // =========================================================================
     //  9. 카드 관리 (Card)
     // =========================================================================

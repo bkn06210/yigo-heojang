@@ -1,5 +1,7 @@
 package com.wallet.member.mapper;
 
+import java.time.LocalDateTime;
+
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -30,6 +32,15 @@ public interface MemberMapper {
         @Param("memberId") Long memberId,
         @Param("simplePasswordHash") String simplePasswordHash
     );
+
+    int increaseSimplePasswordFailedAttemptCount(@Param("memberId") Long memberId);
+
+    int lockSimplePasswordVerification(
+        @Param("memberId") Long memberId,
+        @Param("lockedUntil") LocalDateTime lockedUntil
+    );
+
+    int resetSimplePasswordVerificationFailure(@Param("memberId") Long memberId);
 
     /**
      * 대표 카드 변경 작업 동안 회원 행을 잠근다.

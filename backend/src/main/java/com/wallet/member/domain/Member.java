@@ -8,6 +8,8 @@ public class Member {
     private String password;  // 해시된 비밀번호
     // 간편비밀번호 원문이 아니라 BCrypt 해시를 담는다. 미설정 회원은 null이다.
     private String simplePasswordHash;
+    private Integer simplePasswordFailedAttemptCount;
+    private LocalDateTime simplePasswordLockedUntil;
     private String name;
     private String nickname;
     private String memberStatus;
@@ -45,6 +47,14 @@ public class Member {
 
     public String getSimplePasswordHash() {
         return simplePasswordHash;
+    }
+
+    public Integer getSimplePasswordFailedAttemptCount() {
+        return simplePasswordFailedAttemptCount;
+    }
+
+    public LocalDateTime getSimplePasswordLockedUntil() {
+        return simplePasswordLockedUntil;
     }
 
     public String getName() {
