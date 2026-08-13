@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.wallet.card.mapper.MockCardMapper">
+
+    <resultMap id="mockCardResultMap"
+               type="com.wallet.card.domain.MockCard">
+        <constructor>
+            <idArg column="mockCardId" javaType="Long"/>
+            <arg column="cardId" javaType="Long"/>
+        </constructor>
+    </resultMap>
+
+    <select id="findActiveByCardNumber"
+            resultMap="mockCardResultMap">
+        SELECT
+            mc.mock_card_id AS mockCardId,
+            mc.card_id AS cardId
+        FROM mock_card mc
+        WHERE mc.card_number = #{cardNumber}
+          AND mc.is_active = 'Y'
+        LIMIT 1
+    </select>
+
+</mapper>
