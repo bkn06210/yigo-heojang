@@ -8,8 +8,7 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.wallet.card.domain.Card;
-import com.wallet.card.domain.CardBin;
+import com.wallet.card.domain.MockCard;
 import com.wallet.card.domain.UserCard;
 import com.wallet.card.domain.UserCardDetailResult;
 import com.wallet.card.domain.UserCardListResult;
@@ -20,9 +19,8 @@ import com.wallet.card.dto.UserCardListItemResponse;
 import com.wallet.card.dto.UserCardListResponse;
 import com.wallet.card.dto.UserCardRegisterRequest;
 import com.wallet.card.dto.UserCardRegisterResponse;
-import com.wallet.card.mapper.CardMapper;
+import com.wallet.card.mapper.MockCardMapper;
 import com.wallet.card.mapper.UserCardMapper;
-import com.wallet.card.support.CardBinFinder;
 import com.wallet.card.support.CardMaskingSupport;
 import com.wallet.card.support.CardNumberSupport;
 import com.wallet.common.ErrorCode;
@@ -34,9 +32,8 @@ import com.wallet.member.mapper.MemberMapper;
 public class UserCardService {
     private static final int MAX_REPRESENTATIVE_CARD_COUNT = 3;
 
-    private final CardMapper cardMapper;
+    private final MockCardMapper mockCardMapper;
     private final UserCardMapper userCardMapper;
-    private final CardBinFinder cardBinFinder;
     private final MemberMapper memberMapper;
 
     @Transactional
@@ -47,26 +44,24 @@ public class UserCardService {
         String normalizedCardNumber =
             CardNumberSupport.normalizeAndValidate(request.cardNumber());
 
+        // 클라이언트가 cardId를 정하지 못하게 하고, 서버가 신뢰하는 Mock 매핑에서 카드 상품을 결정한다.
+        MockCard mockCard = findSupportedMockCard(normalizedCardNumber);
+        Long cardId = mockCard.getCardId();
+
         String maskedCardNumber =
             CardMaskingSupport.mask(normalizedCardNumber);
 
-        Card selectedCard = findSelectedCard(request.cardId());
-
-        CardBin cardBin = cardBinFinder.findCardBin(normalizedCardNumber);
-
-        validateCardCompany(selectedCard, cardBin);
-
         UserCard existingUserCard =
-            userCardMapper.findByMemberIdAndCardId(memberId, request.cardId());
+            userCardMapper.findByMemberIdAndCardId(memberId, cardId);
 
         if (existingUserCard == null) {
-            insertUserCard(memberId, request.cardId(), maskedCardNumber);
+            insertUserCard(memberId, cardId, maskedCardNumber);
         } else {
             registerExistingUserCard(memberId, existingUserCard, maskedCardNumber);
         }
 
         UserCardRegistrationResult result =
-            userCardMapper.findRegistrationResult(memberId, request.cardId());
+            userCardMapper.findRegistrationResult(memberId, cardId);
 
         if (result == null) {
             throw new BusinessException(ErrorCode.USER_CARD_REGISTRATION_FAILED);
@@ -192,20 +187,15 @@ public class UserCardService {
         }
     }
 
-    private Card findSelectedCard(Long cardId) {
-        Card card = cardMapper.findActiveById(cardId);
+    private MockCard findSupportedMockCard(String normalizedCardNumber) {
+        MockCard mockCard =
+            mockCardMapper.findActiveByCardNumber(normalizedCardNumber);
 
-        if (card == null) {
-            throw new BusinessException(ErrorCode.CARD_NOT_FOUND);
+        if (mockCard == null) {
+            throw new BusinessException(ErrorCode.CARD_NOT_SUPPORTED);
         }
 
-        return card;
-    }
-
-    private void validateCardCompany(Card selectedCard, CardBin cardBin) {
-        if (!selectedCard.getCardCompanyId().equals(cardBin.getCardCompanyId())) {
-            throw new BusinessException(ErrorCode.CARD_COMPANY_MISMATCH);
-        }
+        return mockCard;
     }
 
     private void insertUserCard(

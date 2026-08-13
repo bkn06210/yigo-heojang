@@ -377,6 +377,13 @@ public enum ErrorCode {
         "유효한 카드번호 형식이 아닙니다."
     ),
 
+    /** 형식은 유효하지만 시연용 Mock 카드 목록에 없거나 등록이 비활성화된 경우 */
+    CARD_NOT_SUPPORTED(
+        HttpStatus.BAD_REQUEST,
+        "CARD_NOT_SUPPORTED",
+        "등록을 지원하지 않는 카드번호입니다."
+    ),
+
     /** 프로젝트가 보유한 BIN 데이터에서 카드사를 찾지 못한 경우 */
     CARD_BIN_NOT_FOUND(
         HttpStatus.BAD_REQUEST,
