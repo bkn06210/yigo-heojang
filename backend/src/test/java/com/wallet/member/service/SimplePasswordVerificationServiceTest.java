@@ -18,11 +18,11 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import com.wallet.auth.domain.VerificationStatus;
 import com.wallet.auth.service.EmailSender;
-import com.wallet.auth.support.TokenHashUtil;
 import com.wallet.auth.support.VerificationCodeGenerator;
 import com.wallet.auth.support.VerificationTokenGenerator;
 import com.wallet.common.ErrorCode;
 import com.wallet.common.exception.BusinessException;
+import com.wallet.common.util.Sha256Hasher;
 import com.wallet.member.domain.Member;
 import com.wallet.member.domain.SimplePasswordVerification;
 import com.wallet.member.dto.SimplePasswordEmailVerificationVerifyRequest;
@@ -36,7 +36,7 @@ class SimplePasswordVerificationServiceTest {
     private final EmailSender emailSender = mock(EmailSender.class);
     private final VerificationCodeGenerator codeGenerator = mock(VerificationCodeGenerator.class);
     private final VerificationTokenGenerator tokenGenerator = mock(VerificationTokenGenerator.class);
-    private final TokenHashUtil tokenHashUtil = new TokenHashUtil();
+    private final Sha256Hasher sha256Hasher = new Sha256Hasher();
 
     private SimplePasswordVerificationService service;
 
@@ -48,7 +48,7 @@ class SimplePasswordVerificationServiceTest {
             emailSender,
             codeGenerator,
             tokenGenerator,
-            tokenHashUtil
+            sha256Hasher
         );
     }
 
@@ -96,7 +96,7 @@ class SimplePasswordVerificationServiceTest {
         assertThat(response.expiresIn()).isEqualTo(600);
         verify(verificationMapper).verify(
             eq(10L),
-            eq(tokenHashUtil.sha256("change-token")),
+            eq(sha256Hasher.sha256("change-token")),
             any(LocalDateTime.class)
         );
     }
@@ -169,7 +169,7 @@ class SimplePasswordVerificationServiceTest {
         ReflectionTestUtils.setField(
             verification,
             "verificationCodeHash",
-            tokenHashUtil.sha256("482913")
+            sha256Hasher.sha256("482913")
         );
         ReflectionTestUtils.setField(verification, "verificationStatus", status);
         ReflectionTestUtils.setField(verification, "failedAttemptCount", failedAttemptCount);

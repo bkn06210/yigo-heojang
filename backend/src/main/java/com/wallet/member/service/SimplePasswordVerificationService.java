@@ -9,11 +9,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.wallet.auth.domain.VerificationStatus;
 import com.wallet.auth.service.EmailSender;
-import com.wallet.auth.support.TokenHashUtil;
 import com.wallet.auth.support.VerificationCodeGenerator;
 import com.wallet.auth.support.VerificationTokenGenerator;
 import com.wallet.common.ErrorCode;
 import com.wallet.common.exception.BusinessException;
+import com.wallet.common.util.Sha256Hasher;
 import com.wallet.member.domain.Member;
 import com.wallet.member.domain.SimplePasswordVerification;
 import com.wallet.member.dto.SimplePasswordEmailVerificationResponse;
@@ -35,7 +35,7 @@ public class SimplePasswordVerificationService {
     private final EmailSender emailSender;
     private final VerificationCodeGenerator verificationCodeGenerator;
     private final VerificationTokenGenerator verificationTokenGenerator;
-    private final TokenHashUtil tokenHashUtil;
+    private final Sha256Hasher sha256Hasher;
 
     @Transactional
     public SimplePasswordEmailVerificationResponse sendVerificationCode(Long memberId) {
@@ -55,7 +55,7 @@ public class SimplePasswordVerificationService {
         validateReissueAllowed(existingVerification);
 
         String verificationCode = verificationCodeGenerator.generateSixDigitCode();
-        String verificationCodeHash = tokenHashUtil.sha256(verificationCode);
+        String verificationCodeHash = sha256Hasher.sha256(verificationCode);
         LocalDateTime expiresAt = LocalDateTime.now()
             .plusMinutes(VERIFICATION_CODE_EXPIRE_MINUTES);
 
@@ -103,13 +103,13 @@ public class SimplePasswordVerificationService {
         validateAttemptLimit(verification);
         validateCodeNotExpired(verification);
 
-        String requestCodeHash = tokenHashUtil.sha256(request.verificationCode());
+        String requestCodeHash = sha256Hasher.sha256(request.verificationCode());
         if (!verification.getVerificationCodeHash().equals(requestCodeHash)) {
             handleCodeMismatch(verification);
         }
 
         String changeToken = verificationTokenGenerator.generate();
-        String changeTokenHash = tokenHashUtil.sha256(changeToken);
+        String changeTokenHash = sha256Hasher.sha256(changeToken);
         LocalDateTime changeTokenExpiresAt = LocalDateTime.now()
             .plusMinutes(CHANGE_TOKEN_EXPIRE_MINUTES);
 

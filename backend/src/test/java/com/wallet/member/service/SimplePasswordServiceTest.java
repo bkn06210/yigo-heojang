@@ -9,9 +9,9 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.time.LocalDateTime;
 import java.time.Clock;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -21,9 +21,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import com.wallet.auth.domain.VerificationStatus;
-import com.wallet.auth.support.TokenHashUtil;
 import com.wallet.common.ErrorCode;
 import com.wallet.common.exception.BusinessException;
+import com.wallet.common.util.Sha256Hasher;
 import com.wallet.member.domain.Member;
 import com.wallet.member.domain.SimplePasswordVerification;
 import com.wallet.member.dto.SimplePasswordUpdateRequest;
@@ -35,7 +35,7 @@ class SimplePasswordServiceTest {
     private final MemberMapper memberMapper = mock(MemberMapper.class);
     private final SimplePasswordVerificationMapper verificationMapper =
         mock(SimplePasswordVerificationMapper.class);
-    private final TokenHashUtil tokenHashUtil = new TokenHashUtil();
+    private final Sha256Hasher sha256Hasher = new Sha256Hasher();
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     private final Clock clock = Clock.fixed(
         Instant.parse("2026-08-13T05:00:00Z"),
@@ -49,7 +49,7 @@ class SimplePasswordServiceTest {
         service = new SimplePasswordService(
             memberMapper,
             verificationMapper,
-            tokenHashUtil,
+            sha256Hasher,
             passwordEncoder,
             clock
         );
@@ -58,7 +58,7 @@ class SimplePasswordServiceTest {
     @Test
     @DisplayName("간편비밀번호 설정 성공 - BCrypt 해시를 저장하고 변경 토큰을 사용 완료 처리한다")
     void updateSimplePassword_success() {
-        String tokenHash = tokenHashUtil.sha256("change-token");
+        String tokenHash = sha256Hasher.sha256("change-token");
         when(memberMapper.lockActiveMemberById(1L)).thenReturn(1L);
         when(memberMapper.findById(1L)).thenReturn(member(1L));
         when(verificationMapper.findByChangeTokenHashForUpdate(tokenHash))
@@ -94,7 +94,7 @@ class SimplePasswordServiceTest {
     @Test
     @DisplayName("간편비밀번호 설정 실패 - 다른 회원의 토큰은 사용할 수 없다")
     void updateSimplePassword_fail_whenTokenBelongsToAnotherMember() {
-        String tokenHash = tokenHashUtil.sha256("change-token");
+        String tokenHash = sha256Hasher.sha256("change-token");
         when(memberMapper.lockActiveMemberById(1L)).thenReturn(1L);
         when(memberMapper.findById(1L)).thenReturn(member(1L));
         when(verificationMapper.findByChangeTokenHashForUpdate(tokenHash))
@@ -113,7 +113,7 @@ class SimplePasswordServiceTest {
     @Test
     @DisplayName("간편비밀번호 설정 실패 - 만료된 변경 토큰은 사용할 수 없다")
     void updateSimplePassword_fail_whenTokenExpired() {
-        String tokenHash = tokenHashUtil.sha256("change-token");
+        String tokenHash = sha256Hasher.sha256("change-token");
         when(memberMapper.lockActiveMemberById(1L)).thenReturn(1L);
         when(memberMapper.findById(1L)).thenReturn(member(1L));
         SimplePasswordVerification verification =
@@ -139,7 +139,7 @@ class SimplePasswordServiceTest {
     @Test
     @DisplayName("간편비밀번호 설정 실패 - 사용 완료된 변경 토큰은 재사용할 수 없다")
     void updateSimplePassword_fail_whenTokenAlreadyUsed() {
-        String tokenHash = tokenHashUtil.sha256("change-token");
+        String tokenHash = sha256Hasher.sha256("change-token");
         when(memberMapper.lockActiveMemberById(1L)).thenReturn(1L);
         when(memberMapper.findById(1L)).thenReturn(member(1L));
         when(verificationMapper.findByChangeTokenHashForUpdate(tokenHash))

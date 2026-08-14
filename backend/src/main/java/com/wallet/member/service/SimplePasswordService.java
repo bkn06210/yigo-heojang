@@ -10,9 +10,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.wallet.auth.domain.VerificationStatus;
-import com.wallet.auth.support.TokenHashUtil;
 import com.wallet.common.ErrorCode;
 import com.wallet.common.exception.BusinessException;
+import com.wallet.common.util.Sha256Hasher;
 import com.wallet.member.domain.Member;
 import com.wallet.member.domain.SimplePasswordVerification;
 import com.wallet.member.dto.SimplePasswordUpdateRequest;
@@ -29,7 +29,7 @@ public class SimplePasswordService {
 
     private final MemberMapper memberMapper;
     private final SimplePasswordVerificationMapper simplePasswordVerificationMapper;
-    private final TokenHashUtil tokenHashUtil;
+    private final Sha256Hasher sha256Hasher;
     private final PasswordEncoder passwordEncoder;
     private final Clock clock;
 
@@ -51,7 +51,7 @@ public class SimplePasswordService {
             throw new BusinessException(ErrorCode.MEMBER_NOT_FOUND);
         }
 
-        String changeTokenHash = tokenHashUtil.sha256(request.simplePasswordChangeToken());
+        String changeTokenHash = sha256Hasher.sha256(request.simplePasswordChangeToken());
         SimplePasswordVerification verification =
             simplePasswordVerificationMapper.findByChangeTokenHashForUpdate(changeTokenHash);
 
