@@ -1,9 +1,8 @@
 <!-- src/components/transaction/TransactionFilterBottomSheet.vue -->
 
 <script setup>
-import { ref, watch, onMounted } from 'vue';
+import { ref, watch } from 'vue';
 import Icon from '@/components/common/Icon.vue';
-import { getExpenseCategories } from '@/api/walletApi';
 
 
 // 부모 전달값
@@ -83,31 +82,37 @@ const filter = ref({
 
 
 
-// 소비 카테고리 목록 — GET /api/expense-categories
-// 카테고리는 서버에서 관리하는 마스터 데이터라 화면에 박아두면 서버와 어긋난다.
-// 조회에 실패해도 필터 자체는 열려야 하므로 "전체"만 남기고 넘어간다.
-const categories = ref([]);
+// 소비 카테고리 목록 — 개인화 설정(관심 카테고리)과 같은 9개 축으로 맞춘다.
+// 서버 마스터(대분류 7 + 중분류 31)를 그대로 늘어놓으면 조회조건이 화면 한 장을 넘기고,
+// 개인화 화면과 기준이 달라 사용자가 같은 축으로 읽지 못한다.
+//
+// categoryId는 표시용이 아니라 실제 조회 조건이라 라벨이 가리키는 범위와 맞아야 한다.
+// 쇼핑·문화/여가·교통·의료는 중분류를 묶는 개념이라 대분류 ID를 보내고,
+// 서버가 하위 중분류 결제까지 매칭한다(TransactionMapper.selectTransactionList).
+//
+// 개인화 스토어(stores/personalization.js)는 "현장 결제 대표 중분류" 기준이라
+// 같은 라벨이라도 ID가 다르다. 라벨만 공유하고 ID는 각자의 용도를 따른다.
+const categories = [
 
-const loadCategories = async () => {
+  { categoryId: 102, categoryName: '카페' },
 
-  try {
+  { categoryId: 201, categoryName: '편의점' },
 
-    const response = await getExpenseCategories();
+  { categoryId: 101, categoryName: '음식점' },
 
-    categories.value = response?.categories || [];
+  { categoryId: 202, categoryName: '마트' },
 
-  } catch (error) {
+  { categoryId: 2, categoryName: '쇼핑' },
 
-    console.error('소비 카테고리 조회 실패:', error);
+  { categoryId: 205, categoryName: '뷰티' },
 
-    categories.value = [];
+  { categoryId: 5, categoryName: '문화/여가' },
 
-  }
+  { categoryId: 3, categoryName: '교통' },
 
-};
+  { categoryId: 6, categoryName: '의료' },
 
-
-onMounted(loadCategories);
+];
 
 
 // 카테고리 선택 — "전체"는 categoryId를 비워 서버 조건에서 아예 빠지게 한다.
@@ -650,7 +655,6 @@ v-if="card.imageUrl"
 
 <div
 class="filter-item"
-v-if="categories.length"
 >
 
 

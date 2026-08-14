@@ -38,7 +38,15 @@ const formatRelativeTime = (isoString) => {
   const created = new Date(isoString);
   if (Number.isNaN(created.getTime())) return '';
 
+  const absoluteDate = `${created.getMonth() + 1}월 ${created.getDate()}일`;
+
   const diffMs = Date.now() - created.getTime();
+
+  // 예약 발송이나 시연용 시드는 생성 시각이 미래일 수 있다. 그대로 두면 음수 차이가
+  // '방금 전'으로 접혀 모든 알림이 같은 시각처럼 보인다. 상대 표기가 성립하지 않으므로
+  // 날짜를 그대로 쓴다.
+  if (diffMs < 0) return absoluteDate;
+
   const diffMinutes = Math.floor(diffMs / 60000);
 
   if (diffMinutes < 1) return '방금 전';
@@ -51,7 +59,7 @@ const formatRelativeTime = (isoString) => {
   if (diffDays === 1) return '어제';
   if (diffDays < 7) return `${diffDays}일 전`;
 
-  return `${created.getMonth() + 1}월 ${created.getDate()}일`;
+  return absoluteDate;
 };
 
 // 서버 응답을 이 화면이 쓰는 형태로 옮긴다.
@@ -104,8 +112,15 @@ const displayNotifications = computed(() => {
   return user.value ? notifications.value : [];
 });
 
+// 여는 순간 읽음으로 넘긴다.
+//
+// 확인 버튼에만 걸어두면 ×로 닫은 알림이 안 읽음으로 남아, 분명히 열어본 알림이
+// 목록에서 계속 진하게 보인다. readNotification은 이미 읽은 건을 그냥 흘려보내므로
+// 확인 버튼과 겹쳐 호출돼도 요청이 두 번 나가지 않는다.
 const openNotification = (item) => {
   selectedNotification.value = item;
+
+  readNotification(item.id);
 };
 
 
@@ -275,6 +290,8 @@ const deleteNotification = async (id) => {
     >
 
 
+      <!-- 목록은 제목과 시각만 보여준다. 본문은 눌러서 모달로 본다 —
+           다이제스트 본문이 여러 줄이라 목록에 펼치면 카드가 화면을 다 먹는다. -->
       <div class="notification-content">
 
 
@@ -283,12 +300,7 @@ const deleteNotification = async (id) => {
         </h2>
 
 
-        <p>
-          {{ item.message }}
-        </p>
-
-
-        <span>
+        <span class="time">
           {{ item.createdAt }}
         </span>
 
@@ -313,22 +325,16 @@ const deleteNotification = async (id) => {
   </main>
 
   <NotificationModal
-  v-if="selectedNotification"
-  :notification="selectedNotification"
-  @close="selectedNotification=null"
-/>
 
-<NotificationModal
+    v-if="selectedNotification"
 
-  v-if="selectedNotification"
+    :notification="selectedNotification"
 
-  :notification="selectedNotification"
+    @close="selectedNotification = null"
 
-  @close="selectedNotification = null"
+    @read="readNotification"
 
-  @read="readNotification"
-
-/>
+  />
 
 
 
@@ -373,9 +379,9 @@ const deleteNotification = async (id) => {
 
   display:flex;
 
-  justify-content:space-between;
-
   align-items:flex-start;
+
+  gap: var(--space-sm);
 
   padding: var(--space-md);
 
@@ -383,9 +389,13 @@ const deleteNotification = async (id) => {
 
   border-radius: var(--radius-md);
 
-  color: var(--color-text-secondary);
+  /* 읽은 알림의 기본 상태 — 연한 회색(#83868B). 안 읽은 것만 아래에서 진하게 덮는다.
+     기본을 "읽음"으로 두면 읽음 처리에서 클래스가 빠지는 것만으로 색이 내려간다. */
+  color: var(--color-text-tertiary);
 
-  transition: var(--transition-normal);
+  transition: color var(--transition-normal);
+
+  cursor: pointer;
 
 }
 
@@ -395,39 +405,76 @@ const deleteNotification = async (id) => {
 
   color: var(--color-text-primary);
 
-  font-weight: var(--font-semibold);
+}
+
+
+
+/* min-width:0 이 없으면 flex 자식이 내용 너비만큼 버텨서 제목이 안 접히고
+   삭제 버튼을 밀어낸다. */
+.notification-content {
+
+  flex: 1;
+
+  min-width: 0;
 
 }
 
 
 
+/* 제목 길이가 제각각이라 그대로 두면 카드 높이가 들쭉날쭉하다.
+   두 줄에서 자르면 줄이 맞고, 잘린 전문은 눌러서 모달에서 본다.
+   한국어는 어절 단위로 끊어야 읽히므로 keep-all 을 쓰고,
+   LIFESTYLE_SHOPPING_5000 같이 안 끊기는 토큰만 break-word 로 흘린다. */
 .notification-content h2 {
 
-  margin: 0 0 var(--space-xs);
+  margin: 0;
 
   font-size: var(--font-md);
 
+  /* 굵기도 색과 같이 내린다. 색만 바꾸면 제목이 계속 굵어서 읽은 티가 잘 안 난다.
+     여기에 semibold 를 박아두면 부모의 .unread 규칙이 h2 를 못 이긴다 —
+     그래서 기본을 regular 로 두고 .unread 쪽에서 올린다. */
+  font-weight: var(--font-regular);
+
+  color: inherit;
+
+  transition: color var(--transition-normal);
+
+  line-height: 1.45;
+
+  display: -webkit-box;
+
+  -webkit-line-clamp: 2;
+
+  -webkit-box-orient: vertical;
+
+  overflow: hidden;
+
+  word-break: keep-all;
+
+  overflow-wrap: break-word;
+
+}
+
+
+
+.notification-item.unread .notification-content h2 {
+
   font-weight: var(--font-semibold);
 
 }
 
 
 
-.notification-content p {
+.notification-content .time {
 
-  margin: 0 0 var(--space-xs);
+  display: block;
 
-  font-size: var(--font-sm);
-
-  font-weight: var(--font-regular);
-
-}
-
-
-
-.notification-content span {
+  margin-top: var(--space-xs);
 
   font-size: var(--font-xs);
+
+  font-weight: var(--font-regular);
 
   color: var(--color-text-tertiary);
 
@@ -435,13 +482,31 @@ const deleteNotification = async (id) => {
 
 
 
+/* flex:none 과 고정 크기를 주지 않으면 제목 길이에 따라 버튼이 밀려
+   행마다 × 위치가 어긋난다. */
 .delete-button {
+
+  flex: none;
+
+  width: 28px;
+
+  height: 28px;
+
+  margin: -4px -4px 0 0;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
 
   border:none;
 
   background:none;
 
   font-size: var(--font-lg);
+
+  line-height: 1;
 
   color: var(--color-text-tertiary);
 

@@ -220,8 +220,10 @@ const maskCardNumber = (number) => {
 };
 
 // 혜택 상세 이동
+// card 는 ref 라 스크립트에서는 .value 를 거쳐야 한다. 템플릿은 자동 언랩이라
+// card.id 로 써도 보이지만, 여기서 빠뜨리면 /benefits/undefined 로 이동한다.
 const goBenefitDetail = () => {
-  router.push(`/benefits/${card.id}`);
+  router.push(`/benefits/${card.value.id}`);
 };
 
 // 소비내역 이동 (이 카드의 소비내역만 필터링해서 보여줌)

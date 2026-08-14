@@ -18,6 +18,11 @@ target/
 *.war
 *.class
 
+# JVM 크래시 덤프 — 메모리가 모자라 포크가 죽을 때마다 생긴다.
+# 소스가 아니라 일회성 진단 파일이라 레포에 남기지 않는다.
+hs_err_pid*.log
+replay_pid*.log
+
 # IDE
 .idea/
 .vscode/

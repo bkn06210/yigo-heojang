@@ -37,8 +37,16 @@
             AND DATE_FORMAT(e.payment_date, '%Y-%m') = #{yearMonth}
         </if>
 
+        <!--
+            결제(expense)는 항상 중분류로 기록된다. 조회조건이 대분류를 보내면 그대로
+            비교했을 때 한 건도 걸리지 않으므로 부모까지 본다. 혜택 대상이 대분류면
+            하위 중분류 결제까지 매칭하는 규칙(benefit.target_category_id)과 같은 해석이다.
+        -->
         <if test="categoryId != null">
-            AND e.category_id = #{categoryId}
+            AND (
+            e.category_id = #{categoryId}
+            OR c.parent_category_id = #{categoryId}
+            )
         </if>
 
         <if test="userCardId != null">
