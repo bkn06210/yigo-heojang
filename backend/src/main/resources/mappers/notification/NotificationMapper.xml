@@ -6,8 +6,8 @@
         <constructor>
             <idArg column="notification_setting_id" javaType="Long"/>
             <arg column="member_id" javaType="Long"/>
-            <arg column="performance_shortage_enabled" javaType="boolean"/>
-            <arg column="benefit_limit_enabled" javaType="boolean"/>
+            <arg column="performance_shortage_enabled" javaType="_boolean"/>
+            <arg column="benefit_limit_enabled" javaType="_boolean"/>
             <arg column="updated_at" javaType="java.time.LocalDateTime"/>
         </constructor>
     </resultMap>
@@ -143,5 +143,24 @@
         ON n.member_id = candidates.member_id
         AND n.deduplication_key = candidates.deduplication_key
     </select>
+
+    <!--
+        ON DUPLICATE KEY UPDATE: INSERT를 시도하다 UNIQUE 제약(member_id)에 걸리면,
+        새 행을 만드는 대신 그 자리에서 바로 UPDATE로 전환하는 MySQL 문법.
+        "조회 → 있으면 UPDATE 없으면 INSERT"를 두 단계 쿼리로 나누지 않고 한 번의 원자적
+        명령으로 처리해서, 동시에 같은 회원의 설정을 두 번 저장하려 해도 행이 중복되지 않는다.
+
+        updated_at은 컬럼 DEFAULT/ON UPDATE 절이 자동으로 채워주므로 여기서 다루지 않는다.
+    -->
+    <insert id="upsertSetting">
+        INSERT INTO notification_setting (
+            member_id, performance_shortage_enabled, benefit_limit_enabled
+        ) VALUES (
+                     #{setting.memberId}, #{setting.performanceShortageEnabled}, #{setting.benefitLimitEnabled}
+                 )
+            ON DUPLICATE KEY UPDATE
+                                 performance_shortage_enabled = VALUES(performance_shortage_enabled),
+                                 benefit_limit_enabled = VALUES(benefit_limit_enabled)
+    </insert>
 
 </mapper>

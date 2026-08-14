@@ -57,6 +57,11 @@ public class NotificationRepository {
         return notificationMapper.findExistingMemberDedupKeys(lookups);
     }
 
+    /** 알림 설정값 저장. */
+    public void saveSetting(NotificationSetting setting) {
+        notificationMapper.upsertSetting(setting);
+    }
+
     public int countUnread(Long memberId) {
         return notificationMapper.countUnread(memberId);
     }
