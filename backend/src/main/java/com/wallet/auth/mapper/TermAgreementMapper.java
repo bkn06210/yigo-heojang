@@ -6,15 +6,19 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import com.wallet.auth.domain.MemberTermAgreement;
+import com.wallet.auth.domain.TermScope;
 
 @Mapper
 public interface TermAgreementMapper {
 
     // 요청으로 들어온 termsVersionId들이 현재 회원가입에 사용할 수 있는 약관 버전인지 확인
-    int countActiveTermVersionsByIds(@Param("termsVersionIds") List<Long> termsVersionIds);
+    int countActiveTermVersionsByIds(
+        @Param("termsVersionIds") List<Long> termsVersionIds,
+        @Param("termScope") TermScope termScope
+    );
 
     // 현재 활성화된 필수 약관 버전 ID 목록을 조회
-    List<Long> findActiveRequiredTermVersionIds();
+    List<Long> findActiveRequiredTermVersionIds(@Param("termScope") TermScope termScope);
 
     // 회원가입 시 회원의 약관 동의 이력을 저장
     int insertMemberTermAgreements(

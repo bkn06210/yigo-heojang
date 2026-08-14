@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.wallet.auth.domain.MemberTermAgreement;
 import com.wallet.auth.domain.RefreshToken;
+import com.wallet.auth.domain.TermScope;
 import com.wallet.auth.dto.LoginMemberResponse;
 import com.wallet.auth.dto.LoginRequest;
 import com.wallet.auth.dto.LoginResult;
@@ -192,7 +193,8 @@ public class AuthService {
         }
 
         int activeTermVersionCount = termAgreementMapper.countActiveTermVersionsByIds(
-            List.copyOf(requestedTermVersionIds)
+            List.copyOf(requestedTermVersionIds),
+            TermScope.SIGNUP
         );
         if (activeTermVersionCount != requestedTermVersionIds.size()) {
             throw new BusinessException(ErrorCode.INPUT_INVALID);
@@ -203,7 +205,7 @@ public class AuthService {
             .map(TermAgreementRequest::termsVersionId)
             .collect(Collectors.toSet());
 
-        List<Long> requiredTermVersionIds = termAgreementMapper.findActiveRequiredTermVersionIds();
+        List<Long> requiredTermVersionIds = termAgreementMapper.findActiveRequiredTermVersionIds(TermScope.SIGNUP);
 
         if (!agreedTermVersionIds.containsAll(requiredTermVersionIds)) {
             throw new BusinessException(ErrorCode.INPUT_INVALID);

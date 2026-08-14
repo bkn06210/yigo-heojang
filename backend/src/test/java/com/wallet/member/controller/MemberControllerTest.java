@@ -29,6 +29,7 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import com.wallet.auth.service.TermsService;
 import com.wallet.common.exception.GlobalExceptionHandler;
 import com.wallet.member.dto.MemberMeResponse;
 import com.wallet.member.dto.MemberUpdateRequest;
@@ -43,6 +44,7 @@ class MemberControllerTest {
     private static final String AUTHENTICATED_MEMBER_ID = "authenticatedMemberId";
 
     private final MemberService memberService = mock(MemberService.class);
+    private final TermsService termsService = mock(TermsService.class);
     private final SimplePasswordVerificationService simplePasswordVerificationService =
         mock(SimplePasswordVerificationService.class);
     private final SimplePasswordService simplePasswordService =
@@ -55,6 +57,7 @@ class MemberControllerTest {
     private final MockMvc mockMvc = MockMvcBuilders
         .standaloneSetup(new MemberController(
             memberService,
+            termsService,
             simplePasswordVerificationService,
             simplePasswordService
         ))

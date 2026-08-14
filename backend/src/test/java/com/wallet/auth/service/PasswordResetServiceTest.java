@@ -26,7 +26,7 @@ import com.wallet.auth.dto.PasswordResetCodeVerifyRequest;
 import com.wallet.auth.dto.PasswordResetCodeVerifyResponse;
 import com.wallet.auth.dto.PasswordResetRequest;
 import com.wallet.auth.mapper.PasswordResetVerificationMapper;
-import com.wallet.auth.support.TokenHashUtil;
+import com.wallet.common.util.Sha256Hasher;
 import com.wallet.auth.support.VerificationCodeGenerator;
 import com.wallet.auth.support.VerificationTokenGenerator;
 import com.wallet.common.ErrorCode;
@@ -41,7 +41,7 @@ class PasswordResetServiceTest {
     private EmailSender emailSender;
     private VerificationCodeGenerator verificationCodeGenerator;
     private VerificationTokenGenerator verificationTokenGenerator;
-    private TokenHashUtil tokenHashUtil;
+    private Sha256Hasher sha256Hasher;
     private PasswordResetService passwordResetService;
     private PasswordEncoder passwordEncoder;
     private RefreshTokenService refreshTokenService;
@@ -53,7 +53,7 @@ class PasswordResetServiceTest {
         emailSender = mock(EmailSender.class);
         verificationCodeGenerator = mock(VerificationCodeGenerator.class);
         verificationTokenGenerator = mock(VerificationTokenGenerator.class);
-        tokenHashUtil = new TokenHashUtil();
+        sha256Hasher = new Sha256Hasher();
         passwordEncoder = new BCryptPasswordEncoder();
         refreshTokenService = mock(RefreshTokenService.class);
 
@@ -63,7 +63,7 @@ class PasswordResetServiceTest {
             emailSender,
             verificationCodeGenerator,
             verificationTokenGenerator,
-            tokenHashUtil,
+            sha256Hasher,
             passwordEncoder,
             refreshTokenService
 
@@ -113,7 +113,7 @@ class PasswordResetServiceTest {
             .isEqualTo(VerificationStatus.PENDING);
         assertThat(savedVerification.getFailedAttemptCount()).isZero();
         assertThat(savedVerification.getVerificationCodeHash())
-            .isEqualTo(tokenHashUtil.sha256("482913"));
+            .isEqualTo(sha256Hasher.sha256("482913"));
         assertThat(savedVerification.getVerificationCodeExpiresAt())
             .isAfter(LocalDateTime.now());
 
@@ -193,7 +193,7 @@ class PasswordResetServiceTest {
         PasswordResetVerification existingVerification = createPasswordResetVerification(
             10L,
             1L,
-            tokenHashUtil.sha256("111111"),
+            sha256Hasher.sha256("111111"),
             VerificationStatus.PENDING,
             0,
             LocalDateTime.now().plusMinutes(5),
@@ -247,7 +247,7 @@ class PasswordResetServiceTest {
         PasswordResetVerification verification = createPasswordResetVerification(
             10L,
             1L,
-            tokenHashUtil.sha256("482913"),
+            sha256Hasher.sha256("482913"),
             VerificationStatus.PENDING,
             0,
             LocalDateTime.now().plusMinutes(5),
@@ -269,7 +269,7 @@ class PasswordResetServiceTest {
 
         when(passwordResetVerificationMapper.verify(
             eq(10L),
-            eq(tokenHashUtil.sha256("password-reset-token")),
+            eq(sha256Hasher.sha256("password-reset-token")),
             any(LocalDateTime.class)
         )).thenReturn(1);
 
@@ -288,7 +288,7 @@ class PasswordResetServiceTest {
 
         verify(passwordResetVerificationMapper).verify(
             eq(10L),
-            eq(tokenHashUtil.sha256("password-reset-token")),
+            eq(sha256Hasher.sha256("password-reset-token")),
             any(LocalDateTime.class)
         );
     }
@@ -369,7 +369,7 @@ class PasswordResetServiceTest {
         PasswordResetVerification verification = createPasswordResetVerification(
             10L,
             1L,
-            tokenHashUtil.sha256("482913"),
+            sha256Hasher.sha256("482913"),
             VerificationStatus.PENDING,
             0,
             LocalDateTime.now().plusMinutes(5),
@@ -418,7 +418,7 @@ class PasswordResetServiceTest {
         PasswordResetVerification verification = createPasswordResetVerification(
             10L,
             1L,
-            tokenHashUtil.sha256("482913"),
+            sha256Hasher.sha256("482913"),
             VerificationStatus.PENDING,
             4,
             LocalDateTime.now().plusMinutes(5),
@@ -467,7 +467,7 @@ class PasswordResetServiceTest {
         PasswordResetVerification verification = createPasswordResetVerification(
             10L,
             1L,
-            tokenHashUtil.sha256("482913"),
+            sha256Hasher.sha256("482913"),
             VerificationStatus.PENDING,
             5,
             LocalDateTime.now().plusMinutes(5),
@@ -516,7 +516,7 @@ class PasswordResetServiceTest {
         PasswordResetVerification verification = createPasswordResetVerification(
             10L,
             1L,
-            tokenHashUtil.sha256("482913"),
+            sha256Hasher.sha256("482913"),
             VerificationStatus.PENDING,
             0,
             LocalDateTime.now().minusSeconds(1),
@@ -565,11 +565,11 @@ class PasswordResetServiceTest {
         PasswordResetVerification verification = createPasswordResetVerification(
             10L,
             1L,
-            tokenHashUtil.sha256("482913"),
+            sha256Hasher.sha256("482913"),
             VerificationStatus.VERIFIED,
             0,
             LocalDateTime.now().plusMinutes(5),
-            tokenHashUtil.sha256("already-issued-token"),
+            sha256Hasher.sha256("already-issued-token"),
             LocalDateTime.now().plusMinutes(10),
             LocalDateTime.now().minusMinutes(1),
             null,
@@ -613,11 +613,11 @@ class PasswordResetServiceTest {
         PasswordResetVerification verification = createPasswordResetVerification(
             10L,
             1L,
-            tokenHashUtil.sha256("482913"),
+            sha256Hasher.sha256("482913"),
             VerificationStatus.USED,
             0,
             LocalDateTime.now().plusMinutes(5),
-            tokenHashUtil.sha256("already-used-token"),
+            sha256Hasher.sha256("already-used-token"),
             LocalDateTime.now().plusMinutes(10),
             LocalDateTime.now().minusMinutes(2),
             LocalDateTime.now().minusMinutes(1),
@@ -652,12 +652,12 @@ class PasswordResetServiceTest {
             "newPassword123"
         );
 
-        String resetTokenHash = tokenHashUtil.sha256("password-reset-token");
+        String resetTokenHash = sha256Hasher.sha256("password-reset-token");
 
         PasswordResetVerification verification = createPasswordResetVerification(
             10L,
             1L,
-            tokenHashUtil.sha256("482913"),
+            sha256Hasher.sha256("482913"),
             VerificationStatus.VERIFIED,
             0,
             LocalDateTime.now().minusMinutes(1),
@@ -714,7 +714,7 @@ class PasswordResetServiceTest {
             "newPassword123"
         );
 
-        String resetTokenHash = tokenHashUtil.sha256("unknown-token");
+        String resetTokenHash = sha256Hasher.sha256("unknown-token");
 
         when(passwordResetVerificationMapper.findByResetTokenHashForUpdate(resetTokenHash))
             .thenReturn(null);
@@ -743,12 +743,12 @@ class PasswordResetServiceTest {
             "newPassword123"
         );
 
-        String resetTokenHash = tokenHashUtil.sha256("password-reset-token");
+        String resetTokenHash = sha256Hasher.sha256("password-reset-token");
 
         PasswordResetVerification verification = createPasswordResetVerification(
             10L,
             1L,
-            tokenHashUtil.sha256("482913"),
+            sha256Hasher.sha256("482913"),
             VerificationStatus.PENDING,
             0,
             LocalDateTime.now().plusMinutes(5),
@@ -786,12 +786,12 @@ class PasswordResetServiceTest {
             "newPassword123"
         );
 
-        String resetTokenHash = tokenHashUtil.sha256("password-reset-token");
+        String resetTokenHash = sha256Hasher.sha256("password-reset-token");
 
         PasswordResetVerification verification = createPasswordResetVerification(
             10L,
             1L,
-            tokenHashUtil.sha256("482913"),
+            sha256Hasher.sha256("482913"),
             VerificationStatus.USED,
             0,
             LocalDateTime.now().minusMinutes(1),
@@ -829,12 +829,12 @@ class PasswordResetServiceTest {
             "newPassword123"
         );
 
-        String resetTokenHash = tokenHashUtil.sha256("password-reset-token");
+        String resetTokenHash = sha256Hasher.sha256("password-reset-token");
 
         PasswordResetVerification verification = createPasswordResetVerification(
             10L,
             1L,
-            tokenHashUtil.sha256("482913"),
+            sha256Hasher.sha256("482913"),
             VerificationStatus.VERIFIED,
             0,
             LocalDateTime.now().minusMinutes(1),
@@ -872,12 +872,12 @@ class PasswordResetServiceTest {
             "newPassword123"
         );
 
-        String resetTokenHash = tokenHashUtil.sha256("password-reset-token");
+        String resetTokenHash = sha256Hasher.sha256("password-reset-token");
 
         PasswordResetVerification verification = createPasswordResetVerification(
             10L,
             1L,
-            tokenHashUtil.sha256("482913"),
+            sha256Hasher.sha256("482913"),
             VerificationStatus.VERIFIED,
             0,
             LocalDateTime.now().minusMinutes(1),
@@ -918,12 +918,12 @@ class PasswordResetServiceTest {
             "newPassword123"
         );
 
-        String resetTokenHash = tokenHashUtil.sha256("password-reset-token");
+        String resetTokenHash = sha256Hasher.sha256("password-reset-token");
 
         PasswordResetVerification verification = createPasswordResetVerification(
             10L,
             1L,
-            tokenHashUtil.sha256("482913"),
+            sha256Hasher.sha256("482913"),
             VerificationStatus.VERIFIED,
             0,
             LocalDateTime.now().minusMinutes(1),
@@ -992,12 +992,12 @@ class PasswordResetServiceTest {
             "samePassword123"
         );
 
-        String resetTokenHash = tokenHashUtil.sha256("password-reset-token");
+        String resetTokenHash = sha256Hasher.sha256("password-reset-token");
 
         PasswordResetVerification verification = createPasswordResetVerification(
             10L,
             1L,
-            tokenHashUtil.sha256("482913"),
+            sha256Hasher.sha256("482913"),
             VerificationStatus.VERIFIED,
             0,
             LocalDateTime.now().minusMinutes(1),

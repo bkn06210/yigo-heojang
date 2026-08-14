@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.wallet.member.mapper.CreditInfoWithdrawalMapper">
+    <!-- 1. payment_qr: payment를 참조하므로 payment보다 먼저 지운다. -->
+    <delete id="deletePaymentQrByMemberId">
+        DELETE FROM payment_qr
+        WHERE member_id = #{memberId}
+    </delete>
+
+    <!-- 2. payment: expense를 참조하므로 expense보다 먼저 지운다. -->
+    <delete id="deletePaymentByMemberId">
+        DELETE FROM payment
+        WHERE member_id = #{memberId}
+    </delete>
+
+    <!--
+        3. point_history: expense와 point_wallet을 참조하므로 둘 다보다 먼저 지운다.
+        전제: MemberDataCleanupMapper.deleteNotificationByMemberId가 이 메서드보다
+        먼저 실행되어 있어야 한다 (notification.point_history_id FK).
+    -->
+    <delete id="deletePointHistoryByMemberId">
+        DELETE FROM point_history
+        WHERE member_id = #{memberId}
+    </delete>
+
+    <!-- 4. expense: 1~3에서 이 테이블을 참조하던 행이 먼저 지워졌으므로 안전하다. -->
+    <delete id="deleteExpenseByMemberId">
+        DELETE FROM expense
+        WHERE member_id = #{memberId}
+    </delete>
+
+    <!-- 5. point_wallet: point_history가 먼저 지워졌으므로 안전하다. -->
+    <delete id="deletePointWalletByMemberId">
+        DELETE FROM point_wallet
+        WHERE member_id = #{memberId}
+    </delete>
+
+    <!--
+        6~8. member_id 컬럼이 없어 user_card_id로만 회원과 연결된다.
+        "이 회원이 보유한 카드들의 user_card_id"를 서브쿼리로 찾아 지운다.
+        user_card 삭제(9번)보다 반드시 먼저 실행한다.
+    -->
+    <delete id="deleteUserCardBenefitSelectionByMemberId">
+        DELETE FROM user_card_benefit_selection
+        WHERE user_card_id IN (
+            SELECT user_card_id FROM user_card WHERE member_id = #{memberId}
+        )
+    </delete>
+
+    <delete id="deleteUserCardMonthlyStateByMemberId">
+        DELETE FROM user_card_monthly_state
+        WHERE user_card_id IN (
+            SELECT user_card_id FROM user_card WHERE member_id = #{memberId}
+        )
+    </delete>
+
+    <delete id="deleteUserBenefitUsageByMemberId">
+        DELETE FROM user_benefit_usage
+        WHERE user_card_id IN (
+            SELECT user_card_id FROM user_card WHERE member_id = #{memberId}
+        )
+    </delete>
+
+    <!--
+        9. user_card: 이 카드를 참조하던 expense, payment, payment_qr,
+        user_card_benefit_selection, user_card_monthly_state, user_benefit_usage가
+        전부 먼저 지워진 뒤에 실행해야 한다.
+        전제: MemberDataCleanupMapper.deleteNotificationByMemberId도 먼저
+        실행되어 있어야 한다 (notification.user_card_id FK).
+        기존 UserCardService.softDeleteByIdAndMemberId(소프트 삭제)는
+        card_status만 바꿔 마스킹 카드번호가 남으므로 재사용하지 않는다.
+    -->
+    <delete id="deleteUserCardByMemberId">
+        DELETE FROM user_card
+        WHERE member_id = #{memberId}
+    </delete>
+
+    <!-- 10. membership_register: member만 참조하는 독립적인 테이블이다. -->
+    <delete id="deleteMembershipRegisterByMemberId">
+        DELETE FROM membership_register
+        WHERE member_id = #{memberId}
+    </delete>
+
+    <!-- 11. recommend_input: member만 참조하는 독립적인 테이블이다. -->
+    <delete id="deleteRecommendInputByMemberId">
+        DELETE FROM recommend_input
+        WHERE member_id = #{memberId}
+    </delete>
+
+</mapper>
