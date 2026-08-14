@@ -46,6 +46,21 @@ public interface MemberMapper {
         @Param("encodedPassword") String encodedPassword
     );
 
+    // Service에서 BCrypt로 변환한 값만 받아 저장하여 원문이 DB 계층까지 전달되지 않게 한다.
+    int updateSimplePassword(
+        @Param("memberId") Long memberId,
+        @Param("simplePasswordHash") String simplePasswordHash
+    );
+
+    int increaseSimplePasswordFailedAttemptCount(@Param("memberId") Long memberId);
+
+    int lockSimplePasswordVerification(
+        @Param("memberId") Long memberId,
+        @Param("lockedUntil") LocalDateTime lockedUntil
+    );
+
+    int resetSimplePasswordVerificationFailure(@Param("memberId") Long memberId);
+
     /**
      * 대표 카드 변경 작업 동안 회원 행을 잠근다.
      * <p>

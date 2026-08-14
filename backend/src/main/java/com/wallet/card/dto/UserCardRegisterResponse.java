@@ -8,8 +8,10 @@ package com.wallet.card.dto;
  */
 public record UserCardRegisterResponse(
     Long userCardId,
+    Long cardId,
     String cardName,
     String issuerName,
+    String cardType,
     String maskedCardNumber,
     String imageUrl,
     Boolean representative

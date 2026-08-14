@@ -58,6 +58,7 @@ DROP TABLE IF EXISTS benefit;
 DROP TABLE IF EXISTS performance_exclusion;
 DROP TABLE IF EXISTS performance_tier;
 DROP TABLE IF EXISTS user_card;
+DROP TABLE IF EXISTS mock_card;
 DROP TABLE IF EXISTS card_alias;
 DROP TABLE IF EXISTS merchant_alias;
 DROP TABLE IF EXISTS merchant;
@@ -73,6 +74,7 @@ DROP TABLE IF EXISTS term;
 DROP TABLE IF EXISTS refresh_token;
 DROP TABLE IF EXISTS signup_email_verification;
 DROP TABLE IF EXISTS password_reset_verification;
+DROP TABLE IF EXISTS simple_password_verification;
 DROP TABLE IF EXISTS member_withdrawal_archive;
 DROP TABLE IF EXISTS member_withdrawal;
 DROP TABLE IF EXISTS member;
@@ -84,15 +86,20 @@ SET FOREIGN_KEY_CHECKS = 1;
 -- ════════════════════════════════════════════════════════════
 
 CREATE TABLE member (
-    member_id     BIGINT       NOT NULL AUTO_INCREMENT COMMENT '회원 ID',
-    email         VARCHAR(255) NOT NULL COMMENT '이메일(로그인 ID)',
-    password_hash VARCHAR(255) NOT NULL COMMENT '비밀번호 해시',
-    name          VARCHAR(50)  NOT NULL COMMENT '회원명',
-    nickname      VARCHAR(50) NOT NULL COMMENT '닉네임',
-    member_status ENUM('ACTIVE','SUSPENDED','WITHDRAWN') NOT NULL DEFAULT 'ACTIVE' COMMENT '회원 상태',
-    created_at    DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '생성일시',
-    updated_at    DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '수정일시',
-    withdrawn_at  DATETIME     NULL COMMENT '탈퇴일시. 상태가 WITHDRAWN이면 필수',
+    member_id            BIGINT       NOT NULL AUTO_INCREMENT COMMENT '회원 ID',
+    email                VARCHAR(255) NOT NULL COMMENT '이메일(로그인 ID)',
+    password_hash        VARCHAR(255) NOT NULL COMMENT '비밀번호 해시',
+    -- 기존 회원은 간편비밀번호를 설정하지 않았으므로 NULL을 허용한다.
+    -- 6자리 원문은 저장하지 않고, 서버에서 BCrypt로 만든 해시만 저장한다.
+    simple_password_hash VARCHAR(255) NULL COMMENT '간편비밀번호 해시',
+    simple_password_failed_attempt_count INT NOT NULL DEFAULT 0 COMMENT '간편비밀번호 연속 검증 실패 횟수',
+    simple_password_locked_until DATETIME NULL COMMENT '간편비밀번호 검증 잠금 만료일시',
+    name                 VARCHAR(50)  NOT NULL COMMENT '회원명',
+    nickname             VARCHAR(50)  NOT NULL COMMENT '닉네임',
+    member_status        ENUM('ACTIVE','SUSPENDED','WITHDRAWN') NOT NULL DEFAULT 'ACTIVE' COMMENT '회원 상태',
+    created_at           DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '생성일시',
+    updated_at           DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '수정일시',
+    withdrawn_at         DATETIME     NULL COMMENT '탈퇴일시. 상태가 WITHDRAWN이면 필수',
     PRIMARY KEY (member_id),
     UNIQUE KEY uk_member_email (email)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT '회원';
@@ -180,6 +187,28 @@ CREATE TABLE password_reset_verification (
     KEY idx_password_reset_code_expiry (verification_code_expires_at),
     CONSTRAINT fk_password_reset_member FOREIGN KEY (member_id) REFERENCES member (member_id)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT '비밀번호 재설정 인증';
+
+-- 이메일 인증 코드와 변경 토큰은 유효 기간이 다르므로 만료일시를 따로 관리한다.
+-- 코드와 토큰의 원문을 DB에 남기지 않아 DB 노출 시 즉시 악용되는 것을 방지한다.
+CREATE TABLE simple_password_verification (
+    simple_password_verification_id BIGINT       NOT NULL AUTO_INCREMENT COMMENT '간편비밀번호 변경 인증 ID',
+    member_id                       BIGINT       NOT NULL COMMENT '회원 ID',
+    verification_code_hash          VARCHAR(255) NOT NULL COMMENT '이메일 인증 코드 단방향 해시',
+    verification_status             ENUM('PENDING','VERIFIED','USED','EXPIRED') NOT NULL DEFAULT 'PENDING' COMMENT '인증 상태',
+    failed_attempt_count            INT          NOT NULL DEFAULT 0 COMMENT '인증 코드 검증 실패 횟수',
+    verification_code_expires_at    DATETIME     NOT NULL COMMENT '인증 코드 만료일시',
+    change_token_hash               VARCHAR(255) NULL COMMENT '간편비밀번호 변경 토큰 단방향 해시',
+    change_token_expires_at         DATETIME     NULL COMMENT '변경 토큰 만료일시',
+    verified_at                     DATETIME     NULL COMMENT '이메일 인증 완료일시',
+    used_at                         DATETIME     NULL COMMENT '간편비밀번호 설정·변경에 사용된 일시',
+    created_at                      DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '생성일시',
+    updated_at                      DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '수정일시',
+    PRIMARY KEY (simple_password_verification_id),
+    UNIQUE KEY uk_simple_password_change_token (change_token_hash),
+    KEY idx_simple_password_verification_member_status (member_id, verification_status),
+    KEY idx_simple_password_verification_code_expiry (verification_code_expires_at),
+    CONSTRAINT fk_simple_password_verification_member FOREIGN KEY (member_id) REFERENCES member (member_id)
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT '간편비밀번호 변경 이메일 인증';
 
 -- 원문은 저장하지 않는다. revoked_at과 revoke_reason은 함께 NULL이거나 함께 값이 있어야 한다.
 CREATE TABLE refresh_token (
@@ -287,6 +316,24 @@ CREATE TABLE card (
     KEY idx_card_company_active (card_company_id, is_active),
     CONSTRAINT fk_card_company FOREIGN KEY (card_company_id) REFERENCES card_company (card_company_id)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT '카드 마스터';
+
+-- 시연 환경에서 전체 카드번호를 카드 상품에 정확히 연결하기 위한 Mock 카드다.
+-- 실제 발급 카드번호가 아닌 개발·시연 목적으로 만든 가상 번호만 저장한다.
+CREATE TABLE mock_card (
+    mock_card_id BIGINT      NOT NULL AUTO_INCREMENT COMMENT 'Mock 카드 ID',
+    card_id      BIGINT      NOT NULL COMMENT '연결할 카드 상품 ID',
+    -- 사용자가 입력한 카드번호에서 공백과 하이픈을 제거한 값이다.
+    -- 실제 발급 카드번호가 아니라 개발 및 시연 목적으로 만든 번호만 저장한다.
+    card_number  VARCHAR(19) NOT NULL COMMENT '정규화된 전체 카드번호',
+    is_active    CHAR(1)     NOT NULL DEFAULT 'Y' COMMENT '등록 허용 여부: Y | N',
+    created_at   DATETIME    NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '생성일시',
+    PRIMARY KEY (mock_card_id),
+    UNIQUE KEY uk_mock_card_number (card_number),
+    KEY idx_mock_card_card_active (card_id, is_active),
+    CONSTRAINT fk_mock_card_card FOREIGN KEY (card_id) REFERENCES card (card_id),
+    CONSTRAINT chk_mock_card_number CHECK (card_number REGEXP '^[0-9]{13,19}$'),
+    CONSTRAINT chk_mock_card_active CHECK (is_active IN ('Y', 'N'))
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT '시연용 카드번호와 카드 상품 매핑';
 
 -- 연회비는 하나가 아니다. 국제브랜드(국내전용/VISA/Mastercard)와 발급 형태(실물/모바일단독)에
 -- 따라 갈리고, 기본연회비와 제휴연회비가 따로 청구된다.

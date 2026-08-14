@@ -273,7 +273,101 @@ public enum ErrorCode {
     ),
 
     // =========================================================================
-    //  8. 카드 관리 (Card)
+    //  8. 간편비밀번호 변경 이메일 인증 (SimplePasswordVerification)
+    // =========================================================================
+
+    SIMPLE_PASSWORD_VERIFICATION_REISSUE_COOLDOWN(
+        HttpStatus.TOO_MANY_REQUESTS,
+        "SIMPLE_PASSWORD_VERIFICATION_REISSUE_COOLDOWN",
+        "인증 이메일은 1분에 한 번만 요청할 수 있습니다. 잠시 후 다시 시도해 주세요."
+    ),
+
+    SIMPLE_PASSWORD_VERIFICATION_CODE_INVALID(
+        HttpStatus.BAD_REQUEST,
+        "SIMPLE_PASSWORD_VERIFICATION_CODE_INVALID",
+        "인증 코드가 일치하지 않습니다."
+    ),
+
+    SIMPLE_PASSWORD_VERIFICATION_CODE_EXPIRED(
+        HttpStatus.BAD_REQUEST,
+        "SIMPLE_PASSWORD_VERIFICATION_CODE_EXPIRED",
+        "인증 코드가 만료되었습니다."
+    ),
+
+    SIMPLE_PASSWORD_VERIFICATION_CODE_ALREADY_USED(
+        HttpStatus.CONFLICT,
+        "SIMPLE_PASSWORD_VERIFICATION_CODE_ALREADY_USED",
+        "이미 사용 완료된 인증 코드입니다."
+    ),
+
+    SIMPLE_PASSWORD_VERIFICATION_ATTEMPT_LIMIT_EXCEEDED(
+        HttpStatus.TOO_MANY_REQUESTS,
+        "SIMPLE_PASSWORD_VERIFICATION_ATTEMPT_LIMIT_EXCEEDED",
+        "인증 코드 입력 시도 횟수를 초과했습니다."
+    ),
+
+    SIMPLE_PASSWORD_VERIFICATION_NOT_FOUND(
+        HttpStatus.NOT_FOUND,
+        "SIMPLE_PASSWORD_VERIFICATION_NOT_FOUND",
+        "간편비밀번호 변경 인증 정보를 찾을 수 없습니다."
+    ),
+
+    SIMPLE_PASSWORD_VERIFICATION_FAILED(
+        HttpStatus.INTERNAL_SERVER_ERROR,
+        "SIMPLE_PASSWORD_VERIFICATION_FAILED",
+        "간편비밀번호 변경 인증 처리에 실패했습니다."
+    ),
+
+    SIMPLE_PASSWORD_CHANGE_TOKEN_INVALID(
+        HttpStatus.BAD_REQUEST,
+        "SIMPLE_PASSWORD_CHANGE_TOKEN_INVALID",
+        "간편비밀번호 변경 토큰이 유효하지 않습니다."
+    ),
+
+    SIMPLE_PASSWORD_CHANGE_TOKEN_EXPIRED(
+        HttpStatus.BAD_REQUEST,
+        "SIMPLE_PASSWORD_CHANGE_TOKEN_EXPIRED",
+        "간편비밀번호 변경 토큰이 만료되었습니다."
+    ),
+
+    SIMPLE_PASSWORD_CHANGE_TOKEN_ALREADY_USED(
+        HttpStatus.CONFLICT,
+        "SIMPLE_PASSWORD_CHANGE_TOKEN_ALREADY_USED",
+        "이미 사용 완료된 간편비밀번호 변경 토큰입니다."
+    ),
+
+    SIMPLE_PASSWORD_CONFIRMATION_MISMATCH(
+        HttpStatus.BAD_REQUEST,
+        "SIMPLE_PASSWORD_CONFIRMATION_MISMATCH",
+        "간편비밀번호와 간편비밀번호 확인이 일치하지 않습니다."
+    ),
+
+    SIMPLE_PASSWORD_UPDATE_FAILED(
+        HttpStatus.INTERNAL_SERVER_ERROR,
+        "SIMPLE_PASSWORD_UPDATE_FAILED",
+        "간편비밀번호 저장에 실패했습니다."
+    ),
+
+    SIMPLE_PASSWORD_NOT_SET(
+        HttpStatus.CONFLICT,
+        "SIMPLE_PASSWORD_NOT_SET",
+        "간편비밀번호가 설정되어 있지 않습니다."
+    ),
+
+    SIMPLE_PASSWORD_ATTEMPT_LIMIT_EXCEEDED(
+        HttpStatus.TOO_MANY_REQUESTS,
+        "SIMPLE_PASSWORD_ATTEMPT_LIMIT_EXCEEDED",
+        "간편비밀번호 입력 시도 횟수를 초과했습니다. 5분 후 다시 시도해 주세요."
+    ),
+
+    SIMPLE_PASSWORD_ATTEMPT_UPDATE_FAILED(
+        HttpStatus.INTERNAL_SERVER_ERROR,
+        "SIMPLE_PASSWORD_ATTEMPT_UPDATE_FAILED",
+        "간편비밀번호 입력 시도 상태를 저장하지 못했습니다."
+    ),
+
+    // =========================================================================
+    //  9. 카드 관리 (Card)
     // =========================================================================
 
     /** 카드번호가 숫자/길이/룬 알고리즘 기준을 만족하지 않는 경우 */
@@ -283,32 +377,18 @@ public enum ErrorCode {
         "유효한 카드번호 형식이 아닙니다."
     ),
 
+    /** 형식은 유효하지만 시연용 Mock 카드 목록에 없거나 등록이 비활성화된 경우 */
+    CARD_NOT_SUPPORTED(
+        HttpStatus.BAD_REQUEST,
+        "CARD_NOT_SUPPORTED",
+        "등록을 지원하지 않는 카드번호입니다."
+    ),
+
     /** 프로젝트가 보유한 BIN 데이터에서 카드사를 찾지 못한 경우 */
     CARD_BIN_NOT_FOUND(
         HttpStatus.BAD_REQUEST,
         "CARD_BIN_NOT_FOUND",
         "카드사를 확인할 수 없는 카드번호입니다."
-    ),
-
-    /** BIN으로 카드사는 식별했지만, 해당 카드사의 등록 가능한 활성 카드 상품이 없는 경우 */
-    CARD_CANDIDATE_NOT_FOUND(
-        HttpStatus.NOT_FOUND,
-        "CARD_CANDIDATE_NOT_FOUND",
-        "등록 가능한 카드 상품을 찾을 수 없습니다."
-    ),
-
-    /** 사용자가 선택한 cardId가 존재하지 않거나 비활성 카드 상품인 경우 */
-    CARD_NOT_FOUND(
-        HttpStatus.NOT_FOUND,
-        "CARD_NOT_FOUND",
-        "등록 가능한 카드 상품을 찾을 수 없습니다."
-    ),
-
-    /** 카드번호의 BIN으로 식별한 카드사와 사용자가 선택한 카드 상품의 카드사가 다른 경우 */
-    CARD_COMPANY_MISMATCH(
-        HttpStatus.BAD_REQUEST,
-        "CARD_COMPANY_MISMATCH",
-        "카드번호와 선택한 카드 상품의 카드사가 일치하지 않습니다."
     ),
 
     /** 이미 ACTIVE 상태로 등록된 보유 카드를 다시 등록하려는 경우. */
@@ -340,7 +420,7 @@ public enum ErrorCode {
     ),
 
     // =========================================================================
-    //  9. 알림 (Notification)
+    //  10. 알림 (Notification)
     // =========================================================================
 
     /** 로그인 회원 소유의 알림을 찾을 수 없음 (존재하지 않거나, 다른 회원 소유이거나, 이미 삭제됨) */
