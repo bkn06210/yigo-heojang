@@ -28,6 +28,67 @@ def _db_available() -> bool:
 needs_db = pytest.mark.skipif(not _db_available(), reason="MySQL 연결 불가")
 
 
+@pytest.fixture
+def 약관_조각():
+    """검색이 걸릴 조문을 넣어 두고 끝나면 지운다.
+
+    약관 원문은 카드사 저작물이라 저장소에 두지 않는다. 그래서 시드만 적용한 DB 에는
+    조문이 하나도 없고, 원문이 있다고 가정한 테스트는 빈 결과를 받는다. 못 찾는 것과
+    "무관한 것은 안 준다"가 같은 모양이 되어 통과 여부가 뒤집힌다.
+
+    확인하려는 것은 검색 규칙(전문검색 점수 하한, 카드사별 한 건)이지 원문 자체가
+    아니므로, 조문을 직접 넣어 규칙만 본다.
+    """
+    documents = [
+        ("삼성", "개인회원 표준약관"),
+        ("신한", "개인회원 표준약관"),
+        ("KB국민", "개인회원 표준약관"),
+    ]
+    lost_card = (
+        "회원은 카드를 분실하거나 도난당한 경우 지체 없이 카드사에 분실 도난 신고를 "
+        "하여야 하며, 신고 접수 이후 발생한 부정사용 금액은 카드사가 부담합니다."
+    )
+    unrelated = "카드사는 매월 이용대금명세서를 회원이 지정한 방법으로 교부합니다."
+
+    inserted = []
+    with connection() as conn:
+        with conn.cursor() as cursor:
+            for issuer, name in documents:
+                cursor.execute(
+                    "INSERT INTO card_term_document"
+                    " (source_card_name, issuer, doc_type, source_url, storage_path,"
+                    "  extract_status, content_hash, fetched_at)"
+                    " VALUES (%s, %s, 'MEMBER_TERMS', 'test://terms', 'test',"
+                    "         'TEXT_OK', %s, NOW())",
+                    (name, issuer, f"test-{issuer}"),
+                )
+                document_id = cursor.lastrowid
+                inserted.append(document_id)
+                for index, (heading, content) in enumerate(
+                        [("제40조(카드의 분실·도난)", lost_card), ("제20조(이용대금명세서)", unrelated)]):
+                    cursor.execute(
+                        "INSERT INTO card_term_chunk"
+                        " (card_term_document_id, chunk_index, heading, content)"
+                        " VALUES (%s, %s, %s, %s)",
+                        (document_id, index, heading, content),
+                    )
+        conn.commit()
+
+    yield
+
+    with connection() as conn:
+        with conn.cursor() as cursor:
+            cursor.execute(
+                "DELETE FROM card_term_chunk WHERE card_term_document_id IN %s",
+                (tuple(inserted),),
+            )
+            cursor.execute(
+                "DELETE FROM card_term_document WHERE card_term_document_id IN %s",
+                (tuple(inserted),),
+            )
+        conn.commit()
+
+
 class FakeEngine:
     """엔진 응답을 흉내 낸다. 형식은 API 명세와 같다."""
 
@@ -347,7 +408,7 @@ def test_가맹점을_짚어_물으면_그_가맹점_거래만_합산한다(fake
 
 
 @needs_db
-def test_약관_질문은_원문_조항을_근거로_답한다(fake_engine):
+def test_약관_질문은_원문_조항을_근거로_답한다(fake_engine, 약관_조각):
     body = _ask("카드 잃어버리면 어떻게 해?")
 
     assert body["intent"] == IntentName.TERM_QA
@@ -371,22 +432,27 @@ def test_약관_검색어를_못_만들면_되묻는다(fake_engine):
 
 
 @needs_db
-def test_약관_검색은_무관한_조항을_돌려주지_않는다():
+def test_약관_검색은_무관한_조항을_돌려주지_않는다(약관_조각):
     """점수가 낮은 것은 못 찾은 것으로 본다.
 
-    하한이 없으면 어떤 검색어를 넣어도 뭔가는 걸린다. 실측에서 맞는 조항은 5점을
-    넘었고 무관한 것은 0.1 미만이라, 그 사이를 끊어 "없다"고 말할 수 있게 한다.
+    하한이 없으면 어떤 검색어를 넣어도 뭔가는 걸린다. 그걸 근거로 문장을 만들면
+    사용자가 틀렸다는 것을 알 방법이 없어, 낱말이 안 겹치는 질문은 빈 결과로 끊는다.
+
+    <b>다만 하한으로 거를 수 있는 것은 여기까지다.</b> 약관에 흔한 낱말이 섞인 질문은
+    뜻이 무관해도 점수가 오른다(실측: "드론 항공 촬영" 16.8 > "이용대금 연체" 4.7 —
+    약관에 '항공'이 자주 나오기 때문). 조각이 늘수록 이 겹침이 커지므로 뜻으로 찾는
+    검색이 필요하다.
     """
     from chatbot import terms
     from chatbot.db import connection
 
     with connection() as conn:
         assert terms.search(conn, "분실 도난 신고")
-        assert terms.search(conn, "우주선 위성 궤도") == []
+        assert terms.search(conn, "공룡 화석 발굴") == []
 
 
 @needs_db
-def test_약관_검색은_카드사마다_하나씩만_싣는다():
+def test_약관_검색은_카드사마다_하나씩만_싣는다(약관_조각):
     """개인회원 표준약관은 3사 내용이 사실상 같다.
 
     같은 조문이 카드사 수만큼 실리면 LLM 에게 같은 글을 세 번 주는 셈이라
