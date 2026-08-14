@@ -21,6 +21,7 @@
         FROM term_version tv
         INNER JOIN term t ON tv.term_id = t.term_id
         WHERE t.term_status = 'ACTIVE'
+          AND t.term_scope = #{termScope}
         <![CDATA[
           AND tv.effective_started_at <= NOW()
           AND (
@@ -48,6 +49,7 @@
         INNER JOIN term t ON tv.term_id = t.term_id
         WHERE t.term_status = 'ACTIVE'
           AND t.is_required = 1
+          AND t.term_scope = #{termScope}
         <![CDATA[
           AND tv.effective_started_at <= NOW()
           AND (

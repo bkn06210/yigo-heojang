@@ -16,7 +16,7 @@ import com.wallet.auth.dto.SignupEmailVerificationRequest;
 import com.wallet.auth.dto.SignupEmailVerificationResponse;
 import com.wallet.auth.mapper.SignupEmailVerificationMapper;
 import com.wallet.auth.support.VerificationTokenGenerator;
-import com.wallet.auth.support.TokenHashUtil;
+import com.wallet.common.util.Sha256Hasher;
 import com.wallet.auth.support.VerificationCodeGenerator;
 import com.wallet.common.ErrorCode;
 import com.wallet.common.exception.BusinessException;
@@ -43,7 +43,7 @@ public class SignupEmailVerificationService {
     private final EmailSender emailSender;
     private final VerificationCodeGenerator verificationCodeGenerator;
     private final VerificationTokenGenerator verificationTokenGenerator;
-    private final TokenHashUtil tokenHashUtil;
+    private final Sha256Hasher sha256Hasher;
 
     // 회원가입 이메일 인증 코드를 발송
     @Transactional
@@ -60,7 +60,7 @@ public class SignupEmailVerificationService {
         validateReissueAllowed(existingVerification);
 
         String verificationCode = verificationCodeGenerator.generateSixDigitCode();
-        String verificationCodeHash = tokenHashUtil.sha256(verificationCode);
+        String verificationCodeHash = sha256Hasher.sha256(verificationCode);
         LocalDateTime expiresAt = LocalDateTime.now()
             .plusMinutes(VERIFICATION_CODE_EXPIRE_MINUTES);
 
@@ -112,7 +112,7 @@ public class SignupEmailVerificationService {
         validateAttemptLimitNotExceeded(verification);
         validateVerificationCodeNotExpired(verification);
 
-        String requestedCodeHash = tokenHashUtil.sha256(request.verificationCode());
+        String requestedCodeHash = sha256Hasher.sha256(request.verificationCode());
 
         if (!requestedCodeHash.equals(verification.getVerificationCodeHash())) {
             signupEmailVerificationMapper.increaseFailedAttemptCount(
@@ -122,7 +122,7 @@ public class SignupEmailVerificationService {
         }
 
         String signupVerificationToken = verificationTokenGenerator.generate();
-        String signupTokenHash = tokenHashUtil.sha256(signupVerificationToken);
+        String signupTokenHash = sha256Hasher.sha256(signupVerificationToken);
         LocalDateTime signupTokenExpiresAt = LocalDateTime.now()
             .plusMinutes(SIGNUP_TOKEN_EXPIRE_MINUTES);
 
@@ -149,7 +149,7 @@ public class SignupEmailVerificationService {
         String signupVerificationToken
     ) {
         String normalizedEmail = normalizeEmail(requestEmail);
-        String signupTokenHash = tokenHashUtil.sha256(signupVerificationToken);
+        String signupTokenHash = sha256Hasher.sha256(signupVerificationToken);
 
         SignupEmailVerification verification =
             signupEmailVerificationMapper.findBySignupTokenHashForUpdate(signupTokenHash);
