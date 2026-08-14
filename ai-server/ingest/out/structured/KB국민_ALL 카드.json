@@ -94,16 +94,6 @@
    "exclusion_type": "TRANSACTION_ATTR",
    "exclusion_value": "CANCELED",
    "_source": "[할인서비스 제외 대상] 취소금액"
-  },
-  {
-   "exclusion_type": "MERCHANT",
-   "exclusion_value": "결제대행업체(PG)",
-   "_source": "[기타] · 가맹점 정보가 해당 업체가 아닌 결제대행업체(PG) 또는 간편결제 전용 가맹점으로 확인되는 경우 '결제대행업체' 또는 '간편결제' 가맹점으로 분류되어 할인·적립 대상에서 제외됩니다."
-  },
-  {
-   "exclusion_type": "MERCHANT",
-   "exclusion_value": "간편결제",
-   "_source": "[기타] · 가맹점 정보가 해당 업체가 아닌 결제대행업체(PG) 또는 간편결제 전용 가맹점으로 확인되는 경우 '결제대행업체' 또는 '간편결제' 가맹점으로 분류되어 할인·적립 대상에서 제외됩니다. 예시) 음식점에서 네이버페이로 결제 시 가맹점명이 '네이버페이'인 경우 음식점 가맹점이 아닌 '간편결제' 가맹점으로 분류"
   }
  ],
  "performance_tiers": [
@@ -242,7 +232,7 @@
    "apply_timing": null,
    "target_type": "MERCHANT",
    "target_category_code": null,
-   "target_merchant_name": "네이버플러스",
+   "target_merchant_name": "네이버플러스 멤버십",
    "require_performance": "Y",
    "performance_period": "MONTH",
    "require_payment_type": "AUTO_TRANSFER",
@@ -265,12 +255,7 @@
    "exclusions": [
     {
      "exclusion_type": "PAYMENT_TYPE",
-     "exclusion_value": "간편결제",
-     "_source": "※ 쇼핑 멤버십, OTT 할인은 공식 홈페이지를 통한 정기 결제 건에 한함 (간편결제 및 인앱결제 등은 할인 제외)"
-    },
-    {
-     "exclusion_type": "PAYMENT_TYPE",
-     "exclusion_value": "인앱결제",
+     "exclusion_value": "SIMPLE_PAY",
      "_source": "※ 쇼핑 멤버십, OTT 할인은 공식 홈페이지를 통한 정기 결제 건에 한함 (간편결제 및 인앱결제 등은 할인 제외)"
     }
    ],
@@ -317,12 +302,7 @@
    "exclusions": [
     {
      "exclusion_type": "PAYMENT_TYPE",
-     "exclusion_value": "간편결제",
-     "_source": "※ 쇼핑 멤버십, OTT 할인은 공식 홈페이지를 통한 정기 결제 건에 한함 (간편결제 및 인앱결제 등은 할인 제외)"
-    },
-    {
-     "exclusion_type": "PAYMENT_TYPE",
-     "exclusion_value": "인앱결제",
+     "exclusion_value": "SIMPLE_PAY",
      "_source": "※ 쇼핑 멤버십, OTT 할인은 공식 홈페이지를 통한 정기 결제 건에 한함 (간편결제 및 인앱결제 등은 할인 제외)"
     }
    ],
@@ -369,12 +349,7 @@
    "exclusions": [
     {
      "exclusion_type": "PAYMENT_TYPE",
-     "exclusion_value": "간편결제",
-     "_source": "※ 쇼핑 멤버십, OTT 할인은 공식 홈페이지를 통한 정기 결제 건에 한함 (간편결제 및 인앱결제 등은 할인 제외)"
-    },
-    {
-     "exclusion_type": "PAYMENT_TYPE",
-     "exclusion_value": "인앱결제",
+     "exclusion_value": "SIMPLE_PAY",
      "_source": "※ 쇼핑 멤버십, OTT 할인은 공식 홈페이지를 통한 정기 결제 건에 한함 (간편결제 및 인앱결제 등은 할인 제외)"
     }
    ],
@@ -398,7 +373,7 @@
    "apply_timing": null,
    "target_type": "MERCHANT",
    "target_category_code": null,
-   "target_merchant_name": "유튜브",
+   "target_merchant_name": "유튜브 프리미엄",
    "require_performance": "Y",
    "performance_period": "MONTH",
    "require_payment_type": "AUTO_TRANSFER",
@@ -421,12 +396,7 @@
    "exclusions": [
     {
      "exclusion_type": "PAYMENT_TYPE",
-     "exclusion_value": "간편결제",
-     "_source": "※ 쇼핑 멤버십, OTT 할인은 공식 홈페이지를 통한 정기 결제 건에 한함 (간편결제 및 인앱결제 등은 할인 제외)"
-    },
-    {
-     "exclusion_type": "PAYMENT_TYPE",
-     "exclusion_value": "인앱결제",
+     "exclusion_value": "SIMPLE_PAY",
      "_source": "※ 쇼핑 멤버십, OTT 할인은 공식 홈페이지를 통한 정기 결제 건에 한함 (간편결제 및 인앱결제 등은 할인 제외)"
     }
    ],
@@ -473,12 +443,7 @@
    "exclusions": [
     {
      "exclusion_type": "PAYMENT_TYPE",
-     "exclusion_value": "간편결제",
-     "_source": "※ 쇼핑 멤버십, OTT 할인은 공식 홈페이지를 통한 정기 결제 건에 한함 (간편결제 및 인앱결제 등은 할인 제외)"
-    },
-    {
-     "exclusion_type": "PAYMENT_TYPE",
-     "exclusion_value": "인앱결제",
+     "exclusion_value": "SIMPLE_PAY",
      "_source": "※ 쇼핑 멤버십, OTT 할인은 공식 홈페이지를 통한 정기 결제 건에 한함 (간편결제 및 인앱결제 등은 할인 제외)"
     }
    ],
@@ -525,12 +490,7 @@
    "exclusions": [
     {
      "exclusion_type": "PAYMENT_TYPE",
-     "exclusion_value": "간편결제",
-     "_source": "※ 쇼핑 멤버십, OTT 할인은 공식 홈페이지를 통한 정기 결제 건에 한함 (간편결제 및 인앱결제 등은 할인 제외)"
-    },
-    {
-     "exclusion_type": "PAYMENT_TYPE",
-     "exclusion_value": "인앱결제",
+     "exclusion_value": "SIMPLE_PAY",
      "_source": "※ 쇼핑 멤버십, OTT 할인은 공식 홈페이지를 통한 정기 결제 건에 한함 (간편결제 및 인앱결제 등은 할인 제외)"
     }
    ],
@@ -554,7 +514,7 @@
    "apply_timing": null,
    "target_type": "MERCHANT",
    "target_category_code": null,
-   "target_merchant_name": "디즈니",
+   "target_merchant_name": "디즈니 플러스",
    "require_performance": "Y",
    "performance_period": "MONTH",
    "require_payment_type": "AUTO_TRANSFER",
@@ -577,12 +537,7 @@
    "exclusions": [
     {
      "exclusion_type": "PAYMENT_TYPE",
-     "exclusion_value": "간편결제",
-     "_source": "※ 쇼핑 멤버십, OTT 할인은 공식 홈페이지를 통한 정기 결제 건에 한함 (간편결제 및 인앱결제 등은 할인 제외)"
-    },
-    {
-     "exclusion_type": "PAYMENT_TYPE",
-     "exclusion_value": "인앱결제",
+     "exclusion_value": "SIMPLE_PAY",
      "_source": "※ 쇼핑 멤버십, OTT 할인은 공식 홈페이지를 통한 정기 결제 건에 한함 (간편결제 및 인앱결제 등은 할인 제외)"
     }
    ],

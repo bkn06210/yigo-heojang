@@ -620,12 +620,7 @@
    "exclusions": [
     {
      "exclusion_type": "PAYMENT_TYPE",
-     "exclusion_value": "간편결제",
-     "_source": "※ 간편결제, 인앱 결제, 단건 결제, 포인트 및 캐시 충전 등은 제외"
-    },
-    {
-     "exclusion_type": "PAYMENT_TYPE",
-     "exclusion_value": "인앱결제",
+     "exclusion_value": "SIMPLE_PAY",
      "_source": "※ 간편결제, 인앱 결제, 단건 결제, 포인트 및 캐시 충전 등은 제외"
     }
    ],
@@ -672,12 +667,7 @@
    "exclusions": [
     {
      "exclusion_type": "PAYMENT_TYPE",
-     "exclusion_value": "간편결제",
-     "_source": "※ 간편결제, 인앱 결제, 단건 결제, 포인트 및 캐시 충전 등은 제외"
-    },
-    {
-     "exclusion_type": "PAYMENT_TYPE",
-     "exclusion_value": "인앱결제",
+     "exclusion_value": "SIMPLE_PAY",
      "_source": "※ 간편결제, 인앱 결제, 단건 결제, 포인트 및 캐시 충전 등은 제외"
     }
    ],
@@ -724,12 +714,7 @@
    "exclusions": [
     {
      "exclusion_type": "PAYMENT_TYPE",
-     "exclusion_value": "간편결제",
-     "_source": "※ 간편결제, 인앱 결제, 단건 결제, 포인트 및 캐시 충전 등은 제외"
-    },
-    {
-     "exclusion_type": "PAYMENT_TYPE",
-     "exclusion_value": "인앱결제",
+     "exclusion_value": "SIMPLE_PAY",
      "_source": "※ 간편결제, 인앱 결제, 단건 결제, 포인트 및 캐시 충전 등은 제외"
     }
    ],
@@ -776,12 +761,7 @@
    "exclusions": [
     {
      "exclusion_type": "PAYMENT_TYPE",
-     "exclusion_value": "간편결제",
-     "_source": "※ 간편결제, 인앱 결제, 단건 결제, 포인트 및 캐시 충전 등은 제외"
-    },
-    {
-     "exclusion_type": "PAYMENT_TYPE",
-     "exclusion_value": "인앱결제",
+     "exclusion_value": "SIMPLE_PAY",
      "_source": "※ 간편결제, 인앱 결제, 단건 결제, 포인트 및 캐시 충전 등은 제외"
     }
    ],
@@ -828,12 +808,7 @@
    "exclusions": [
     {
      "exclusion_type": "PAYMENT_TYPE",
-     "exclusion_value": "간편결제",
-     "_source": "※ 간편결제, 인앱 결제, 단건 결제, 포인트 및 캐시 충전 등은 제외"
-    },
-    {
-     "exclusion_type": "PAYMENT_TYPE",
-     "exclusion_value": "인앱결제",
+     "exclusion_value": "SIMPLE_PAY",
      "_source": "※ 간편결제, 인앱 결제, 단건 결제, 포인트 및 캐시 충전 등은 제외"
     }
    ],
@@ -1325,7 +1300,7 @@
    "step_count": null,
    "apply_timing": "BILLED",
    "target_type": "CATEGORY",
-   "target_category_code": null,
+   "target_category_code": "PERSONAL_CARE",
    "target_merchant_name": null,
    "require_performance": "Y",
    "performance_period": "MONTH",
@@ -1347,7 +1322,7 @@
    "exclude_from_performance": "N",
    "option_group_code": "WISH_PICK",
    "option_key": "CARE",
-   "description": "위시 픽 서비스팩 3개 중 택1(관리팩). 미용실 업종. 미용실·스포츠·온라인서점·올리브영 합산 월 1만원 한도. 표준 카테고리에 미용실 업종에 대응하는 코드가 없어 target_category_code를 비워 둔다.",
+   "description": "위시 픽 서비스팩 3개 중 택1(관리팩). 미용실 업종. 미용실·스포츠·온라인서점·올리브영 합산 월 1만원 한도.",
    "tier_limits": [],
    "exclusions": [],
    "_source": {

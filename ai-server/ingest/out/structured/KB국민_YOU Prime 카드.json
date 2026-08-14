@@ -1,0 +1,1065 @@
+{
+  "card": {
+    "card_name": "KB YOU Prime 카드",
+    "card_type": "CREDIT",
+    "annual_fee": 30000,
+    "annual_fees": [
+      {
+        "brand": "ANY",
+        "issue_type": "PLASTIC",
+        "variant": "ANY",
+        "total_fee": 30000,
+        "base_fee": 7000,
+        "partner_fee": 23000,
+        "_source": "구 분 국내전용(Local) / 국내외겸용(Mastercard, K-World(JCB)) — 일반카드 30,000원 (기본연회비 7천원 + 제휴연회비 2만3천원). 금액 칸이 국내전용과 국내외겸용에 걸쳐 하나로 병합돼 있어 브랜드를 나누지 않는다"
+      },
+      {
+        "brand": "ANY",
+        "issue_type": "MOBILE",
+        "variant": "ANY",
+        "total_fee": 24000,
+        "base_fee": 1000,
+        "partner_fee": 23000,
+        "_source": "모바일 단독카드 24,000원 (기본연회비 1천원 + 제휴연회비 2만3천원). 금액 칸이 두 브랜드에 걸쳐 하나로 병합돼 있다"
+      }
+    ],
+    "_source": {
+      "annual_fee": "가장 흔한 조합인 일반카드 총액 30,000원을 대표값으로 쓴다"
+    },
+    "_needs_review": []
+  },
+  "card_exclusions": [
+    {
+      "exclusion_type": "TRANSACTION_ATTR",
+      "exclusion_value": "INTEREST_FREE",
+      "_source": "[할인서비스제외대상] 무이자할부이용금액, 상품권및 선불카드(선불전자지급수단포함) 구입·충전금액"
+    },
+    {
+      "exclusion_type": "TRANSACTION_ATTR",
+      "exclusion_value": "GIFT_CARD"
+    }
+  ],
+  "performance_tiers": [
+    {
+      "period_type": "MONTH",
+      "min_performance_amount": 0,
+      "shared_monthly_limit": null,
+      "_source": "전월 이용실적 40만원 이상 시 할인 서비스 제공 — 미달 구간(0원 구간). 카드 통합 할인한도 조항이 없고 영역별 월 할인한도만 있어 shared_monthly_limit은 null"
+    },
+    {
+      "period_type": "MONTH",
+      "min_performance_amount": 400000,
+      "shared_monthly_limit": null,
+      "_source": "전월이용실적에따른월할인한도 40만원이상 80만원미만"
+    },
+    {
+      "period_type": "MONTH",
+      "min_performance_amount": 800000,
+      "shared_monthly_limit": null,
+      "_source": "전월이용실적에따른월할인한도 80만원이상 160만원미만"
+    },
+    {
+      "period_type": "MONTH",
+      "min_performance_amount": 1600000,
+      "shared_monthly_limit": null,
+      "_source": "전월이용실적에따른월할인한도 160만원이상"
+    }
+  ],
+  "performance_exclusions": [
+    {
+      "exclusion_type": "TRANSACTION_ATTR",
+      "exclusion_value": "INTEREST_FREE",
+      "_source": "[전월 이용실적제외 대상] ‘KB YOU Prime 카드’ 할인적용 받은 매출(일상팩, 가족팩), (부분)무이자할부이용금액, 단기카드대출(현금서비스), 장기카드대출(카드론), 상품권및 선불카드(선불전자지급수단포함) 구입·충전금액, 아파트관리비, 유치원/초·중·고학교납입금전체, 정부지원금(보육료/유치원보조비/바우처이용금액등), 대학(원) 등록금, 국세, 지방세, 공과금(전기/수도등), 도시가스, 4대 사회보험료(건강/연금/고용/산재), 각종 수수료및 이자, 연체료, 연회비, 무승인전표(RF후불교통요금/자판기/터널 이용료/항공기내이용 등), 취소금액"
+    },
+    {
+      "exclusion_type": "TRANSACTION_ATTR",
+      "exclusion_value": "CASH_ADVANCE"
+    },
+    {
+      "exclusion_type": "TRANSACTION_ATTR",
+      "exclusion_value": "CARD_LOAN"
+    },
+    {
+      "exclusion_type": "TRANSACTION_ATTR",
+      "exclusion_value": "GIFT_CARD"
+    },
+    {
+      "exclusion_type": "CATEGORY",
+      "exclusion_value": "APARTMENT_FEE"
+    },
+    {
+      "exclusion_type": "CATEGORY",
+      "exclusion_value": "TUITION"
+    },
+    {
+      "exclusion_type": "TRANSACTION_ATTR",
+      "exclusion_value": "GOV_SUBSIDY"
+    },
+    {
+      "exclusion_type": "TRANSACTION_ATTR",
+      "exclusion_value": "TAX"
+    },
+    {
+      "exclusion_type": "CATEGORY",
+      "exclusion_value": "UTILITY"
+    },
+    {
+      "exclusion_type": "TRANSACTION_ATTR",
+      "exclusion_value": "SOCIAL_INSURANCE"
+    },
+    {
+      "exclusion_type": "TRANSACTION_ATTR",
+      "exclusion_value": "FEE_INTEREST"
+    },
+    {
+      "exclusion_type": "TRANSACTION_ATTR",
+      "exclusion_value": "ANNUAL_FEE"
+    },
+    {
+      "exclusion_type": "TRANSACTION_ATTR",
+      "exclusion_value": "UNAPPROVED"
+    },
+    {
+      "exclusion_type": "TRANSACTION_ATTR",
+      "exclusion_value": "CANCELED"
+    }
+  ],
+  "benefits": [
+    {
+      "benefit_name": "일상팩 - 주유 10% 할인",
+      "benefit_kind": "DISCOUNT",
+      "calc_method": "RATE",
+      "benefit_value": 10,
+      "step_count": null,
+      "apply_timing": null,
+      "target_type": "CATEGORY",
+      "target_category_code": "FUEL",
+      "target_merchant_name": null,
+      "targets": null,
+      "require_performance": "Y",
+      "performance_period": "MONTH",
+      "require_payment_type": null,
+      "min_txn_amount": null,
+      "max_eligible_amount": null,
+      "max_benefit_per_txn": null,
+      "daily_limit": null,
+      "monthly_limit": null,
+      "quarterly_limit": null,
+      "yearly_limit": null,
+      "daily_count_limit": null,
+      "monthly_count_limit": null,
+      "quarterly_count_limit": null,
+      "yearly_count_limit": null,
+      "limit_group_code": "PRIME_DAILY_FUEL",
+      "count_group_code": null,
+      "use_shared_limit": "N",
+      "exclude_from_performance": "Y",
+      "option_group_code": "SERVICE_PACK",
+      "option_key": "DAILY",
+      "description": "주유소/충전소업종. 할인 서비스는 일상팩·가족팩 2종 중 택 1이며 매월 변경할 수 있다(신청일 기준 다음달 1일부터 적용). 월 할인한도는 영역별로 따로 주어지고 전월 이용실적 구간에 따라 5천원/7천원/1만원으로 달라진다.",
+      "tier_limits": [
+        {
+          "min_performance_amount": 400000,
+          "monthly_limit": 5000,
+          "benefit_value": null,
+          "_source": "전월이용실적에따른월할인한도 - 40만원이상 80만원미만 5천원"
+        },
+        {
+          "min_performance_amount": 800000,
+          "monthly_limit": 7000,
+          "benefit_value": null,
+          "_source": "전월이용실적에따른월할인한도 - 80만원이상 160만원미만 7천원"
+        },
+        {
+          "min_performance_amount": 1600000,
+          "monthly_limit": 10000,
+          "benefit_value": null,
+          "_source": "전월이용실적에따른월할인한도 - 160만원이상 1만원"
+        }
+      ],
+      "exclusions": [],
+      "_source": {
+        "benefit_value": "일상팩 주유 주유소/충전소업종, 전기차충전 10%",
+        "require_performance": "※ 할인 서비스는 전월 이용실적 40만원 이상 시 월 단위로 제공되며, 전월 이용실적에 따라 월간 할인한도가 제공됩니다.",
+        "limit_group_code": "표에서 '주유'가 한 행이라 월 할인한도가 하나로 제시된다"
+      },
+      "_needs_review": [
+        "apply_timing"
+      ]
+    },
+    {
+      "benefit_name": "일상팩 - 배달 10% 할인",
+      "benefit_kind": "DISCOUNT",
+      "calc_method": "RATE",
+      "benefit_value": 10,
+      "step_count": null,
+      "apply_timing": null,
+      "target_type": "MERCHANT",
+      "target_category_code": null,
+      "target_merchant_name": null,
+      "targets": [
+        "배달의민족",
+        "쿠팡이츠"
+      ],
+      "require_performance": "Y",
+      "performance_period": "MONTH",
+      "require_payment_type": "KB_PAY",
+      "min_txn_amount": null,
+      "max_eligible_amount": null,
+      "max_benefit_per_txn": null,
+      "daily_limit": null,
+      "monthly_limit": null,
+      "quarterly_limit": null,
+      "yearly_limit": null,
+      "daily_count_limit": null,
+      "monthly_count_limit": null,
+      "quarterly_count_limit": null,
+      "yearly_count_limit": null,
+      "limit_group_code": "PRIME_DAILY_DELIVERY",
+      "count_group_code": null,
+      "use_shared_limit": "N",
+      "exclude_from_performance": "Y",
+      "option_group_code": "SERVICE_PACK",
+      "option_key": "DAILY",
+      "description": "배달의민족, 쿠팡이츠를 KB Pay로 결제한 건. 할인 서비스는 일상팩·가족팩 2종 중 택 1이며 매월 변경할 수 있다(신청일 기준 다음달 1일부터 적용). 월 할인한도는 영역별로 따로 주어지고 전월 이용실적 구간에 따라 5천원/7천원/1만원으로 달라진다.",
+      "tier_limits": [
+        {
+          "min_performance_amount": 400000,
+          "monthly_limit": 5000,
+          "benefit_value": null,
+          "_source": "전월이용실적에따른월할인한도 - 40만원이상 80만원미만 5천원"
+        },
+        {
+          "min_performance_amount": 800000,
+          "monthly_limit": 7000,
+          "benefit_value": null,
+          "_source": "전월이용실적에따른월할인한도 - 80만원이상 160만원미만 7천원"
+        },
+        {
+          "min_performance_amount": 1600000,
+          "monthly_limit": 10000,
+          "benefit_value": null,
+          "_source": "전월이용실적에따른월할인한도 - 160만원이상 1만원"
+        }
+      ],
+      "exclusions": [],
+      "_source": {
+        "benefit_value": "일상팩 배달 배달의민족, 쿠팡이츠 (KB Pay로결제시) 10%",
+        "require_performance": "※ 할인 서비스는 전월 이용실적 40만원 이상 시 월 단위로 제공되며, 전월 이용실적에 따라 월간 할인한도가 제공됩니다.",
+        "limit_group_code": "표에서 '배달' 한 행이 두 가맹점을 묶어 월 할인한도가 하나다"
+      },
+      "_needs_review": [
+        "apply_timing"
+      ]
+    },
+    {
+      "benefit_name": "일상팩 - 통신/APP 10% 할인",
+      "benefit_kind": "DISCOUNT",
+      "calc_method": "RATE",
+      "benefit_value": 10,
+      "step_count": null,
+      "apply_timing": null,
+      "target_type": "MERCHANT",
+      "target_category_code": null,
+      "target_merchant_name": null,
+      "targets": [
+        "SKT",
+        "KT",
+        "LG U+",
+        "Liiv M",
+        "구글플레이스토어",
+        "애플앱스토어"
+      ],
+      "require_performance": "Y",
+      "performance_period": "MONTH",
+      "require_payment_type": null,
+      "min_txn_amount": null,
+      "max_eligible_amount": null,
+      "max_benefit_per_txn": null,
+      "daily_limit": null,
+      "monthly_limit": null,
+      "quarterly_limit": null,
+      "yearly_limit": null,
+      "daily_count_limit": null,
+      "monthly_count_limit": null,
+      "quarterly_count_limit": null,
+      "yearly_count_limit": null,
+      "limit_group_code": "PRIME_DAILY_TELECOM_INS_APP",
+      "count_group_code": null,
+      "use_shared_limit": "N",
+      "exclude_from_performance": "Y",
+      "option_group_code": "SERVICE_PACK",
+      "option_key": "DAILY",
+      "description": "이동통신 4사와 앱마켓 2곳. 약관이 사업자를 열거해 TELECOM 카테고리로 뭉치지 않았다(뭉치면 알뜰폰까지 대상이 된다). 같은 행의 손해보험/생명보험업종 혜택과 월 할인한도를 함께 쓴다. 할인 서비스는 일상팩·가족팩 2종 중 택 1이며 매월 변경할 수 있다(신청일 기준 다음달 1일부터 적용). 월 할인한도는 영역별로 따로 주어지고 전월 이용실적 구간에 따라 5천원/7천원/1만원으로 달라진다.",
+      "tier_limits": [
+        {
+          "min_performance_amount": 400000,
+          "monthly_limit": 5000,
+          "benefit_value": null,
+          "_source": "전월이용실적에따른월할인한도 - 40만원이상 80만원미만 5천원"
+        },
+        {
+          "min_performance_amount": 800000,
+          "monthly_limit": 7000,
+          "benefit_value": null,
+          "_source": "전월이용실적에따른월할인한도 - 80만원이상 160만원미만 7천원"
+        },
+        {
+          "min_performance_amount": 1600000,
+          "monthly_limit": 10000,
+          "benefit_value": null,
+          "_source": "전월이용실적에따른월할인한도 - 160만원이상 1만원"
+        }
+      ],
+      "exclusions": [],
+      "_source": {
+        "benefit_value": "일상팩 통신/보험/APP 이동통신(SKT, KT, LG U+, LiivM), 손해보험/생명보험업종, 구글플레이스토어/애플앱스토어 10%",
+        "require_performance": "※ 할인 서비스는 전월 이용실적 40만원 이상 시 월 단위로 제공되며, 전월 이용실적에 따라 월간 할인한도가 제공됩니다.",
+        "limit_group_code": "'통신/보험/APP'가 표에서 한 행이라 통신·앱마켓·보험이 월 할인한도를 공유한다"
+      },
+      "_needs_review": [
+        "apply_timing"
+      ]
+    },
+    {
+      "benefit_name": "일상팩 - 보험 10% 할인",
+      "benefit_kind": "DISCOUNT",
+      "calc_method": "RATE",
+      "benefit_value": 10,
+      "step_count": null,
+      "apply_timing": null,
+      "target_type": "CATEGORY",
+      "target_category_code": "INSURANCE",
+      "target_merchant_name": null,
+      "targets": null,
+      "require_performance": "Y",
+      "performance_period": "MONTH",
+      "require_payment_type": null,
+      "min_txn_amount": null,
+      "max_eligible_amount": null,
+      "max_benefit_per_txn": null,
+      "daily_limit": null,
+      "monthly_limit": null,
+      "quarterly_limit": null,
+      "yearly_limit": null,
+      "daily_count_limit": null,
+      "monthly_count_limit": null,
+      "quarterly_count_limit": null,
+      "yearly_count_limit": null,
+      "limit_group_code": "PRIME_DAILY_TELECOM_INS_APP",
+      "count_group_code": null,
+      "use_shared_limit": "N",
+      "exclude_from_performance": "Y",
+      "option_group_code": "SERVICE_PACK",
+      "option_key": "DAILY",
+      "description": "손해보험/생명보험업종. 같은 행의 통신/APP 혜택과 월 할인한도를 함께 쓴다. 할인 서비스는 일상팩·가족팩 2종 중 택 1이며 매월 변경할 수 있다(신청일 기준 다음달 1일부터 적용). 월 할인한도는 영역별로 따로 주어지고 전월 이용실적 구간에 따라 5천원/7천원/1만원으로 달라진다.",
+      "tier_limits": [
+        {
+          "min_performance_amount": 400000,
+          "monthly_limit": 5000,
+          "benefit_value": null,
+          "_source": "전월이용실적에따른월할인한도 - 40만원이상 80만원미만 5천원"
+        },
+        {
+          "min_performance_amount": 800000,
+          "monthly_limit": 7000,
+          "benefit_value": null,
+          "_source": "전월이용실적에따른월할인한도 - 80만원이상 160만원미만 7천원"
+        },
+        {
+          "min_performance_amount": 1600000,
+          "monthly_limit": 10000,
+          "benefit_value": null,
+          "_source": "전월이용실적에따른월할인한도 - 160만원이상 1만원"
+        }
+      ],
+      "exclusions": [],
+      "_source": {
+        "benefit_value": "일상팩 통신/보험/APP … 손해보험/생명보험업종 … 10%"
+      },
+      "_needs_review": [
+        "apply_timing"
+      ]
+    },
+    {
+      "benefit_name": "일상팩 - 온라인쇼핑 5% 할인",
+      "benefit_kind": "DISCOUNT",
+      "calc_method": "RATE",
+      "benefit_value": 5,
+      "step_count": null,
+      "apply_timing": null,
+      "target_type": "MERCHANT",
+      "target_category_code": null,
+      "target_merchant_name": null,
+      "targets": [
+        "네이버플러스 스토어",
+        "쿠팡",
+        "무신사",
+        "지그재그",
+        "29CM",
+        "W컨셉",
+        "오늘의집"
+      ],
+      "require_performance": "Y",
+      "performance_period": "MONTH",
+      "require_payment_type": "KB_PAY",
+      "min_txn_amount": null,
+      "max_eligible_amount": null,
+      "max_benefit_per_txn": null,
+      "daily_limit": null,
+      "monthly_limit": null,
+      "quarterly_limit": null,
+      "yearly_limit": null,
+      "daily_count_limit": null,
+      "monthly_count_limit": null,
+      "quarterly_count_limit": null,
+      "yearly_count_limit": null,
+      "limit_group_code": "PRIME_DAILY_ONLINE",
+      "count_group_code": null,
+      "use_shared_limit": "N",
+      "exclude_from_performance": "Y",
+      "option_group_code": "SERVICE_PACK",
+      "option_key": "DAILY",
+      "description": "열거된 온라인쇼핑몰 7곳을 KB Pay로 결제한 건. 할인 서비스는 일상팩·가족팩 2종 중 택 1이며 매월 변경할 수 있다(신청일 기준 다음달 1일부터 적용). 월 할인한도는 영역별로 따로 주어지고 전월 이용실적 구간에 따라 5천원/7천원/1만원으로 달라진다.",
+      "tier_limits": [
+        {
+          "min_performance_amount": 400000,
+          "monthly_limit": 5000,
+          "benefit_value": null,
+          "_source": "전월이용실적에따른월할인한도 - 40만원이상 80만원미만 5천원"
+        },
+        {
+          "min_performance_amount": 800000,
+          "monthly_limit": 7000,
+          "benefit_value": null,
+          "_source": "전월이용실적에따른월할인한도 - 80만원이상 160만원미만 7천원"
+        },
+        {
+          "min_performance_amount": 1600000,
+          "monthly_limit": 10000,
+          "benefit_value": null,
+          "_source": "전월이용실적에따른월할인한도 - 160만원이상 1만원"
+        }
+      ],
+      "exclusions": [],
+      "_source": {
+        "benefit_value": "일상팩 온라인쇼핑 네이버플러스스토어, 쿠팡, 무신사, 지그재그, 29CM, W컨셉, 오늘의집 (KB Pay로결제시) 5%",
+        "require_performance": "※ 할인 서비스는 전월 이용실적 40만원 이상 시 월 단위로 제공되며, 전월 이용실적에 따라 월간 할인한도가 제공됩니다.",
+        "limit_group_code": "'온라인쇼핑' 한 행이 일곱 가맹점을 묶어 월 할인한도가 하나다"
+      },
+      "_needs_review": [
+        "apply_timing"
+      ]
+    },
+    {
+      "benefit_name": "일상팩 - 편의점 5% 할인",
+      "benefit_kind": "DISCOUNT",
+      "calc_method": "RATE",
+      "benefit_value": 5,
+      "step_count": null,
+      "apply_timing": null,
+      "target_type": "MERCHANT",
+      "target_category_code": null,
+      "target_merchant_name": null,
+      "targets": [
+        "GS25",
+        "CU"
+      ],
+      "require_performance": "Y",
+      "performance_period": "MONTH",
+      "require_payment_type": null,
+      "min_txn_amount": null,
+      "max_eligible_amount": null,
+      "max_benefit_per_txn": null,
+      "daily_limit": null,
+      "monthly_limit": null,
+      "quarterly_limit": null,
+      "yearly_limit": null,
+      "daily_count_limit": null,
+      "monthly_count_limit": null,
+      "quarterly_count_limit": null,
+      "yearly_count_limit": null,
+      "limit_group_code": "PRIME_DAILY_CVS",
+      "count_group_code": null,
+      "use_shared_limit": "N",
+      "exclude_from_performance": "Y",
+      "option_group_code": "SERVICE_PACK",
+      "option_key": "DAILY",
+      "description": "GS25, CU 오프라인매장. 약관이 편의점을 두 곳으로 열거해 CONVENIENCE_STORE 카테고리로 뭉치지 않았다. 할인 서비스는 일상팩·가족팩 2종 중 택 1이며 매월 변경할 수 있다(신청일 기준 다음달 1일부터 적용). 월 할인한도는 영역별로 따로 주어지고 전월 이용실적 구간에 따라 5천원/7천원/1만원으로 달라진다.",
+      "tier_limits": [
+        {
+          "min_performance_amount": 400000,
+          "monthly_limit": 5000,
+          "benefit_value": null,
+          "_source": "전월이용실적에따른월할인한도 - 40만원이상 80만원미만 5천원"
+        },
+        {
+          "min_performance_amount": 800000,
+          "monthly_limit": 7000,
+          "benefit_value": null,
+          "_source": "전월이용실적에따른월할인한도 - 80만원이상 160만원미만 7천원"
+        },
+        {
+          "min_performance_amount": 1600000,
+          "monthly_limit": 10000,
+          "benefit_value": null,
+          "_source": "전월이용실적에따른월할인한도 - 160만원이상 1만원"
+        }
+      ],
+      "exclusions": [],
+      "_source": {
+        "benefit_value": "일상팩 편의점 GS25, CU 오프라인매장 5%",
+        "require_performance": "※ 할인 서비스는 전월 이용실적 40만원 이상 시 월 단위로 제공되며, 전월 이용실적에 따라 월간 할인한도가 제공됩니다.",
+        "limit_group_code": "'편의점' 한 행이 두 가맹점을 묶어 월 할인한도가 하나다"
+      },
+      "_needs_review": [
+        "apply_timing"
+      ]
+    },
+    {
+      "benefit_name": "일상팩 - 취미/자기관리 5% 할인",
+      "benefit_kind": "DISCOUNT",
+      "calc_method": "RATE",
+      "benefit_value": 5,
+      "step_count": null,
+      "apply_timing": null,
+      "target_type": "CATEGORY",
+      "target_category_code": null,
+      "target_merchant_name": null,
+      "targets": [
+        "SPORTS_LEISURE",
+        "PERSONAL_CARE"
+      ],
+      "require_performance": "Y",
+      "performance_period": "MONTH",
+      "require_payment_type": null,
+      "min_txn_amount": null,
+      "max_eligible_amount": null,
+      "max_benefit_per_txn": null,
+      "daily_limit": null,
+      "monthly_limit": null,
+      "quarterly_limit": null,
+      "yearly_limit": null,
+      "daily_count_limit": null,
+      "monthly_count_limit": null,
+      "quarterly_count_limit": null,
+      "yearly_count_limit": null,
+      "limit_group_code": "PRIME_DAILY_HOBBY",
+      "count_group_code": null,
+      "use_shared_limit": "N",
+      "exclude_from_performance": "Y",
+      "option_group_code": "SERVICE_PACK",
+      "option_key": "DAILY",
+      "description": "스포츠업종, 미용실업종. 할인 서비스는 일상팩·가족팩 2종 중 택 1이며 매월 변경할 수 있다(신청일 기준 다음달 1일부터 적용). 월 할인한도는 영역별로 따로 주어지고 전월 이용실적 구간에 따라 5천원/7천원/1만원으로 달라진다.",
+      "tier_limits": [
+        {
+          "min_performance_amount": 400000,
+          "monthly_limit": 5000,
+          "benefit_value": null,
+          "_source": "전월이용실적에따른월할인한도 - 40만원이상 80만원미만 5천원"
+        },
+        {
+          "min_performance_amount": 800000,
+          "monthly_limit": 7000,
+          "benefit_value": null,
+          "_source": "전월이용실적에따른월할인한도 - 80만원이상 160만원미만 7천원"
+        },
+        {
+          "min_performance_amount": 1600000,
+          "monthly_limit": 10000,
+          "benefit_value": null,
+          "_source": "전월이용실적에따른월할인한도 - 160만원이상 1만원"
+        }
+      ],
+      "exclusions": [],
+      "_source": {
+        "benefit_value": "일상팩 취미/자기관리 스포츠/미용실업종 5%",
+        "require_performance": "※ 할인 서비스는 전월 이용실적 40만원 이상 시 월 단위로 제공되며, 전월 이용실적에 따라 월간 할인한도가 제공됩니다.",
+        "limit_group_code": "'취미/자기관리' 한 행이 두 업종을 묶어 월 할인한도가 하나다"
+      },
+      "_needs_review": [
+        "apply_timing"
+      ]
+    },
+    {
+      "benefit_name": "가족팩 - 생활요금 10% 할인",
+      "benefit_kind": "DISCOUNT",
+      "calc_method": "RATE",
+      "benefit_value": 10,
+      "step_count": null,
+      "apply_timing": null,
+      "target_type": "CATEGORY",
+      "target_category_code": null,
+      "target_merchant_name": null,
+      "targets": [
+        "APARTMENT_FEE",
+        "INSURANCE"
+      ],
+      "require_performance": "Y",
+      "performance_period": "MONTH",
+      "require_payment_type": null,
+      "min_txn_amount": null,
+      "max_eligible_amount": null,
+      "max_benefit_per_txn": null,
+      "daily_limit": null,
+      "monthly_limit": null,
+      "quarterly_limit": null,
+      "yearly_limit": null,
+      "daily_count_limit": null,
+      "monthly_count_limit": null,
+      "quarterly_count_limit": null,
+      "yearly_count_limit": null,
+      "limit_group_code": "PRIME_FAMILY_LIVING",
+      "count_group_code": null,
+      "use_shared_limit": "N",
+      "exclude_from_performance": "Y",
+      "option_group_code": "SERVICE_PACK",
+      "option_key": "FAMILY",
+      "description": "아파트관리비, 손해보험/생명보험업종. 약관의 '도시가스'는 대응하는 카테고리 코드가 없어 대상에서 뺐다(UTILITY는 전기·수도까지 포함해 약관보다 넓다). 할인 서비스는 일상팩·가족팩 2종 중 택 1이며 매월 변경할 수 있다(신청일 기준 다음달 1일부터 적용). 월 할인한도는 영역별로 따로 주어지고 전월 이용실적 구간에 따라 5천원/7천원/1만원으로 달라진다.",
+      "tier_limits": [
+        {
+          "min_performance_amount": 400000,
+          "monthly_limit": 5000,
+          "benefit_value": null,
+          "_source": "전월이용실적에따른월할인한도 - 40만원이상 80만원미만 5천원"
+        },
+        {
+          "min_performance_amount": 800000,
+          "monthly_limit": 7000,
+          "benefit_value": null,
+          "_source": "전월이용실적에따른월할인한도 - 80만원이상 160만원미만 7천원"
+        },
+        {
+          "min_performance_amount": 1600000,
+          "monthly_limit": 10000,
+          "benefit_value": null,
+          "_source": "전월이용실적에따른월할인한도 - 160만원이상 1만원"
+        }
+      ],
+      "exclusions": [],
+      "_source": {
+        "benefit_value": "가족팩 생활요금 아파트관리비/도시가스/손해보험/생명보험업종 10%",
+        "require_performance": "※ 할인 서비스는 전월 이용실적 40만원 이상 시 월 단위로 제공되며, 전월 이용실적에 따라 월간 할인한도가 제공됩니다.",
+        "limit_group_code": "'생활요금' 한 행이 여러 업종을 묶어 월 할인한도가 하나다"
+      },
+      "_needs_review": [
+        "apply_timing"
+      ]
+    },
+    {
+      "benefit_name": "가족팩 - 온라인장보기 10% 할인",
+      "benefit_kind": "DISCOUNT",
+      "calc_method": "RATE",
+      "benefit_value": 10,
+      "step_count": null,
+      "apply_timing": null,
+      "target_type": "MERCHANT",
+      "target_category_code": null,
+      "target_merchant_name": null,
+      "targets": [
+        "네이버플러스 스토어",
+        "쿠팡",
+        "마켓컬리",
+        "오아시스마켓"
+      ],
+      "require_performance": "Y",
+      "performance_period": "MONTH",
+      "require_payment_type": "KB_PAY",
+      "min_txn_amount": null,
+      "max_eligible_amount": null,
+      "max_benefit_per_txn": null,
+      "daily_limit": null,
+      "monthly_limit": null,
+      "quarterly_limit": null,
+      "yearly_limit": null,
+      "daily_count_limit": null,
+      "monthly_count_limit": null,
+      "quarterly_count_limit": null,
+      "yearly_count_limit": null,
+      "limit_group_code": "PRIME_FAMILY_GROCERY",
+      "count_group_code": null,
+      "use_shared_limit": "N",
+      "exclude_from_performance": "Y",
+      "option_group_code": "SERVICE_PACK",
+      "option_key": "FAMILY",
+      "description": "열거된 온라인 장보기몰 4곳을 KB Pay로 결제한 건. 할인 서비스는 일상팩·가족팩 2종 중 택 1이며 매월 변경할 수 있다(신청일 기준 다음달 1일부터 적용). 월 할인한도는 영역별로 따로 주어지고 전월 이용실적 구간에 따라 5천원/7천원/1만원으로 달라진다.",
+      "tier_limits": [
+        {
+          "min_performance_amount": 400000,
+          "monthly_limit": 5000,
+          "benefit_value": null,
+          "_source": "전월이용실적에따른월할인한도 - 40만원이상 80만원미만 5천원"
+        },
+        {
+          "min_performance_amount": 800000,
+          "monthly_limit": 7000,
+          "benefit_value": null,
+          "_source": "전월이용실적에따른월할인한도 - 80만원이상 160만원미만 7천원"
+        },
+        {
+          "min_performance_amount": 1600000,
+          "monthly_limit": 10000,
+          "benefit_value": null,
+          "_source": "전월이용실적에따른월할인한도 - 160만원이상 1만원"
+        }
+      ],
+      "exclusions": [],
+      "_source": {
+        "benefit_value": "가족팩 온라인장보기 네이버플러스스토어, 쿠팡, 마켓컬리, 오아시스마켓 (KB Pay로결제시) 10%",
+        "require_performance": "※ 할인 서비스는 전월 이용실적 40만원 이상 시 월 단위로 제공되며, 전월 이용실적에 따라 월간 할인한도가 제공됩니다.",
+        "limit_group_code": "'온라인장보기' 한 행이 네 가맹점을 묶어 월 할인한도가 하나다"
+      },
+      "_needs_review": [
+        "apply_timing"
+      ]
+    },
+    {
+      "benefit_name": "가족팩 - 일상케어 10% 할인",
+      "benefit_kind": "DISCOUNT",
+      "calc_method": "RATE",
+      "benefit_value": 10,
+      "step_count": null,
+      "apply_timing": null,
+      "target_type": "CATEGORY",
+      "target_category_code": null,
+      "target_merchant_name": null,
+      "targets": [
+        "HOSPITAL",
+        "PHARMACY",
+        "PERSONAL_CARE",
+        "LIFE_SERVICE"
+      ],
+      "require_performance": "Y",
+      "performance_period": "MONTH",
+      "require_payment_type": null,
+      "min_txn_amount": null,
+      "max_eligible_amount": null,
+      "max_benefit_per_txn": null,
+      "daily_limit": null,
+      "monthly_limit": null,
+      "quarterly_limit": null,
+      "yearly_limit": null,
+      "daily_count_limit": null,
+      "monthly_count_limit": null,
+      "quarterly_count_limit": null,
+      "yearly_count_limit": null,
+      "limit_group_code": "PRIME_FAMILY_CARE",
+      "count_group_code": null,
+      "use_shared_limit": "N",
+      "exclude_from_performance": "Y",
+      "option_group_code": "SERVICE_PACK",
+      "option_key": "FAMILY",
+      "description": "병원/약국/미용실/세탁소업종. 할인 서비스는 일상팩·가족팩 2종 중 택 1이며 매월 변경할 수 있다(신청일 기준 다음달 1일부터 적용). 월 할인한도는 영역별로 따로 주어지고 전월 이용실적 구간에 따라 5천원/7천원/1만원으로 달라진다.",
+      "tier_limits": [
+        {
+          "min_performance_amount": 400000,
+          "monthly_limit": 5000,
+          "benefit_value": null,
+          "_source": "전월이용실적에따른월할인한도 - 40만원이상 80만원미만 5천원"
+        },
+        {
+          "min_performance_amount": 800000,
+          "monthly_limit": 7000,
+          "benefit_value": null,
+          "_source": "전월이용실적에따른월할인한도 - 80만원이상 160만원미만 7천원"
+        },
+        {
+          "min_performance_amount": 1600000,
+          "monthly_limit": 10000,
+          "benefit_value": null,
+          "_source": "전월이용실적에따른월할인한도 - 160만원이상 1만원"
+        }
+      ],
+      "exclusions": [],
+      "_source": {
+        "benefit_value": "가족팩 일상케어 병원/약국/미용실/세탁소업종 10%",
+        "require_performance": "※ 할인 서비스는 전월 이용실적 40만원 이상 시 월 단위로 제공되며, 전월 이용실적에 따라 월간 할인한도가 제공됩니다.",
+        "limit_group_code": "'일상케어' 한 행이 네 업종을 묶어 월 할인한도가 하나다"
+      },
+      "_needs_review": [
+        "apply_timing"
+      ]
+    },
+    {
+      "benefit_name": "가족팩 - 학원 5% 할인",
+      "benefit_kind": "DISCOUNT",
+      "calc_method": "RATE",
+      "benefit_value": 5,
+      "step_count": null,
+      "apply_timing": null,
+      "target_type": "CATEGORY",
+      "target_category_code": null,
+      "target_merchant_name": null,
+      "targets": [
+        "ACADEMY",
+        "LEARNING_SERVICE"
+      ],
+      "require_performance": "Y",
+      "performance_period": "MONTH",
+      "require_payment_type": null,
+      "min_txn_amount": null,
+      "max_eligible_amount": null,
+      "max_benefit_per_txn": null,
+      "daily_limit": null,
+      "monthly_limit": null,
+      "quarterly_limit": null,
+      "yearly_limit": null,
+      "daily_count_limit": null,
+      "monthly_count_limit": null,
+      "quarterly_count_limit": null,
+      "yearly_count_limit": null,
+      "limit_group_code": "PRIME_FAMILY_ACADEMY",
+      "count_group_code": null,
+      "use_shared_limit": "N",
+      "exclude_from_performance": "Y",
+      "option_group_code": "SERVICE_PACK",
+      "option_key": "FAMILY",
+      "description": "학원/학습지업종. 약관의 '문화센터업종'은 대응하는 카테고리 코드가 없어 대상에서 뺐다. 할인 서비스는 일상팩·가족팩 2종 중 택 1이며 매월 변경할 수 있다(신청일 기준 다음달 1일부터 적용). 월 할인한도는 영역별로 따로 주어지고 전월 이용실적 구간에 따라 5천원/7천원/1만원으로 달라진다.",
+      "tier_limits": [
+        {
+          "min_performance_amount": 400000,
+          "monthly_limit": 5000,
+          "benefit_value": null,
+          "_source": "전월이용실적에따른월할인한도 - 40만원이상 80만원미만 5천원"
+        },
+        {
+          "min_performance_amount": 800000,
+          "monthly_limit": 7000,
+          "benefit_value": null,
+          "_source": "전월이용실적에따른월할인한도 - 80만원이상 160만원미만 7천원"
+        },
+        {
+          "min_performance_amount": 1600000,
+          "monthly_limit": 10000,
+          "benefit_value": null,
+          "_source": "전월이용실적에따른월할인한도 - 160만원이상 1만원"
+        }
+      ],
+      "exclusions": [],
+      "_source": {
+        "benefit_value": "가족팩 학원 학원/학습지/문화센터업종 5%",
+        "require_performance": "※ 할인 서비스는 전월 이용실적 40만원 이상 시 월 단위로 제공되며, 전월 이용실적에 따라 월간 할인한도가 제공됩니다.",
+        "limit_group_code": "'학원' 한 행이 여러 업종을 묶어 월 할인한도가 하나다"
+      },
+      "_needs_review": [
+        "apply_timing"
+      ]
+    },
+    {
+      "benefit_name": "가족팩 - 대형마트 5% 할인",
+      "benefit_kind": "DISCOUNT",
+      "calc_method": "RATE",
+      "benefit_value": 5,
+      "step_count": null,
+      "apply_timing": null,
+      "target_type": "MERCHANT",
+      "target_category_code": null,
+      "target_merchant_name": null,
+      "targets": [
+        "이마트",
+        "트레이더스 홀세일 클럽",
+        "롯데마트"
+      ],
+      "require_performance": "Y",
+      "performance_period": "MONTH",
+      "require_payment_type": null,
+      "min_txn_amount": 50000,
+      "max_eligible_amount": null,
+      "max_benefit_per_txn": null,
+      "daily_limit": null,
+      "monthly_limit": null,
+      "quarterly_limit": null,
+      "yearly_limit": null,
+      "daily_count_limit": null,
+      "monthly_count_limit": null,
+      "quarterly_count_limit": null,
+      "yearly_count_limit": null,
+      "limit_group_code": "PRIME_FAMILY_MART",
+      "count_group_code": null,
+      "use_shared_limit": "N",
+      "exclude_from_performance": "Y",
+      "option_group_code": "SERVICE_PACK",
+      "option_key": "FAMILY",
+      "description": "이마트, 트레이더스홀세일클럽, 롯데마트 오프라인매장. 건당 5만원 이상 이용 시 제공. 할인 서비스는 일상팩·가족팩 2종 중 택 1이며 매월 변경할 수 있다(신청일 기준 다음달 1일부터 적용). 월 할인한도는 영역별로 따로 주어지고 전월 이용실적 구간에 따라 5천원/7천원/1만원으로 달라진다.",
+      "tier_limits": [
+        {
+          "min_performance_amount": 400000,
+          "monthly_limit": 5000,
+          "benefit_value": null,
+          "_source": "전월이용실적에따른월할인한도 - 40만원이상 80만원미만 5천원"
+        },
+        {
+          "min_performance_amount": 800000,
+          "monthly_limit": 7000,
+          "benefit_value": null,
+          "_source": "전월이용실적에따른월할인한도 - 80만원이상 160만원미만 7천원"
+        },
+        {
+          "min_performance_amount": 1600000,
+          "monthly_limit": 10000,
+          "benefit_value": null,
+          "_source": "전월이용실적에따른월할인한도 - 160만원이상 1만원"
+        }
+      ],
+      "exclusions": [],
+      "_source": {
+        "benefit_value": "가족팩 대형마트 (건당5만원이상시) 이마트, 트레이더스홀세일클럽, 롯데마트오프라인매장 5%",
+        "min_txn_amount": "대형마트 (건당5만원이상시)",
+        "require_performance": "※ 할인 서비스는 전월 이용실적 40만원 이상 시 월 단위로 제공되며, 전월 이용실적에 따라 월간 할인한도가 제공됩니다.",
+        "limit_group_code": "'대형마트' 한 행이 세 가맹점을 묶어 월 할인한도가 하나다"
+      },
+      "_needs_review": [
+        "apply_timing"
+      ]
+    },
+    {
+      "benefit_name": "가족팩 - 카페 5% 할인",
+      "benefit_kind": "DISCOUNT",
+      "calc_method": "RATE",
+      "benefit_value": 5,
+      "step_count": null,
+      "apply_timing": null,
+      "target_type": "CATEGORY",
+      "target_category_code": "CAFE",
+      "target_merchant_name": null,
+      "targets": null,
+      "require_performance": "Y",
+      "performance_period": "MONTH",
+      "require_payment_type": null,
+      "min_txn_amount": null,
+      "max_eligible_amount": null,
+      "max_benefit_per_txn": null,
+      "daily_limit": null,
+      "monthly_limit": null,
+      "quarterly_limit": null,
+      "yearly_limit": null,
+      "daily_count_limit": null,
+      "monthly_count_limit": null,
+      "quarterly_count_limit": null,
+      "yearly_count_limit": null,
+      "limit_group_code": "PRIME_FAMILY_CAFE",
+      "count_group_code": null,
+      "use_shared_limit": "N",
+      "exclude_from_performance": "Y",
+      "option_group_code": "SERVICE_PACK",
+      "option_key": "FAMILY",
+      "description": "커피전문점업종. 약관에 함께 적힌 '키즈카페(유아전문교육기관/놀이시설) 업종'은 대응하는 카테고리 코드가 없어 대상에서 뺐다. 할인 서비스는 일상팩·가족팩 2종 중 택 1이며 매월 변경할 수 있다(신청일 기준 다음달 1일부터 적용). 월 할인한도는 영역별로 따로 주어지고 전월 이용실적 구간에 따라 5천원/7천원/1만원으로 달라진다.",
+      "tier_limits": [
+        {
+          "min_performance_amount": 400000,
+          "monthly_limit": 5000,
+          "benefit_value": null,
+          "_source": "전월이용실적에따른월할인한도 - 40만원이상 80만원미만 5천원"
+        },
+        {
+          "min_performance_amount": 800000,
+          "monthly_limit": 7000,
+          "benefit_value": null,
+          "_source": "전월이용실적에따른월할인한도 - 80만원이상 160만원미만 7천원"
+        },
+        {
+          "min_performance_amount": 1600000,
+          "monthly_limit": 10000,
+          "benefit_value": null,
+          "_source": "전월이용실적에따른월할인한도 - 160만원이상 1만원"
+        }
+      ],
+      "exclusions": [],
+      "_source": {
+        "benefit_value": "가족팩 카페 커피전문점/키즈카페(유아전문교육기관/놀이시설) 업종 5%",
+        "require_performance": "※ 할인 서비스는 전월 이용실적 40만원 이상 시 월 단위로 제공되며, 전월 이용실적에 따라 월간 할인한도가 제공됩니다.",
+        "limit_group_code": "'카페' 한 행에 월 할인한도가 하나로 제시된다"
+      },
+      "_needs_review": [
+        "apply_timing"
+      ]
+    }
+  ],
+  "unmapped": [
+    {
+      "text": "주1) 전기차충전 할인업체는 상품설명서 QR코드 참조",
+      "why": "할인 대상 전기차충전 업체 목록이 약관 본문에 없어 대상을 특정할 수 없다. 주유소/충전소업종(FUEL)만 대상으로 담았다"
+    },
+    {
+      "text": "편의점 GS25, CU 오프라인매장 / 대형마트 이마트, 트레이더스홀세일클럽, 롯데마트오프라인매장",
+      "why": "'오프라인매장 한정'은 결제 채널 조건이라 범위 밖이다. 가맹점만 대상으로 담았다"
+    },
+    {
+      "text": "브랜드 서비스: Mastercard 티타늄서비스, JCB Platinum 서비스제공 ※ 선택서비스: 호텔/공항발렛파킹(각월 2회/각연 6회), 국내공항라운지(연2회) [기본서비스] 실적조건없음 [선택서비스] 전월40만원이상 시",
+      "why": "결제 트랜잭션이 발생하지 않는 증정형 서비스라 target_type을 정할 수 없다"
+    },
+    {
+      "text": "※ 국제브랜드선택서비스(호텔/공항발레파킹, 국내공항라운지)는실물카드로만이용가능하며, 실적유예기간없음(발급당월사용불가)",
+      "why": "발급 형태(실물카드)에 따른 이용 제한은 혜택 규칙이 아니라 카드 이용 조건이다"
+    },
+    {
+      "text": "※ 가족카드 연회비 7,000원 (제휴연회비 7,000원)",
+      "why": "가족카드는 범위 밖이다. annual_fees의 발급 형태 축(실물/모바일)과도 다른 축이라 행으로 담을 수 없다"
+    },
+    {
+      "text": "[선택서비스안내 사항] • 서비스팩변경은KB국민카드홈페이지및 KB Pay 앱을 통해가능 • 선택서비스변경 시 신청일기준 다음달1일부터적용(월단위로제공되며, 매월 변경 가능)",
+      "why": "선택 변경 시점·경로는 회원 상태 변경 규칙이라 혜택 행의 컬럼으로 담을 대상이 아니다. option_group_code로 '택1'만 표현한다"
+    },
+    {
+      "text": "• 이용순서대로 월간 한도 내 할인이 적용되며, 잔여 할인한도는 이월되지 않습니다.",
+      "why": "한도 적용 순서와 이월 여부는 엔진 동작 규칙이라 혜택 행의 컬럼으로 표현할 대상이 아니다"
+    },
+    {
+      "text": "• 할인 받은 이용 건을 취소할 경우 취소전표가 실시간으로 접수되지 않아, 할인한도가 즉시 복원되지 않을 수 있습니다.",
+      "why": "취소 전표 접수 시점에 따른 한도 복원 지연은 운영 규칙이다"
+    },
+    {
+      "text": "∙ KB YOU Prime 카드를 모바일 단독카드로 발급받는 경우 국내 일부 및 해외 오프라인 가맹점에서 사용이 제한됩니다.",
+      "why": "발급 형태에 따른 사용처 제한은 혜택 규칙이 아니라 카드 이용 조건이다"
+    },
+    {
+      "text": "∙ 해외 이용 시(해외사이트 거래 포함) 미화(USD)기준 … 국제브랜드사가 부과하는 국제브랜드 수수료(Mastercard 1.0%, K-World(JCB) 1.0%)와 KB국민카드가 부과하는 해외 서비스 수수료(0.25%)를 포함하여 원화로 청구됩니다.",
+      "why": "해외 결제 관련 조항은 범위 밖이다"
+    },
+    {
+      "text": "[전월 이용실적기준] ∙ 전월 1일~말일(승인시점 기준)까지 ‘KB YOU Prime 카드’ 일시불 및 할부 승인금액 기준 ∙ 해외 이용금액은 전월 1일 ~ 말일까지 일시불 매입완료 기준 ∙ 취소 금액은 취소 전표가 당사에 접수된 월의 실적에서 차감",
+      "why": "실적 집계 기준일·매입 시점 규칙은 혜택 행이나 실적 제외 항목으로 표현할 대상이 아니다"
+    },
+    {
+      "text": "• KB YOU Prime 카드 서비스는 대상 가맹점이 KB국민카드의 업종 분류기준, 지정 업종에 한하여 제공됩니다.",
+      "why": "카드사 내부 업종 분류 기준을 가리키는 문장이라 특정 카테고리·가맹점으로 옮길 수 없다"
+    }
+  ],
+  "_schema_gap": [
+    {
+      "text": "기본 서비스 - 해외이용수수료(국제브랜드수수료1%, 해외서비스수수료0.25%)면제 / 전월실적조건및수수료면제한도없음",
+      "missing": "결제금액이 아니라 수수료에 붙는 할인을 담을 계산 방식",
+      "why": "benefit_value는 결제금액에 대한 요율·정액만 표현한다. 국제브랜드 수수료·해외 서비스 수수료라는 별도 금액에 붙는 면제는 결제금액 기준으로 환산할 수 없다"
+    },
+    {
+      "text": "기본 서비스 - 전월실적 채워드림 분기1회(연4회) 신청가능 (전월35만원이상40만원미만시, 전월40만원이상80만원미만구간의일상팩/가족팩혜택제공) ∙ 본인회원기준분기1회(연4회)신청가능합니다. ∙ 서비스신청후취소는불가합니다. ∙ 전월실적 채워드림 신청 시할인 서비스의 서비스팩 2종(일상팩/가족팩) 중선택한 옵션에 대한혜택이 제공되며, 그외서비스의 경우 전월실적 채워드림이 적용되지 않습니다.",
+      "missing": "회원 신청으로 실적 구간을 끌어올리는 규칙(신청 이력·분기 1회 소진 상태)",
+      "why": "performance_tier는 실적 금액에서 한도로 가는 매핑만 담고, 회원이 신청해 판정 구간 자체를 바꾸는 서비스를 담을 자리가 없다"
+    },
+    {
+      "text": "※ 최초 발급 받은 KB YOU Prime 카드 사용등록일(KB Pay 등 간편결제 등록 포함)로부터 다음달 말일까지는전월 이용실적 40만원 미만시에도 영역별 월 2,500원의 한도까지 할인 제공됩니다.(단, 최초사용등록월의실적이 40만원 이상일 경우에는 다음달에 해당 실적구간의 할인한도 적용)",
+      "missing": "카드 사용등록일과 실적 유예기간 판정, 그리고 유예기간 전용 한도(영역별 월 2,500원)",
+      "why": "카드 사용등록일 정보가 없어 유예기간 해당 여부를 판정할 수 없다. tier_limits는 실적 금액 축이라 '발급 후 경과 기간' 축과 다르다"
+    },
+    {
+      "text": "• 가맹점 정보가 해당 업체가 아닌 결제대행업체(PG) 또는 간편결제 전용 가맹점으로 확인되는 경우 '결제대행업체' 또는 '간편결제' 가맹점으로 분류되어 할인대상에서 제외됩니다. * 예시 : 음식점에서 네이버페이로 결제 시 가맹점명이 '네이버페이'인 경우 음식점 가맹점이 아닌 '간편결제' 가맹점으로 분류됩니다.",
+      "missing": "결제 건의 가맹점 분류가 PG·간편결제로 바뀌는 경우를 나타내는 속성",
+      "why": "가맹점은 실제 브랜드 기준으로만 매칭되어, 같은 결제가 PG 가맹점으로 잡혀 혜택에서 빠지는 상황을 표현할 수 없다. PAYMENT_TYPE의 SIMPLE_PAY는 '간편결제로 결제함'을 뜻해 '가맹점명이 간편결제사로 잡힘'과 다르다"
+    },
+    {
+      "text": "가족팩 학원 학원/학습지/문화센터업종 5%",
+      "missing": "문화센터업종에 대응하는 카테고리 코드",
+      "why": "카테고리 표준에 문화센터가 없다. ACADEMY(학원)·LEARNING_SERVICE(학습지)만 넣으면 문화센터 결제가 대상에서 빠지고, CULTURE_LEISURE 대분류로 넣으면 영화·골프까지 대상이 된다"
+    },
+    {
+      "text": "가족팩 카페 커피전문점/키즈카페(유아전문교육기관/놀이시설) 업종 5%",
+      "missing": "키즈카페(유아전문교육기관/놀이시설)에 대응하는 카테고리 코드",
+      "why": "카테고리 표준에 키즈카페가 없다. AMUSEMENT_VENUE는 노래방·PC방·비디오방·게임방이고, SPORTS_LEISURE·EDUCATION 어느 쪽에 넣어도 약관에 없는 업종까지 대상이 된다"
+    },
+    {
+      "text": "가족팩 생활요금 아파트관리비/도시가스/손해보험/생명보험업종 10%",
+      "missing": "도시가스에 대응하는 카테고리 코드",
+      "why": "UTILITY(공과금)는 전기·수도까지 포함해 약관이 지정한 도시가스보다 넓다. 그대로 넣으면 전기·수도 결제에도 10% 할인이 붙어 실제보다 많이 계산된다"
+    }
+  ]
+}

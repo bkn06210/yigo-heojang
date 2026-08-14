@@ -1,0 +1,224 @@
+{
+ "card": {
+  "card_name": "네이버페이 머니 하나 체크카드 (그린)",
+  "card_type": "CHECK",
+  "annual_fee": 0,
+  "annual_fees": [
+   {
+    "brand": "ANY",
+    "issue_type": "ANY",
+    "variant": "ANY",
+    "total_fee": 0,
+    "base_fee": null,
+    "partner_fee": null,
+    "_source": "•연회비 : 없음 •발급 브랜드 : 국내전용, 국내외겸용(mastercard) — 브랜드가 둘이지만 연회비가 갈리지 않고 '없음' 하나라 brand를 ANY로 두고 한 행만 적었다."
+   }
+  ],
+  "_source": {
+   "annual_fee": "•연회비 : 없음"
+  },
+  "_needs_review": []
+ },
+ "card_exclusions": [
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "TAX",
+   "_source": "- 국세, 지방세, 공과금(인터넷/모바일 앱을 통한 공과금 납부 금액 포함), 수도/전기요금, 도시가스 요금, 아파트관리비, 국민연금/고용보험료/산재보험료/건강보험료 납부 금액, 스쿨뱅킹, 초.중.고 학교 납입금, 대학등록금, 대학원등록금, 상품권 및 기프트카드 구매, 선불카드 및 선불전자지급수단(하나머니 등) 충전 금액, 부동산 임대료, 국내외 ATM 이용금액은 포인트 적립대상에서 제외됩니다."
+  },
+  {
+   "exclusion_type": "CATEGORY",
+   "exclusion_value": "UTILITY",
+   "_source": "공과금(인터넷/모바일 앱을 통한 공과금 납부 금액 포함), 수도/전기요금, 도시가스 요금"
+  },
+  {
+   "exclusion_type": "CATEGORY",
+   "exclusion_value": "APARTMENT_FEE",
+   "_source": "아파트관리비"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "SOCIAL_INSURANCE",
+   "_source": "국민연금/고용보험료/산재보험료/건강보험료 납부 금액"
+  },
+  {
+   "exclusion_type": "CATEGORY",
+   "exclusion_value": "TUITION",
+   "_source": "스쿨뱅킹, 초.중.고 학교 납입금, 대학등록금, 대학원등록금"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "GIFT_CARD",
+   "_source": "상품권 및 기프트카드 구매, 선불카드 및 선불전자지급수단(하나머니 등) 충전 금액"
+  },
+  {
+   "exclusion_type": "CATEGORY",
+   "exclusion_value": "RENT",
+   "_source": "부동산 임대료"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "CANCELED",
+   "_source": "- 매출 접수된 국내외 이용금액에 따라 적립 혜택을 제공하며, 매출 취소 시 취소가 접수된 월에서 실적 및 적립된 네이버페이 포인트를 차감 반영"
+  }
+ ],
+ "performance_tiers": [
+  {
+   "period_type": "MONTH",
+   "min_performance_amount": 0,
+   "shared_monthly_limit": null,
+   "_source": "[실적 산정 기준] 지난달 1일부터 말일(승인 시점 기준)까지 국내외 이용금액 25만원 이상 시 서비스 제공 — 실적을 못 채운 경우도 판정되어야 해 0원 구간을 뒀다. 약관에 '통합 월 할인한도' 개념이 없어 통합한도는 비웠다."
+  },
+  {
+   "period_type": "MONTH",
+   "min_performance_amount": 250000,
+   "shared_monthly_limit": null,
+   "_source": "[실적 산정 기준] 지난달 1일부터 말일(승인 시점 기준)까지 국내외 이용금액 25만원 이상 시 서비스 제공"
+  }
+ ],
+ "performance_exclusions": [
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "TAX",
+   "_source": "[지난달 실적 제외 대상] 국세, 지방세, 공과금(인터넷/모바일 앱을 통한 공과금 납부 금액 포함), 수도/전기요금, 도시가스 요금, 아파트관리비, 국민연금/고용보험료/산재보험료/건강보험료 납부 금액, 스쿨뱅킹, 초.중.고 학교 납입금, 대학등록금, 대학원등록금, 상품권 및 기프트카드 구매, 선불카드 및 선불전자지급수단(하나머니 등) 충전 금액, 부동산 임대료, 국내외 ATM 이용금액"
+  },
+  {
+   "exclusion_type": "CATEGORY",
+   "exclusion_value": "UTILITY",
+   "_source": "공과금(인터넷/모바일 앱을 통한 공과금 납부 금액 포함), 수도/전기요금, 도시가스 요금"
+  },
+  {
+   "exclusion_type": "CATEGORY",
+   "exclusion_value": "APARTMENT_FEE",
+   "_source": "아파트관리비"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "SOCIAL_INSURANCE",
+   "_source": "국민연금/고용보험료/산재보험료/건강보험료 납부 금액"
+  },
+  {
+   "exclusion_type": "CATEGORY",
+   "exclusion_value": "TUITION",
+   "_source": "스쿨뱅킹, 초.중.고 학교 납입금, 대학등록금, 대학원등록금"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "GIFT_CARD",
+   "_source": "상품권 및 기프트카드 구매, 선불카드 및 선불전자지급수단(하나머니 등) 충전 금액"
+  },
+  {
+   "exclusion_type": "CATEGORY",
+   "exclusion_value": "RENT",
+   "_source": "부동산 임대료"
+  }
+ ],
+ "benefits": [
+  {
+   "benefit_name": "네이버페이 포인트 적립",
+   "benefit_kind": "POINT",
+   "calc_method": "RATE",
+   "benefit_value": 1.2,
+   "step_count": null,
+   "apply_timing": null,
+   "target_type": "ALL",
+   "target_category_code": null,
+   "target_merchant_name": null,
+   "targets": null,
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": 10000,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": null,
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "이 카드의 유일한 적립 서비스다. 적립 대상이 '국내/외 모든 가맹점'이라 target_type은 ALL이고, 결제수단 조건은 약관 어디에도 없다 — 네이버페이 제휴 카드지만 네이버페이로 결제해야 적립되는 것이 아니라 적립이 네이버페이 포인트로 지급될 뿐이다. 적립 단위는 네이버페이 포인트이고 월 한도 1만 포인트를 1포인트=1원으로 보아 monthly_limit에 넣었다. 하나은행 '네이버페이 머니 하나 통장' 이외의 계좌로 바꾸면 적립률이 0.6%로 내려가지만 결제계좌 종류를 담을 자리가 없어 계좌 연결이 필수인 원칙 상태의 1.2%만 적었다. 혜택이 하나뿐이고 약관에 통합 할인한도가 없어 use_shared_limit은 N이다.",
+   "tier_limits": [],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "네이버페이 포인트 적립 서비스 / 적립 대상 국내/외 모든 가맹점 / 적립률 1.2% / 월 적립한도 1만 포인트",
+    "require_performance": "•서비스 제공 조건 [실적 산정 기준] 지난달 1일부터 말일(승인 시점 기준)까지 국내외 이용금액 25만원 이상 시 서비스 제공"
+   },
+   "_needs_review": []
+  }
+ ],
+ "unmapped": [
+  {
+   "text": "적립 대상 국내/외 모든 가맹점 / - 해외 매출은 최종 원화 청구금액에 대하여 적립 제공",
+   "why": "해외 결제 혜택은 범위 밖이다. 국내분은 target_type ALL 혜택 행에 그대로 담기지만, 해외분은 적립 기준 금액이 결제금액이 아니라 환율·국제브랜드수수료·해외서비스수수료가 더해진 최종 원화 청구금액이라 결제금액에 요율을 곱하는 계산과 맞지 않는다."
+  },
+  {
+   "text": "- 해외 결제 시 수수료가 발생할 수 있으니 [해외결제 및 기타안내] 참조하시기 바랍니다. / ① 결제은행이 하나은행인 경우, 해외 이용 시(해외사이트 거래 포함) 미화(USD)기준 거래 금액에 카드 승인시점의 하나은행이 고시한 전신환매도율을 적용한 금액으로 카드 승인일에 회원의 계좌잔액에서 지급정지 되고, 이 후 매출표가 접수되면 지급정지 금액 계산시와 동일한 방법으로 산정된 미화(USD) 금액에 접수일의 하나은행 최초고시 전신환매도율을 적용한 원화금액으로 회원의 계좌에서 출금됩니다. / 해외 이용 시 청구금액 = (거래미화금액X전신환매도율)+국제브랜드수수료+해외서비스수수료",
+   "why": "해외 결제 청구금액 산출 규칙이라 혜택이 아니다. 해외 결제는 범위 밖이고 환율·수수료를 담을 필드도 없다."
+  },
+  {
+   "text": "- 모든 적립 서비스는 하나카드에 등록된 가맹점 및 업종 기준에 따라 제공",
+   "why": "카드사 전산의 가맹점·업종 분류를 조건으로 삼는 문장이라 우리 데이터로 판정할 수 없다."
+  },
+  {
+   "text": "선불카드 및 선불전자지급수단(하나머니 등) 충전 금액",
+   "why": "네이버페이 머니나 하나머니 같은 선불 충전은 결제가 아니라 잔액 이동이라 혜택 대상 거래로 표현할 수 없다. 다만 '제외 대상'이라는 방향으로는 TRANSACTION_ATTR의 GIFT_CARD로 담아 두었다."
+  },
+  {
+   "text": "* 네이버페이 포인트는 네이버페이 회원 가입 후 적립 및 이용 가능하며, 해당 정책의 기준은 네이버페이 운영 기준을 따릅니다. / * 네이버페이 포인트 적립, 사용 등 자세한 내용은 네이버페이 사이트 (pay.naver.com) 또는 네이버페이 고객센터(1588-3819)에서 확인 가능합니다. / - 적립된 포인트는 네이버페이 사이트에서 확인 가능합니다.",
+   "why": "적립된 포인트를 외부 제휴사에서 조회·사용하는 절차 안내라 혜택 계산과 무관하다. 제휴사 회원 가입 여부도 회원 상태로 갖고 있지 않다."
+  },
+  {
+   "text": "•카드이용 시 제공되는 포인트 및 할인혜택 등의 부가서비스는 카드 신규 출시(2021년 10월 05일) 이후 3년 이상 축소·폐지 없이 유지됩니다.",
+   "why": "혜택 유효기간은 범위 밖이다. is_active Y/N 토글로만 다룬다."
+  },
+  {
+   "text": "•결제은행에 따라 안정적인 서비스 제공을 위한 전산 시스템 점검 시에는 23:00~06:00 중 체크카드 이용이 일시적으로 제한될 수 있습니다.",
+   "why": "시간대 조건은 범위 밖이다. 혜택 조건이 아니라 결제 자체가 막히는 시간이라 혜택 행에 담을 성격도 아니다."
+  }
+ ],
+ "_schema_gap": [
+  {
+   "text": "본 체크카드 상품은 발급 시 하나은행의 “네이버페이 머니 하나 통장” 계좌 연결이 필수이며, 이용 중 하나은행 이외의 계좌로 변경 시, 적립률은 0.6%가 제공됩니다.",
+   "missing": "체크카드의 결제계좌가 어느 은행·어느 상품인지를 담는 보유카드 속성과, 그 값으로 요율이 갈리는 조건 축",
+   "why": "요율이 1.2%와 0.6%로 갈리는 조건이 가맹점·카테고리·결제수단·실적 어디에도 속하지 않는다. 결제계좌는 같은 카드라도 회원마다 다르고 이용 중에 바뀔 수 있는데 user_card에 그 값이 없어 두 요율 중 어느 쪽인지 판정할 수 없다. 계좌 연결이 필수라는 원칙 상태의 1.2%만 넣어 두면 계좌를 바꾼 회원에게 실제의 두 배가 계산된다."
+  },
+  {
+   "text": "[최초 카드 사용등록 서비스 제공] 최초 카드 사용등록일로부터 다음 달 말일까지는 지난달 카드 실적과 관계없이 서비스 제공",
+   "missing": "user_card의 카드 사용등록일과, 유예기간 동안 적용할 기본 구간을 지정하는 표현",
+   "why": "발급 초기 실적 면제를 판정하려면 사용등록일이 있어야 하는데 보유카드에 그 값이 없다. 이 카드는 실적 조건이 25만원 하나뿐이라 유예기간 동안 신규 회원의 적립이 통째로 계산되지 않는다."
+  },
+  {
+   "text": "- 적립 일자 : 매월 1일부터 말일까지의 이용금액에 대해 다음 달 15일(휴일일 경우 다음 영업일) 일괄 적립 / - 후불교통요금 등 무승인거래(카드사의 승인없이 이용금액이 카드사에 접수됨)의 경우 매출이 접수된 월의 이용금액에 반영",
+   "missing": "POINT 혜택의 지급 시점 컬럼",
+   "why": "apply_timing이 DISCOUNT 전용이라 '다음 달 15일 일괄 적립'처럼 적립이 언제 붙는지를 담지 못한다. 무승인거래는 승인 월과 매출 접수 월이 갈려 실적이 귀속되는 달도 일반 결제와 다른데 그 축도 없다."
+  },
+  {
+   "text": "국내외 ATM 이용금액은 포인트 적립대상에서 제외됩니다.",
+   "missing": "TRANSACTION_ATTR 표준값에 체크카드 ATM 인출이 없다",
+   "why": "CASH_ADVANCE는 신용카드 현금서비스라 체크카드의 예금 인출과 다른 거래다. 체크카드는 ATM 인출이 카드 거래로 들어오므로 구분값이 없으면 인출액까지 적립 대상이자 실적으로 잡힌다."
+  },
+  {
+   "text": "[하이브리드 서비스 이용안내] 하이브리드 서비스에 대한 상세한 내용은 하이브리드 서비스 신청 후 별도로 발송되는 “하나카드 체크카드 하이브리드 서비스 약관”을 참고 바랍니다.",
+   "missing": "체크카드의 하이브리드(소액신용) 이용 여부를 담을 보유카드 속성",
+   "why": "혜택이 아니라 카드 기능이라 benefit_kind·target_type 어디에도 들어가지 않는데, 통장 잔액이 부족해도 결제가 승인되는지와 그 금액의 성격(신용거래)을 바꾼다. 신청한 회원에게만 붙는 기능이라 카드가 아니라 보유카드 쪽 값이어야 한다."
+  },
+  {
+   "text": "•후불교통 : 선택 가능 / [후불교통 가능 이용안내] •발급대상 : 만 18세 이상 고객 (단, 연체 등 특이 정보가 있는 경우 발급이 제한될 수 있음) / - 후불교통 이용금액은 고객님 계좌에서 즉시 출금되지 않으며, 당사 카드 결제일에 일시 출금됩니다.",
+   "missing": "회원마다 갈리는 카드 기능(후불교통 탑재 여부)",
+   "why": "후불교통은 발급할 때 고르는 옵션이라 같은 카드라도 회원마다 다른데 보유카드에 그 값이 없다. 탑재하지 않은 회원에게도 후불교통 거래가 계산 흐름에 들어올 수 있다."
+  },
+  {
+   "text": "•발급대상 : 만 17세 이상 / [후불교통 가능 이용안내] •발급대상 : 만 18세 이상 고객",
+   "missing": "카드·기능별 발급 자격(연령) 조건",
+   "why": "card에 발급 자격 컬럼이 없다. 카드 본체는 만 17세부터지만 후불교통 기능은 만 18세부터라 카드 하나에 값이 여럿 필요하다."
+  }
+ ]
+}

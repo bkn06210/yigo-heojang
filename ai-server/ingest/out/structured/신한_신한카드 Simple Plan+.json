@@ -1,0 +1,320 @@
+{
+ "card": {
+  "card_name": "신한카드 Simple Plan+",
+  "card_type": "CREDIT",
+  "annual_fee": null,
+  "annual_fees": [
+   {
+    "brand": "LOCAL",
+    "issue_type": "ANY",
+    "variant": "ANY",
+    "total_fee": 47000,
+    "base_fee": 7000,
+    "partner_fee": 40000,
+    "_source": "연회비 구분 총연회비 기본연회비 서비스연회비 / 국내전용 Local 4만 7천원 7천원 4만원 / Mastercard 해외겸용 5만원 7천원 4만 3천원 Platinum"
+   },
+   {
+    "brand": "MASTERCARD",
+    "issue_type": "ANY",
+    "variant": "ANY",
+    "total_fee": 50000,
+    "base_fee": 7000,
+    "partner_fee": 43000
+   }
+  ],
+  "_source": {},
+  "_needs_review": [
+   "annual_fee"
+  ]
+ },
+ "card_exclusions": [
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "CASH_ADVANCE",
+   "_source": "※ 할인/캐시백/무이자할부 서비스 제외 대상은 아래와 같습니다. - 단기카드대출(현금서비스), 장기카드대출(카드론)"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "CARD_LOAN"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "ANNUAL_FEE",
+   "_source": "- 연회비, 각종 수수료/이자(할부수수료, 연체이자 등)"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "FEE_INTEREST"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "GIFT_CARD",
+   "_source": "- 기프트카드/선불카드 구매 · 충전금액 / - 상품권/선불전자지급수단 구매 · 충전금액 / - 포인트/캐시/사이버머니/예치금 등 전자지급(결제)수단 구매 · 충전금액"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "POINT_USED",
+   "_source": "- 포인트 사용거래 중 포인트 금액"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "TAX",
+   "_source": "- 지방세, 국세, 지방세외수입, 환경개선부담금"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "LEVY"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "SOCIAL_INSURANCE",
+   "_source": "- 4대보험(국민연금, 고용보험, 건강보험, 산재보험)"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "CANCELED",
+   "_source": "- 거래 취소금액"
+  },
+  {
+   "exclusion_type": "CATEGORY",
+   "exclusion_value": "TUITION",
+   "_source": "- 유치원/초중고 납입금(스쿨뱅킹), 대학(원)등록금"
+  },
+  {
+   "exclusion_type": "CATEGORY",
+   "exclusion_value": "APARTMENT_FEE",
+   "_source": "- 아파트관리비, 도시가스, 전기요금, TV수신료, 수도요금"
+  },
+  {
+   "exclusion_type": "CATEGORY",
+   "exclusion_value": "UTILITY"
+  },
+  {
+   "exclusion_type": "CATEGORY",
+   "exclusion_value": "PHARMACY",
+   "_source": "- 의약품 전용몰(도매몰), 제약회사/약국 업종 이용금액 — 이 중 약국 업종만 표준 카테고리로 표현된다."
+  }
+ ],
+ "performance_tiers": [
+  {
+   "period_type": "MONTH",
+   "min_performance_amount": 0,
+   "shared_monthly_limit": null,
+   "_source": "※ 실적 조건 및 한도 없이 할인됩니다. — 실적 구간표도 통합 할인한도도 없는 카드라 0원 구간 하나만 두고 통합한도는 null이다."
+  }
+ ],
+ "performance_exclusions": [
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "CASH_ADVANCE",
+   "_source": "※ 분기 이용금액 제외 대상은 아래와 같습니다. - 단기카드대출(현금서비스), 장기카드대출(카드론)"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "CARD_LOAN"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "ANNUAL_FEE",
+   "_source": "- 연회비, 각종 수수료/이자(할부수수료, 연체이자 등)"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "FEE_INTEREST"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "GIFT_CARD",
+   "_source": "- 기프트카드/선불카드 구매 · 충전금액 / - 상품권/선불전자지급수단 구매 · 충전금액 / - 포인트/캐시/사이버머니/예치금 등 전자지급(결제)수단 구매 · 충전금액"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "TAX",
+   "_source": "- 지방세, 국세, 지방세외수입, 환경개선부담금"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "LEVY"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "SOCIAL_INSURANCE",
+   "_source": "- 4대보험(국민연금, 고용보험, 건강보험, 산재보험)"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "CANCELED",
+   "_source": "- 거래 취소금액"
+  },
+  {
+   "exclusion_type": "CATEGORY",
+   "exclusion_value": "TUITION",
+   "_source": "- 유치원/초중고 납입금(스쿨뱅킹), 대학(원)등록금"
+  },
+  {
+   "exclusion_type": "CATEGORY",
+   "exclusion_value": "APARTMENT_FEE",
+   "_source": "- 아파트관리비, 도시가스, 전기요금, TV수신료, 수도요금"
+  },
+  {
+   "exclusion_type": "CATEGORY",
+   "exclusion_value": "UTILITY"
+  },
+  {
+   "exclusion_type": "CATEGORY",
+   "exclusion_value": "PHARMACY",
+   "_source": "- 의약품 전용몰(도매몰), 제약회사/약국 업종 이용금액 — 이 중 약국 업종만 표준 카테고리로 표현된다."
+  }
+ ],
+ "benefits": [
+  {
+   "benefit_name": "심플 할인 국내 이용금액 1.5% 결제일 할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 1.5,
+   "step_count": null,
+   "apply_timing": "BILLED",
+   "target_type": "ALL",
+   "target_category_code": null,
+   "target_merchant_name": null,
+   "targets": null,
+   "require_performance": "N",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": null,
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "국내 이용금액 전체에 적용되는 결제일 할인이다. 가맹점 업종은 신한카드 가맹점 업종 기준을 따른다. 해외 온라인 사이트에서 국내 가맹점(국내 전자지급 결제 대행사)으로 결제되는 경우에도 국내 할인이 제공된다. 해외 이용금액 2% 할인은 별도 조항이며 해외 결제 데이터가 없어 옮기지 않았다.",
+   "tier_limits": [],
+   "exclusions": [
+    {
+     "exclusion_type": "TRANSACTION_ATTR",
+     "exclusion_value": "INTEREST_FREE",
+     "_source": "- 무이자할부(슬림할부 등 부분 무이자 포함) 이용거래* / * 할인 및 캐시백 서비스에서만 제외 / ※ 무이자 할부 서비스 적용 건은 심플 할인 서비스가 제공되지 않습니다."
+    },
+    {
+     "exclusion_type": "TRANSACTION_ATTR",
+     "exclusion_value": "DISCOUNTED",
+     "_source": "- 신한카드 Simple Plan+ 서비스 이외의 프로모션 할인이 적용된 거래* / * 할인 및 캐시백 서비스에서만 제외"
+    }
+   ],
+   "_source": {
+    "benefit_value": "심플 할인 서비스 • 국내 이용금액 1.5% 결제일 할인",
+    "require_performance": "※ 실적 조건 및 한도 없이 할인됩니다. — 실적 조건도 금액 한도도 없어 require_performance는 N이고 모든 한도 필드는 null이다."
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "국내 가맹점 2~3개월 무이자 할부",
+   "benefit_kind": "INSTALLMENT_FREE",
+   "calc_method": null,
+   "benefit_value": null,
+   "step_count": null,
+   "apply_timing": null,
+   "target_type": "ALL",
+   "target_category_code": null,
+   "target_merchant_name": null,
+   "targets": null,
+   "require_performance": "N",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": 50000,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": null,
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "국내 가맹점에서 5만원 이상 2~3개월 할부 결제 시 제공된다. 무이자 할부가 적용된 결제 건에는 심플 할인 서비스가 제공되지 않는다. 무이자 개월 수(2~3개월)를 담을 필드가 없어 설명으로만 남긴다.",
+   "tier_limits": [],
+   "exclusions": [
+    {
+     "exclusion_type": "TRANSACTION_ATTR",
+     "exclusion_value": "INSTALLMENT_CONVERTED",
+     "_source": "※ 일시불 거래 후 할부로 전환하는 경우에는 무이자 할부가 제공되지 않습니다."
+    }
+   ],
+   "_source": {
+    "min_txn_amount": "• 국내 5만원 이상 결제 건 2~3개월 무이자 할부 / ※ 국내 가맹점에서 5만원 이상 2~3개월 할부 결제 시 제공됩니다."
+   },
+   "_needs_review": [
+    "calc_method",
+    "benefit_value"
+   ]
+  }
+ ],
+ "unmapped": [
+  {
+   "text": "심플 할인 서비스 • 해외 이용금액 2% 결제일 할인 / ※ 해외 할인은 해외겸용(Mastercard) 카드 발급 후 이용 시 제공됩니다. / ※ 해외 일시불 거래 후 할부로 전환하는 경우 할인되지 않습니다. / ※ 해외 현금인출 이용금액은 할인되지 않습니다. / ※ 해외 이용 시 별도의 수수료가 부과됩니다.",
+   "why": "해외 결제 혜택은 범위 밖이다. 해외 가맹점 데이터가 없어 판정할 수 없다."
+  },
+  {
+   "text": "웰컴 캐시백 서비스 • 마트/병원/주유 3만원 이상 결제 시 3만원 캐시백(최초 1회) / 영역 대상 가맹점 / 마트 이마트, 트레이더스 홀세일 클럽, 롯데마트 / 병원 종합병원, 개인병원, 치과병원, 응급실운영병원, 동물병원 업종 / 주유 SK에너지, GS칼텍스, S-OIL, HD현대오일뱅크 / ※ 웰컴 캐시백은 회원당 최초 1회에 한해 제공됩니다. / ※ 발급 초년도에 한해 제공되며, 발급 초년도에 서비스 대상 거래가 없을 경우 이월되어 제공되지 않습니다. / - 발급 초년도 기준 : 발급일 ~ 다음해 연회비 결제월의 전월 말일 / ※ 서비스 대상 거래가 발생한 월의 다음달 20일(휴일인 경우, 다음 영업일)에 캐시백이 제공됩니다. / ※ 1회 결제금액 기준 3만원 이상인 경우에 캐시백이 제공됩니다(할인 적용 전 승인금액 기준). / ※ 웰컴 캐시백은 심플 할인 서비스와 중복 제공이 가능합니다. / ※ 무이자 할부 거래에는 캐시백이 제공되지 않습니다. / ※ 웰컴 캐시백 제공 후 발급 초년도에 신한카드 Simple Plan+ 카드를 해지하는 경우, 캐시백 금액은 연회비 반환 금액에서 차감됩니다. / ※ 캐시백 제공 시점 이전에 카드를 해지하거나 이용을 정지하여 유효한 카드를 보유하지 않은 경우, 캐시백이 제공되지 않습니다.",
+   "why": "회원당 최초 1회 한정이고 발급 초년도에만 제공된다. 생애 1회 한정과 혜택 유효기간은 둘 다 범위 밖이고, 발급일 정보가 없어 제공 기간을 판정할 수도 없다. 심플 할인 서비스와 중복 제공된다는 점도 한 결제에 혜택 하나를 고르는 전제와 어긋난다."
+  },
+  {
+   "text": "※ 키오스크, 간편결제(Pay)로 결제 시 가맹점명이 해당 업체가 아닌 PG업체명, 간편결제명(네이버페이, 스마일페이 등)으로 나오는 경우는 웰컴 캐시백이 제공되지 않습니다.",
+   "why": "결제가 어느 가맹점으로 잡히는지에 대한 안내라 혜택 규칙으로 옮길 값이 없고, 대상 혜택인 웰컴 캐시백 자체가 범위 밖이다."
+  },
+  {
+   "text": "※ 오프라인 매장 이용 시에만 캐시백 제공되며, 대상 가맹점 외 창고형 할인매장, 기업형 슈퍼마켓, 주차비, 문화센터, 마트 내 입점된 임대 매장 이용 시에는 캐시백이 제공되지 않습니다. / ※ 주유 영역은 휘발유, 경유, 등유 이용금액에 한해서만 캐시백이 제공되며 LPG 이용금액은 캐시백이 제공되지 않습니다.",
+   "why": "온·오프라인 채널 조건과 주유 상품 단위 조건이라 범위 밖이고, 대상 혜택인 웰컴 캐시백 자체가 범위 밖이다."
+  },
+  {
+   "text": "가족카드 캐시백 서비스 • 가족카드 분기 실적 150만원 이상 시 1만원 캐시백(분기당 1회) / ※ 가족카드 합산 실적이 아닌 가족카드 1매당 실적을 기준으로 분기 150만원 이상 이용 시 캐시백이 제공됩니다. / ※ 가족카드 최대 4매까지 캐시백이 제공됩니다. / ※ 분기 실적을 충족한 경우, 분기 종료월의 다음달 20일(휴일인 경우, 다음 영업일)에 Simple Plan+ 결제계좌로 캐시백이 제공됩니다. / ※ 본인 카드에 연결된 결제계좌로 캐시백이 제공됩니다. / ※ 본인카드 회원에 한하여 제공되며, 가족카드로 발생한 거래에 대해서는 캐시백이 제공되지 않습니다.",
+   "why": "가족카드는 범위 밖이다. 또한 특정 결제가 아니라 분기 이용금액에만 걸리는 정액 캐시백이라 target_type을 정할 수 없다. ALL로 넣으면 모든 결제에 캐시백이 붙는다."
+  },
+  {
+   "text": "- 교통카드 이용금액은 전전월 이용금액이 전월 이용금액에 반영됩니다. (단, 모바일 후불 교통카드 이용금액은 전월 이용금액이 반영됩니다.)",
+   "why": "전전월 실적은 범위 밖이다."
+  },
+  {
+   "text": "※ 서비스가 제공된 결제 건이 취소될 경우, 이미 제공된 서비스 또는 향후 제공될 서비스 금액에서 우선 차감되며 부족한 차액은 고객님께 청구될 수 있습니다. / ※ 서비스가 제공된 이후 결제 취소 등의 사유로 분기 이용금액 등 서비스 제공 조건을 미충족하게 되는 경우, 서비스 차액이 청구되거나 향후 제공될 서비스 금액에서 차감될 수 있습니다 / ※ 거래 후 취소금액은 국내 거래의 경우 최초 승인된 달의 이용금액에서, 해외 거래의 경우 취소 전표가 매입된 달의 이용금액에서 차감됩니다. 예) 1월 20일 국내 이용금액을 2월 10일 취소하는 경우 1월 이용금액에서 차감",
+   "why": "이미 지급된 혜택의 회수와 이용금액 귀속월 조정 규칙이라 혜택 행에 담을 필드가 없다."
+  },
+  {
+   "text": "[가족카드 안내] ※ 가족카드 연회비는 2만원입니다. / ※ 본인카드와 가족카드의 연회비는 별도 청구주기가 적용됩니다. / ※ 본인카드와 가족카드는 반드시 동일 브랜드로만 신청 가능합니다. / ※ 후불교통 기능이 있는 카드로만 신청 가능합니다. / ※ 신한카드 Simple Plan+는 1인 2장 이상 중복 발급 및 소지가 불가 합니다(제휴상품 포함).",
+   "why": "가족카드와 발급 조건은 범위 밖이고, 연회비 행에 발급 주체를 구분할 칸이 없다."
+  },
+  {
+   "text": "※ 신한카드 Simple Plan+로 국제브랜드사(Mastercard)의 플래티늄 서비스를 이용할 수 있습니다. 브랜드사 서비스 안내장, 신한카드 홈페이지(www.shinhancard.com) 및 국제브랜드사 홈페이지(www.mastercard.co.kr)에서 서비스 세부 내용 및 유의사항을 확인해주세요. / ※ 해외겸용(Mastercard)은 컨택리스 결제를 지원합니다.",
+   "why": "국제브랜드사가 별도로 제공하는 서비스라 이 카드의 혜택 규칙으로 표현할 대상이 없다."
+  }
+ ],
+ "_schema_gap": [
+  {
+   "text": "- 의약품 전용몰(도매몰), 제약회사/약국 업종 이용금액",
+   "missing": "의약품 도매몰·제약회사 업종에 해당하는 카테고리 코드",
+   "why": "카테고리 표준에 PHARMACY(약국)는 있으나 의약품 전용몰(도매)·제약회사 업종은 없다. PHARMACY만 넣었으므로 약국 거래는 빠지지만 도매몰·제약회사 거래는 그대로 할인 대상과 이용금액에 남는다."
+  },
+  {
+   "text": "- 신차판매/수입자동차 업종 이용금액",
+   "missing": "신차판매·수입자동차 업종 카테고리 코드",
+   "why": "카테고리 표준에 자동차 판매 업종이 없어 card_exclusion과 performance_exclusion의 CATEGORY 값으로 넣을 수 없다."
+  }
+ ]
+}

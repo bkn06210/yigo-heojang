@@ -1,0 +1,466 @@
+{
+ "card": {
+  "card_name": "KB 틴업 체크카드",
+  "card_type": "CHECK",
+  "annual_fee": 0,
+  "annual_fees": [
+   {
+    "brand": "ANY",
+    "issue_type": "ANY",
+    "variant": "ANY",
+    "total_fee": 0,
+    "base_fee": null,
+    "partner_fee": null,
+    "_source": "∙ 브랜드: 국내전용(Local), 국내외겸용(Mastercard, UPI) / ∙ 연회비: 없음 — 브랜드별로 금액이 갈리지 않아 한 행으로 적었다"
+   }
+  ],
+  "_source": {
+   "annual_fee": "연회비: 없음"
+  },
+  "_needs_review": []
+ },
+ "card_exclusions": [
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "GIFT_CARD",
+   "_source": "∙ 상품권 및 선불카드(선불전자지급수단 포함) 구입∙충전 금액의 경우 할인에서 제외됩니다."
+  }
+ ],
+ "performance_tiers": [
+  {
+   "period_type": "MONTH",
+   "min_performance_amount": 0,
+   "shared_monthly_limit": null,
+   "_source": "* 예시: 전월말일자기준회원만나이가만15세인경우당월1구간실적적용및서비스제공(전월실적없이공통할인만제공) — 1구간에는 실적 금액이 없다. 월간 통합할인한도 조항은 있으나 금액이 상품설명서에 없어 shared_monthly_limit은 비웠다"
+  },
+  {
+   "period_type": "MONTH",
+   "min_performance_amount": 100000,
+   "shared_monthly_limit": null,
+   "_source": "전월말일자기준회원만나이가만18세인경우전월이용실적20만원이용시에도당월2구간실적적용및서비스제공(전월100,000원이용실적조건으로공통할인+놀이할인제공)"
+  }
+ ],
+ "performance_exclusions": [
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "POSTPAID_TRANSIT",
+   "_source": "전월 이용실적 제외 대상 ∙ 후불교통요금, 무승인 금액(자판기, 터널통행료, 유료도로, 기차/고속버스 취소 반환수수료 등), 정부지원금 이용금액(보육료, 유치원보조비, 바우처 이용금액 등), 포인트리 충전금액, 대학(대학원)등록금, 상품권 및 선불카드(선불전자지급수단 포함) 구입(충전)금액, 연체료, 지방세(지방세, 상하수도, 세외수입), 취소금액, 각종 수수료 및 이자"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "UNAPPROVED",
+   "_source": "전월 이용실적 제외 대상 위 목록의 무승인 금액(자판기, 터널통행료, 유료도로 등)"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "GOV_SUBSIDY",
+   "_source": "전월 이용실적 제외 대상 위 목록의 정부지원금 이용금액"
+  },
+  {
+   "exclusion_type": "CATEGORY",
+   "exclusion_value": "TUITION",
+   "_source": "전월 이용실적 제외 대상 위 목록의 대학(대학원)등록금"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "GIFT_CARD",
+   "_source": "전월 이용실적 제외 대상 위 목록의 상품권 및 선불카드 구입(충전)금액"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "FEE_INTEREST",
+   "_source": "전월 이용실적 제외 대상 위 목록의 연체료·각종 수수료 및 이자"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "TAX",
+   "_source": "전월 이용실적 제외 대상 위 목록의 지방세(지방세, 상하수도, 세외수입) — 표준값 TAX가 국세·지방세를 뜻한다. 괄호 안 상하수도·세외수입은 약관이 지방세로 묶어 열거한 것이라 같은 값으로 적었다"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "CANCELED",
+   "_source": "전월 이용실적 제외 대상 위 목록의 취소금액 / ∙ 취소금액은취소전표가당사에접수된월의실적에서차감"
+  }
+ ],
+ "benefits": [
+  {
+   "benefit_name": "KB Pay 오프라인 결제 2% 환급할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 2,
+   "step_count": null,
+   "apply_timing": "CASHBACK",
+   "target_type": "ALL",
+   "target_category_code": null,
+   "target_merchant_name": null,
+   "targets": null,
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": "KB_PAY",
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": 5000,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": null,
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "공통할인(나이 관계없이 제공). KB Pay로 오프라인 가맹점 결제 시 제공되며 타 서비스와 중복 적용된다. 최초 발급월에는 서비스가 제공되지 않고 실적유예 대상도 아니다. 할인은 환급할인으로, 이용전표가 매입처리 완료된 후 할인금액을 카드 출금계좌로 환급한다.",
+   "tier_limits": [],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "[KBPay] 오프라인결제2% 할인 - KB Pay로 오프라인 가맹점 결제 시 제공 (타 서비스와 중복 적용)",
+    "monthly_limit": "- 월 할인한도 5천원 이내 제공",
+    "require_performance": "전월100,000원이용실적조건으로공통할인+놀이할인제공 — 만 15세 이하 1구간은 전월실적 없이 공통할인이 제공되지만 회원 연령을 담을 축이 없어 실적 조건이 붙는 2구간 기준으로 적었다. 실적유예 조항이 '편의점·쇼핑·스터디·문구'만 실적 없이 제공한다고 따로 정한 것도 공통할인에 실적 조건이 있다는 근거다"
+   },
+   "_needs_review": [
+    "require_performance"
+   ]
+  },
+  {
+   "benefit_name": "모바일 앱스토어 5% 환급할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 5,
+   "step_count": null,
+   "apply_timing": "CASHBACK",
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": null,
+   "targets": [
+    "구글플레이스토어",
+    "애플앱스토어"
+   ],
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": 1000,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": "TEENUP_APP_1000",
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "공통할인(나이 관계없이 제공). 구글 플레이스토어·애플 앱스토어 가맹점 중 KB국민카드 가맹점명 '구글플레이스토어, 앱스토어'로 등록된 온라인 결제 건에 한한다. 두 대상이 월 할인한도 1천원을 함께 쓴다. 실적유예 미적용. 할인은 환급할인으로 제공된다.",
+   "tier_limits": [],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "[모바일] 구글플레이스토어, 애플앱스토어5% 할인",
+    "monthly_limit": "- 월 할인한도 1천원 이내 제공",
+    "limit_group_code": "두 대상에 월 할인한도 1천원이 한 번만 제시된다"
+   },
+   "_needs_review": [
+    "require_performance"
+   ]
+  },
+  {
+   "benefit_name": "편의점 5% 환급할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 5,
+   "step_count": null,
+   "apply_timing": "CASHBACK",
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": null,
+   "targets": [
+    "CU",
+    "세븐일레븐"
+   ],
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": 1000,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": "TEENUP_CVS_1000",
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "공통할인(나이 관계없이 제공). 오프라인 매장 결제 건에 한한다. 두 브랜드가 월 할인한도 1천원을 함께 쓴다. 실적유예 적용 대상이라 최초 발급 카드는 사용등록일부터 다음달 말일까지 이용실적이 없어도 제공된다. 할인은 환급할인으로 제공된다.",
+   "tier_limits": [],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "[편의점] CU,세븐일레븐5% 할인",
+    "monthly_limit": "- 월 할인한도 1천원 이내 제공",
+    "limit_group_code": "두 대상에 월 할인한도 1천원이 한 번만 제시된다"
+   },
+   "_needs_review": [
+    "require_performance"
+   ]
+  },
+  {
+   "benefit_name": "쇼핑(다이소·올리브영) 5% 환급할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 5,
+   "step_count": null,
+   "apply_timing": "CASHBACK",
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": null,
+   "targets": [
+    "다이소",
+    "올리브영"
+   ],
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": 1000,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": "TEENUP_SHOPPING_1000",
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "공통할인(나이 관계없이 제공). 다이소·올리브영은 오프라인 매장 결제 건에 한한다. 같은 조항의 'KB Pay 쇼핑'도 같은 월 할인한도 1천원을 함께 쓰지만 KB Pay 앱 안의 쇼핑 채널이라 대상으로 담지 못했다(unmapped 참조). 실적유예 적용 대상이다. 할인은 환급할인으로 제공된다.",
+   "tier_limits": [],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "[쇼핑] 다이소, 올리브영, KB Pay 쇼핑5% 할인",
+    "monthly_limit": "- 월 할인한도 1천원 이내 제공",
+    "limit_group_code": "세 대상에 월 할인한도 1천원이 한 번만 제시된다"
+   },
+   "_needs_review": [
+    "require_performance"
+   ]
+  },
+  {
+   "benefit_name": "서점 5% 환급할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 5,
+   "step_count": null,
+   "apply_timing": "CASHBACK",
+   "target_type": "CATEGORY",
+   "target_category_code": "BOOKSTORE",
+   "target_merchant_name": null,
+   "targets": null,
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": 1000,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": "TEENUP_BOOK_STATIONERY_1000",
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "공통할인(나이 관계없이 제공). 오프라인 매장 결제 건에 한한다. 같은 조항의 문구점 업종도 같은 월 할인한도 1천원을 함께 쓰지만 표준 카테고리에 문구점이 없어 담지 못했다(unmapped 참조). 실적유예 적용 대상이다. 할인은 환급할인으로 제공된다.",
+   "tier_limits": [],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "[문구] 서점업종, 문구점업종5% 할인",
+    "monthly_limit": "- 월 할인한도 1천원 이내 제공",
+    "limit_group_code": "서점·문구점 두 업종에 월 할인한도 1천원이 한 번만 제시된다"
+   },
+   "_needs_review": [
+    "require_performance"
+   ]
+  },
+  {
+   "benefit_name": "놀이(비디오방·게임방) 5% 환급할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 5,
+   "step_count": null,
+   "apply_timing": "CASHBACK",
+   "target_type": "CATEGORY",
+   "target_category_code": "AMUSEMENT_VENUE",
+   "target_merchant_name": null,
+   "targets": null,
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": 1000,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": null,
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "놀이할인. 오프라인 비디오방/게임방 업종 매장 결제 건에 한한다. 만 16세부터(2구간) 전월 이용실적 10만원 조건으로 제공되는데 회원 연령을 담을 축이 없어 실적 조건만 적었다. 실적유예 미적용. 할인은 환급할인으로 제공된다.",
+   "tier_limits": [],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "[놀이] PC방5% 할인 - 오프라인 비디오방/게임방 업종 매장 결제 건에 한함",
+    "monthly_limit": "- 월 할인한도 1천원 이내 제공",
+    "require_performance": "놀이할인 I 16세부터는 더 풍성하게! / 전월100,000원이용실적조건으로공통할인+놀이할인제공"
+   },
+   "_needs_review": []
+  }
+ ],
+ "unmapped": [
+  {
+   "text": "[스터디] 독서실업종5% 할인 - 오프라인 매장 결제 건에 한함 - 월 할인한도 1천원 이내 제공 -실적유예적용",
+   "why": "표준 카테고리에 독서실이 없다. EDUCATION 하위는 ACADEMY(학원)·TUITION(학교납입금)·LEARNING_SERVICE(학습지)뿐이라 ACADEMY로 넣으면 약관이 대상으로 삼지 않은 학원 결제까지 5% 할인을 받는다"
+  },
+  {
+   "text": "[문구] 서점업종, 문구점업종5% 할인 - 오프라인 매장 결제 건에 한함 - 월 할인한도 1천원 이내 제공 -실적유예적용",
+   "why": "서점은 BOOKSTORE로 담았으나 문구점에 해당하는 표준 카테고리가 없다. SHOPPING 대분류로 넣으면 편의점·백화점 등 하위 업종까지 대상이 된다. 두 업종이 월 1천원 한도를 함께 쓰므로 문구점 분이 빠진 만큼 한도 소진이 실제보다 느리게 계산된다"
+  },
+  {
+   "text": "[외식] 패밀리레스토랑업종 10% 할인 - 오프라인 매장 결제 건에 한함 - 건당 3만원 이상 결제 시 제공 - 월 할인한도 3천원 이내 제공 -실적유예미적용",
+   "why": "대상이 패밀리레스토랑 업종 하나인데 표준 카테고리에는 RESTAURANT(음식점)밖에 없다. RESTAURANT로 넣으면 한식·중식·분식 등 약관에 없는 모든 음식점 결제가 10% 할인 대상이 된다. 두번째혜택UP(19세부터 제공)이라 연령 조건도 함께 걸린다"
+  },
+  {
+   "text": "[쇼핑] 다이소, 올리브영, KB Pay 쇼핑5% 할인 - KB Pay 쇼핑은 KB Pay 앱 > 쇼핑 결제건에 한함 (직불 결제 및 상품권·여행 등 팝업 사이트 제외)",
+   "why": "'KB Pay 쇼핑'은 가맹점도 업종도 아니라 KB Pay 앱 안의 쇼핑 채널이다. target_type을 정할 수 없고, ALL + require_payment_type=KB_PAY로 적으면 앱 밖의 모든 KB Pay 결제까지 5%가 붙는다. 다이소·올리브영 행과 월 1천원 한도를 함께 쓴다"
+  },
+  {
+   "text": "∙ 가맹점 정보가 해당 업체가 아닌 결제대행업체(PG) 또는 간편결제 전용 가맹점으로 확인되는 경우, '결제대행업체' 또는 '간편결제' 가맹점으로 분류되어 할인대상에서 제외됩니다. ※ 예시) 편의점에서 네이버페이로 결제 시 가맹점명이 '네이버페이'인 경우 편의점가맹점이 아닌 '간편결제' 가맹점으로 분류",
+   "why": "승인이 어느 가맹점 코드로 잡히는지에 달린 조건이라 카드·혜택 어느 축으로도 표현되지 않는다"
+  },
+  {
+   "text": "∙ 호텔, 백화점, 대형마트, 철도/역사 등에 입점한 가맹점이나 상품권 구매 시 할인 대상에서 제외됩니다.",
+   "why": "카드 전체에 걸리는 입점 위치 제외인데 card_exclusions의 유형은 CATEGORY/MERCHANT/PAYMENT_TYPE/TRANSACTION_ATTR뿐이라 위치 조건을 카드 단위로 적을 자리가 없다. 상품권 구매분은 card_exclusions의 GIFT_CARD로 담았다"
+  },
+  {
+   "text": "월간 통합할인한도 ∙ 체크카드별로 월간 할인 받을 수 있는 최대 금액으로 잔여 한도는 다음달로 이월되지 않으며 전표가 매입되는 순서대로 월간통합할인한도 내에서 차감됩니다.",
+   "why": "통합할인한도가 있다고 적혀 있으나 금액이 상품설명서 어디에도 없다. performance_tiers.shared_monthly_limit에 넣을 값이 없어 비웠고, 임의로 채우면 약관에 없는 한도를 만드는 셈이라 혜택들의 use_shared_limit도 N으로 뒀다"
+  },
+  {
+   "text": "∙ 본인 회원 기준으로 월간 할인 한도가 제공되며, 할인 한도는 매월 1일 ~ 말일까지 (승인시점 기준) 이용금액으로 적용됩니다. ∙ 할인서비스는 월간 할인한도 내에서 적용되며, 잔여 한도는 이월되지 않습니다. ∙ 할인받은 매출을 취소한 경우 취소 전표가 실시간 접수되지 않아 할인한도가 즉시 복원되지 않을 수 있습니다.",
+   "why": "한도 집계 주기·이월 여부·취소 시 복원 시점 규약이라 혜택 행이 아니라 엔진 동작 규칙이다"
+  },
+  {
+   "text": "(단, 선택형디자인카드는재발급시발급수수료*부과) * 발급수수료: 상품기준최초발급시면제, 2회~4회차 2천원, 5회차이상4천원",
+   "why": "연회비가 아니라 재발급 수수료다. annual_fees는 연 단위 회비를 담는 자리라 여기에 넣으면 의미가 뒤바뀐다"
+  },
+  {
+   "text": "체크카드 해외이용 시 유의사항 — 해외 이용 시(해외사이트 거래 포함) 미화(USD)기준 거래 미화금액에 국제브랜드사가 부과하는 국제브랜드수수료(Mastercard 1.0%, UPI 0.6% ~ 0.8%)와 KB국민카드가 부과하는 해외서비스수수료(0.25%)를 포함하여 원화로 청구됩니다.",
+   "why": "해외 이용 수수료 안내로 혜택이 아니다. 해외 결제는 범위 밖"
+  },
+  {
+   "text": "[체크카드 이용 시 출금 시점] - 일반가맹점 이용: 승인시점 출금계좌에서 즉시 출금 / - 무승인/T&E 업종 이용: 매출전표 매입일 출금. 출금시점 계좌잔액 부족 시 전액 신용청구됩니다.",
+   "why": "체크카드의 출금·정산 절차 규정이다. 혜택 규칙이 아니라 대금 흐름이라 담을 대상이 없다"
+  },
+  {
+   "text": "체크카드 이용제한 ∙ 매월 세번째 일요일 00:00~06:00 중에는 은행 전산시스템 점검 관련으로 이용이 제한될 수 있으며, 점검시간이 변경될 경우 별도로 고지해 드립니다.",
+   "why": "카드 이용 제한 시간 안내로 혜택 규칙이 아니다"
+  },
+  {
+   "text": "[비접촉식 기능] ∙ Mastercard 브랜드 발급 시 비접촉식(Contactless) 칩 탑재에 따라 교통 단말에서 인식 될 수 있습니다.",
+   "why": "카드 매체의 기능 안내다. 결제 이벤트에 붙는 혜택이 아니라 target_type을 정할 수 없다"
+  },
+  {
+   "text": "[연체이자율] 회원별/이용상품별 정상이자율 +3%p, 최고 연 20% 이내 ※ 단, 연체발생시점에 정상이자율이 없는 경우 - 무이자할부 거래 연체 시: 거래발생시점의 동일한 할부계약 기간의 유이자할부수수료율 적용",
+   "why": "연체이자율은 혜택이 아니다"
+  },
+  {
+   "text": "[부가서비스 변경 안내] ∙ KB 틴업 체크카드(2025.5.22 출시)를 이용하는 경우 제공되는 할인 혜택 등의 부가서비스는 다음 각 호를 제외하고는 변경 할 수 없습니다.",
+   "why": "부가서비스 변경 고지 절차 규정이라 혜택 데이터가 아니다"
+  }
+ ],
+ "_schema_gap": [
+  {
+   "text": "※ 연령구간별로전월이용실적조건과제공혜택이상이하며, <전월>말일자만나이기준으로<당월>전월이용실적조건과혜택이적용됩니다. (만나이산정은KB국민카드회원정보에입력된생년월일을기준으로 합니다.) * 예시: 전월말일자기준회원만나이가만15세인경우당월1구간실적적용및서비스제공(전월실적없이공통할인만제공) 전월말일자기준회원만나이가만18세인경우전월이용실적20만원이용시에도당월2구간실적적용및서비스제공(전월100,000원이용실적조건으로공통할인+놀이할인제공)",
+   "missing": "회원 연령 축 — 실적 구간을 나이로 가르는 조건과, 3구간(만 19세부터, 외식할인)의 최소 실적금액",
+   "why": "performance_tier는 금액 축 하나뿐이라 '만 나이에 따라 다른 구간이 적용된다'를 적을 자리가 없다. 같은 실적 10만원이어도 만 15세는 공통할인만, 만 18세는 공통+놀이할인이 나오는데 엔진은 둘을 구분하지 못한다. 3구간 실적금액은 상품설명서에 구간표가 실려 있지 않아 값 자체를 모른다"
+  },
+  {
+   "text": "※ 실적유예적용기준: 최초발급받은KB 틴업체크카드는사용등록일(KB Pay 등간편결제등록포함)로부터다음달말일까지이용실적이없는경우에도공통할인중'편의점, 쇼핑, 스터디, 문구' 할인이제공됩니다",
+   "missing": "user_card의 사용등록일과, 혜택별 실적유예 적용 여부 플래그",
+   "why": "등록일이 없어 유예기간인지 판정할 수 없고, 같은 카드 안에서도 편의점·쇼핑·스터디·문구만 유예 대상이라 카드 단위로도 적을 수 없다. 지금 스키마로는 신규 회원이 0원 구간으로 떨어져 이 네 혜택이 계산되지 않는다"
+  },
+  {
+   "text": "[KBPay] 오프라인결제2% 할인 - 최초 발급월에는 서비스 미제공",
+   "missing": "user_card의 발급일(또는 최초 발급월 여부)",
+   "why": "발급일이 없어 '최초 발급월'을 판정할 수 없다. 그 결과 발급 첫 달에도 2% 할인이 계산되어 실제보다 많은 혜택이 나온다"
+  },
+  {
+   "text": "[KBPay] 오프라인결제2% 할인 - KB Pay로 오프라인 가맹점 결제 시 제공 (타 서비스와 중복 적용)",
+   "missing": "benefit의 중복 적용 허용 플래그와, 한 거래에 혜택을 여러 개 기록할 수단",
+   "why": "엔진은 한 결제에 혜택을 하나만 고르고 소비내역의 적용 혜택도 단수다. 이 카드는 편의점·쇼핑 5%와 KB Pay 2%가 함께 붙는 결제가 실제로 생기는데, 지금은 둘 중 큰 하나만 계산되어 실제보다 적게 나온다"
+  },
+  {
+   "text": "전월 이용실적 제외 대상 ∙ … 포인트리 충전금액 …",
+   "missing": "TRANSACTION_ATTR 표준값에 '포인트 충전금액'이 없다",
+   "why": "GIFT_CARD는 상품권·선불카드 구입/충전이라 포인트리 충전과 다르고, POINT_USED는 포인트로 결제한 금액이라 방향이 반대다. 비슷한 값으로 넣으면 다른 거래까지 실적에서 빠지므로 비워 뒀다"
+  },
+  {
+   "text": "[체크카드 직불이용한도] ∙ 카드발급 시 부여한도(기본한도)",
+   "missing": "카드의 직불(체크) 이용한도 컬럼",
+   "why": "card에 이용한도 컬럼이 없다. benefit의 daily_limit·monthly_limit은 혜택 한도지 결제 승인 한도가 아니라 여기에 넣으면 의미가 뒤바뀐다"
+  },
+  {
+   "text": "[후불교통기능 탑재] ∙ 버스, 지하철 등 교통이용이 가능하고, 매월 체크카드 결제계좌에서 아래의 지정된 결제일에 자동 출금됩니다. ∙ 이용금액 출금 시 한도가 복원됩니다. ∙ 후불교통기능은 국내 이용 건에 한하여 적용됩니다. [미성년자 후불교통 체크카드 이용한도] ∙ 월 이용한도는 10만원 이하이나, 교통카드 이용내역 및 금액 정산 체계로 일시적 이용한도 초과 사용이 가능합니다.",
+   "missing": "카드의 후불교통 기능 탑재 여부와 그 이용한도(월 10만원)",
+   "why": "card에 기능 탑재 플래그가 없다. 혜택이 아니라 카드 기능이라 benefit으로도 담기지 않는데, 후불교통 이용분은 실적에서 빠지므로(POSTPAID_TRANSIT) 기능 유무가 계산 전제에 영향을 준다"
+  },
+  {
+   "text": "∙ 동일계열카드는 전월이용실적 및 할인한도가 합산됩니다.",
+   "missing": "카드 간 실적·한도 합산 그룹(계열 카드 묶음)",
+   "why": "실적과 한도는 user_card 단위로만 집계된다. 같은 계열 카드를 묶어 합산할 축이 없어 실적은 실제보다 낮게, 한도는 카드 수만큼 많게 계산된다"
+  },
+  {
+   "text": "∙ 발급대상: 만7세부터발급가능 (만7세~13세미성년자발급시법정대리인동의필수)",
+   "missing": "카드 발급 자격(연령 하한) 컬럼",
+   "why": "card에 발급 자격 컬럼이 없다. 미보유 카드 추천에서 나이로 거를 수 없어 자격이 안 되는 회원에게도 이 카드가 후보로 남는다"
+  },
+  {
+   "text": "∙ 할인서비스는 환급할인으로 제공됩니다. ∙ 체크카드 환급할인은 이용전표가 매입처리 완료 된 후 할인금액을 카드 출금계좌로 환급하는 방식입니다.",
+   "missing": "환급 시점(매입 완료 후)을 담을 축",
+   "why": "지급 방식 자체는 apply_timing=CASHBACK으로 담긴다. 다만 신용카드의 청구할인과 달리 승인 시점에는 전액이 출금되고 나중에 되돌아오는 구조라 회원이 보는 시점이 다른데, apply_timing은 값 세 개뿐이라 그 차이를 적을 자리가 없다"
+  }
+ ]
+}

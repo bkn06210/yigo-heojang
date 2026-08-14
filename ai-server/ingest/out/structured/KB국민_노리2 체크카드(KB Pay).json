@@ -1,0 +1,771 @@
+{
+ "card": {
+  "card_name": "KB국민 노리2 체크카드(KB Pay)",
+  "card_type": "CHECK",
+  "annual_fee": 0,
+  "annual_fees": [
+   {
+    "brand": "ANY",
+    "issue_type": "ANY",
+    "variant": "ANY",
+    "total_fee": 0,
+    "base_fee": null,
+    "partner_fee": null,
+    "_source": "- 브랜드: 국내전용(Local), 국내외겸용(Master, Visa) / - 연회비 : 없음 — 브랜드별로 금액이 갈리지 않아 한 행으로 적었다"
+   }
+  ],
+  "_source": {
+   "annual_fee": "연회비: 없음"
+  },
+  "_needs_review": []
+ },
+ "card_exclusions": [
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "GIFT_CARD",
+   "_source": "- 상품권 및 선불카드(선불전자지급수단 포함) 구입·충전 금액의 경우 할인에서 제외될 수 있습니다."
+  }
+ ],
+ "performance_tiers": [
+  {
+   "period_type": "MONTH",
+   "min_performance_amount": 0,
+   "shared_monthly_limit": null,
+   "_source": "[표] 전월 이용실적 구간 | 20만원 미만 … 월간 통합할인한도 | 일상혜택 커피 할인 — 20만원 미만 칸에 금액이 아니라 '일상혜택 커피 할인'이라고 적혀 있어 통합한도 금액 자체가 없다. 0을 넣으면 실적 없이도 제공되는 커피 할인까지 사라지므로 null로 두었고, 이 구간에서는 커피 혜택 자신의 월 한도 3천원이 상한이 된다"
+  },
+  {
+   "period_type": "MONTH",
+   "min_performance_amount": 200000,
+   "shared_monthly_limit": 20000,
+   "_source": "[표] 20만원 이상 | 20,000원"
+  },
+  {
+   "period_type": "MONTH",
+   "min_performance_amount": 400000,
+   "shared_monthly_limit": 30000,
+   "_source": "[표] 40만원 이상 | 30,000원"
+  },
+  {
+   "period_type": "MONTH",
+   "min_performance_amount": 600000,
+   "shared_monthly_limit": 40000,
+   "_source": "[표] 60만원 이상 | 40,000원"
+  },
+  {
+   "period_type": "MONTH",
+   "min_performance_amount": 800000,
+   "shared_monthly_limit": 50000,
+   "_source": "[표] 80만원 이상 | 50,000원"
+  }
+ ],
+ "performance_exclusions": [
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "POSTPAID_TRANSIT",
+   "_source": "[전월 이용실적 제외 대상] 후불교통요금"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "UNAPPROVED",
+   "_source": "[전월 이용실적 제외 대상] 무승인 금액(자판기, 터널통행료, 유료도로, 기차/고속버스 취소 반환수수료 등)"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "GOV_SUBSIDY",
+   "_source": "[전월 이용실적 제외 대상] 정부지원금 이용금액(보육료, 유치원보조비, 바우처 이용금액 등)"
+  },
+  {
+   "exclusion_type": "CATEGORY",
+   "exclusion_value": "TUITION",
+   "_source": "[전월 이용실적 제외 대상] 대학(대학원)등록금"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "GIFT_CARD",
+   "_source": "[전월 이용실적 제외 대상] 상품권 및 선불카드(선불전자지급수단 포함) 구입(충전)금액"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "FEE_INTEREST",
+   "_source": "[전월 이용실적 제외 대상] 연체료 / 각종 수수료 및 이자 — 표준값 FEE_INTEREST 하나가 셋을 모두 덮는다"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "TAX",
+   "_source": "[전월 이용실적 제외 대상] 지방세(지방세, 상하수도, 세외수입) — 표준값 TAX가 국세·지방세를 뜻한다. 괄호 안 상하수도·세외수입은 약관이 지방세로 묶어 열거한 것이라 같은 값으로 적었다"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "CANCELED",
+   "_source": "[전월 이용실적 제외 대상] 취소금액"
+  }
+ ],
+ "benefits": [
+  {
+   "benefit_name": "커피 10% 환급할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 10,
+   "step_count": null,
+   "apply_timing": "CASHBACK",
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": null,
+   "targets": [
+    "스타벅스",
+    "커피빈"
+   ],
+   "require_performance": "N",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": 3000,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": "NORI2_KBPAY_COFFEE_3000",
+   "count_group_code": null,
+   "use_shared_limit": "Y",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "스타벅스는 사이렌오더 결제도 포함한다. 월 3만원 이용분까지 10% 할인이며 그 상한이 월 할인한도 3천원과 같은 금액이다(3만원 × 10% = 3천원). 두 브랜드가 이 한도를 함께 쓴다. 전월 이용실적 없이도 제공되는 유일한 혜택이다. 환급할인 방식으로 이용전표 매입처리 완료 후 카드 출금계좌로 환급된다.",
+   "tier_limits": [],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "- 커피 : 스타벅스(사이렌오더 포함), 커피빈 10% 할인 — 월 3만원 이용분까지 (월 할인한도 3천원)",
+    "require_performance": "※ 단, 일상혜택 [커피]할인은 전월실적 없이도 제공됩니다.",
+    "limit_group_code": "한 행(커피)에 월 할인한도 3천원이 한 번만 제시되어 두 브랜드가 나눠 쓴다"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "모바일(앱스토어) 10% 환급할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 10,
+   "step_count": null,
+   "apply_timing": "CASHBACK",
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": null,
+   "targets": [
+    "구글플레이스토어",
+    "애플앱스토어"
+   ],
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": 5000,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": "NORI2_KBPAY_APP_5000",
+   "count_group_code": null,
+   "use_shared_limit": "Y",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "가맹점명이 '구글플레이스토어' 또는 '앱스토어'로 등록된 KB국민카드 가맹점에 한한다. 월 5만원 이용분까지 10%이며 그 상한이 월 할인한도 5천원과 같다. 두 브랜드가 이 한도를 함께 쓴다.",
+   "tier_limits": [],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "- 모바일 : 구글플레이스토어, 앱스토어 10% 할인 — 월 5만원 이용분까지 (월 할인한도 5천원)",
+    "require_performance": "※ 전월 이용실적 조건: 일상혜택은 전월실적 20만원 이상 시 … 제공됩니다.",
+    "limit_group_code": "한 행(모바일)에 월 할인한도 5천원이 한 번만 제시되어 두 브랜드가 나눠 쓴다"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "문화(인터파크티켓) 10% 환급할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 10,
+   "step_count": null,
+   "apply_timing": "CASHBACK",
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": "인터파크티켓",
+   "targets": null,
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": 7000,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": null,
+   "count_group_code": null,
+   "use_shared_limit": "Y",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "공연 티켓 예매 시에만 제공된다. 월 7만원 이용분까지 10%이며 그 상한이 월 할인한도 7천원과 같다. 마스터 가맹점 목록의 '인터파크'는 온라인쇼핑으로 등록돼 있어 티켓 예매로 한정된 이 대상과 범위가 달라 약관 표기를 그대로 썼다.",
+   "tier_limits": [],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "- 문화 : 인터파크티켓 10% 할인 — 월 7만원 이용분까지 (월 할인한도 7천원)",
+    "require_performance": "※ 전월 이용실적 조건: 일상혜택은 전월실적 20만원 이상 시 … 제공됩니다."
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "뷰티(올리브영) 5% 환급할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 5,
+   "step_count": null,
+   "apply_timing": "CASHBACK",
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": "올리브영",
+   "targets": null,
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": 2000,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": "NORI2_KBPAY_BEAUTY_2000",
+   "count_group_code": null,
+   "use_shared_limit": "Y",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "약관은 올리브영(가맹점)과 미용실(업종)을 한 줄에 적었으나 대상 유형이 달라 혜택을 둘로 나누고 월 할인한도 2천원을 묶음 코드로 함께 쓰게 했다. 월 4만원 이용분까지 5%이며 그 상한이 2천원과 같다.",
+   "tier_limits": [],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "- 뷰티 : 올리브영, 미용실 업종 5% 할인 — 월 4만원 이용분까지 (월 할인한도 2천원)",
+    "limit_group_code": "한 행(뷰티)에 월 할인한도 2천원이 한 번만 제시되어 올리브영과 미용실 업종이 나눠 쓴다",
+    "require_performance": "※ 전월 이용실적 조건: 일상혜택은 전월실적 20만원 이상 시 … 제공됩니다."
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "뷰티(미용실 업종) 5% 환급할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 5,
+   "step_count": null,
+   "apply_timing": "CASHBACK",
+   "target_type": "CATEGORY",
+   "target_category_code": "PERSONAL_CARE",
+   "target_merchant_name": null,
+   "targets": null,
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": 2000,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": "NORI2_KBPAY_BEAUTY_2000",
+   "count_group_code": null,
+   "use_shared_limit": "Y",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "약관은 '미용실 업종'만 적었는데 표준 카테고리 PERSONAL_CARE는 피부관리·사진관·마사지까지 포함해 범위가 넓다. 올리브영 혜택과 월 할인한도 2천원을 함께 쓴다.",
+   "tier_limits": [],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "- 뷰티 : 올리브영, 미용실 업종 5% 할인 — 월 4만원 이용분까지 (월 할인한도 2천원)"
+   },
+   "_needs_review": [
+    "target_category_code"
+   ]
+  },
+  {
+   "benefit_name": "편의점 5% 환급할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 5,
+   "step_count": null,
+   "apply_timing": "CASHBACK",
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": null,
+   "targets": [
+    "GS25",
+    "CU"
+   ],
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": 2000,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": "NORI2_KBPAY_CVS_2000",
+   "count_group_code": null,
+   "use_shared_limit": "Y",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "월 4만원 이용분까지 5%이며 그 상한이 월 할인한도 2천원과 같다. 두 브랜드가 이 한도를 함께 쓴다.",
+   "tier_limits": [],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "- 편의점 : GS25, CU 5% 할인 — 월 4만원 이용분까지 (월 할인한도 2천원)",
+    "limit_group_code": "한 행(편의점)에 월 할인한도 2천원이 한 번만 제시되어 두 브랜드가 나눠 쓴다"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "구독(OTT) 1,000원 환급할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "FIXED",
+   "benefit_value": 1000,
+   "step_count": null,
+   "apply_timing": "CASHBACK",
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": null,
+   "targets": [
+    "넷플릭스",
+    "유튜브 프리미엄"
+   ],
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": 10000,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": 2000,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": 2,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": "NORI2_KBPAY_OTT_2000",
+   "count_group_code": null,
+   "use_shared_limit": "Y",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "건당 1만원 이상 결제 시 1천원 정액 할인. 두 브랜드가 월 2회·월 할인한도 2천원을 함께 쓴다.",
+   "tier_limits": [],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "- 구독 : 넷플릭스, 유튜브프리미엄 1,000원 할인 — 건당 1만원 이상 결제 시 (월 2회, 할인한도 2천원)",
+    "limit_group_code": "한 행(구독)에 월 2회·2천원이 한 번만 제시되어 두 브랜드가 금액과 횟수를 함께 쓴다"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "배달 1,000원 환급할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "FIXED",
+   "benefit_value": 1000,
+   "step_count": null,
+   "apply_timing": "CASHBACK",
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": null,
+   "targets": [
+    "배달의민족",
+    "요기요"
+   ],
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": 10000,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": 1000,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": 1,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": "NORI2_KBPAY_DELIVERY_1000",
+   "count_group_code": null,
+   "use_shared_limit": "Y",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "건당 1만원 이상 결제 시 1천원 정액 할인. 두 브랜드가 월 1회·월 할인한도 1천원을 함께 쓴다.",
+   "tier_limits": [],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "- 배달 : 배달의민족, 요기요 1,000원 할인 — 건당 1만원 이상 결제 시 (월 1회, 할인한도 1천원)",
+    "limit_group_code": "한 행(배달)에 월 1회·1천원이 한 번만 제시되어 두 브랜드가 금액과 횟수를 함께 쓴다"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "이동통신 2,500원 환급할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "FIXED",
+   "benefit_value": 2500,
+   "step_count": null,
+   "apply_timing": "CASHBACK",
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": null,
+   "targets": [
+    "SKT",
+    "KT",
+    "LG U+",
+    "Liiv M"
+   ],
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": "AUTO_TRANSFER",
+   "min_txn_amount": 50000,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": 2500,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": 1,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": "NORI2_KBPAY_TELECOM_2500",
+   "count_group_code": null,
+   "use_shared_limit": "Y",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "이동통신요금 자동이체 납부금액 기준으로 제공된다. 건당 5만원 이상 결제 시 2,500원 정액 할인이며 네 브랜드가 월 1회·월 할인한도 2,500원을 함께 쓴다.",
+   "tier_limits": [],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "- 이동통신 : SKT, KT, LG U+, Liiv M 2,500원 할인 — 건당 5만원 이상 결제 시 (월 1회, 할인한도 2천5백원)",
+    "limit_group_code": "한 행(이동통신)에 월 1회·2천5백원이 한 번만 제시되어 네 브랜드가 금액과 횟수를 함께 쓴다"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "영화(CGV) 4,000원 환급할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "FIXED",
+   "benefit_value": 4000,
+   "step_count": null,
+   "apply_timing": "CASHBACK",
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": "CGV",
+   "targets": null,
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": 10000,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": 8000,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": 2,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": null,
+   "count_group_code": null,
+   "use_shared_limit": "Y",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "현장결제, 공식 홈페이지 및 모바일(앱) 결제 시 제공된다. 건당 1만원 이상 결제 시 4천원 정액 할인, 월 2회·월 할인한도 8천원. 매점 이용분은 할인 대상이 아니다.",
+   "tier_limits": [],
+   "exclusions": [
+    {
+     "exclusion_type": "TRANSACTION_ATTR",
+     "exclusion_value": "GIFT_CARD",
+     "_source": "※ 일상혜택 [영화] 할인은 … (상품권 구매 및 매점 이용분은 할인 불가)"
+    }
+   ],
+   "_source": {
+    "benefit_value": "- 영화 : CGV 4,000원 할인 — 건당 1만원 이상 결제 시 (월 2회, 할인한도 8천원)"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "놀이공원 15,000원 환급할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "FIXED",
+   "benefit_value": 15000,
+   "step_count": null,
+   "apply_timing": "CASHBACK",
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": null,
+   "targets": [
+    "에버랜드",
+    "롯데월드 어드벤처"
+   ],
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": 30000,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": 15000,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": 1,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": "NORI2_KBPAY_THEMEPARK_15000",
+   "count_group_code": null,
+   "use_shared_limit": "Y",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "티켓 요금 결제 시에만 제공된다. 건당 3만원 이상 결제 시 15,000원 정액 할인이며 두 브랜드가 월 1회·월 할인한도 15,000원을 함께 쓴다. 매점 이용분은 할인 대상이 아니다.",
+   "tier_limits": [],
+   "exclusions": [
+    {
+     "exclusion_type": "TRANSACTION_ATTR",
+     "exclusion_value": "GIFT_CARD",
+     "_source": "※ 일상혜택 [놀이공원] 할인은 티켓 요금 결제 시 제공됩니다. (상품권 구매 및 매점 이용분은 할인 불가)"
+    }
+   ],
+   "_source": {
+    "benefit_value": "- 놀이공원 : 에버랜드, 롯데월드 15,000원 할인 — 건당 3만원 이상 결제 시 (월 1회, 할인한도 1만5천원)",
+    "limit_group_code": "한 행(놀이공원)에 월 1회·1만5천원이 한 번만 제시되어 두 브랜드가 금액과 횟수를 함께 쓴다"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "오프라인 KB Pay 결제 2% 환급할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 2,
+   "step_count": null,
+   "apply_timing": "CASHBACK",
+   "target_type": "ALL",
+   "target_category_code": null,
+   "target_merchant_name": null,
+   "targets": null,
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": "KB_PAY",
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": 3000,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": null,
+   "count_group_code": null,
+   "use_shared_limit": "Y",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "오프라인 매장 KB Pay 결제 건에 한한다. 월 15만원 이용분까지 2%이며 그 상한이 월 할인한도 3천원과 같다. 약관은 이 혜택이 일상혜택과 중복 적용된다고 밝히지만 한 결제에 혜택 하나만 적용되는 구조라 중복은 표현하지 못했다. 실적 문턱도 일상혜택(20만원)과 달리 30만원이나 실적 구간표에 30만원 구간이 없어 구분하지 못했다.",
+   "tier_limits": [],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "[KB Pay 혜택] - 오프라인 KB Pay 결제 시 2% 추가 할인 — 월 15만원 이용분까지 (월 할인한도 3천원)",
+    "require_performance": "※ 전월 이용실적 조건: … KB Pay 혜택과 Global 혜택은 전월실적 30만원 이상 시 제공됩니다."
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "온라인 KB Pay 결제 2% 환급할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 2,
+   "step_count": null,
+   "apply_timing": "CASHBACK",
+   "target_type": "ALL",
+   "target_category_code": null,
+   "target_merchant_name": null,
+   "targets": null,
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": "KB_PAY",
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": 2000,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": null,
+   "count_group_code": null,
+   "use_shared_limit": "Y",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "온라인 KB Pay 결제 건에 한한다. 월 10만원 이용분까지 2%이며 그 상한이 월 할인한도 2천원과 같다. 오프라인 건과 요율·결제수단이 같고 온·오프라인 구분만 다른데 그 축이 없어 두 혜택이 구분되지 않는다.",
+   "tier_limits": [],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "[KB Pay 혜택] - 온라인 KB Pay 결제 시 2% 추가 할인 — 월 10만원 이용분까지 (월 할인한도 2천원)"
+   },
+   "_needs_review": []
+  }
+ ],
+ "unmapped": [
+  {
+   "text": "[Global 혜택] KB국민 노리2 체크카드(Global) - 해외이용 : 해외가맹점 결제 시 2% 추가 할인 — 월 25만원 이용분까지 (월 할인한도 5천원)",
+   "why": "이 문서가 담은 두 상품 중 구조화 대상은 KB Pay형이다. Global형에만 제공되는 혜택이라 KB Pay형 카드의 행으로 넣으면 없는 혜택이 계산된다. 해외 결제 혜택 자체도 범위 밖이다"
+  },
+  {
+   "text": "[Global 혜택] - 전 세계 공항라운지 연 1회 무료 제공 (본인만) — 더라운지멤버스(The Lounge Members) / ※ Global 혜택 [공항라운지] 서비스는 본인 회원 한정, 연 1회 제공되며, 더라운지멤버스 앱 설치 및 회원가입, 카드 등록 후 이용 가능합니다. (전월 이용실적 충족 시 익월 서비스 제공)",
+   "why": "Global형 전용 혜택이라 KB Pay형에 넣지 않는다. 더해서 결제 트랜잭션이 발생하지 않는 증정형이라 target_type을 정할 수 없다"
+  },
+  {
+   "text": "본 상품은 ① KB국민 노리2 체크카드(KB Pay)와 ② KB국민 노리2 체크카드(Global) 중 선택 발급 가능합니다. * 두 상품 모두 일상 혜택은 기본 제공하며 선택에 따라 KB Pay, Global 혜택을 각각 제공합니다.",
+   "why": "상품설명서 한 장이 카드 두 장을 담고 있다는 안내다. 카드 단위로 행을 만드는 구조라 KB Pay형만 옮기고 발급 선택 관계 자체는 담을 자리가 없다"
+  },
+  {
+   "text": "[KB Pay 혜택] - 오프라인 KB Pay 결제 시 2% 추가 할인 / - 온라인 KB Pay 결제 시 2% 추가 할인",
+   "why": "온·오프라인은 결제 채널 조건이라 범위 밖이다. 그 결과 두 혜택이 대상(ALL)·결제수단(KB_PAY)·요율(2%)까지 같아 엔진이 구분하지 못하고, 각자의 월 한도 3천원·2천원이 사실상 5천원처럼 쓰인다"
+  },
+  {
+   "text": "※ 일상혜택 [문화] 할인은 공연 티켓 예매 시에만 제공됩니다.",
+   "why": "가맹점 안의 상품 종류(공연 티켓) 조건이라 담을 축이 없다"
+  },
+  {
+   "text": "※ 일상혜택 [모바일] 할인은 가맹점명이 \"구글플레이스토어\" 또는 \"앱스토어\"로 등록 된 KB국민카드 가맹점에 한하여 제공됩니다.",
+   "why": "카드사 내부 가맹점 등록명에 달린 조건이라 우리 데이터로 판정할 수 없다"
+  },
+  {
+   "text": "※ 일상혜택 [영화] 할인은 현장결제, 공식 홈페이지 및 모바일(앱) 결제 시 제공됩니다. (상품권 구매 및 매점 이용분은 할인 불가)",
+   "why": "결제 채널 조건은 범위 밖이고 매점은 가맹점 안의 구분이라 표현할 수 없다. 상품권 구매만 혜택 exclusions의 GIFT_CARD로 옮겼다"
+  },
+  {
+   "text": "※ 일상혜택 [놀이공원] 할인은 티켓 요금 결제 시 제공됩니다. (상품권 구매 및 매점 이용분은 할인 불가)",
+   "why": "티켓 요금·매점은 가맹점 안의 상품 종류 조건이라 담을 축이 없다. 상품권 구매만 GIFT_CARD로 옮겼다"
+  },
+  {
+   "text": "- 각 할인서비스는 해당 가맹점이 KB국민카드의 가맹점 업종코드 상 할인대상 가맹점 업종으로 등록된 경우에 한하여 제공됩니다. PG(결제대행) 업체 또는 할인서비스로 제공하지 않는 타 간편결제, 대행사이트를 통한 결제 및 호텔, 백화점, 대형마트, 철도/역사 등에 입점한 가맹점이나 상품권 구매 시 할인 대상에서 제외될 수 있습니다.",
+   "why": "카드 전체에 걸리는 입점 위치·대행사이트·PG 제외인데 card_exclusions의 유형은 CATEGORY/MERCHANT/PAYMENT_TYPE/TRANSACTION_ATTR뿐이라 위치 조건을 카드 단위로 적을 자리가 없다. 상품권 구매만 card_exclusions의 GIFT_CARD로 옮겼다"
+  },
+  {
+   "text": "- 할인서비스는 월간 할인한도 내에서 적용되며, 잔여한도는 이월되지 않습니다. - 할인 받은 매출을 취소한 경우 취소 전표가 실시간 접수되지 않아 할인한도가 즉시 복원되지 않을 수 있습니다. - 잔여한도는 다음달로 이월되지 않으며 전표가 매입되는 순서대로 월간 통합할인한도 내에서 차감됩니다.",
+   "why": "한도 집계 주기·차감 순서·취소 시 복원 시점은 엔진 동작 규칙이라 혜택 행의 컬럼이 아니다"
+  },
+  {
+   "text": "* KB국민 노리2 체크카드(KB Pay), KB국민 노리2 체크카드(Global)은 동일계열카드가 아니므로 할인한도가 합산되지 않습니다. / * KB국민 노리2 체크카드(KB Pay), KB국민 노리2 체크카드(Global)는 동일계열카드가 아니므로, 전월 이용실적이 합산되지 않습니다.",
+   "why": "합산하지 않는다는 진술이다. 실적·한도를 보유카드 단위로만 집계하는 지금 구조가 이미 이 상태라 따로 표현할 것이 없다"
+  },
+  {
+   "text": "- 할인서비스는 제휴업체 정책에 따라 타 할인카드와 중복 할인이 제한될 수 있습니다.",
+   "why": "제휴업체 정책에 달린 조건부 진술이라 판정할 데이터가 없다"
+  },
+  {
+   "text": "[체크카드 해외이용 시 유의사항] 해외 이용 시(해외사이트 거래 포함) 미화(USD)기준 거래 미화금액에 접수일의 (KB국민은행) 최초 고시 전신환 매도율을 적용한 후, 국제브랜드사가 부과하는 국제브랜드수수료(Visa 1.1%, Master 1.0%)와 KB국민카드가 부과하는 해외서비스수수료(0.25%)를 포함하여 원화로 청구됩니다.",
+   "why": "해외 이용 수수료 규정이라 혜택 규칙이 아니고 해외 결제는 범위 밖이다"
+  },
+  {
+   "text": "[플래티늄(Platinum) 서비스 확인사항] - 본 상품을 국내외겸용(Master, Visa)으로 발급 시 해당 국제브랜드사의 플래티늄(Platinum) 서비스가 제공됩니다.",
+   "why": "국제브랜드사가 제공하는 서비스라 내용이 이 문서에 없고 결제 이벤트에 붙지 않아 target_type을 정할 수 없다"
+  },
+  {
+   "text": "[체크카드 이용제한] - 매월 세번째 일요일 00:00~06:00 중에는 은행 전산시스템 점검 관련으로 이용이 제한될 수 있으며, 점검시간이 변경될 경우 별도로 고지해 드립니다.",
+   "why": "카드 이용 가능 시간 규정이라 혜택 규칙이 아니다"
+  }
+ ],
+ "_schema_gap": [
+  {
+   "text": "※ 전월 이용실적 조건: 일상혜택은 전월실적 20만원 이상 시, KB Pay 혜택과 Global 혜택은 전월실적 30만원 이상 시 제공됩니다.",
+   "missing": "혜택마다 다른 실적 문턱(혜택 행의 최소 실적금액)",
+   "why": "require_performance는 Y/N뿐이고 충족 기준이 '판정된 구간의 최소실적금액 > 0'이라 혜택별로 다른 문턱을 구분할 수 없다. 통합한도 구간표에 30만원 구간이 없어 구간을 추가하면 약관에 없는 통합한도 금액을 만들게 된다. 지금 상태로는 전월실적 20만원 이상 30만원 미만 회원에게 KB Pay 혜택이 잘못 적용된다"
+  },
+  {
+   "text": "[표] 전월 이용실적 구간 | 20만원 미만 | 20만원 이상 | 40만원 이상 | 60만원 이상 | 80만원 이상 / 월간 통합할인한도 | 일상혜택 커피 할인 | 20,000원 | 30,000원 | 40,000원 | 50,000원",
+   "missing": "통합한도 칸이 금액이 아니라 '어떤 혜택만 제공된다'는 서술일 때 담을 표현",
+   "why": "shared_monthly_limit은 금액 하나뿐이다. 0을 넣으면 실적 없이 제공되는 커피 할인까지 사라지고 금액을 지어내면 약관에 없는 값이 된다. null로 두어 커피 혜택 자신의 월 한도 3천원이 상한이 되게 했으나, 이 구간에서 제공되는 혜택이 커피뿐이라는 사실 자체는 구간표가 아니라 각 혜택의 require_performance로만 간접 표현된다"
+  },
+  {
+   "text": "※ KB Pay 혜택은 일상혜택과 중복 적용 가능합니다.",
+   "missing": "benefit.allow_stacking(혜택 중복 적용 허용)과 결제 건당 복수 혜택 기록",
+   "why": "한 결제에 카드당 혜택 하나만 적용하는 전제라 커피 10%와 KB Pay 2%가 함께 붙는 실제 동작을 표현할 수 없다. KB Pay 혜택은 대상이 ALL이고 일상혜택은 가맹점·업종 축이라 추가분을 합산값으로 적는 우회도 조합 수만큼 행이 필요해 쓰지 못했다. 지금 구조로는 둘 중 큰 하나만 적용되어 실제보다 적게 계산된다"
+  },
+  {
+   "text": "[전월 이용실적 제외 대상] 후불교통요금, 무승인 금액(…), 정부지원금 이용금액(…), 포인트리 충전금액, 대학(대학원)등록금, …",
+   "missing": "TRANSACTION_ATTR 표준값에 포인트 충전금액에 해당하는 값",
+   "why": "GIFT_CARD는 상품권·선불카드 구입/충전이라 포인트리 충전과 다르고, POINT_USED는 포인트로 결제한 금액이라 방향이 반대다. 비슷한 값으로 넣으면 다른 거래까지 실적에서 빠지므로 비워 뒀다"
+  },
+  {
+   "text": "- 뷰티 : 올리브영, 미용실 업종 5% 할인 — 월 4만원 이용분까지 (월 할인한도 2천원)",
+   "missing": "표준 카테고리에 미용실 업종 코드",
+   "why": "가장 가까운 PERSONAL_CARE가 미용실·피부관리·사진관·마사지를 함께 묶은 코드라 약관이 지정하지 않은 업종까지 할인 대상이 된다. 코드를 비우면 이 혜택이 시드에서 행으로 만들어지지 않아 PERSONAL_CARE를 넣고 범위 차이를 남긴다"
+  },
+  {
+   "text": "- 체크카드 환급할인은 이용전표가 매입처리 완료 된 후 할인금액을 카드 출금계좌로 환급하는 방식입니다.",
+   "missing": "환급 시점(매입 완료 후)을 담을 축",
+   "why": "지급 방식 자체는 apply_timing=CASHBACK으로 담긴다. 다만 승인 시점에는 전액이 출금되고 나중에 되돌아오는 구조라 회원이 보는 시점이 신용카드의 청구할인과 다른데, apply_timing은 값 세 개뿐이라 그 차이를 적을 자리가 없다"
+  },
+  {
+   "text": "[체크카드 직불이용한도] - 카드발급 시 부여한도(기본한도) / 만7세 ~ 만13세 1회 3만원·1일 3만원·월간 30만원 / 만14세 이상 1회 600만원·1일 600만원·월간 2천만원",
+   "missing": "카드의 직불(체크) 이용한도 — 1회·1일·월간 승인 한도 컬럼",
+   "why": "card에 이용한도 컬럼이 없다. benefit의 daily_limit·monthly_limit은 혜택 한도지 결제 승인 한도가 아니라 여기에 넣으면 의미가 뒤바뀐다"
+  },
+  {
+   "text": "[발급대상 / 브랜드 / 연회비] - 발급대상: 만 7세 부터 발급 가능 * 만7세~만13세 미성년자 체크카드 발급 시 법정대리인 동의 필수",
+   "missing": "카드 발급 연령 조건",
+   "why": "card에 발급 자격 컬럼이 없다. 미보유 카드 추천에서 나이로 거를 수 없어 자격이 안 되는 회원에게도 이 카드가 후보로 남는다"
+  },
+  {
+   "text": "[후불교통기능 탑재] - 버스, 지하철 등 교통이용이 가능하고, 매월 체크카드 결제계좌에서 아래의 지정된 결제일에 자동 출금됩니다. 이용일 1일 ~ 말일 / 출금일 말일 + 3영업일",
+   "missing": "카드의 후불교통 기능 탑재 여부",
+   "why": "card에 기능 플래그가 없다. 혜택이 아니라 카드 기능이라 benefit으로도 담기지 않는데, 후불교통 이용분은 실적에서 빠지므로(POSTPAID_TRANSIT) 기능 유무가 계산 전제에 영향을 준다"
+  }
+ ]
+}

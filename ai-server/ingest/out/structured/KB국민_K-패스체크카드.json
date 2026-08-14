@@ -1,0 +1,457 @@
+{
+ "card": {
+  "card_name": "KB국민 K-패스체크카드",
+  "card_type": "CHECK",
+  "annual_fee": 0,
+  "annual_fees": [
+   {
+    "brand": "ANY",
+    "issue_type": "ANY",
+    "variant": "ANY",
+    "total_fee": 0,
+    "base_fee": null,
+    "partner_fee": null,
+    "_source": "[발급대상 / 브랜드 / 연회비] - 브랜드: 국내전용(Local), 국내외겸용(Visa) / - 연회비 : 없음 — 브랜드를 나누지 않고 연회비가 하나로 적혀 있어 한 행으로 적는다"
+   }
+  ],
+  "_source": {
+   "annual_fee": "- 연회비 : 없음"
+  },
+  "_needs_review": []
+ },
+ "card_exclusions": [
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "GIFT_CARD",
+   "_source": "[적립서비스 적용 안내] - 상품권 및 선불카드(선불전자지급수단 포함) 구입·충전금액, 연체료, 취소금액의 경우 적립에서 제외됩니다."
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "FEE_INTEREST",
+   "_source": "[적립서비스 적용 안내] 위 문장의 연체료"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "CANCELED",
+   "_source": "[적립서비스 적용 안내] 위 문장의 취소금액"
+  }
+ ],
+ "performance_tiers": [
+  {
+   "period_type": "MONTH",
+   "min_performance_amount": 0,
+   "shared_monthly_limit": 0,
+   "_source": "세 서비스의 '전월 실적' 칸이 모두 20만원이라 20만원 미만 구간에는 제공되는 적립이 없다"
+  },
+  {
+   "period_type": "MONTH",
+   "min_performance_amount": 200000,
+   "shared_monthly_limit": 10000,
+   "_source": "[표] 합계 | | | 1만점 — 대중교통 2천점 + 생활서비스 4천점 + KB Pay 추가 4천점의 카드 합계 한도. 포인트리 1점은 1원과 가치가 동일하다"
+  }
+ ],
+ "performance_exclusions": [
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "POSTPAID_TRANSIT",
+   "_source": "[전월 이용실적 제외 대상] - 후불교통요금, 무승인 금액(자판기, 터널통행료, 유료도로, 기차/고속버스 취소 반환수수료 등), 정부지원금 이용금액(보육료, 유치원 보조비, 바우처 이용금액 등), 포인트리 충전금액, 대학(대학원)등록금, 상품권 및 선불카드(선불전자지급수단 포함)구입·충전금액, 연체료, 지방세(지방세, 상하수도, 세외수입), 취소금액, 각종 수수료 및 이자"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "UNAPPROVED",
+   "_source": "[전월 이용실적 제외 대상] 위 목록의 항목"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "GOV_SUBSIDY",
+   "_source": "[전월 이용실적 제외 대상] 위 목록의 항목"
+  },
+  {
+   "exclusion_type": "CATEGORY",
+   "exclusion_value": "TUITION",
+   "_source": "[전월 이용실적 제외 대상] 위 목록의 대학(대학원)등록금"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "GIFT_CARD",
+   "_source": "[전월 이용실적 제외 대상] 위 목록의 항목"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "FEE_INTEREST",
+   "_source": "[전월 이용실적 제외 대상] 위 목록의 연체료·각종 수수료 및 이자"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "TAX",
+   "_source": "[전월 이용실적 제외 대상] 위 목록의 지방세(지방세, 상하수도, 세외수입)"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "CANCELED",
+   "_source": "[전월 이용실적 제외 대상] 위 목록의 항목"
+  }
+ ],
+ "benefits": [
+  {
+   "benefit_name": "대중교통 10% 포인트리 적립",
+   "benefit_kind": "POINT",
+   "calc_method": "RATE",
+   "benefit_value": 10,
+   "step_count": null,
+   "apply_timing": null,
+   "target_type": "CATEGORY",
+   "target_category_code": "PUBLIC_TRANSPORT",
+   "target_merchant_name": null,
+   "targets": null,
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": 2000,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": null,
+   "count_group_code": null,
+   "use_shared_limit": "Y",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "버스, 지하철. 택시·시외버스·고속버스·공항버스는 제외. 월 적립한도 2천점은 이 영역이 단독으로 쓴다. 포인트리 1점은 1원과 가치가 동일하다.",
+   "tier_limits": [],
+   "exclusions": [
+    {
+     "exclusion_type": "CATEGORY",
+     "exclusion_value": "TAXI",
+     "_source": "- 대중교통 : 택시, 시외버스, 고속버스, 공항버스 제외"
+    },
+    {
+     "exclusion_type": "CATEGORY",
+     "exclusion_value": "EXPRESS_BUS",
+     "_source": "- 대중교통 : 택시, 시외버스, 고속버스, 공항버스 제외"
+    }
+   ],
+   "_source": {
+    "benefit_value": "[표] 대중교통 적립 | 버스, 지하철 | 10% | 2천점 | 20만원"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "생활서비스 이동통신요금 자동납부 1% 포인트리 적립",
+   "benefit_kind": "POINT",
+   "calc_method": "RATE",
+   "benefit_value": 1,
+   "step_count": null,
+   "apply_timing": null,
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": null,
+   "targets": [
+    "SKT",
+    "KT",
+    "LG U+",
+    "Liiv M"
+   ],
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": "AUTO_TRANSFER",
+   "min_txn_amount": 10000,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": 4000,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": "KPASS_CHECK_LIFE_4000",
+   "count_group_code": null,
+   "use_shared_limit": "Y",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "이동통신요금 자동납부(SK, KT, LG, LiivM). 생활서비스 적립 여섯 세부 영역(이동통신요금 자동납부·커피·약국·편의점·영화·패스트푸드)이 월 적립한도 4천점을 함께 쓴다.",
+   "tier_limits": [],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "[표] 생활서비스 적립 | 이동통신요금 자동납부(SK, KT, LG, LiivM) / 커피 업종 / 약국 업종 / 편의점 업종 / 영화(CGV, 롯데시네마) / 패스트푸드 업종 | (건당 1만원 이상 이용 시) 1% | 4천점 | 20만원",
+    "limit_group_code": "여섯 세부 영역이 '월 적립한도' 한 칸(4천점)을 함께 쓰는 표라 같은 코드로 묶는다"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "생활서비스 업종 1% 포인트리 적립",
+   "benefit_kind": "POINT",
+   "calc_method": "RATE",
+   "benefit_value": 1,
+   "step_count": null,
+   "apply_timing": null,
+   "target_type": "CATEGORY",
+   "target_category_code": null,
+   "target_merchant_name": null,
+   "targets": [
+    "CAFE",
+    "PHARMACY",
+    "CONVENIENCE_STORE",
+    "FAST_FOOD"
+   ],
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": 10000,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": 4000,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": "KPASS_CHECK_LIFE_4000",
+   "count_group_code": null,
+   "use_shared_limit": "Y",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "커피 업종 / 약국 업종 / 편의점 업종 / 패스트푸드 업종. 생활서비스 적립 여섯 세부 영역(이동통신요금 자동납부·커피·약국·편의점·영화·패스트푸드)이 월 적립한도 4천점을 함께 쓴다.",
+   "tier_limits": [],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "커피 업종 / 약국 업종 / 편의점 업종 / 패스트푸드 업종 | (건당 1만원 이상 이용 시) 1% | 4천점 | 20만원",
+    "limit_group_code": "생활서비스 적립 행의 월 적립한도 4천점을 이동통신·영화 영역과 함께 쓴다"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "생활서비스 영화 1% 포인트리 적립",
+   "benefit_kind": "POINT",
+   "calc_method": "RATE",
+   "benefit_value": 1,
+   "step_count": null,
+   "apply_timing": null,
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": null,
+   "targets": [
+    "CGV",
+    "롯데시네마"
+   ],
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": 10000,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": 4000,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": "KPASS_CHECK_LIFE_4000",
+   "count_group_code": null,
+   "use_shared_limit": "Y",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "영화(CGV, 롯데시네마). 생활서비스 적립 여섯 세부 영역(이동통신요금 자동납부·커피·약국·편의점·영화·패스트푸드)이 월 적립한도 4천점을 함께 쓴다.",
+   "tier_limits": [],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "영화(CGV, 롯데시네마) | (건당 1만원 이상 이용 시) 1% | 4천점 | 20만원",
+    "limit_group_code": "생활서비스 적립 행의 월 적립한도 4천점을 이동통신·업종 영역과 함께 쓴다"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "생활서비스 업종 KB Pay 이용 시 2% 포인트리 적립",
+   "benefit_kind": "POINT",
+   "calc_method": "RATE",
+   "benefit_value": 2,
+   "step_count": null,
+   "apply_timing": null,
+   "target_type": "CATEGORY",
+   "target_category_code": null,
+   "target_merchant_name": null,
+   "targets": [
+    "CAFE",
+    "PHARMACY",
+    "CONVENIENCE_STORE",
+    "FAST_FOOD"
+   ],
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": "KB_PAY",
+   "min_txn_amount": 10000,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": 4000,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": "KPASS_CHECK_KBPAY_4000",
+   "count_group_code": null,
+   "use_shared_limit": "Y",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "커피 업종 / 약국 업종 / 편의점 업종 / 패스트푸드 업종. 생활서비스 적립 영역에서 KB Pay로 결제하면 기본 1%에 추가 1%가 얹히므로 합산 2%를 적는다(추가분 1%만 적으면 기본 1% 행에 밀려 실제보다 낮게 계산된다). 추가적립의 월 적립한도 4천점은 생활서비스 적립 4천점과 별개 한도다. 건당 1만원 이상 조건은 합산에 포함된 기본 적립의 조건을 따른다.",
+   "tier_limits": [],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "[표] KB Pay 추가적립 | '생활서비스 적립' 영역에서 KB Pay 이용 시 추가적립 | 1% | 4천점 | 20만원 — 기본 1%(생활서비스 적립)에 추가 1%를 더한 합산값",
+    "limit_group_code": "추가적립의 월 적립한도 4천점은 생활서비스 적립 4천점과 다른 칸이라 코드를 따로 준다"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "생활서비스 영화 KB Pay 이용 시 2% 포인트리 적립",
+   "benefit_kind": "POINT",
+   "calc_method": "RATE",
+   "benefit_value": 2,
+   "step_count": null,
+   "apply_timing": null,
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": null,
+   "targets": [
+    "CGV",
+    "롯데시네마"
+   ],
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": "KB_PAY",
+   "min_txn_amount": 10000,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": 4000,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": "KPASS_CHECK_KBPAY_4000",
+   "count_group_code": null,
+   "use_shared_limit": "Y",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "영화(CGV, 롯데시네마). 생활서비스 적립 영역에서 KB Pay로 결제하면 기본 1%에 추가 1%가 얹히므로 합산 2%를 적는다(추가분 1%만 적으면 기본 1% 행에 밀려 실제보다 낮게 계산된다). 추가적립의 월 적립한도 4천점은 생활서비스 적립 4천점과 별개 한도다. 건당 1만원 이상 조건은 합산에 포함된 기본 적립의 조건을 따른다.",
+   "tier_limits": [],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "'생활서비스 적립' 영역에서 KB Pay 이용 시 추가적립 | 1% — 기본 1%에 더한 합산값",
+    "limit_group_code": "KB Pay 추가적립 행의 월 적립한도 4천점을 업종 영역과 함께 쓴다"
+   },
+   "_needs_review": []
+  }
+ ],
+ "unmapped": [
+  {
+   "text": "* 버스/지하철 요금할인은 실제 카드 사용일이 아닌 이용내역서 상 기재된 이용일을 기준으로 서비스 제공",
+   "why": "적립을 어느 달에 귀속시킬지 정하는 기준일 규정이라 혜택 행의 조건이 아니라 정산 시점 규칙이다"
+  },
+  {
+   "text": "[전월 이용실적 기준] - 전월 1일 ~ 말일(승인시점 기준) 까지 KB국민 K-패스체크카드 승인(이용)금액 / - 해외 이용금액은 전월 1일 ~ 말일까지 매입완료 기준 / - 취소금액은 취소전표가 당사에 접수된 월의 실적에서 차감",
+   "why": "실적 집계 기준일과 취소분 차감 시점 규정이라 제외 대상이 아니라 집계 시점 규칙이다"
+  },
+  {
+   "text": "- 발급대상: 만 12세 부터 발급 가능",
+   "why": "발급 조건이라 혜택 스키마 대상이 아니다"
+  },
+  {
+   "text": "- 본인 회원 기준으로 월간 적립한도가 제공되며, 적립 한도는 매월 1일 ~ 말일까지 (승인시점 기준) 이용 금액으로 적용됩니다. / - 적립서비스는 월간 적립한도 내에서 적립이 적용되며, 잔여 적립한도는 이월되지 않습니다.",
+   "why": "한도 산정 기간과 이월 여부 규약이라 데이터 컬럼이 아니라 엔진 동작 규칙이다"
+  },
+  {
+   "text": "- 적립 받은 매출을 취소한 경우 취소 전표가 실시간 접수되지 않아 적립 한도가 즉시 복원되지 않을 수 있습니다.",
+   "why": "취소 시 한도 복원 시점 규정이라 혜택 규칙으로 담을 필드가 없다"
+  },
+  {
+   "text": "- 업종에 따른 적립 서비스는 대상 가맹점이 KB국민카드의 업종분류기준 상 해당 업종에 한하여 제공합니다.",
+   "why": "카드사 내부 업종분류 기준이라 표준 카테고리 코드로 옮길 수 없다"
+  },
+  {
+   "text": "- 별도 전용 가맹점번호로 승인되는 PG(결제대행)업체 또는 일부 간편결제(Pay) 이용 시 적립대상에서 제외될 수 있으며, 대행사이트를 통한 결제 및 호텔, 백화점, 대형마트, 철도/역사 등에 입점한 가맹점이나 상품권 구매 시 적립 대상에서 제외될 수 있습니다.",
+   "why": "'일부', '제외될 수 있습니다'라 대상이 특정되지 않아 제외 목록에 넣을 값을 정할 수 없다. 입점 매장 조건도 카드 전체에 걸리는데 card_exclusions에는 MERCHANT_LOCATION 유형이 없다"
+  },
+  {
+   "text": "- 적립서비스는 제휴업체 정책에 따라 타 적립카드와 중복적립이 제한될 수 있습니다.",
+   "why": "타사 적립카드와의 중복 여부라 이 카드의 혜택 규칙으로 담을 필드가 없다"
+  },
+  {
+   "text": "[포인트리 안내] - KB국민카드 포인트리 1점은 1원과 가치가 동일합니다. / - KB국민 K-패스체크카드의 포인트리 적립은 해당 전표의 매입일 + 1영업일 익일에 적립됩니다. / - 적립 시점 기준 60개월이 경과한 포인트리는 적립 순서에 따라 월 단위로 소멸됩니다.",
+   "why": "포인트 가치·지급 시점·소멸 기한 안내다. 적립 지급 시점을 담을 필드가 없고(apply_timing은 DISCOUNT 전용) 소멸 기한도 혜택 규칙이 아니다"
+  },
+  {
+   "text": "[체크카드 직불이용한도] - 카드발급 시 부여한도(기본한도) [표] 구분 | 1회 | 1일 | 월간 / 만12세 ~ 13세 | 3만원 | 3만원 | 30만원 / 만14세 이상 | 600만원 | 600만원 | 2,000만원",
+   "why": "카드로 결제할 수 있는 금액의 한도라 혜택 한도가 아니다. daily_limit·monthly_limit에 넣으면 적립한도로 잘못 해석된다"
+  },
+  {
+   "text": "[후불교통기능 탑재] - 버스, 지하철 등 교통이용이 가능하고, 매월 체크카드 결제 계좌에서 지정된 결제일에 자동 출금됩니다. / [미성년자 RF(후불교통) 체크카드 이용한도] - 월 5만원 이하이며, 교통카드 이용내역 및 금액 정산 체계로 일시적 이용한도 초과 사용 가능합니다.",
+   "why": "후불교통 기능과 그 이용한도·출금 방식이라 혜택이 아니다"
+  },
+  {
+   "text": "[체크카드 이용제한] - 매월 세번째 일요일 00:00~06:00 중에는 은행 전산시스템 점검 관련으로 이용이 제한될 수 있으며, 점검시간이 변경될 경우 별도로 고지해 드립니다. / [영업 마감시간 이후 결제계좌 출금] - 결제계좌 개설기관의 영업 마감시간(16시) 이후 입금 된 금액에 대해서는 당일 출금되지 못하여 연체 처리 될 수 있으니 유의하시기 바랍니다.",
+   "why": "이용 가능 시간과 출금 처리 안내라 혜택 스키마 대상이 아니다"
+  },
+  {
+   "text": "[체크카드 해외이용 유의사항] 해외 이용 시(해외사이트 거래 포함) 미화(USD)기준 거래 미화금액에 접수일의(KB국민은행) 최초 고시 전신환 매도율을 적용한 후, 국제브랜드사가 부과하는 국제브랜드 수수료(Visa 1.1%)와 KB국민카드가 부과하는 해외서비스 수수료(0.25%)를 포함하여 원화로 청구됩니다.",
+   "why": "해외 이용 수수료·환율 산정 안내라 범위 밖(해외 결제)이고 혜택도 아니다"
+  },
+  {
+   "text": "[부가서비스 변경 안내] - KB국민 K-패스체크카드(2023.04.26 출시)를 이용하는 경우 제공되는 적립 혜택 등의 부가서비스는 다음 각 호를 제외하고는 변경 할 수 없습니다. (단, 회원의 권익을 증진하거나 부담을 완화하는 경우는 제외)",
+   "why": "부가서비스 변경 고지 절차라 혜택 규칙이 아니다"
+  },
+  {
+   "text": "[연체이자율] - 회원별/이용상품별 정상이자율 +3%p, 최고 연 20% 이내 - 무이자할부 거래 연체 시 : 거래발생시점의 동일한 할부계약 기간의 유이자할부수수료율 적용",
+   "why": "연체이자율 안내라 혜택 규칙이 아니다"
+  }
+ ],
+ "_schema_gap": [
+  {
+   "text": "[표] KB Pay 추가적립 | '생활서비스 적립' 영역에서 KB Pay 이용 시 추가적립 | 1% | 4천점 | 20만원 / [표] 합계 | | | 1만점",
+   "missing": "한 혜택 행이 두 개의 월 적립한도에 동시에 속하는 표현(limit_group_code 복수)",
+   "why": "KB Pay로 생활서비스 영역을 결제하면 한 거래가 생활서비스 4천점과 KB Pay 추가 4천점 두 한도를 동시에 소진하는데 혜택 행은 limit_group_code를 하나만 가진다. 합산 2% 행에 KB Pay 한도만 걸어 두었으므로 KB Pay 생활서비스 이용액이 월 40만원을 넘으면 실제(최대 8천점)보다 적게 계산된다. 한도를 8천점으로 적는 대안은 생활서비스 한도가 다른 결제로 이미 찬 달에 실제보다 많게 계산되어 택하지 않았다"
+  },
+  {
+   "text": "이동통신요금 자동납부(SK, KT, LG, LiivM) / [표] KB Pay 추가적립 | '생활서비스 적립' 영역에서 KB Pay 이용 시 추가적립 | 1% | 4천점 | 20만원",
+   "missing": "결제수단 조건을 둘 이상 AND로 거는 표현",
+   "why": "require_payment_type이 단수라 '자동납부이면서 KB Pay'를 표현할 수 없다. KB_PAY만 적으면 자동납부가 아닌 이동통신 결제까지 추가적립을 받으므로 이동통신 영역에는 KB Pay 추가적립 행을 만들지 않았다. 그만큼 덜 계산된다"
+  },
+  {
+   "text": "- 실적 유예 제공 : 최초 카드 사용 등록 후 다음 달 말일까지 전월 실적 조건 미달 시에도 서비스 제공",
+   "missing": "user_card의 최초 사용등록일과 유예기간 판정, 유예 중 적용할 구간",
+   "why": "카드 사용등록 시점 정보가 없어 유예기간인지 판정할 수 없고, 유예 중 어느 구간을 적용할지 지정할 자리도 없다"
+  },
+  {
+   "text": "- 대중교통 : 택시, 시외버스, 고속버스, 공항버스 제외",
+   "missing": "공항버스에 해당하는 카테고리 코드",
+   "why": "택시는 TAXI, 시외·고속버스는 EXPRESS_BUS로 제외했지만 공항버스에 맞는 표준 코드가 없다. EXPRESS_BUS(고속시외버스)가 공항버스를 포함한다고 단정할 수 없어 비슷한 코드로 넣지 않았다"
+  },
+  {
+   "text": "[전월 이용실적 제외 대상] - 후불교통요금, 무승인 금액(자판기, 터널통행료, 유료도로, 기차/고속버스 취소 반환수수료 등), 정부지원금 이용금액(보육료, 유치원 보조비, 바우처 이용금액 등), 포인트리 충전금액, 대학(대학원)등록금, …",
+   "missing": "포인트 충전(구입) 금액에 해당하는 TRANSACTION_ATTR 표준값",
+   "why": "POINT_USED는 '포인트로 결제한 금액'이라 방향이 반대이고, 상품권·선불카드는 같은 목록에 따로 열거되어 GIFT_CARD로 뭉갤 수 없다. 맞는 표준값이 없어 포인트리 충전금액은 실적 제외 행을 만들지 않았다"
+  }
+ ]
+}

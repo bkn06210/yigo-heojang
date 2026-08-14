@@ -1,0 +1,704 @@
+{
+ "card": {
+  "card_name": "LOCA 365 카드",
+  "card_type": "CREDIT",
+  "annual_fee": 20000,
+  "annual_fees": [
+   {
+    "brand": "LOCAL",
+    "issue_type": "ANY",
+    "variant": "ANY",
+    "total_fee": 20000,
+    "base_fee": 7000,
+    "partner_fee": 13000,
+    "_source": "구 분 총 연회비 기본 연회비 제휴 연회비 / 국내 전용 20,000원 7,000원 13,000원"
+   },
+   {
+    "brand": "ANY",
+    "issue_type": "ANY",
+    "variant": "ANY",
+    "total_fee": 20000,
+    "base_fee": 7000,
+    "partner_fee": 13000,
+    "_source": "해외 겸용 20,000원 7,000원 13,000원 (MASTER, VISA, AMEX) — MASTER·VISA·AMEX가 한 칸에 병합된 금액이라 브랜드마다 행을 만들지 않고 한 행으로 적었다."
+   }
+  ],
+  "_source": {
+   "annual_fee": "ㆍ연회비: 국내전용 20,000원, 해외겸용(MASTER, VISA, AMEX) 20,000원 — 모든 조합의 총 연회비가 같아 대표값이 하나로 정해진다."
+  },
+  "_needs_review": []
+ },
+ "card_exclusions": [
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "INTEREST_FREE",
+   "_source": "ㆍ할인 적용 제외 대상:모든 무이자할부 이용금액,기프트·선불카드 충전 및 구매,포인트 충전,상품권(모바일상품권 포함)구매,스마트 캐시백 신청 이용금액"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "GIFT_CARD",
+   "_source": "ㆍ할인 적용 제외 대상: … 기프트·선불카드 충전 및 구매 … 상품권(모바일상품권 포함)구매"
+  }
+ ],
+ "performance_tiers": [
+  {
+   "period_type": "MONTH",
+   "min_performance_amount": 0,
+   "shared_monthly_limit": 0,
+   "_source": "*지 난달1일~말일까지50만원 이상(본인,가족카드 합산)이용 시 혜택이 제공됩니다. — 미달 구간에는 제공되는 혜택이 없다."
+  },
+  {
+   "period_type": "MONTH",
+   "min_performance_amount": 500000,
+   "shared_monthly_limit": 35000,
+   "_source": "생활업종 월 최대 36,500원 결제일 할인 / 할인한도 월 35,000원 10% (각 5,000원) — 통합 월 35,000원은 10% 할인 7개 항목에만 걸리고 스트리밍 1,500원은 별도라 합계가 36,500원이 된다."
+  }
+ ],
+ "performance_exclusions": [
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "INTEREST_FREE",
+   "_source": "ㆍ이용실적 산정 시 제외 대상 … 모든 무이자할부 이용금액"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "TAX",
+   "_source": "ㆍ이용실적 산정 시 제외 대상 … 국세,지방세 … 관세납부,인지세"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "SOCIAL_INSURANCE",
+   "_source": "ㆍ이용실적 산정 시 제외 대상 … 건강보험,국민연금,고용보험,산재보험"
+  },
+  {
+   "exclusion_type": "CATEGORY",
+   "exclusion_value": "TUITION",
+   "_source": "ㆍ이용실적 산정 시 제외 대상 … 초·중·고교 납입금,대학등록금"
+  },
+  {
+   "exclusion_type": "CATEGORY",
+   "exclusion_value": "RENT",
+   "_source": "ㆍ이용실적 산정 시 제외 대상 … LH·SH공사 공공임대료,부동산 임대료"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "LEVY",
+   "_source": "ㆍ이용실적 산정 시 제외 대상 … 장애인 고용부담금"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "GIFT_CARD",
+   "_source": "ㆍ이용실적 산정 시 제외 대상 … 기프트·선불카드 충전 및 구매,포인트충전,상품권(모바일 상품권 포함)구매"
+  },
+  {
+   "exclusion_type": "CATEGORY",
+   "exclusion_value": "TAXI",
+   "_source": "ㆍ이용실적 산정 시 제외 대상 … 택시"
+  },
+  {
+   "exclusion_type": "CATEGORY",
+   "exclusion_value": "EXPRESS_BUS",
+   "_source": "ㆍ이용실적 산정 시 제외 대상 … 고속버스"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "UNAPPROVED",
+   "_source": "ㆍ이용실적 산정 시 제외 대상 … 무승인전표(자판기,터널통행료,항공 기내 이용)"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "CASH_ADVANCE",
+   "_source": "ㆍ이용실적 산정 시 제외 대상 … 단기카드대출(현금서비스)"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "CARD_LOAN",
+   "_source": "ㆍ이용실적 산정 시 제외 대상 … 장기카드대출(카드론)"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "ANNUAL_FEE",
+   "_source": "ㆍ이용실적 산정 시 제외 대상 … 연회비"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "FEE_INTEREST",
+   "_source": "ㆍ이용실적 산정 시 제외 대상 … 이자 및 각종 수수료"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "CANCELED",
+   "_source": "ㆍ지 난달 이용금액 중 실적에 포함된 매출을 취소하는 경우 지난달 이용실적 및 이번 달 할인한도가 변경될 수 있습니다. 예)6월에5월 승인 건 취소 시,5월 이용실적에서 제외"
+  }
+ ],
+ "benefits": [
+  {
+   "benefit_name": "아파트관리비 10% 결제일 할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 10,
+   "step_count": null,
+   "apply_timing": "BILLED",
+   "target_type": "CATEGORY",
+   "target_category_code": "APARTMENT_FEE",
+   "target_merchant_name": null,
+   "targets": null,
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": "AUTO_TRANSFER",
+   "min_txn_amount": 20000,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": 5000,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": null,
+   "count_group_code": null,
+   "use_shared_limit": "Y",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "아파트 관리비 자동납부 건만 혜택이 제공된다. 롯데카드 가맹점 업종 기준으로 혜택이 제공된다.",
+   "tier_limits": [],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "아파트관리비 아파트관리비 … 10%",
+    "monthly_limit": "할인한도 월 35,000원 10% (각 5,000원) — 항목별 월 5,000원이고 7개 항목 통합이 월 35,000원이다.",
+    "min_txn_amount": "*건당2만원 이상 결제 건에 대해서 혜택이 제공됩니다.",
+    "require_performance": "*지 난달1일~말일까지50만원 이상(본인,가족카드 합산)이용 시 혜택이 제공됩니다."
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "공과금 10% 결제일 할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 10,
+   "step_count": null,
+   "apply_timing": "BILLED",
+   "target_type": "CATEGORY",
+   "target_category_code": "UTILITY",
+   "target_merchant_name": null,
+   "targets": null,
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": "AUTO_TRANSFER",
+   "min_txn_amount": 20000,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": 5000,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": null,
+   "count_group_code": null,
+   "use_shared_limit": "Y",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "약관이 정한 대상은 도시가스비·전기료 두 가지이고 자동납부 건만 혜택이 제공된다. 공과금 카테고리에는 수도료 등 다른 항목도 들어가지만 코드로 그 둘만 가리킬 수 없어 UTILITY로 넣었다.",
+   "tier_limits": [],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "공과금 도시가스비, 전기료 … 10%",
+    "monthly_limit": "할인한도 월 35,000원 10% (각 5,000원)",
+    "min_txn_amount": "*건당2만원 이상 결제 건에 대해서 혜택이 제공됩니다.",
+    "require_performance": "*지 난달1일~말일까지50만원 이상(본인,가족카드 합산)이용 시 혜택이 제공됩니다."
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "이동통신 10% 결제일 할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 10,
+   "step_count": null,
+   "apply_timing": "BILLED",
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": null,
+   "targets": [
+    "SKT",
+    "KT",
+    "LG U+"
+   ],
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": "AUTO_TRANSFER",
+   "min_txn_amount": 20000,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": 5000,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": 1,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": "TELECOM_5000",
+   "count_group_code": null,
+   "use_shared_limit": "Y",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "이동통신요금 자동납부 건만 혜택이 제공되며, 인터넷·TV 등과의 결합상품 및 알뜰폰 이용금액은 제외된다. 월 1회 제공된다. 약관이 SKT·KT·LG U+ 세 곳을 열거했으므로 이동통신 카테고리가 아니라 가맹점 셋으로 적었다.",
+   "tier_limits": [],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "이동통신 SKT, KT, LG U+ … 10%",
+    "monthly_limit": "할인한도 월 35,000원 10% (각 5,000원) — 항목 단위 5,000원이라 통신 3사가 한도를 함께 쓴다.",
+    "monthly_count_limit": "ㆍ월1회 제공됩니다.",
+    "limit_group_code": "이동통신 항목 하나에 월 5,000원과 월 1회가 걸리므로 세 가맹점 행이 금액과 횟수를 같은 범위로 공유한다. 범위가 같아 count_group_code는 비웠다.",
+    "min_txn_amount": "*건당2만원 이상 결제 건에 대해서 혜택이 제공됩니다.",
+    "require_performance": "*지 난달1일~말일까지50만원 이상(본인,가족카드 합산)이용 시 혜택이 제공됩니다."
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "대중교통 10% 결제일 할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 10,
+   "step_count": null,
+   "apply_timing": "BILLED",
+   "target_type": "CATEGORY",
+   "target_category_code": "PUBLIC_TRANSPORT",
+   "target_merchant_name": null,
+   "targets": null,
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": 20000,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": 5000,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": null,
+   "count_group_code": null,
+   "use_shared_limit": "Y",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "지하철·시내버스 이용 건만 혜택이 제공된다. 한 달 동안 이용한 금액이 다음 달에 결제되는 후불 건은 롯데카드에 접수된 일자를 기준으로 혜택이 제공된다.",
+   "tier_limits": [],
+   "exclusions": [
+    {
+     "exclusion_type": "CATEGORY",
+     "exclusion_value": "TAXI",
+     "_source": "ㆍ지하철,시내버스 이용 건만 혜택이 제공되며 택시,고속버스,시외버스 이용금액은 혜택이 제공되지 않습니다."
+    },
+    {
+     "exclusion_type": "CATEGORY",
+     "exclusion_value": "EXPRESS_BUS",
+     "_source": "ㆍ지하철,시내버스 이용 건만 혜택이 제공되며 택시,고속버스,시외버스 이용금액은 혜택이 제공되지 않습니다."
+    }
+   ],
+   "_source": {
+    "benefit_value": "대중교통 버스, 지하철 … 10%",
+    "monthly_limit": "할인한도 월 35,000원 10% (각 5,000원)",
+    "min_txn_amount": "*건당2만원 이상 결제 건에 대해서 혜택이 제공됩니다.",
+    "require_performance": "*지 난달1일~말일까지50만원 이상(본인,가족카드 합산)이용 시 혜택이 제공됩니다."
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "보험료 10% 결제일 할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 10,
+   "step_count": null,
+   "apply_timing": "BILLED",
+   "target_type": "CATEGORY",
+   "target_category_code": "INSURANCE",
+   "target_merchant_name": null,
+   "targets": null,
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": "AUTO_TRANSFER",
+   "min_txn_amount": 20000,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": 5000,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": null,
+   "count_group_code": null,
+   "use_shared_limit": "Y",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "생명보험·손해보험 보험료 자동납부 건만 혜택이 제공된다. 서비스 이용 전 보험사에 카드결제 가능 여부를 확인해야 한다.",
+   "tier_limits": [],
+   "exclusions": [
+    {
+     "exclusion_type": "PAYMENT_TYPE",
+     "exclusion_value": "SIMPLE_PAY",
+     "_source": "ㆍ보험료 자동납부 건만 혜택이 제공되며,모든 간편결제(카카오페이,네이버페이,페이코 등)이용금액은 혜택이 제공되지 않습니다."
+    }
+   ],
+   "_source": {
+    "benefit_value": "보험료 생명보험, 손해보험 … 10%",
+    "monthly_limit": "할인한도 월 35,000원 10% (각 5,000원)",
+    "min_txn_amount": "*건당2만원 이상 결제 건에 대해서 혜택이 제공됩니다.",
+    "require_performance": "*지 난달1일~말일까지50만원 이상(본인,가족카드 합산)이용 시 혜택이 제공됩니다."
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "학습지 10% 결제일 할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 10,
+   "step_count": null,
+   "apply_timing": "BILLED",
+   "target_type": "CATEGORY",
+   "target_category_code": "LEARNING_SERVICE",
+   "target_merchant_name": null,
+   "targets": null,
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": 20000,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": 5000,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": null,
+   "count_group_code": null,
+   "use_shared_limit": "Y",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "학습지 오프라인 이용 건만 혜택이 제공되고 일부 PG(결제대행) 업체를 통해 결제하면 제공되지 않는다.",
+   "tier_limits": [],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "학습지 학습지 … 10%",
+    "monthly_limit": "할인한도 월 35,000원 10% (각 5,000원)",
+    "min_txn_amount": "*건당2만원 이상 결제 건에 대해서 혜택이 제공됩니다.",
+    "require_performance": "*지 난달1일~말일까지50만원 이상(본인,가족카드 합산)이용 시 혜택이 제공됩니다."
+   },
+   "_needs_review": [
+    "target_category_code"
+   ]
+  },
+  {
+   "benefit_name": "배달앱 10% 결제일 할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 10,
+   "step_count": null,
+   "apply_timing": "BILLED",
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": null,
+   "targets": [
+    "배달의민족",
+    "요기요",
+    "쿠팡이츠"
+   ],
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": 20000,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": 5000,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": "DELIVERY_APP_5000",
+   "count_group_code": null,
+   "use_shared_limit": "Y",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "공식 앱을 통한 결제 시에만 혜택이 제공되고 가맹점 직접 결제 건은 제외된다. 약관이 배달의민족·요기요·쿠팡이츠 세 곳을 열거했으므로 배달앱 카테고리가 아니라 가맹점 셋으로 적었다.",
+   "tier_limits": [],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "배달앱 배달의민족, 요기요, 쿠팡이츠 … 10%",
+    "monthly_limit": "할인한도 월 35,000원 10% (각 5,000원) — 항목 단위 5,000원이라 세 배달앱이 한도를 함께 쓴다.",
+    "min_txn_amount": "*건당2만원 이상 결제 건에 대해서 혜택이 제공됩니다.",
+    "require_performance": "*지 난달1일~말일까지50만원 이상(본인,가족카드 합산)이용 시 혜택이 제공됩니다."
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "스트리밍 1,500원 결제일 할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "FIXED",
+   "benefit_value": 1500,
+   "step_count": null,
+   "apply_timing": "BILLED",
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": null,
+   "targets": [
+    "넷플릭스",
+    "유튜브 프리미엄",
+    "왓챠",
+    "멜론",
+    "지니뮤직",
+    "디즈니 플러스"
+   ],
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": "AUTO_TRANSFER",
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": 1,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": "STREAMING_MONTHLY_1",
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "대상 가맹점 공식 홈페이지 또는 앱에서 직접 신청한 정기결제(자동이체) 건만 혜택이 제공된다. 1회성 일반구매, 통신요금 내 합산 청구, 앱마켓(구글플레이·앱스토어 등) 결제처럼 가맹점 구분이 불가한 경우는 제외된다. 건당 결제금액과 무관하게 제공되어 다른 항목과 달리 2만원 기준이 없다.",
+   "tier_limits": [],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "스트리밍 넷플릭스, 유튜브, 왓챠, 멜론, 지니뮤직, 디즈니플러스 1,500원 월 1회",
+    "monthly_count_limit": "스트리밍 … 1,500원 월 1회 — 금액 한도는 약관에 없고 횟수만 있다.",
+    "limit_group_code": "월 1회가 스트리밍 항목 전체에 걸리므로 여섯 가맹점 행이 횟수를 함께 쓴다.",
+    "min_txn_amount": "(스트리밍 할인은 건당 결제금액에 상관없이 혜택이 제공됩니다.)",
+    "require_performance": "*지 난달1일~말일까지50만원 이상(본인,가족카드 합산)이용 시 혜택이 제공됩니다.",
+    "use_shared_limit": "생활업종 월 최대 36,500원 결제일 할인 — 통합 한도 35,000원에 스트리밍 1,500원을 더해야 36,500원이 되므로 스트리밍은 통합 한도 밖이다."
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "국내 가맹점 2~3개월 무이자 할부",
+   "benefit_kind": "INSTALLMENT_FREE",
+   "calc_method": null,
+   "benefit_value": null,
+   "step_count": null,
+   "apply_timing": null,
+   "target_type": "ALL",
+   "target_category_code": null,
+   "target_merchant_name": null,
+   "targets": null,
+   "require_performance": "N",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": 50000,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": null,
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "국내 가맹점에서 5만원 이상 2~3개월 할부 결제 시 무이자 할부가 제공된다. 해외 및 일시불 이용 건을 할부로 전환하거나 할부 개월 수를 변경하면 제공되지 않는다. 무이자 할부가 제공된 결제 건은 다른 결제일 할인 및 포인트 적립 혜택을 받지 못한다. 무이자 개월 수(2~3개월)를 담을 필드가 없어 설명으로만 남긴다.",
+   "tier_limits": [],
+   "exclusions": [
+    {
+     "exclusion_type": "TRANSACTION_ATTR",
+     "exclusion_value": "OVERSEAS",
+     "_source": "ㆍ해 외 및 일시불 이용 건을 할부로 전환하거나,할부 개월 수 변경 시 무이자 할부 혜택이 제공되지 않습니다."
+    },
+    {
+     "exclusion_type": "TRANSACTION_ATTR",
+     "exclusion_value": "INSTALLMENT_CONVERTED",
+     "_source": "ㆍ해 외 및 일시불 이용 건을 할부로 전환하거나,할부 개월 수 변경 시 무이자 할부 혜택이 제공되지 않습니다."
+    },
+    {
+     "exclusion_type": "TRANSACTION_ATTR",
+     "exclusion_value": "TAX",
+     "_source": "ㆍ무이자 할부 적용 제외 대상 … 국세,지방세 … 관세납부,인지세"
+    },
+    {
+     "exclusion_type": "TRANSACTION_ATTR",
+     "exclusion_value": "SOCIAL_INSURANCE",
+     "_source": "ㆍ무이자 할부 적용 제외 대상 … 건강보험,국민연금,고용보험,산재보험"
+    },
+    {
+     "exclusion_type": "CATEGORY",
+     "exclusion_value": "TUITION",
+     "_source": "ㆍ무이자 할부 적용 제외 대상 … 초·중·고교 납입금,대학등록금"
+    },
+    {
+     "exclusion_type": "CATEGORY",
+     "exclusion_value": "RENT",
+     "_source": "ㆍ무이자 할부 적용 제외 대상 … LH·SH공사 공공임대료,부동산 임대료"
+    },
+    {
+     "exclusion_type": "TRANSACTION_ATTR",
+     "exclusion_value": "LEVY",
+     "_source": "ㆍ무이자 할부 적용 제외 대상 … 장애인 고용부담금"
+    },
+    {
+     "exclusion_type": "TRANSACTION_ATTR",
+     "exclusion_value": "GIFT_CARD",
+     "_source": "ㆍ무이자 할부 적용 제외 대상 … 기프트·선불카드 충전 및 구매,포인트충전,상품권(모바일 상품권 포함)구매"
+    },
+    {
+     "exclusion_type": "CATEGORY",
+     "exclusion_value": "TAXI",
+     "_source": "ㆍ무이자 할부 적용 제외 대상 … 택시"
+    },
+    {
+     "exclusion_type": "CATEGORY",
+     "exclusion_value": "EXPRESS_BUS",
+     "_source": "ㆍ무이자 할부 적용 제외 대상 … 고속버스"
+    },
+    {
+     "exclusion_type": "TRANSACTION_ATTR",
+     "exclusion_value": "UNAPPROVED",
+     "_source": "ㆍ무이자 할부 적용 제외 대상 … 무승인전표(자판기,터널통행료,항공 기내 이용)"
+    },
+    {
+     "exclusion_type": "TRANSACTION_ATTR",
+     "exclusion_value": "CASH_ADVANCE",
+     "_source": "ㆍ무이자 할부 적용 제외 대상 … 단기카드대출(현금서비스)"
+    },
+    {
+     "exclusion_type": "TRANSACTION_ATTR",
+     "exclusion_value": "CARD_LOAN",
+     "_source": "ㆍ무이자 할부 적용 제외 대상 … 장기카드대출(카드론)"
+    },
+    {
+     "exclusion_type": "TRANSACTION_ATTR",
+     "exclusion_value": "ANNUAL_FEE",
+     "_source": "ㆍ무이자 할부 적용 제외 대상 … 연회비"
+    },
+    {
+     "exclusion_type": "TRANSACTION_ATTR",
+     "exclusion_value": "FEE_INTEREST",
+     "_source": "ㆍ무이자 할부 적용 제외 대상 … 이자 및 각종 수수료"
+    }
+   ],
+   "_source": {
+    "min_txn_amount": "ㆍ국 내 가맹점에서5만원 이상2~3개월 할부 결제 시 무이자 할부 혜택이 제공됩니다."
+   },
+   "_needs_review": []
+  }
+ ],
+ "unmapped": [
+  {
+   "text": "*지 난달1일~말일까지50만원 이상(본인,가족카드 합산)이용 시 혜택이 제공됩니다. / ㆍ지 난달 실적 산정 시 가족카드 이용금액도 동일한 기준으로 본인카드 이용실적에 합산됩니다. / ㆍ본인카드와 가족카드의 할인한도는 합산되며,남은 할인한도는 이월되지 않습니다. / ㆍ가족카드 부가서비스 지난달 이용금액,월별 할인횟수 및 할인한도는 본인카드와 합산 적용됩니다.",
+   "why": "가족카드 합산은 범위 밖이다. 실적도 한도도 본인카드 단독 기준으로만 계산한다."
+  },
+  {
+   "text": "ㆍ할부 결제 건은 이용일을 기준으로 전체 이용금액이 실적에 합산됩니다. / ㆍ해외 이용금액은 롯데카드에 접수되는 현지 매출일자를 기준으로 실적에 포함됩니다. / ㆍ한 달 동안 이용한 금액이 다음 달에 결제되는 결제 건은(이동통신,대중교통 등)롯데카드에 접수되는 일자를 기준으로 실적에 포함됩니다.",
+   "why": "실적에 잡히는 시점(이용일·접수일) 규칙이다. 소비내역에 거래일 하나만 있어 매입 시차를 표현할 자리가 없다."
+  },
+  {
+   "text": "ㆍ승인시점 기준으로 남은 할인한도 내에서 할인 혜택이 제공됩니다. / ㆍ할인 혜택이 제공된 결제 건을 취소하는 경우 취소 건이 롯데카드에 접수된 후 (약2~3일 소요)할인 한도가 복원됩니다. / ㆍ할인한도가 복원되기 전의 결제 건은 승인 시점 기준 할인한도로 할인 혜택이 제공되며,한도 복원 후에 즉시 할인이 되지 않을 수 있습니다.",
+   "why": "한도 복원의 지연 시간을 담는 필드가 없다. 취소 시점에 한도를 즉시 되돌리는 것과 결과가 달라질 수 있다."
+  },
+  {
+   "text": "ㆍ롯데카드의 다른 결제일 할인(청구할인)혜택과 중복 시 할인금액이 큰 혜택이 제공됩니다.",
+   "why": "한 결제에 혜택 하나만 고르고 혜택액이 큰 쪽을 택하는 규칙과 같아 따로 적을 컬럼이 없다."
+  },
+  {
+   "text": "ㆍ이용실적 산정 시 제외 대상 LOCA365카드가 아닌 롯데카드 이용금액",
+   "why": "실적을 카드별로 계산하므로 다른 카드 이용금액이 애초에 섞이지 않는다."
+  },
+  {
+   "text": "ㆍ이동통신요금 자동납부 건만 혜택이 제공되며,인터넷,TV등과 결합상품 및 알뜰폰 이용금액은 혜택이 제공되지 않습니다.",
+   "why": "결합상품 제외는 같은 통신사 안에서 상품 종류를 가르는 조건이라 가맹점 단위로 내려가는 구조에서는 판정할 수 없다. 알뜰폰은 대상을 통신 3사 가맹점으로 적어 자연히 빠진다."
+  },
+  {
+   "text": "ㆍ오프라인 이용 건만 혜택이 제공되며,일부PG(결제대행)업체를 통해 결제 시 혜택이 제공되지 않습니다. / ㆍ공식 앱을 통한 결제 시 혜택이 제공되며,가맹점 직접 결제 건은 혜택이 제공되지 않습니다. / ㆍ서비스 대상 가맹점 공식 홈페이지 또는 앱을 통해 직접 신청한 정기결제 (자동이체)이용 건만 혜택이 제공되며,1회성 일반구매 결제 및 통신요금 내 합산 청구,앱마켓(구글플레이,앱스토어 등)결제와 같이 가맹점 구분이 불가한 경우에는 혜택이 제공되지 않습니다.",
+   "why": "결제 채널(오프라인·공식 앱·PG·앱마켓) 조건은 범위 밖이다. 각 혜택의 description에 문장을 남겼다."
+  },
+  {
+   "text": "ㆍLOCA365카드로 결제 시 롯데카드가 제공하는L.POINT적립서비스가 제공되지 않습니다. 다른L.POINT제휴사가 제공하는L.POINT는 적립 가능합니다.",
+   "why": "혜택이 없다는 서술이라 혜택 행으로 만들 것이 없다."
+  },
+  {
+   "text": "ㆍ해 외이용시(해외사이트거래포함) 미화(USD)기준 거래미화금액에 접수일의(우리은행) 최초고시 전신환 매도율을 적용한 후, 국제브랜드사가 부과하는 국제브랜드수수료(MASTER 1.0%, VISA 1.1%, AMEX 1.4%)와 롯데카드가 부과하는 해외서비스수수료(신용 0.2%)를 포함하여 원화로 청구됩니다.",
+   "why": "해외 이용 청구금액 산정식이다. 혜택이 아니라 수수료 계산 규칙이라 담을 필드가 없다."
+  },
+  {
+   "text": "ㆍ연회비는 계약을 해지한 날부터 영업일 기준10일 이내 반환하여 드립니다. / ㆍ카드 이용시 제공되는 추가적인 혜택은 카드 신규출시 이후 3년 이상 축소·폐지 없이 유지됩니다.",
+   "why": "연회비 반환·부가서비스 변경 고지 절차는 혜택 규칙이 아니다. 약관 원문을 그대로 두고 답해야 할 영역이다."
+  }
+ ],
+ "_schema_gap": [
+  {
+   "text": "ㆍL OCA365카드를 최초 발급받은 경우 카드발급일~다음 달 말일까지 이용실적에 관계없이 생활업종 결제일 할인 혜택이 제공됩니다.",
+   "missing": "user_card의 발급일과 카드별 실적 면제 기간",
+   "why": "발급일이 없어 면제 기간인지 판정할 수 없다. 지금 구조로는 신규 회원이 전월 실적 50만원 미달로 잡혀 생활업종 할인 8개가 전부 계산되지 않는다."
+  },
+  {
+   "text": "학습지 학습지 10% (각 5,000원)",
+   "missing": "EDUCATION 하위의 학습지 카테고리 코드",
+   "why": "표준 카테고리 40개에 학습지가 없다. 학원(ACADEMY)이나 학교납입금(TUITION)에 넣으면 약관이 대상으로 삼지 않은 결제까지 혜택을 받으므로 대상 코드를 비웠고, 이 상태로는 시드에서 혜택 행이 만들어지지 않는다."
+  },
+  {
+   "text": "ㆍ할인 적용 제외 대상:모든 무이자할부 이용금액,기프트·선불카드 충전 및 구매,포인트 충전,상품권(모바일상품권 포함)구매,스마트 캐시백 신청 이용금액 / ㆍ이용실적 산정 시 제외 대상 … 오토·스마트 캐시백 신청 이용금액",
+   "missing": "TRANSACTION_ATTR 표준값 — 카드사 캐시백 전환을 신청한 이용금액",
+   "why": "오토·스마트 캐시백은 회원이 신청해 이용금액을 캐시백으로 돌리는 롯데카드 서비스다. 표준값에 맞는 것이 없어 할인 제외와 실적 제외 양쪽에서 빠졌다."
+  },
+  {
+   "text": "ㆍ할인 적용 제외 대상: … 포인트 충전 … / ㆍ이용실적 산정 시 제외 대상 … 포인트충전",
+   "missing": "TRANSACTION_ATTR 표준값 — 포인트 충전",
+   "why": "POINT_USED는 포인트로 결제한 금액이고 GIFT_CARD는 상품권·선불카드 구매·충전이다. 포인트를 사는 거래는 둘 중 어느 쪽이라고 단정할 수 없어 넣지 않았다."
+  },
+  {
+   "text": "ㆍ이용실적 산정 시 제외 대상 … 고속도로 통행요금",
+   "missing": "통행료를 가리키는 카테고리 코드 또는 TRANSACTION_ATTR 표준값",
+   "why": "UNAPPROVED는 무승인전표(자판기·터널통행료·항공 기내)를 가리키고 고속도로 통행요금은 같은 문장에서 따로 열거된다. 교통 카테고리에도 통행료가 없다."
+  },
+  {
+   "text": "ㆍ이용실적 산정 시 제외 대상 … 벌금,과태료,민원 발급 수수료,관세납부,인지세,송달료",
+   "missing": "TRANSACTION_ATTR 표준값 — 벌금·과태료 등 제재금과 행정 수수료",
+   "why": "관세·인지세는 국세라 TAX로 넣었으나 벌금·과태료·민원 발급 수수료·송달료는 TAX(국세·지방세)도 LEVY(부담금·준조세)도 FEE_INTEREST(카드 이용에 따르는 수수료·이자)도 아니어서 실적 제외에서 빠졌다."
+  },
+  {
+   "text": "공과금 도시가스비, 전기료 10% (각 5,000원)",
+   "missing": "카테고리 하위 일부만 대상으로 지정하는 방법",
+   "why": "약관은 공과금 중 도시가스비·전기료만 대상으로 삼는데 카테고리 코드는 UTILITY 하나뿐이라 수도료 등 다른 공과금 결제까지 혜택을 받는다. 대상이 브랜드가 아니라 요금 종류라 MERCHANT로 쪼갤 수도 없다."
+  }
+ ]
+}

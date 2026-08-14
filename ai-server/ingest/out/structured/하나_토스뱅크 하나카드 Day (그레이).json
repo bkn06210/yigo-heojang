@@ -1,0 +1,753 @@
+{
+ "card": {
+  "card_name": "토스뱅크 하나카드 Day",
+  "card_type": "CREDIT",
+  "annual_fee": 20000,
+  "annual_fees": [
+   {
+    "brand": "LOCAL",
+    "issue_type": "ANY",
+    "variant": "ANY",
+    "total_fee": 20000,
+    "base_fee": 20000,
+    "partner_fee": 0,
+    "_source": "토스뱅크 하나카드 Day 연회비 | 국내전용/국내외겸용(Mastercard) : 2만원(기본연회비 2만원, 제휴연회비 0원) — 국내전용과 Mastercard가 한 칸에 같은 금액으로 적혀 있어 열거된 두 브랜드로 각각 행을 만들었다."
+   },
+   {
+    "brand": "MASTERCARD",
+    "issue_type": "ANY",
+    "variant": "ANY",
+    "total_fee": 20000,
+    "base_fee": 20000,
+    "partner_fee": 0
+   }
+  ],
+  "_source": {
+   "annual_fee": "두 브랜드의 총 연회비가 2만원으로 같아 대표값도 2만원이다."
+  },
+  "_needs_review": []
+ },
+ "card_exclusions": [
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "TAX",
+   "_source": "할인 제외 대상 국세, 지방세, 수도/전기요금, 그 외 공과금(우편요금, 과태료, 범칙금, 벌금, 국가/공공기관/공공단체가 부과하는 부담금), 도시가스 요금, 스쿨뱅킹, 초·중·고 학교 납입금, 대학등록금, 대학원등록금, 상품권 및 기프트카드 구매, 선불카드 및 선불전자지급수단(하나머니 등) 충전 금액, 부동산임대료, 무이자 할부 및 부분 무이자 할부 이용금액"
+  },
+  {
+   "exclusion_type": "CATEGORY",
+   "exclusion_value": "UTILITY"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "LEVY"
+  },
+  {
+   "exclusion_type": "CATEGORY",
+   "exclusion_value": "TUITION"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "GIFT_CARD"
+  },
+  {
+   "exclusion_type": "CATEGORY",
+   "exclusion_value": "RENT"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "INTEREST_FREE"
+  }
+ ],
+ "performance_tiers": [
+  {
+   "period_type": "MONTH",
+   "min_performance_amount": 0,
+   "shared_monthly_limit": 0,
+   "_source": "지난달 실적 구간이 50만 이상과 100만 이상 둘뿐이고 그 미만은 서비스가 제공되지 않으므로 0원 구간의 통합 월 할인 한도는 0이다."
+  },
+  {
+   "period_type": "MONTH",
+   "min_performance_amount": 500000,
+   "shared_monthly_limit": 30000,
+   "_source": "통합 월 할인 한도 3만원 5만원 (지난달 실적 구간별 50만 이상 / 100만 이상)"
+  },
+  {
+   "period_type": "MONTH",
+   "min_performance_amount": 1000000,
+   "shared_monthly_limit": 50000
+  }
+ ],
+ "performance_exclusions": [
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "TAX",
+   "_source": "실적 제외 대상 국세, 지방세, 수도/전기요금, 그 외 공과금(우편요금, 과태료, 범칙금, 벌금, 국가/공공기관/공공단체가 부과하는 부담금), 도시가스 요금, 아파트관리비, 국민연금/고용보험료/산재보험료/건강보험료 납부 금액, 스쿨뱅킹, 초·중·고 학교 납입금, 대학등록금, 대학원등록금, 상품권 및 기프트카드 구매, 선불카드 및 선불전자지급수단(하나머니 등) 충전 금액, 부동산임대료, 무이자 할부 및 부분 무이자 할부 이용금액, 할인받은 매출 전체 제외"
+  },
+  {
+   "exclusion_type": "CATEGORY",
+   "exclusion_value": "UTILITY"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "LEVY"
+  },
+  {
+   "exclusion_type": "CATEGORY",
+   "exclusion_value": "APARTMENT_FEE"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "SOCIAL_INSURANCE"
+  },
+  {
+   "exclusion_type": "CATEGORY",
+   "exclusion_value": "TUITION"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "GIFT_CARD"
+  },
+  {
+   "exclusion_type": "CATEGORY",
+   "exclusion_value": "RENT"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "INTEREST_FREE"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "DISCOUNTED"
+  }
+ ],
+ "benefits": [
+  {
+   "benefit_name": "커피 10% 청구할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 10,
+   "step_count": null,
+   "apply_timing": "BILLED",
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": null,
+   "targets": [
+    "스타벅스",
+    "커피빈",
+    "이디야",
+    "투썸플레이스",
+    "할리스"
+   ],
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": "COFFEE_10",
+   "count_group_code": null,
+   "use_shared_limit": "Y",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "국내 가맹점에 한하며, 대형시설물(백화점, 할인점, 아울렛, 쇼핑몰, 휴게소, 공항, 호텔 리조트, 역사, 마트) 입점 점포 및 임대매장 결제와 배달앱·식당 예약앱을 통한 주문 결제는 서비스에서 제외된다.",
+   "tier_limits": [
+    {
+     "min_performance_amount": 500000,
+     "monthly_limit": 5000,
+     "quarterly_limit": null,
+     "yearly_limit": null,
+     "benefit_value": null,
+     "_source": "대상 가맹점 / 할인율 / 지난달 실적 구간별 월 할인 한도(50만 이상, 100만 이상) 표에서 영역별 월 할인 한도 칸이 5천원(50만 이상)과 1만원(100만 이상)으로 갈린다. 구간마다 한도가 다르므로 혜택 본문의 monthly_limit은 비우고 tier_limits에만 적었다."
+    },
+    {
+     "min_performance_amount": 1000000,
+     "monthly_limit": 10000,
+     "quarterly_limit": null,
+     "yearly_limit": null,
+     "benefit_value": null
+    }
+   ],
+   "exclusions": [
+    {
+     "exclusion_type": "MERCHANT_LOCATION",
+     "exclusion_value": "IN_DEPARTMENT_STORE",
+     "_source": "커피 : 국내 가맹점에 한하며, 대형시설물(백화점, 할인점, 아울렛, 쇼핑몰, 휴게소, 공항, 호텔 리조트, 역사, 마트) 입점 점포 및 임대매장 결제, 배달앱이나 식당 예약앱을 통한 주문 결제는 서비스 제외"
+    },
+    {
+     "exclusion_type": "MERCHANT_LOCATION",
+     "exclusion_value": "IN_LARGE_MART"
+    },
+    {
+     "exclusion_type": "MERCHANT_LOCATION",
+     "exclusion_value": "IN_SHOPPING_MALL"
+    },
+    {
+     "exclusion_type": "MERCHANT_LOCATION",
+     "exclusion_value": "IN_TRANSIT_HUB"
+    }
+   ],
+   "_source": {
+    "benefit_value": "커피 스타벅스, 커피빈, 이디야, 투썸플레이스, 할리스 10% 5천원 1만원",
+    "require_performance": "지난달 1일부터 말일(승인 시점 기준)까지 국내외 일시불/할부 이용금액 50만원/100만원 이상 시 서비스 차등 제공",
+    "limit_group_code": "월 할인 한도 5천원/1만원이 커피 한 줄에 하나로 적혀 있어 열거된 다섯 브랜드가 한도를 나눠 쓴다. 대상마다 행으로 펼쳐져도 한도가 브랜드 수만큼 새지 않도록 한 코드로 묶었다."
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "쇼핑 10% 청구할인 - 대형마트",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 10,
+   "step_count": null,
+   "apply_timing": "BILLED",
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": null,
+   "targets": [
+    "이마트",
+    "롯데마트",
+    "홈플러스"
+   ],
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": "SHOPPING_10",
+   "count_group_code": null,
+   "use_shared_limit": "Y",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "이마트·롯데마트·홈플러스는 오프라인 결제건에 한하여 서비스가 제공되며 상설·임대매장과 창고형 할인매장은 제외된다. 같은 쇼핑 영역인 토스쇼핑은 결제 채널 조건과 제외 대상이 달라 혜택을 따로 썼다.",
+   "tier_limits": [
+    {
+     "min_performance_amount": 500000,
+     "monthly_limit": 5000,
+     "quarterly_limit": null,
+     "yearly_limit": null,
+     "benefit_value": null
+    },
+    {
+     "min_performance_amount": 1000000,
+     "monthly_limit": 10000,
+     "quarterly_limit": null,
+     "yearly_limit": null,
+     "benefit_value": null
+    }
+   ],
+   "exclusions": [
+    {
+     "exclusion_type": "MERCHANT_LOCATION",
+     "exclusion_value": "IN_LARGE_MART",
+     "_source": "쇼핑(이마트, 롯데마트, 홈플러스) : 오프라인 결제건에 한하여 서비스 제공되며, 상설·임대매장과 창고형 할인매장은 제외"
+    }
+   ],
+   "_source": {
+    "benefit_value": "쇼핑 이마트, 롯데마트, 홈플러스, 토스쇼핑 10% 5천원 1만원",
+    "limit_group_code": "월 할인 한도 5천원/1만원이 쇼핑 한 줄에 하나로 적혀 있어, 제외 조건이 갈려 둘로 나눈 혜택을 한 코드로 묶었다."
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "쇼핑 10% 청구할인 - 토스쇼핑",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 10,
+   "step_count": null,
+   "apply_timing": "BILLED",
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": "토스쇼핑",
+   "targets": null,
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": "SHOPPING_10",
+   "count_group_code": null,
+   "use_shared_limit": "Y",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "토스쇼핑은 공식 앱을 통한 결제 건에 한하여 서비스가 제공된다. 마트 3사에 붙는 상설·임대매장 제외 조건이 없어 혜택을 나누고 한도만 같은 코드로 묶었다.",
+   "tier_limits": [
+    {
+     "min_performance_amount": 500000,
+     "monthly_limit": 5000,
+     "quarterly_limit": null,
+     "yearly_limit": null,
+     "benefit_value": null
+    },
+    {
+     "min_performance_amount": 1000000,
+     "monthly_limit": 10000,
+     "quarterly_limit": null,
+     "yearly_limit": null,
+     "benefit_value": null
+    }
+   ],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "쇼핑 이마트, 롯데마트, 홈플러스, 토스쇼핑 10% 5천원 1만원"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "보험 10% 청구할인 - 4대 사회보험 자동납부",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 10,
+   "step_count": null,
+   "apply_timing": "BILLED",
+   "target_type": "CATEGORY",
+   "target_category_code": "INSURANCE",
+   "target_merchant_name": null,
+   "targets": null,
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": "AUTO_TRANSFER",
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": "INSURANCE_10",
+   "count_group_code": null,
+   "use_shared_limit": "Y",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "건강보험·고용보험·산재보험·국민연금 자동납부 건. 4대 사회보험료를 가리키는 카테고리 코드가 없어 보험료(INSURANCE)로 넣었고, 자동납부 조건이 없는 손해보험 업종과는 혜택을 나눠 적었다.",
+   "tier_limits": [
+    {
+     "min_performance_amount": 500000,
+     "monthly_limit": 5000,
+     "quarterly_limit": null,
+     "yearly_limit": null,
+     "benefit_value": null
+    },
+    {
+     "min_performance_amount": 1000000,
+     "monthly_limit": 10000,
+     "quarterly_limit": null,
+     "yearly_limit": null,
+     "benefit_value": null
+    }
+   ],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "보험 건강보험/고용보험/산재보험/국민연금 자동납부 시, 손해보험 업종 10% 5천원 1만원",
+    "limit_group_code": "월 할인 한도 5천원/1만원이 보험 한 줄에 하나로 적혀 있어, 결제수단 조건이 갈려 둘로 나눈 혜택을 한 코드로 묶었다."
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "보험 10% 청구할인 - 손해보험 업종",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 10,
+   "step_count": null,
+   "apply_timing": "BILLED",
+   "target_type": "CATEGORY",
+   "target_category_code": "INSURANCE",
+   "target_merchant_name": null,
+   "targets": null,
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": "INSURANCE_10",
+   "count_group_code": null,
+   "use_shared_limit": "Y",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "손해보험 업종. 하나카드 가맹점 업종 기준으로 제공되며 자동납부 조건이 붙지 않는다.",
+   "tier_limits": [
+    {
+     "min_performance_amount": 500000,
+     "monthly_limit": 5000,
+     "quarterly_limit": null,
+     "yearly_limit": null,
+     "benefit_value": null
+    },
+    {
+     "min_performance_amount": 1000000,
+     "monthly_limit": 10000,
+     "quarterly_limit": null,
+     "yearly_limit": null,
+     "benefit_value": null
+    }
+   ],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "보험 건강보험/고용보험/산재보험/국민연금 자동납부 시, 손해보험 업종 10% 5천원 1만원"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "통신 10% 청구할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 10,
+   "step_count": null,
+   "apply_timing": "BILLED",
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": null,
+   "targets": [
+    "SKT",
+    "KT",
+    "LG U+",
+    "SK세븐모바일",
+    "KT M모바일",
+    "U+ 유모바일"
+   ],
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": "AUTO_TRANSFER",
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": "TELECOM_10",
+   "count_group_code": null,
+   "use_shared_limit": "Y",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "SKT·KT·LGU+와 알뜰폰(SK세븐모바일, KT M모바일, U+ 유모바일) 자동납부 건. 약관이 통신사를 브랜드로 열거했으므로 TELECOM 카테고리로 바꾸지 않았다 — 카테고리로 바꾸면 열거되지 않은 통신사까지 대상이 된다.",
+   "tier_limits": [
+    {
+     "min_performance_amount": 500000,
+     "monthly_limit": 5000,
+     "quarterly_limit": null,
+     "yearly_limit": null,
+     "benefit_value": null
+    },
+    {
+     "min_performance_amount": 1000000,
+     "monthly_limit": 10000,
+     "quarterly_limit": null,
+     "yearly_limit": null,
+     "benefit_value": null
+    }
+   ],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "통신 SKT, KT, LGU+, 알뜰폰(SK세븐모바일, KT M모바일, U+ 유모바일) 자동납부 시 10% 5천원 1만원",
+    "limit_group_code": "월 할인 한도 5천원/1만원이 통신 한 줄에 하나로 적혀 있어 열거된 여섯 브랜드가 한도를 나눠 쓴다."
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "아파트관리비 10% 청구할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 10,
+   "step_count": null,
+   "apply_timing": "BILLED",
+   "target_type": "CATEGORY",
+   "target_category_code": "APARTMENT_FEE",
+   "target_merchant_name": null,
+   "targets": null,
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": "AUTO_TRANSFER",
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": null,
+   "count_group_code": null,
+   "use_shared_limit": "Y",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "아파트관리비 자동납부 건. 아파트관리비는 실적 산정에서는 제외되지만 할인 제외 대상에는 없다.",
+   "tier_limits": [
+    {
+     "min_performance_amount": 500000,
+     "monthly_limit": 5000,
+     "quarterly_limit": null,
+     "yearly_limit": null,
+     "benefit_value": null
+    },
+    {
+     "min_performance_amount": 1000000,
+     "monthly_limit": 10000,
+     "quarterly_limit": null,
+     "yearly_limit": null,
+     "benefit_value": null
+    }
+   ],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "아파트 아파트관리비 자동납부 시 10% 5천원 1만원"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "학원 10% 청구할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 10,
+   "step_count": null,
+   "apply_timing": "BILLED",
+   "target_type": "CATEGORY",
+   "target_category_code": "ACADEMY",
+   "target_merchant_name": null,
+   "targets": null,
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": null,
+   "count_group_code": null,
+   "use_shared_limit": "Y",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "학원 업종 — 외국어, 예체능, 기술/직업 훈련, 자동차운전, 무술도장, 입시/보습학원 업종. 하나카드 가맹점 업종 기준으로 제공된다.",
+   "tier_limits": [
+    {
+     "min_performance_amount": 500000,
+     "monthly_limit": 5000,
+     "quarterly_limit": null,
+     "yearly_limit": null,
+     "benefit_value": null
+    },
+    {
+     "min_performance_amount": 1000000,
+     "monthly_limit": 10000,
+     "quarterly_limit": null,
+     "yearly_limit": null,
+     "benefit_value": null
+    }
+   ],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "학원 학원 업종 10% 5천원 1만원"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "병원 10% 청구할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 10,
+   "step_count": null,
+   "apply_timing": "BILLED",
+   "target_type": "CATEGORY",
+   "target_category_code": "HOSPITAL",
+   "target_merchant_name": null,
+   "targets": null,
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": null,
+   "count_group_code": null,
+   "use_shared_limit": "Y",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "병원/의원 업종. 동물병원은 제외된다. 하나카드 가맹점 업종 기준으로 제공된다.",
+   "tier_limits": [
+    {
+     "min_performance_amount": 500000,
+     "monthly_limit": 5000,
+     "quarterly_limit": null,
+     "yearly_limit": null,
+     "benefit_value": null
+    },
+    {
+     "min_performance_amount": 1000000,
+     "monthly_limit": 10000,
+     "quarterly_limit": null,
+     "yearly_limit": null,
+     "benefit_value": null
+    }
+   ],
+   "exclusions": [
+    {
+     "exclusion_type": "CATEGORY",
+     "exclusion_value": "ANIMAL_HOSPITAL",
+     "_source": "병원 병원/의원 업종(동물병원 제외) 10% 5천원 1만원"
+    }
+   ],
+   "_source": {
+    "benefit_value": "병원 병원/의원 업종(동물병원 제외) 10% 5천원 1만원"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "골프 10% 청구할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 10,
+   "step_count": null,
+   "apply_timing": "BILLED",
+   "target_type": "CATEGORY",
+   "target_category_code": "GOLF",
+   "target_merchant_name": null,
+   "targets": null,
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": null,
+   "count_group_code": null,
+   "use_shared_limit": "Y",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "골프장 업종과 골프연습장 업종. 하나카드 가맹점 업종 기준으로 제공된다.",
+   "tier_limits": [
+    {
+     "min_performance_amount": 500000,
+     "monthly_limit": 5000,
+     "quarterly_limit": null,
+     "yearly_limit": null,
+     "benefit_value": null
+    },
+    {
+     "min_performance_amount": 1000000,
+     "monthly_limit": 10000,
+     "quarterly_limit": null,
+     "yearly_limit": null,
+     "benefit_value": null
+    }
+   ],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "골프 골프장 업종, 골프연습장 업종 10% 5천원 1만원"
+   },
+   "_needs_review": []
+  }
+ ],
+ "unmapped": [
+  {
+   "text": "• 커피 : 국내 가맹점에 한하며, 대형시설물(백화점, 할인점, 아울렛, 쇼핑몰, 휴게소, 공항, 호텔 리조트, 역사, 마트) 입점 점포 및 임대매장 결제, 배달앱이나 식당 예약앱을 통한 주문 결제는 서비스 제외",
+   "why": "백화점·할인점/마트·아울렛/쇼핑몰·공항/역사는 MERCHANT_LOCATION 표준값으로 적었으나 휴게소·호텔·리조트에 해당하는 표준값이 없다. 국내 가맹점에 한한다는 조건(해외 결제 제외)과 배달앱·식당 예약앱을 통한 주문 결제 제외(결제 채널 조건)는 범위 밖이라 description에만 남겼다."
+  },
+  {
+   "text": "• 쇼핑(이마트, 롯데마트, 홈플러스) : 오프라인 결제건에 한하여 서비스 제공되며, 상설·임대매장과 창고형 할인매장은 제외 • 쇼핑(토스쇼핑) : 공식 앱을 통한 결제 건에 한하여 서비스 제공",
+   "why": "상설·임대매장은 MERCHANT_LOCATION의 IN_LARGE_MART로 적었으나 창고형 할인매장은 브랜드가 아니라 서술형이라 제외 값으로 넣을 수 없다(판정할 대상이 없어 제외가 무효가 된다). 오프라인 한정·공식 앱 한정은 결제 채널 조건이라 범위 밖이다."
+  },
+  {
+   "text": "• 매출 접수된 국내외 일시불/할부 이용금액에 따라 할인 혜택을 제공하며, 매출 취소 시 취소가 접수된 월에 할인된 금액을 차감 반영 • 후불교통요금 등 무승인거래(카드사의 승인없이 이용금액이 카드사에 접수됨)의 경우 매출이 접수된 월의 이용금액에 반영 • 할부 이용 전체 금액을 할부 이용한 달의 이용금액으로 반영",
+   "why": "실적·할인액을 어느 달에 반영하는지에 관한 시점 규칙이다. 스키마는 한도와 조건만 담고 매출 접수 시점·취소 반영 시점을 표현하는 축이 없다."
+  },
+  {
+   "text": "• 카드이용 시 제공되는 포인트 및 할인혜택 등의 부가서비스는 카드 신규 출시(2025년 7월 3일) 이후 3년 이상 축소·폐지 없이 유지됩니다.",
+   "why": "혜택 유효기간은 범위 밖이다(is_active 토글로 대체)."
+  }
+ ],
+ "_schema_gap": [
+  {
+   "text": "• 최초 카드 사용등록일로부터 다음달 말일까지는 지난달 카드 실적 50만원 미만이어도 50만원 이상 100만원 미만 기준으로 서비스 제공",
+   "missing": "user_card의 발급일·최초 사용등록일",
+   "why": "발급 초기 실적 면제를 판정할 날짜가 없다. 이 카드는 모든 혜택이 실적 50만원 이상을 요구하므로, 신규 회원의 혜택이 실제와 달리 전부 미적용으로 계산된다."
+  },
+  {
+   "text": "• 대상 가맹점의 공식 오프라인 매장 또는 온라인몰(web/App)에서 이용시 할인되며, 상품권 구매/충전 및 대형시설(백화점/할인점/아울렛/쇼핑몰/휴게소, 공항, 호텔, 리조트/역사) 입점 점포 이용 시 할인 제외",
+   "missing": "card_exclusions의 MERCHANT_LOCATION 유형",
+   "why": "모든 할인 서비스에 공통으로 걸리는 입점 매장 제외인데 card_exclusions가 받는 유형은 CATEGORY·MERCHANT·PAYMENT_TYPE·TRANSACTION_ATTR뿐이다. 커피·쇼핑 혜택에는 개별 exclusions로 적었지만 나중에 혜택이 추가되면 이 공통 제외가 그 혜택에는 걸리지 않는다."
+  },
+  {
+   "text": "보험 건강보험/고용보험/산재보험/국민연금 자동납부 시, 손해보험 업종 10% 5천원 1만원",
+   "missing": "4대 사회보험료를 가리키는 대상 축(카테고리 코드 또는 거래속성 기반 target_type)",
+   "why": "SOCIAL_INSURANCE는 실적 제외용 TRANSACTION_ATTR이고 target_type에는 CATEGORY·MERCHANT·ALL 세 축뿐이라, 4대 사회보험료를 손해보험 업종과 구분해 겨냥할 수 없다. 둘 다 INSURANCE 카테고리로 들어가 자동납부 조건이 붙은 행이 조건 없는 손해보험 행에 가려진다 — 4대보험을 자동납부가 아닌 방법으로 결제해도 할인이 계산된다."
+  }
+ ]
+}

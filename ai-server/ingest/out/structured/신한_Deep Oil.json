@@ -1,0 +1,734 @@
+{
+ "card": {
+  "card_name": "신한카드 Deep Oil",
+  "card_type": "CREDIT",
+  "annual_fee": null,
+  "annual_fees": [
+   {
+    "brand": "LOCAL",
+    "issue_type": "ANY",
+    "variant": "ANY",
+    "total_fee": 10000,
+    "base_fee": 5000,
+    "partner_fee": 5000,
+    "_source": "구분 총연회비 기본연회비 서비스연회비 / 국내전용 S& 1만원 5천원 5천원 — ※ S&은 신한카드가 AMEX와 제휴하여 개발한 브랜드로 국내전용(Local)카드와 동일한 연회비로 국내이용은 물론 AMEX 가맹점 Network로 해외이용이 가능한 Local 브랜드입니다."
+   },
+   {
+    "brand": "MASTERCARD",
+    "issue_type": "ANY",
+    "variant": "ANY",
+    "total_fee": 13000,
+    "base_fee": 5000,
+    "partner_fee": 8000,
+    "_source": "해외겸용 Master 1만 3천원 5천원 8천원"
+   }
+  ],
+  "_source": {},
+  "_needs_review": [
+   "annual_fee"
+  ]
+ },
+ "card_exclusions": [
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "CANCELED",
+   "_source": "※ 아래 거래는 할인 서비스 적용 대상에서 제외됩니다. 거래취소금액/기프트카드 구매금액/선불카드 충전금액/포인트 사용금액/무이자 및 슬림할부 이용거래/당사 할인이 적용된 거래"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "GIFT_CARD",
+   "_source": "기프트카드 구매금액/선불카드 충전금액"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "POINT_USED",
+   "_source": "포인트 사용금액"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "INTEREST_FREE",
+   "_source": "무이자 및 슬림할부 이용거래"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "DISCOUNTED",
+   "_source": "당사 할인이 적용된 거래"
+  }
+ ],
+ "performance_tiers": [
+  {
+   "period_type": "MONTH",
+   "min_performance_amount": 0,
+   "shared_monthly_limit": null,
+   "_source": "[할인 서비스별 월 이용금액 한도 및 월 제공횟수 한도] 표가 전월이용금액 30만원 이상부터 시작해 30만원 미만 구간에는 서비스가 없다. 카드 통합 할인한도 없이 서비스(주유·차량·생활·영화)마다 한도가 따로라 shared_monthly_limit은 null."
+  },
+  {
+   "period_type": "MONTH",
+   "min_performance_amount": 300000,
+   "shared_monthly_limit": null,
+   "_source": "구분 전월이용금액 30만원 이상 70만원 미만"
+  },
+  {
+   "period_type": "MONTH",
+   "min_performance_amount": 700000,
+   "shared_monthly_limit": null,
+   "_source": "구분 전월이용금액 70만원 이상"
+  }
+ ],
+ "performance_exclusions": [
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "CASH_ADVANCE",
+   "_source": "※ 아래 거래는 전월 이용금액에서 제외됩니다. 단기카드대출(현금서비스)/장기카드대출(카드론)/연회비/각종 수수료/이자/거래취소금액/기프트카드 구매금액/선불카드 충전금액/모든 주유소 주유 및 LPG 이용금액"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "CARD_LOAN",
+   "_source": "장기카드대출(카드론)"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "ANNUAL_FEE",
+   "_source": "연회비"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "FEE_INTEREST",
+   "_source": "각종 수수료/이자"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "CANCELED",
+   "_source": "거래취소금액"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "GIFT_CARD",
+   "_source": "기프트카드 구매금액/선불카드 충전금액"
+  },
+  {
+   "exclusion_type": "CATEGORY",
+   "exclusion_value": "FUEL",
+   "_source": "모든 주유소 주유 및 LPG 이용금액 — 주유 혜택을 주면서 주유 이용액 전부를 전월 이용금액에서 뺀다"
+  }
+ ],
+ "benefits": [
+  {
+   "benefit_name": "선택 정유사 주유 10% 결제일 할인 (GS칼텍스)",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 10,
+   "step_count": null,
+   "apply_timing": "BILLED",
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": "GS칼텍스",
+   "targets": null,
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": "OIL_SERVICE",
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": "OIL_BRAND_PICK",
+   "option_key": "GS_CALTEX",
+   "description": "4개 정유사 중 회원이 직접 고른 1곳에만 적용된다. 선택은 1곳만 가능하고 연 1회(1월~12월) 변경할 수 있으며, 미선택 시 GS칼텍스가 선택된다. 변경 후 다음날 이용거래부터 적용된다. 휘발유·등유·경유만 대상이고 LPG는 제외된다.",
+   "tier_limits": [
+    {
+     "min_performance_amount": 300000,
+     "monthly_limit": 15000,
+     "quarterly_limit": null,
+     "yearly_limit": null,
+     "benefit_value": null,
+     "_source": "주유 서비스 월 이용금액 한도 15만원(30만원 이상 70만원 미만) / 예시) 전월 이용금액이 40만원인 경우, 주유 서비스 월 이용금액 한도는 15만원으로 선택 정유사 주유 이용금액 15만원의 10%인 1만5천원까지 할인 가능 — 약관의 한도가 할인금액이 아니라 이용금액이라 10%를 곱해 적었다"
+    },
+    {
+     "min_performance_amount": 700000,
+     "monthly_limit": 30000,
+     "quarterly_limit": null,
+     "yearly_limit": null,
+     "benefit_value": null,
+     "_source": "주유 서비스 월 이용금액 한도 30만원(70만원 이상) × 10%"
+    }
+   ],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "• 4개의 정유사(GS칼텍스, SK에너지, S-OIL, 에이치디현대오일뱅크) 중 직접 고른 1개 정유사 주유 이용금액 10% 결제일 할인",
+    "require_performance": "※ 주유 서비스는 신한카드 Deep Oil 전월 이용금액(1일~말일, 일시불+할부, 모든 주유소 주유 및 LPG 이용금액 제외)이 30만원 이상인 경우 제공되며, 전월 이용금액에 따른 ‘주유 서비스 월 이용금액 한도’ 내에서 거래 순서에 따라 할인 제공됩니다.",
+    "limit_group_code": "주유 서비스 월 이용금액 한도가 선택한 정유사 한 곳에 걸리는 한도라 4개 정유사 행이 같은 코드를 쓴다(정유사를 바꾼 달에는 두 곳 거래가 한 달에 섞인다)"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "선택 정유사 주유 10% 결제일 할인 (SK에너지)",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 10,
+   "step_count": null,
+   "apply_timing": "BILLED",
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": "SK에너지",
+   "targets": null,
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": "OIL_SERVICE",
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": "OIL_BRAND_PICK",
+   "option_key": "SK_ENERGY",
+   "description": "4개 정유사 중 회원이 직접 고른 1곳에만 적용된다. 휘발유·등유·경유만 대상이고 LPG는 제외된다.",
+   "tier_limits": [
+    {
+     "min_performance_amount": 300000,
+     "monthly_limit": 15000,
+     "quarterly_limit": null,
+     "yearly_limit": null,
+     "benefit_value": null
+    },
+    {
+     "min_performance_amount": 700000,
+     "monthly_limit": 30000,
+     "quarterly_limit": null,
+     "yearly_limit": null,
+     "benefit_value": null
+    }
+   ],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "• 4개의 정유사(GS칼텍스, SK에너지, S-OIL, 에이치디현대오일뱅크) 중 직접 고른 1개 정유사 주유 이용금액 10% 결제일 할인"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "선택 정유사 주유 10% 결제일 할인 (S-OIL)",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 10,
+   "step_count": null,
+   "apply_timing": "BILLED",
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": "S-OIL",
+   "targets": null,
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": "OIL_SERVICE",
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": "OIL_BRAND_PICK",
+   "option_key": "S_OIL",
+   "description": "4개 정유사 중 회원이 직접 고른 1곳에만 적용된다. 휘발유·등유·경유만 대상이고 LPG는 제외된다.",
+   "tier_limits": [
+    {
+     "min_performance_amount": 300000,
+     "monthly_limit": 15000,
+     "quarterly_limit": null,
+     "yearly_limit": null,
+     "benefit_value": null
+    },
+    {
+     "min_performance_amount": 700000,
+     "monthly_limit": 30000,
+     "quarterly_limit": null,
+     "yearly_limit": null,
+     "benefit_value": null
+    }
+   ],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "• 4개의 정유사(GS칼텍스, SK에너지, S-OIL, 에이치디현대오일뱅크) 중 직접 고른 1개 정유사 주유 이용금액 10% 결제일 할인"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "선택 정유사 주유 10% 결제일 할인 (HD현대오일뱅크)",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 10,
+   "step_count": null,
+   "apply_timing": "BILLED",
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": "HD현대오일뱅크",
+   "targets": null,
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": "OIL_SERVICE",
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": "OIL_BRAND_PICK",
+   "option_key": "HD_HYUNDAI_OILBANK",
+   "description": "약관 표기는 ‘에이치디현대오일뱅크’다. 4개 정유사 중 회원이 직접 고른 1곳에만 적용된다. 휘발유·등유·경유만 대상이고 LPG는 제외된다.",
+   "tier_limits": [
+    {
+     "min_performance_amount": 300000,
+     "monthly_limit": 15000,
+     "quarterly_limit": null,
+     "yearly_limit": null,
+     "benefit_value": null
+    },
+    {
+     "min_performance_amount": 700000,
+     "monthly_limit": 30000,
+     "quarterly_limit": null,
+     "yearly_limit": null,
+     "benefit_value": null
+    }
+   ],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "• 4개의 정유사(GS칼텍스, SK에너지, S-OIL, 에이치디현대오일뱅크) 중 직접 고른 1개 정유사 주유 이용금액 10% 결제일 할인"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "스피드메이트 정비 10% 결제일 할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 10,
+   "step_count": null,
+   "apply_timing": "BILLED",
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": "스피드메이트",
+   "targets": null,
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": "CAR_SERVICE",
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "차량 서비스(정비소+주차장)가 한도를 통합해 쓴다. 오프라인 현장 일반결제만 가능하고 온라인 결제는 제외된다.",
+   "tier_limits": [
+    {
+     "min_performance_amount": 300000,
+     "monthly_limit": 15000,
+     "quarterly_limit": null,
+     "yearly_limit": null,
+     "benefit_value": null,
+     "_source": "차량 서비스 월 이용금액 한도 15만원(30만원 이상 70만원 미만) × 10% — 약관의 한도가 할인금액이 아니라 이용금액이라 요율을 곱해 적었다"
+    },
+    {
+     "min_performance_amount": 700000,
+     "monthly_limit": 30000,
+     "quarterly_limit": null,
+     "yearly_limit": null,
+     "benefit_value": null,
+     "_source": "차량 서비스 월 이용금액 한도 30만원(70만원 이상) × 10%"
+    }
+   ],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "• 스피드메이트 이용금액 10% 결제일 할인",
+    "require_performance": "※ 차량 서비스는 신한카드 Deep Oil 전월 이용금액(1일~말일, 일시불+할부, 모든 주유소 주유 및 LPG 이용금액 제외)이 30만원 이상인 경우 제공되며, 전월 이용금액에 따른 ‘차량 서비스 월 이용금액 한도’ 내(할인대상 정비소+주차장 통합)에서 거래 순서에 따라 할인 제공됩니다.",
+    "limit_group_code": "할인대상 정비소+주차장 통합"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "주차장 10% 결제일 할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 10,
+   "step_count": null,
+   "apply_timing": "BILLED",
+   "target_type": "CATEGORY",
+   "target_category_code": "PARKING",
+   "target_merchant_name": null,
+   "targets": null,
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": "CAR_SERVICE",
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "약관 대상은 ‘당사 주차장 업종으로 등록된 가맹점’이다. 표준 카테고리가 주차와 정비를 한 코드(PARKING_MAINTENANCE)로 묶고 있어, 약관이 스피드메이트만 지정한 정비 결제까지 이 행에 걸린다. 차량 서비스(정비소+주차장)가 한도를 통합해 쓴다.",
+   "tier_limits": [
+    {
+     "min_performance_amount": 300000,
+     "monthly_limit": 15000,
+     "quarterly_limit": null,
+     "yearly_limit": null,
+     "benefit_value": null
+    },
+    {
+     "min_performance_amount": 700000,
+     "monthly_limit": 30000,
+     "quarterly_limit": null,
+     "yearly_limit": null,
+     "benefit_value": null
+    }
+   ],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "• 전국 모든 주차장 10% 결제일 할인"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "편의점 5% 결제일 할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 5,
+   "step_count": null,
+   "apply_timing": "BILLED",
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": null,
+   "targets": [
+    "GS25",
+    "CU"
+   ],
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": "LIVING_SERVICE",
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "생활 서비스(편의점+커피+택시)가 한도를 통합해 쓴다. 약관이 두 브랜드를 열거했으므로 편의점 카테고리로 넓히지 않았다.",
+   "tier_limits": [
+    {
+     "min_performance_amount": 300000,
+     "monthly_limit": 7500,
+     "quarterly_limit": null,
+     "yearly_limit": null,
+     "benefit_value": null,
+     "_source": "생활 서비스 월 이용금액 한도 15만원(30만원 이상 70만원 미만) × 5% — 약관의 한도가 할인금액이 아니라 이용금액이라 요율을 곱해 적었다"
+    },
+    {
+     "min_performance_amount": 700000,
+     "monthly_limit": 15000,
+     "quarterly_limit": null,
+     "yearly_limit": null,
+     "benefit_value": null,
+     "_source": "생활 서비스 월 이용금액 한도 30만원(70만원 이상) × 5%"
+    }
+   ],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "• GS25, CU 5% 결제일 할인",
+    "require_performance": "※ 생활 서비스는 신한카드 Deep Oil 전월 이용금액(1일~말일, 일시불+할부, 모든 주유소 주유 및 LPG 이용금액 제외)이 30만원 이상인 경우 제공되며, 전월 이용금액에 따른 ‘생활 서비스 월 이용금액 한도’ 내(할인대상 편의점+커피+택시 통합)에서 거래 순서에 따라 할인 제공됩니다.",
+    "limit_group_code": "할인대상 편의점+커피+택시 통합"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "커피 5% 결제일 할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 5,
+   "step_count": null,
+   "apply_timing": "BILLED",
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": null,
+   "targets": [
+    "스타벅스",
+    "이디야"
+   ],
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": "LIVING_SERVICE",
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "생활 서비스(편의점+커피+택시)가 한도를 통합해 쓴다. 약관이 두 브랜드를 열거했으므로 카페 카테고리로 넓히지 않았다.",
+   "tier_limits": [
+    {
+     "min_performance_amount": 300000,
+     "monthly_limit": 7500,
+     "quarterly_limit": null,
+     "yearly_limit": null,
+     "benefit_value": null
+    },
+    {
+     "min_performance_amount": 700000,
+     "monthly_limit": 15000,
+     "quarterly_limit": null,
+     "yearly_limit": null,
+     "benefit_value": null
+    }
+   ],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "• 스타벅스, 이디야 5% 결제일 할인"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "택시 5% 결제일 할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 5,
+   "step_count": null,
+   "apply_timing": "BILLED",
+   "target_type": "CATEGORY",
+   "target_category_code": "TAXI",
+   "target_merchant_name": null,
+   "targets": null,
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": "LIVING_SERVICE",
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "생활 서비스(편의점+커피+택시)가 한도를 통합해 쓴다. 오프라인 현장 일반결제만 가능하고 온라인·자동결제는 제외된다.",
+   "tier_limits": [
+    {
+     "min_performance_amount": 300000,
+     "monthly_limit": 7500,
+     "quarterly_limit": null,
+     "yearly_limit": null,
+     "benefit_value": null
+    },
+    {
+     "min_performance_amount": 700000,
+     "monthly_limit": 15000,
+     "quarterly_limit": null,
+     "yearly_limit": null,
+     "benefit_value": null
+    }
+   ],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "• 택시 5% 결제일 할인"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "롯데시네마 일반관 5천원 현장 할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "FIXED",
+   "benefit_value": 5000,
+   "step_count": null,
+   "apply_timing": "IMMEDIATE",
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": "롯데시네마",
+   "targets": null,
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": 5001,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": 1,
+   "monthly_count_limit": 1,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": null,
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "일반관만 대상이고 3D 등 스페셜관은 제외된다. 조조영화도 대상이나 일반관 5천원 이하 상영 영화는 제외된다. 롯데시네마 현장·홈페이지·공식 App 결제건에 한하며, 예매 시 이 카드 할인을 선택·요청해야 적용된다. 타 할인과 중복 적용은 불가하다.",
+   "tier_limits": [],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "• 롯데시네마 일반관 5천원 현장 할인",
+    "min_txn_amount": "- 조조영화도 할인 제공 가능합니다. 단, 3D 등 스페셜관 상영 영화, 일반관에서 5천원 이하 금액으로 상영되는 영화는 제외됩니다. — ‘5천원 이하 제외’라 건당 최소금액을 5,001원으로 적었다",
+    "monthly_count_limit": "영화 서비스 월 제공횟수 한도 1회(30만원 이상 70만원 미만) 2회(70만원 이상) — 구간별 횟수를 담을 필드가 없어 낮은 구간 값 1회로 고정했다(_schema_gap 참조)",
+    "daily_count_limit": "- 롯데시네마 일반관 상영 영화의 온라인/현장 예매 시 월 제공횟수 한도 내 1일 1회에 한하여 할인 제공됩니다.",
+    "require_performance": "※ 영화 서비스는 신한카드 Deep Oil 전월 이용금액(1일~말일, 일시불+할부, 모든 주유소 주유 및 LPG 이용금액 제외)이 30만원 이상인 경우 제공되며, 전월 이용금액에 따른 ‘영화 서비스 월 제공횟수 한도’ 내에서 거래 순서에 따라 할인 제공됩니다."
+   },
+   "_needs_review": []
+  }
+ ],
+ "unmapped": [
+  {
+   "text": "- 휘발유, 등유, 경유에 대해서만 할인이 제공되며, LPG는 할인 제외됩니다.",
+   "why": "유종은 상품 단위 조건이라 가맹점·카테고리·결제수단 어느 축으로도 표현할 수 없다. 같은 주유소 결제 안에서 갈리므로 대상 지정으로도 걸러지지 않는다"
+  },
+  {
+   "text": "- 정비소 할인 서비스는 오프라인 현장 일반결제만 가능하며, 온라인 결제 등은 적용 제외됩니다.",
+   "why": "결제 채널(온라인/오프라인) 조건은 범위 밖이다"
+  },
+  {
+   "text": "- 오프라인 현장 일반결제만 가능하며, 온라인/자동결제 등은 적용 제외됩니다. (택시 서비스)",
+   "why": "결제 채널 조건은 범위 밖이다. 자동결제 제외는 TRANSACTION_ATTR의 RECURRING에 해당하나 소비내역이 정기결제 여부를 구분하지 않아 판정할 수 없다"
+  },
+  {
+   "text": "- 롯데시네마 영화관 현장 및 롯데시네마 홈페이지, 모바일 App(공식App) 결제건에 한하여 제공됩니다.",
+   "why": "결제 채널 조건은 범위 밖이다"
+  },
+  {
+   "text": "- 조조영화도 할인 제공 가능합니다. 단, 3D 등 스페셜관 상영 영화, 일반관에서 5천원 이하 금액으로 상영되는 영화는 제외됩니다.",
+   "why": "상영관 종류(일반관/스페셜관)는 상품 단위 조건이라 표현할 수 없다. 뒷부분 ‘5천원 이하 제외’는 min_txn_amount로 담았다"
+  },
+  {
+   "text": "- 온라인 예매 시 ‘할인 수단으로 신한카드 Deep Oil 할인을 선택’ 하시거나, 현장 예매 시 ‘신한카드Deep Oil 할인을 요청’하셔야 이용 가능합니다.",
+   "why": "회원이 결제 시점에 할인 적용을 요청해야 한다는 조건인데 결제 데이터로 확인할 수 없다"
+  },
+  {
+   "text": "※ 월 이용금액 및 제공횟수 한도는 할인대상 가맹점의 이용금액 및 횟수 기준이며, 본인+가족카드 통합 적용됩니다.",
+   "why": "가족카드 합산은 범위 밖이다"
+  },
+  {
+   "text": "- 교통카드 이용금액은 전전월 이용금액이 반영됩니다.",
+   "why": "전전월 실적은 범위 밖이다"
+  },
+  {
+   "text": "- 해외 이용금액은 매입일자 기준으로 반영됩니다.",
+   "why": "실적 반영 기준일(거래일/매입일)을 담을 필드가 없고 해외 이용 구분도 소비내역에 없다"
+  }
+ ],
+ "_schema_gap": [
+  {
+   "text": "[할인 서비스별 월 이용금액 한도 및 월 제공횟수 한도] 구분 전월이용금액 30만원 이상 70만원 미만 / 70만원 이상, 주유 서비스 월 이용금액 한도 15만원 30만원, 차량 서비스 월 이용금액 한도 15만원 30만원, 생활 서비스 월 이용금액 한도 15만원 30만원 / 예시) 전월 이용금액이 40만원인 경우, 주유 서비스 월 이용금액 한도는 15만원으로 선택 정유사 주유 이용금액 15만원의 10%인 1만5천원까지 할인 가능",
+   "missing": "할인금액이 아니라 혜택 대상 이용금액을 기준으로 하는 월 한도 필드",
+   "why": "이 카드는 한도를 할인금액이 아니라 이용금액으로 적는다. 세 서비스 모두 정률이라 요율을 곱해 monthly_limit(주유·차량 15,000/30,000원, 생활 7,500/15,000원)으로 환산해 넣었지만, 시드 숫자가 약관 숫자와 달라 대조가 어렵고 정률이 아닌 혜택에서는 환산 자체가 불가능하다"
+  },
+  {
+   "text": "영화 서비스 월 제공횟수 한도 1회 2회 / ※ 영화 서비스는 신한카드 Deep Oil 전월 이용금액(1일~말일, 일시불+할부, 모든 주유소 주유 및 LPG 이용금액 제외)이 30만원 이상인 경우 제공되며, 전월 이용금액에 따른 ‘영화 서비스 월 제공횟수 한도’ 내에서 거래 순서에 따라 할인 제공됩니다.",
+   "missing": "실적 구간별 횟수 한도(구간별 월·일 제공횟수)",
+   "why": "tier_limits가 금액 한도와 혜택값만 담아 구간마다 다른 제공횟수를 표현할 수 없다. 비워 두면 횟수 제한이 없어지므로 낮은 구간 값 1회로 고정했고, 그 결과 전월 70만원 이상 회원은 실제(월 2회)보다 한 번 적게 계산된다"
+  },
+  {
+   "text": "※ 신규 발급 회원의 경우 카드 사용 등록월의 익월말(등록월+1개월)까지 ‘30만원 이상~70만원 미만’ 구간의 이용금액 한도/제공횟수가 적용됩니다. (해당 기간 중 70만원 이상 이용 시엔 다음달에 해당 테이블에 상응하는 이용금액 한도/제공횟수가 적용됩니다.)",
+   "missing": "카드 보유 정보의 최초 사용등록일",
+   "why": "발급 초기에 실적을 면제해 1구간 서비스를 주는 조항인데 사용등록일이 없어 판정할 수 없다. 신규 회원은 첫 두 달 동안 혜택이 하나도 계산되지 않는다"
+  },
+  {
+   "text": "- 정유사 선택은 1곳만 가능하며 연 1회(1월~12월) 변경 가능합니다. / - 정유사 미선택 시에는, GS칼텍스가 선택됩니다.",
+   "missing": "선택형 혜택의 기본 선택값과 변경 주기",
+   "why": "선택 상태가 월 단위로만 저장되어 미선택 회원에게 적용할 기본값(GS칼텍스)과 연 1회 변경 제한을 담을 자리가 없다. 기본값이 없으면 한 번도 선택하지 않은 회원은 주유 혜택이 전혀 계산되지 않는다"
+  },
+  {
+   "text": "무이자 및 슬림할부 이용거래",
+   "missing": "슬림할부(부분 무이자 할부) 거래 속성 표준값",
+   "why": "TRANSACTION_ATTR 표준값에 INTEREST_FREE(무이자할부)만 있어 슬림할부 거래를 구분할 수 없다"
+  },
+  {
+   "text": "• 전국 모든 주차장 10% 결제일 할인 / - 주차장 할인 서비스는 당사 주차장 업종으로 등록된 가맹점에 한하여 제공됩니다.",
+   "missing": "주차 전용 카테고리 코드",
+   "why": "표준 카테고리 PARKING_MAINTENANCE가 주차와 정비를 한 코드로 묶고 있어, 약관이 정비는 스피드메이트만 지정했는데도 다른 정비소 결제까지 10% 할인 대상이 된다. 코드를 비우면 주차장 혜택이 통째로 사라지므로 근접 코드를 넣고 남긴다"
+  }
+ ]
+}

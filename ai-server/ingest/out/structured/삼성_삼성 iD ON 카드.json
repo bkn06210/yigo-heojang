@@ -101,16 +101,6 @@
    "exclusion_type": "TRANSACTION_ATTR",
    "exclusion_value": "GIFT_CARD",
    "_source": "할인 제외 대상: 기프트/선불카드(포인트, 사이버머니 등 전자지급수단 포함) 구매 및 충전, 상품권 구매"
-  },
-  {
-   "exclusion_type": "MERCHANT",
-   "exclusion_value": "문자알림서비스",
-   "_source": "할인 제외 대상: 문자알림서비스, 스마트오토서비스 이용금액"
-  },
-  {
-   "exclusion_type": "MERCHANT",
-   "exclusion_value": "스마트오토서비스",
-   "_source": "할인 제외 대상: 문자알림서비스, 스마트오토서비스 이용금액"
   }
  ],
  "performance_tiers": [
@@ -260,7 +250,7 @@
    "apply_timing": null,
    "target_type": "MERCHANT",
    "target_category_code": null,
-   "target_merchant_name": "이디야커피",
+   "target_merchant_name": "이디야",
    "require_performance": "Y",
    "performance_period": "MONTH",
    "require_payment_type": null,
@@ -1276,7 +1266,7 @@
    "exclusions": [
     {
      "exclusion_type": "PAYMENT_TYPE",
-     "exclusion_value": "간편결제",
+     "exclusion_value": "SIMPLE_PAY",
      "_source": "* 스 트리밍은 간편결제건 및 앱스토어를 통한 결제건(인앱 결제) 제외"
     }
    ],
@@ -1336,7 +1326,7 @@
    "exclusions": [
     {
      "exclusion_type": "PAYMENT_TYPE",
-     "exclusion_value": "간편결제",
+     "exclusion_value": "SIMPLE_PAY",
      "_source": "* 스 트리밍은 간편결제건 및 앱스토어를 통한 결제건(인앱 결제) 제외"
     }
    ],
@@ -1396,7 +1386,7 @@
    "exclusions": [
     {
      "exclusion_type": "PAYMENT_TYPE",
-     "exclusion_value": "간편결제",
+     "exclusion_value": "SIMPLE_PAY",
      "_source": "* 스 트리밍은 간편결제건 및 앱스토어를 통한 결제건(인앱 결제) 제외"
     }
    ],
@@ -1456,7 +1446,7 @@
    "exclusions": [
     {
      "exclusion_type": "PAYMENT_TYPE",
-     "exclusion_value": "간편결제",
+     "exclusion_value": "SIMPLE_PAY",
      "_source": "* 스 트리밍은 간편결제건 및 앱스토어를 통한 결제건(인앱 결제) 제외"
     }
    ],
@@ -1516,7 +1506,7 @@
    "exclusions": [
     {
      "exclusion_type": "PAYMENT_TYPE",
-     "exclusion_value": "간편결제",
+     "exclusion_value": "SIMPLE_PAY",
      "_source": "* 스 트리밍은 간편결제건 및 앱스토어를 통한 결제건(인앱 결제) 제외"
     }
    ],
@@ -1576,7 +1566,7 @@
    "exclusions": [
     {
      "exclusion_type": "PAYMENT_TYPE",
-     "exclusion_value": "간편결제",
+     "exclusion_value": "SIMPLE_PAY",
      "_source": "* 스 트리밍은 간편결제건 및 앱스토어를 통한 결제건(인앱 결제) 제외"
     }
    ],

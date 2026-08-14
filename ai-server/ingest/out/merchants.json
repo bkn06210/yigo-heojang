@@ -5,6 +5,11 @@
   "category_code": "ONLINE_SHOPPING"
  },
  {
+  "merchant_name": "29CM",
+  "merchant_code": "TWENTY_NINE_CM",
+  "category_code": "ONLINE_SHOPPING"
+ },
+ {
   "merchant_name": "8SECONDS",
   "merchant_code": "EIGHT_SECONDS",
   "category_code": "SHOPPING"
@@ -30,9 +35,24 @@
   "category_code": "ONLINE_SHOPPING"
  },
  {
+  "merchant_name": "COS",
+  "merchant_code": "COS",
+  "category_code": "SHOPPING"
+ },
+ {
   "merchant_name": "CU",
   "merchant_code": "CU",
   "category_code": "CONVENIENCE_STORE"
+ },
+ {
+  "merchant_name": "ChatGPT",
+  "merchant_code": "CHATGPT",
+  "category_code": "SUBSCRIPTION_STREAMING"
+ },
+ {
+  "merchant_name": "Claude",
+  "merchant_code": "CLAUDE",
+  "category_code": "SUBSCRIPTION_STREAMING"
  },
  {
   "merchant_name": "FLO",
@@ -43,6 +63,11 @@
   "merchant_name": "GS SHOP",
   "merchant_code": "GS_SHOP",
   "category_code": "ONLINE_SHOPPING"
+ },
+ {
+  "merchant_name": "GS THE FRESH",
+  "merchant_code": "GS_THE_FRESH",
+  "category_code": "SUPERMARKET"
  },
  {
   "merchant_name": "GS25",
@@ -85,6 +110,11 @@
   "category_code": "SHOPPING"
  },
  {
+  "merchant_name": "KFC",
+  "merchant_code": "KFC",
+  "category_code": "FAST_FOOD"
+ },
+ {
   "merchant_name": "KT",
   "merchant_code": "KT",
   "category_code": "TELECOM"
@@ -125,6 +155,11 @@
   "category_code": "ONLINE_SHOPPING"
  },
  {
+  "merchant_name": "Perplexity",
+  "merchant_code": "PERPLEXITY",
+  "category_code": "SUBSCRIPTION_STREAMING"
+ },
+ {
   "merchant_name": "S-OIL",
   "merchant_code": "S_OIL",
   "category_code": "FUEL"
@@ -135,9 +170,24 @@
   "category_code": "TELECOM"
  },
  {
+  "merchant_name": "SK렌터카",
+  "merchant_code": "SK_RENTACAR",
+  "category_code": "TRANSPORT"
+ },
+ {
   "merchant_name": "SK매직",
   "merchant_code": "SK_MAGIC",
   "category_code": "LIFE_SERVICE"
+ },
+ {
+  "merchant_name": "SK브로드밴드",
+  "merchant_code": "SK_BROADBAND",
+  "category_code": "TELECOM"
+ },
+ {
+  "merchant_name": "SK세븐모바일",
+  "merchant_code": "SK_SEVEN_MOBILE",
+  "category_code": "TELECOM"
  },
  {
   "merchant_name": "SK에너지",
@@ -150,9 +200,24 @@
   "category_code": "TELECOM"
  },
  {
+  "merchant_name": "SSF SHOP",
+  "merchant_code": "SSF_SHOP",
+  "category_code": "ONLINE_SHOPPING"
+ },
+ {
   "merchant_name": "SSG.COM",
   "merchant_code": "SSG_COM",
   "category_code": "ONLINE_SHOPPING"
+ },
+ {
+  "merchant_name": "T우주",
+  "merchant_code": "T_UNIVERSE",
+  "category_code": "SUBSCRIPTION_STREAMING"
+ },
+ {
+  "merchant_name": "U+ 유모바일",
+  "merchant_code": "UPLUS_UMOBILE",
+  "category_code": "TELECOM"
  },
  {
   "merchant_name": "VIPS",
@@ -160,9 +225,19 @@
   "category_code": "RESTAURANT"
  },
  {
+  "merchant_name": "W컨셉",
+  "merchant_code": "W_CONCEPT",
+  "category_code": "ONLINE_SHOPPING"
+ },
+ {
   "merchant_name": "YES24",
   "merchant_code": "YES24",
   "category_code": "BOOKSTORE"
+ },
+ {
+  "merchant_name": "ZARA HOME",
+  "merchant_code": "ZARA_HOME",
+  "category_code": "SHOPPING"
  },
  {
   "merchant_name": "갤러리아백화점",
@@ -170,9 +245,19 @@
   "category_code": "DEPARTMENT_STORE"
  },
  {
+  "merchant_name": "공영홈쇼핑",
+  "merchant_code": "PUBLIC_HOMESHOPPING",
+  "category_code": "ONLINE_SHOPPING"
+ },
+ {
   "merchant_name": "교보문고",
   "merchant_code": "KYOBO_BOOK",
   "category_code": "BOOKSTORE"
+ },
+ {
+  "merchant_name": "교원",
+  "merchant_code": "KYOWON",
+  "category_code": "LEARNING_SERVICE"
  },
  {
   "merchant_name": "교원웰스",
@@ -180,9 +265,24 @@
   "category_code": "LIFE_SERVICE"
  },
  {
-  "merchant_name": "네이버플러스",
-  "merchant_code": "NAVER_PLUS",
+  "merchant_name": "구글플레이스토어",
+  "merchant_code": "GOOGLE_PLAY",
   "category_code": "ONLINE_SHOPPING"
+ },
+ {
+  "merchant_name": "그린카",
+  "merchant_code": "GREENCAR",
+  "category_code": "TRANSPORT"
+ },
+ {
+  "merchant_name": "나이키닷컴",
+  "merchant_code": "NIKE_COM",
+  "category_code": "ONLINE_SHOPPING"
+ },
+ {
+  "merchant_name": "네이버웹툰",
+  "merchant_code": "NAVER_WEBTOON",
+  "category_code": "SUBSCRIPTION_STREAMING"
  },
  {
   "merchant_name": "네이버플러스 멤버십",
@@ -205,9 +305,29 @@
   "category_code": "SUBSCRIPTION_STREAMING"
  },
  {
+  "merchant_name": "노브랜드",
+  "merchant_code": "NO_BRAND",
+  "category_code": "SUPERMARKET"
+ },
+ {
   "merchant_name": "농협 하나로마트",
   "merchant_code": "HANARO_MART",
   "category_code": "LARGE_MART"
+ },
+ {
+  "merchant_name": "다이소",
+  "merchant_code": "DAISO",
+  "category_code": "SHOPPING"
+ },
+ {
+  "merchant_name": "대교",
+  "merchant_code": "DAEKYO",
+  "category_code": "LEARNING_SERVICE"
+ },
+ {
+  "merchant_name": "대성마이맥",
+  "merchant_code": "DAESUNG_MIMAC",
+  "category_code": "ACADEMY"
  },
  {
   "merchant_name": "대한항공",
@@ -215,9 +335,19 @@
   "category_code": "TRANSPORT"
  },
  {
+  "merchant_name": "더현대",
+  "merchant_code": "THE_HYUNDAI",
+  "category_code": "DEPARTMENT_STORE"
+ },
+ {
+  "merchant_name": "더현대닷컴",
+  "merchant_code": "THE_HYUNDAI_COM",
+  "category_code": "ONLINE_SHOPPING"
+ },
+ {
   "merchant_name": "던킨",
   "merchant_code": "DUNKIN",
-  "category_code": "CAFE"
+  "category_code": "BAKERY_DESSERT"
  },
  {
   "merchant_name": "동화면세점",
@@ -225,19 +355,24 @@
   "category_code": "SHOPPING"
  },
  {
-  "merchant_name": "디즈니",
-  "merchant_code": "DISNEY",
-  "category_code": "SUBSCRIPTION_STREAMING"
- },
- {
   "merchant_name": "디즈니 플러스",
   "merchant_code": "DISNEY_PLUS",
   "category_code": "SUBSCRIPTION_STREAMING"
  },
  {
+  "merchant_name": "땡겨요",
+  "merchant_code": "DDANGYO",
+  "category_code": "DELIVERY"
+ },
+ {
   "merchant_name": "뚜레쥬르",
   "merchant_code": "TOUS_LES_JOURS",
-  "category_code": "CAFE"
+  "category_code": "BAKERY_DESSERT"
+ },
+ {
+  "merchant_name": "롯데ON",
+  "merchant_code": "LOTTE_ON",
+  "category_code": "ONLINE_SHOPPING"
  },
  {
   "merchant_name": "롯데i몰",
@@ -245,8 +380,18 @@
   "category_code": "ONLINE_SHOPPING"
  },
  {
+  "merchant_name": "롯데리아",
+  "merchant_code": "LOTTERIA",
+  "category_code": "FAST_FOOD"
+ },
+ {
   "merchant_name": "롯데마트",
   "merchant_code": "LOTTE_MART",
+  "category_code": "LARGE_MART"
+ },
+ {
+  "merchant_name": "롯데마트맥스",
+  "merchant_code": "LOTTE_MART_MAXX",
   "category_code": "LARGE_MART"
  },
  {
@@ -258,6 +403,11 @@
   "merchant_name": "롯데백화점",
   "merchant_code": "LOTTE_DEPT",
   "category_code": "DEPARTMENT_STORE"
+ },
+ {
+  "merchant_name": "롯데슈퍼",
+  "merchant_code": "LOTTE_SUPER",
+  "category_code": "SUPERMARKET"
  },
  {
   "merchant_name": "롯데시네마",
@@ -285,9 +435,34 @@
   "category_code": "ONLINE_SHOPPING"
  },
  {
+  "merchant_name": "맘스터치",
+  "merchant_code": "MOMS_TOUCH",
+  "category_code": "FAST_FOOD"
+ },
+ {
+  "merchant_name": "맥도날드",
+  "merchant_code": "MCDONALDS",
+  "category_code": "FAST_FOOD"
+ },
+ {
+  "merchant_name": "머스트잇",
+  "merchant_code": "MUST_IT",
+  "category_code": "ONLINE_SHOPPING"
+ },
+ {
   "merchant_name": "메가박스",
   "merchant_code": "MEGABOX",
   "category_code": "MOVIE"
+ },
+ {
+  "merchant_name": "메가스터디",
+  "merchant_code": "MEGASTUDY",
+  "category_code": "ACADEMY"
+ },
+ {
+  "merchant_name": "메가커피",
+  "merchant_code": "MEGA_COFFEE",
+  "category_code": "CAFE"
  },
  {
   "merchant_name": "멜론",
@@ -298,6 +473,11 @@
   "merchant_name": "모두렌탈",
   "merchant_code": "MODU_RENTAL",
   "category_code": "LIFE_SERVICE"
+ },
+ {
+  "merchant_name": "무신사",
+  "merchant_code": "MUSINSA",
+  "category_code": "ONLINE_SHOPPING"
  },
  {
   "merchant_name": "미니스톱",
@@ -315,9 +495,19 @@
   "category_code": "SUBSCRIPTION_STREAMING"
  },
  {
+  "merchant_name": "밀크T",
+  "merchant_code": "MILK_T",
+  "category_code": "LEARNING_SERVICE"
+ },
+ {
   "merchant_name": "바디프랜드",
   "merchant_code": "BODYFRIEND",
   "category_code": "LIFE_SERVICE"
+ },
+ {
+  "merchant_name": "발란",
+  "merchant_code": "BALAAN",
+  "category_code": "ONLINE_SHOPPING"
  },
  {
   "merchant_name": "배달의민족",
@@ -325,9 +515,19 @@
   "category_code": "DELIVERY"
  },
  {
+  "merchant_name": "배민클럽",
+  "merchant_code": "BAEMIN_CLUB",
+  "category_code": "DELIVERY"
+ },
+ {
   "merchant_name": "배스킨라빈스",
   "merchant_code": "BASKIN_ROBBINS",
-  "category_code": "CAFE"
+  "category_code": "BAKERY_DESSERT"
+ },
+ {
+  "merchant_name": "버거킹",
+  "merchant_code": "BURGER_KING",
+  "category_code": "FAST_FOOD"
  },
  {
   "merchant_name": "블루보틀",
@@ -350,6 +550,16 @@
   "category_code": "CONVENIENCE_STORE"
  },
  {
+  "merchant_name": "세탁특공대",
+  "merchant_code": "LAUNDRY_GO",
+  "category_code": "LIFE_SERVICE"
+ },
+ {
+  "merchant_name": "쇼핑엔티",
+  "merchant_code": "SHOPPING_NT",
+  "category_code": "ONLINE_SHOPPING"
+ },
+ {
   "merchant_name": "쉐이크쉑",
   "merchant_code": "SHAKE_SHACK",
   "category_code": "FAST_FOOD"
@@ -358,6 +568,16 @@
   "merchant_name": "스타벅스",
   "merchant_code": "STARBUCKS",
   "category_code": "CAFE"
+ },
+ {
+  "merchant_name": "스포티파이",
+  "merchant_code": "SPOTIFY",
+  "category_code": "SUBSCRIPTION_STREAMING"
+ },
+ {
+  "merchant_name": "스피드메이트",
+  "merchant_code": "SPEEDMATE",
+  "category_code": "PARKING_MAINTENANCE"
  },
  {
   "merchant_name": "신라면세점",
@@ -385,9 +605,29 @@
   "category_code": "DEPARTMENT_STORE"
  },
  {
+  "merchant_name": "신세계쇼핑",
+  "merchant_code": "SHINSEGAE_SHOPPING",
+  "category_code": "ONLINE_SHOPPING"
+ },
+ {
   "merchant_name": "써브웨이",
   "merchant_code": "SUBWAY",
   "category_code": "FAST_FOOD"
+ },
+ {
+  "merchant_name": "쏘카",
+  "merchant_code": "SOCAR",
+  "category_code": "TRANSPORT"
+ },
+ {
+  "merchant_name": "아고다",
+  "merchant_code": "AGODA",
+  "category_code": "CULTURE_LEISURE"
+ },
+ {
+  "merchant_name": "아시아나항공",
+  "merchant_code": "ASIANA_AIRLINES",
+  "category_code": "TRANSPORT"
  },
  {
   "merchant_name": "아웃백",
@@ -395,9 +635,34 @@
   "category_code": "RESTAURANT"
  },
  {
+  "merchant_name": "아이파킹",
+  "merchant_code": "IPARKING",
+  "category_code": "PARKING_MAINTENANCE"
+ },
+ {
   "merchant_name": "아티제",
   "merchant_code": "ARTISEE",
   "category_code": "CAFE"
+ },
+ {
+  "merchant_name": "알뜰주유소",
+  "merchant_code": "ALTTEUL_GAS",
+  "category_code": "FUEL"
+ },
+ {
+  "merchant_name": "알라딘",
+  "merchant_code": "ALADIN",
+  "category_code": "BOOKSTORE"
+ },
+ {
+  "merchant_name": "애플앱스토어",
+  "merchant_code": "APPLE_APP_STORE",
+  "category_code": "ONLINE_SHOPPING"
+ },
+ {
+  "merchant_name": "야놀자",
+  "merchant_code": "YANOLJA",
+  "category_code": "CULTURE_LEISURE"
  },
  {
   "merchant_name": "에버랜드",
@@ -405,9 +670,39 @@
   "category_code": "SPORTS_LEISURE"
  },
  {
+  "merchant_name": "에어부산",
+  "merchant_code": "AIR_BUSAN",
+  "category_code": "TRANSPORT"
+ },
+ {
+  "merchant_name": "에어서울",
+  "merchant_code": "AIR_SEOUL",
+  "category_code": "TRANSPORT"
+ },
+ {
+  "merchant_name": "에이블리",
+  "merchant_code": "ABLY",
+  "category_code": "ONLINE_SHOPPING"
+ },
+ {
   "merchant_name": "엔제리너스",
   "merchant_code": "ANGELINUS",
   "category_code": "CAFE"
+ },
+ {
+  "merchant_name": "엘리하이",
+  "merchant_code": "ELIHIGH",
+  "category_code": "LEARNING_SERVICE"
+ },
+ {
+  "merchant_name": "엠베스트",
+  "merchant_code": "MBEST",
+  "category_code": "ACADEMY"
+ },
+ {
+  "merchant_name": "여기어때",
+  "merchant_code": "YEOGI_EOTTAE",
+  "category_code": "CULTURE_LEISURE"
  },
  {
   "merchant_name": "예다함",
@@ -416,9 +711,19 @@
   "_note": "상조(장례) 서비스라 표준 카테고리에 대응 항목이 없음"
  },
  {
+  "merchant_name": "오늘의집",
+  "merchant_code": "OHOUSE",
+  "category_code": "ONLINE_SHOPPING"
+ },
+ {
   "merchant_name": "오아시스마켓",
   "merchant_code": "OASIS_MARKET",
   "category_code": "SUPERMARKET"
+ },
+ {
+  "merchant_name": "오토오아시스",
+  "merchant_code": "AUTO_OASIS",
+  "category_code": "PARKING_MAINTENANCE"
  },
  {
   "merchant_name": "옥션",
@@ -435,6 +740,11 @@
   "merchant_name": "올리브영",
   "merchant_code": "OLIVE_YOUNG",
   "category_code": "BEAUTY"
+ },
+ {
+  "merchant_name": "와인앤모어",
+  "merchant_code": "WINE_AND_MORE",
+  "category_code": "SHOPPING"
  },
  {
   "merchant_name": "왓챠",
@@ -487,11 +797,6 @@
   "category_code": "SHOPPING"
  },
  {
-  "merchant_name": "유튜브",
-  "merchant_code": "YOUTUBE",
-  "category_code": "SUBSCRIPTION_STREAMING"
- },
- {
   "merchant_name": "유튜브 프리미엄",
   "merchant_code": "YOUTUBE_PREMIUM",
   "category_code": "SUBSCRIPTION_STREAMING"
@@ -502,14 +807,14 @@
   "category_code": "CAFE"
  },
  {
-  "merchant_name": "이디야커피",
-  "merchant_code": "EDIYA_COFFEE",
-  "category_code": "CAFE"
- },
- {
   "merchant_name": "이마트",
   "merchant_code": "EMART",
   "category_code": "LARGE_MART"
+ },
+ {
+  "merchant_name": "이마트 에브리데이",
+  "merchant_code": "EMART_EVERYDAY",
+  "category_code": "SUPERMARKET"
  },
  {
   "merchant_name": "이마트24",
@@ -517,9 +822,34 @@
   "category_code": "CONVENIENCE_STORE"
  },
  {
+  "merchant_name": "이스타항공",
+  "merchant_code": "EASTAR_JET",
+  "category_code": "TRANSPORT"
+ },
+ {
+  "merchant_name": "이케아",
+  "merchant_code": "IKEA",
+  "category_code": "SHOPPING"
+ },
+ {
+  "merchant_name": "이투스",
+  "merchant_code": "ETOOS",
+  "category_code": "ACADEMY"
+ },
+ {
+  "merchant_name": "익스피디아",
+  "merchant_code": "EXPEDIA",
+  "category_code": "CULTURE_LEISURE"
+ },
+ {
   "merchant_name": "인터파크",
   "merchant_code": "INTERPARK",
   "category_code": "ONLINE_SHOPPING"
+ },
+ {
+  "merchant_name": "인터파크티켓",
+  "merchant_code": "INTERPARK_TICKET",
+  "category_code": "CULTURE_LEISURE"
  },
  {
   "merchant_name": "자라",
@@ -530,6 +860,11 @@
   "merchant_name": "제주항공",
   "merchant_code": "JEJU_AIR",
   "category_code": "TRANSPORT"
+ },
+ {
+  "merchant_name": "지그재그",
+  "merchant_code": "ZIGZAG",
+  "category_code": "ONLINE_SHOPPING"
  },
  {
   "merchant_name": "지니뮤직",
@@ -545,6 +880,21 @@
   "merchant_name": "카카오T",
   "merchant_code": "KAKAO_T",
   "category_code": "TAXI"
+ },
+ {
+  "merchant_name": "카카오골프",
+  "merchant_code": "KAKAO_GOLF",
+  "category_code": "GOLF"
+ },
+ {
+  "merchant_name": "카카오페이지",
+  "merchant_code": "KAKAO_PAGE",
+  "category_code": "SUBSCRIPTION_STREAMING"
+ },
+ {
+  "merchant_name": "카페노티드",
+  "merchant_code": "CAFE_KNOTTED",
+  "category_code": "BAKERY_DESSERT"
  },
  {
   "merchant_name": "카페베네",
@@ -592,14 +942,49 @@
   "category_code": "ONLINE_SHOPPING"
  },
  {
+  "merchant_name": "쿠팡이츠",
+  "merchant_code": "COUPANG_EATS",
+  "category_code": "DELIVERY"
+ },
+ {
+  "merchant_name": "쿠팡플레이",
+  "merchant_code": "COUPANG_PLAY",
+  "category_code": "SUBSCRIPTION_STREAMING"
+ },
+ {
+  "merchant_name": "크린토피아",
+  "merchant_code": "CLEANTOPIA",
+  "category_code": "LIFE_SERVICE"
+ },
+ {
   "merchant_name": "탐앤탐스",
   "merchant_code": "TOM_N_TOMS",
   "category_code": "CAFE"
  },
  {
+  "merchant_name": "탑텐",
+  "merchant_code": "TOPTEN",
+  "category_code": "SHOPPING"
+ },
+ {
+  "merchant_name": "텐바이텐",
+  "merchant_code": "TENBYTEN",
+  "category_code": "ONLINE_SHOPPING"
+ },
+ {
+  "merchant_name": "토스쇼핑",
+  "merchant_code": "TOSS_SHOPPING",
+  "category_code": "ONLINE_SHOPPING"
+ },
+ {
   "merchant_name": "투썸플레이스",
   "merchant_code": "TWOSOME_PLACE",
   "category_code": "CAFE"
+ },
+ {
+  "merchant_name": "트랜비",
+  "merchant_code": "TRENBE",
+  "category_code": "ONLINE_SHOPPING"
  },
  {
   "merchant_name": "트레이더스 홀세일 클럽",
@@ -622,6 +1007,11 @@
   "category_code": "TRANSPORT"
  },
  {
+  "merchant_name": "티켓링크",
+  "merchant_code": "TICKET_LINK",
+  "category_code": "CULTURE_LEISURE"
+ },
+ {
   "merchant_name": "티켓몬스터",
   "merchant_code": "TICKET_MONSTER",
   "category_code": "ONLINE_SHOPPING"
@@ -629,7 +1019,12 @@
  {
   "merchant_name": "파리바게뜨",
   "merchant_code": "PARIS_BAGUETTE",
-  "category_code": "CAFE"
+  "category_code": "BAKERY_DESSERT"
+ },
+ {
+  "merchant_name": "파리크라상",
+  "merchant_code": "PARIS_CROISSANT",
+  "category_code": "BAKERY_DESSERT"
  },
  {
   "merchant_name": "파스쿠찌",
@@ -637,15 +1032,40 @@
   "category_code": "CAFE"
  },
  {
+  "merchant_name": "파이브가이즈",
+  "merchant_code": "FIVE_GUYS",
+  "category_code": "FAST_FOOD"
+ },
+ {
   "merchant_name": "폴바셋",
   "merchant_code": "PAUL_BASSETT_ALT",
   "category_code": "CAFE"
+ },
+ {
+  "merchant_name": "프레딧",
+  "merchant_code": "FREDIT",
+  "category_code": "LIFE_SERVICE"
+ },
+ {
+  "merchant_name": "하나투어",
+  "merchant_code": "HANA_TOUR",
+  "category_code": "CULTURE_LEISURE"
  },
  {
   "merchant_name": "한국 야쿠르트",
   "merchant_code": "KOREA_YAKULT",
   "category_code": "LIFE_SERVICE",
   "_note": "유제품 정기배달(방문판매) 사업이라 소매·배달 중분류 어디에도 명확히 대응하지 않음"
+ },
+ {
+  "merchant_name": "한샘몰",
+  "merchant_code": "HANSSEM_MALL",
+  "category_code": "ONLINE_SHOPPING"
+ },
+ {
+  "merchant_name": "한솔교육",
+  "merchant_code": "HANSOL_EDU",
+  "category_code": "LEARNING_SERVICE"
  },
  {
   "merchant_name": "할리스",
@@ -663,6 +1083,16 @@
   "category_code": "ONLINE_SHOPPING"
  },
  {
+  "merchant_name": "현대리바트",
+  "merchant_code": "HYUNDAI_LIVART",
+  "category_code": "SHOPPING"
+ },
+ {
+  "merchant_name": "현대면세점",
+  "merchant_code": "HYUNDAI_DUTY_FREE",
+  "category_code": "SHOPPING"
+ },
+ {
   "merchant_name": "현대백화점",
   "merchant_code": "HYUNDAI_DEPT",
   "category_code": "DEPARTMENT_STORE"
@@ -678,8 +1108,23 @@
   "category_code": "ONLINE_SHOPPING"
  },
  {
+  "merchant_name": "호텔스닷컴",
+  "merchant_code": "HOTELS_COM",
+  "category_code": "CULTURE_LEISURE"
+ },
+ {
+  "merchant_name": "홈앤쇼핑",
+  "merchant_code": "HOME_AND_SHOPPING",
+  "category_code": "ONLINE_SHOPPING"
+ },
+ {
   "merchant_name": "홈플러스",
   "merchant_code": "HOMEPLUS",
   "category_code": "LARGE_MART"
+ },
+ {
+  "merchant_name": "홈플러스 익스프레스",
+  "merchant_code": "HOMEPLUS_EXPRESS",
+  "category_code": "SUPERMARKET"
  }
 ]

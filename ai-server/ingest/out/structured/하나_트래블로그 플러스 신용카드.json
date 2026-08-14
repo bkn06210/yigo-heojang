@@ -1,0 +1,395 @@
+{
+ "card": {
+  "card_name": "트래블로그+(플러스) 신용카드",
+  "card_type": "CREDIT",
+  "annual_fee": 20000,
+  "annual_fees": [
+   {
+    "brand": "LOCAL",
+    "issue_type": null,
+    "variant": "ANY",
+    "total_fee": 20000,
+    "base_fee": 20000,
+    "partner_fee": 0,
+    "_source": "연회비 : 국내전용 / 국내외겸용(Mastercard) 20,000원 (기본 연회비 20,000원, 제휴 연회비 0원) — 두 브랜드가 한 금액으로 함께 적혀 있어 열거된 브랜드마다 행을 만들었다. ANY로 두면 약관이 발급하지 않는 브랜드까지 포함된다."
+   },
+   {
+    "brand": "MASTERCARD",
+    "issue_type": null,
+    "variant": "ANY",
+    "total_fee": 20000,
+    "base_fee": 20000,
+    "partner_fee": 0
+   }
+  ],
+  "_source": {
+   "annual_fee": "국내전용과 국내외겸용(Mastercard)의 총 연회비가 20,000원으로 같아 대표값을 그대로 넣었다."
+  },
+  "_needs_review": [
+   "annual_fees[].issue_type"
+  ]
+ },
+ "card_exclusions": [
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "TAX",
+   "_source": "적립 제외 대상 - 국세, 지방세, 공과금(인터넷/모바일 앱을 통한 공과금 납부 금액 포함), 수도/전기요금, 도시가스 요금, 아파트관리비,국민연금/고용보험료/산재보험료/건강보험료 납부 금액, 스쿨뱅킹, 초.중.고 학교 납입금, 대학등록금, 대학원등록금, 상품권 및 기프트카드 구매, 선불카드 및 선불전자 지급수단(하나머니 등) 충전 금액, 부동산 임대료, 국내외 ATM이용 금액, 무이자할부 이용금액, 외화 하나머니 이용금액"
+  },
+  {
+   "exclusion_type": "CATEGORY",
+   "exclusion_value": "UTILITY"
+  },
+  {
+   "exclusion_type": "CATEGORY",
+   "exclusion_value": "APARTMENT_FEE"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "SOCIAL_INSURANCE"
+  },
+  {
+   "exclusion_type": "CATEGORY",
+   "exclusion_value": "TUITION"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "GIFT_CARD"
+  },
+  {
+   "exclusion_type": "CATEGORY",
+   "exclusion_value": "RENT"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "CASH_ADVANCE",
+   "_source": "'국내외 ATM이용 금액'. 신용카드의 ATM 이용은 단기카드대출(현금서비스)이라 CASH_ADVANCE로 적었다. 외화 하나머니 ATM 인출은 선불 인출이라 성격이 달라 unmapped에 따로 남긴다."
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "INTEREST_FREE"
+  }
+ ],
+ "performance_tiers": [
+  {
+   "period_type": "MONTH",
+   "min_performance_amount": 0,
+   "shared_monthly_limit": null,
+   "_source": "하나머니 적립 서비스: 지난달 실적과 관계없이 서비스 제공 — 실적 조건이 없는 카드라 0원 구간 하나만 둔다. 카드 통합 할인한도 개념이 없고 영역별 통합 적립한도(월 5만 하나머니)만 있어 shared_monthly_limit은 null이며, 그 한도는 limit_group_code로 묶었다."
+  }
+ ],
+ "performance_exclusions": [],
+ "benefits": [
+  {
+   "benefit_name": "국내외 가맹점 1% 하나머니 적립",
+   "benefit_kind": "POINT",
+   "calc_method": "RATE",
+   "benefit_value": 1,
+   "step_count": null,
+   "apply_timing": null,
+   "target_type": "ALL",
+   "target_category_code": null,
+   "target_merchant_name": null,
+   "targets": null,
+   "require_performance": "N",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": null,
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "국내외 가맹점 이용 시 1.0% 하나머니 적립(1하나머니=1원). 지난달 실적과 관계없이 제공되고 적립한도가 없다. 적립률·적립한도 칸이 '국내외 가맹점' 행과 '간편결제' 행의 삼성페이·네이버페이·카카오페이·SSG페이·페이코·쿠페이·SK페이까지 하나로 병합돼 있어, 하나페이를 뺀 간편결제도 같은 1.0%다. 원문상 해외 가맹점도 대상이지만 해외 거래 데이터가 없어 국내 결제에만 적용된다.",
+   "tier_limits": [],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "구분 '국내외 가맹점' / 적립 대상 가맹점 '국내외 가맹점' / 적립률 1.0% / 적립한도 없음 — 표의 가로선 기준으로 적립률 칸이 간편결제(하나페이 외) 행까지 걸쳐 있다."
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "하나페이 결제 1.3% 하나머니 적립",
+   "benefit_kind": "POINT",
+   "calc_method": "RATE",
+   "benefit_value": 1.3,
+   "step_count": null,
+   "apply_timing": null,
+   "target_type": "ALL",
+   "target_category_code": null,
+   "target_merchant_name": null,
+   "targets": null,
+   "require_performance": "N",
+   "performance_period": "MONTH",
+   "require_payment_type": "HANA_PAY",
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": null,
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "간편결제 중 하나페이로 결제하면 1.3% 하나머니 적립. 지난달 실적과 관계없이 제공되고 적립한도가 없다. 같은 간편결제 행의 다른 결제수단(삼성페이·네이버페이·카카오페이·SSG페이·페이코·쿠페이·SK페이)은 1.0%로 전 가맹점 적립과 값이 같아 그 행에 함께 적었다.",
+   "tier_limits": [],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "구분 '간편결제' / 적립 대상 가맹점 '하나페이' / 적립률 1.3% / 적립한도 없음. 각주 '- 해외, 항공, 면세점, 여행 서비스는 통합적립한도(월 5만 하나머니) 초과 시, 하나페이결제는 1.3% 하나페이 외 결제는 1.0% 적립률 적용'도 같은 두 기본 적립률을 가리킨다."
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "항공 3% 하나머니 적립",
+   "benefit_kind": "POINT",
+   "calc_method": "RATE",
+   "benefit_value": 3,
+   "step_count": null,
+   "apply_timing": null,
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": null,
+   "targets": [
+    "대한항공",
+    "아시아나항공",
+    "진에어",
+    "에어부산",
+    "에어서울",
+    "제주항공",
+    "티웨이항공",
+    "이스타항공"
+   ],
+   "require_performance": "N",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": 50000,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": "TRAVEL_POINT_50000",
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "항공 영역 3% 하나머니 적립. 지난달 실적과 관계없이 제공된다. 공식 홈페이지(온라인/모바일 앱)와 공식 오프라인 매장 결제만 대상이고 여행사·구매대행사이트·온라인 쇼핑몰(오픈마켓·소셜 등) 결제는 제외되며, 국제선은 국내출발(왕복 포함)이고 결제통화가 원화인 건만 제공된다 — 결제 채널 조건은 스키마로 담지 못해 여기에만 남긴다. 약관 표기 '티웨이'는 가맹점 마스터 표기인 '티웨이항공'으로 적었다.",
+   "tier_limits": [],
+   "exclusions": [
+    {
+     "exclusion_type": "MERCHANT_LOCATION",
+     "exclusion_value": "IN_DEPARTMENT_STORE",
+     "_source": "항공·면세점·여행 적립서비스는 해당 가맹점 공식 오프라인 매장 또는 공식 홈페이지(온라인/모바일앱)에서 이용시 적립되며, 해당 가맹점에서 상품권 구매·충전 및 대형시설(백화점/할인점/아울렛/쇼핑몰/휴게소/공항/호텔/리조트/역사) 입점 점포 이용 시 적립 제외"
+    },
+    {
+     "exclusion_type": "MERCHANT_LOCATION",
+     "exclusion_value": "IN_LARGE_MART"
+    },
+    {
+     "exclusion_type": "MERCHANT_LOCATION",
+     "exclusion_value": "IN_SHOPPING_MALL"
+    },
+    {
+     "exclusion_type": "MERCHANT_LOCATION",
+     "exclusion_value": "IN_TRANSIT_HUB"
+    }
+   ],
+   "_source": {
+    "benefit_value": "표의 적립률 칸이 항공·면세점·여행 세 행에 걸쳐 3%로 병합돼 있다: '항공 대한항공, 아시아나항공, 진에어, 에어부산, 에어서울, 제주항공, 티웨이, 이스타 / 3%'",
+    "monthly_limit": "적립한도 칸 '5만 하나머니'. 각주 '- 해외, 항공, 면세점, 여행 서비스는 통합적립한도(월 5만 하나머니) 초과 시, 하나페이결제는 1.3% 하나페이 외 결제는 1.0% 적립률 적용'",
+    "limit_group_code": "위 각주대로 해외·항공·면세점·여행이 월 5만 하나머니 한도를 함께 쓴다. 해외 가맹점 행은 계산 대상이 아니라 빼고 나머지 셋만 한 코드로 묶었다."
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "면세점 3% 하나머니 적립",
+   "benefit_kind": "POINT",
+   "calc_method": "RATE",
+   "benefit_value": 3,
+   "step_count": null,
+   "apply_timing": null,
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": null,
+   "targets": [
+    "신라면세점",
+    "신세계면세점",
+    "롯데면세점",
+    "현대면세점"
+   ],
+   "require_performance": "N",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": 50000,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": "TRAVEL_POINT_50000",
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "면세점 영역 3% 하나머니 적립. 지난달 실적과 관계없이 제공된다. 해당 가맹점 공식 오프라인 매장 또는 공식 홈페이지(온라인/모바일앱) 이용분만 적립된다 — 결제 채널 조건은 스키마로 담지 못해 여기에만 남긴다. 약관 표기 '현대백화점면세점'은 가맹점 마스터 표기인 '현대면세점'으로 적었다.",
+   "tier_limits": [],
+   "exclusions": [
+    {
+     "exclusion_type": "MERCHANT_LOCATION",
+     "exclusion_value": "IN_DEPARTMENT_STORE",
+     "_source": "항공·면세점·여행 적립서비스는 해당 가맹점 공식 오프라인 매장 또는 공식 홈페이지(온라인/모바일앱)에서 이용시 적립되며, 해당 가맹점에서 상품권 구매·충전 및 대형시설(백화점/할인점/아울렛/쇼핑몰/휴게소/공항/호텔/리조트/역사) 입점 점포 이용 시 적립 제외"
+    },
+    {
+     "exclusion_type": "MERCHANT_LOCATION",
+     "exclusion_value": "IN_LARGE_MART"
+    },
+    {
+     "exclusion_type": "MERCHANT_LOCATION",
+     "exclusion_value": "IN_SHOPPING_MALL"
+    },
+    {
+     "exclusion_type": "MERCHANT_LOCATION",
+     "exclusion_value": "IN_TRANSIT_HUB"
+    }
+   ],
+   "_source": {
+    "benefit_value": "'면세점 신라면세점, 신세계면세점, 롯데면세점, 현대백화점면세점' — 적립률 3%·적립한도 5만 하나머니 칸이 항공·면세점·여행에 걸쳐 병합돼 있다."
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "여행 3% 하나머니 적립",
+   "benefit_kind": "POINT",
+   "calc_method": "RATE",
+   "benefit_value": 3,
+   "step_count": null,
+   "apply_timing": null,
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": null,
+   "targets": [
+    "하나투어",
+    "아고다",
+    "익스피디아",
+    "호텔스닷컴"
+   ],
+   "require_performance": "N",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": 50000,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": "TRAVEL_POINT_50000",
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "여행 영역 3% 하나머니 적립. 지난달 실적과 관계없이 제공된다. 해당 가맹점 공식 오프라인 매장 또는 공식 홈페이지(온라인/모바일앱) 이용분만 적립된다 — 결제 채널 조건은 스키마로 담지 못해 여기에만 남긴다.",
+   "tier_limits": [],
+   "exclusions": [
+    {
+     "exclusion_type": "MERCHANT_LOCATION",
+     "exclusion_value": "IN_DEPARTMENT_STORE",
+     "_source": "항공·면세점·여행 적립서비스는 해당 가맹점 공식 오프라인 매장 또는 공식 홈페이지(온라인/모바일앱)에서 이용시 적립되며, 해당 가맹점에서 상품권 구매·충전 및 대형시설(백화점/할인점/아울렛/쇼핑몰/휴게소/공항/호텔/리조트/역사) 입점 점포 이용 시 적립 제외"
+    },
+    {
+     "exclusion_type": "MERCHANT_LOCATION",
+     "exclusion_value": "IN_LARGE_MART"
+    },
+    {
+     "exclusion_type": "MERCHANT_LOCATION",
+     "exclusion_value": "IN_SHOPPING_MALL"
+    },
+    {
+     "exclusion_type": "MERCHANT_LOCATION",
+     "exclusion_value": "IN_TRANSIT_HUB"
+    }
+   ],
+   "_source": {
+    "benefit_value": "'여행 하나투어, 아고다,익스피디아,호텔스닷컴' — 적립률 3%·적립한도 5만 하나머니 칸이 항공·면세점·여행에 걸쳐 병합돼 있다."
+   },
+   "_needs_review": []
+  }
+ ],
+ "unmapped": [
+  {
+   "text": "구분 '해외' / 적립 대상 가맹점 '해외 가맹점' / 적립률 3% / 적립한도 5만 하나머니",
+   "why": "해외 결제 혜택은 범위 밖이다. 해외 가맹점 데이터가 없어 대상을 특정할 수도, 계산할 수도 없다. 이 행이 함께 쓰던 월 5만 하나머니 통합 적립한도는 남는 항공·면세점·여행 세 혜택에 limit_group_code로 그대로 걸어 두었다."
+  },
+  {
+   "text": "해외 이용수수료 면제서비스(외화 하나머니 결제 시) / 구분 해외 가맹점 이용 시 : 해외서비스 수수료 면제, 국제브랜드 수수료 면제 / 해외 ATM 인출 시 : 해외서비스 수수료 면제, 국제브랜드 수수료 면제 / - 신용카드로 해외 이용 시 해외서비스 수수료 0.2%, 국제브랜드 수수료 1.0%, 총 1.2%의 수수료가 부과됩니다. - 신용카드로 해외 ATM 인출 시 결제계좌에서 인출되며, 해외서비스 수수료 건당 US $3, 국제브랜드수수료 1%가 부과됩니다.",
+   "why": "해외 결제 혜택이라 범위 밖이고, 면제 대상이 결제금액이 아니라 카드사·국제브랜드가 부과하는 수수료라 benefit_value로 표현할 축도 없다."
+  },
+  {
+   "text": "해외결제 설정을 외화 하나머니(선불기반결제) 또는 신용결제로 변경이 가능한 기능을 탑재하여 한 장의 카드로 고객이 원하는 해외 결제 방식 선택. / - 트래블로그+(플러스) 신용카드의 국내 이용은 해외결제 설정과 관계없이 신용카드로 결제 - 해외 외화 하나머니 결제는 국내 이용 불가 / - 외화 하나머니 통화별 충전 한도는 원화 환산 금액 기준 200만원 상당액",
+   "why": "적립·할인이 아니라 해외 결제 수단(선불 외화)을 고르는 카드 기능이다. 결제 트랜잭션에 붙는 혜택이 아니어서 benefit_kind와 target_type을 정할 수 없고, 국내 이용에는 적용되지도 않는다."
+  },
+  {
+   "text": "적립 제외 대상 … 외화 하나머니 이용금액",
+   "why": "결제수단으로 거는 제외인데 표준 결제수단 값에 외화 하나머니(선불 외화 결제)가 없다. 해외 전용 결제수단이라 국내 결제 계산에는 영향이 없어 card_exclusions에 넣지 않았다."
+  },
+  {
+   "text": "- 항공 : 공식 홈페이지(온라인/모바일 앱) 및 오프라인을 통한 결제 시에만 서비스 제공 (여행사, 구매대행사이트, 온라인 쇼핑몰(오픈마켓, 소셜 등)을 통한 결제건은 서비스에서 제외) * 국제선의 경우 국내출발(왕복포함), 결제통화를 원화로 구매한 경우에 한하여 서비스 제공",
+   "why": "결제 채널 조건은 범위 밖이다. 같은 가맹점이라도 어느 경로로 결제했는지가 소비내역에 들어오지 않아 판정할 수 없다. 각 혜택의 description에 문장을 남겨 뒀다."
+  },
+  {
+   "text": "- 항공, 면세점, 여행가맹점에서 이용 시(간편결제 포함), 결제 가맹점명이 PG(PG하위몰 포함) 가맹점인 경우 국내외 가맹점 또는 간편결제 적립률이 적용됨 / 예시) 음식점에서 네이버페이로 결제 시 가맹점명이 '네이버페이'인 경우 음식점 가맹점이 아닌 '간편결제' 가맹점으로 분류",
+   "why": "결제 건의 가맹점명이 실제 가맹점이 아니라 PG·간편결제사로 잡히면 적립 영역이 바뀐다는 분류 규칙이다. 엔진은 merchant_id로 가맹점이 이미 정해진 상태에서 계산하므로 이 재분류를 표현할 자리가 없다."
+  },
+  {
+   "text": "서비스 제공 방법 - 매출 접수된 국내외 일시불/할부 이용금액에 따라 적립 혜택을 제공하며, 매출 취소 시 취소가 접수된 월에서 적립된 금액을 차감 반영 - 후불교통요금 등 무승인거래(카드사의 승인없이 이용금액이 카드사에 접수됨)의 경우 매출이 접수된 월의 이용금액에 반영 - 할부 이용 전체 금액을 할부 이용한 달의 이용금액으로 반영 - 해외 매출은 최종 원화 청구금액에 대하여 적립 제공",
+   "why": "적립액이 어느 달에 잡히는지를 정하는 귀속 시점 규칙이다. 혜택 조건이 아니라 정산 시점 문제라 benefit의 어느 필드에도 대응하지 않는다."
+  }
+ ],
+ "_schema_gap": [
+  {
+   "text": "- 해외, 항공, 면세점, 여행 서비스는 통합적립한도(월 5만 하나머니) 초과 시, 하나페이결제는 1.3% 하나페이 외 결제는 1.0% 적립률 적용",
+   "missing": "한도 소진 시 다른 혜택으로 대체되는 규칙(폴백 혜택 지정)",
+   "why": "월 5만 하나머니를 다 쓰면 적립이 0이 될 뿐 1.0%(하나페이 1.3%) 기본 적립으로 되돌아가지 않는다. 한도를 넘긴 항공·면세점·여행 결제의 적립이 실제보다 낮게 계산된다."
+  },
+  {
+   "text": "해당 가맹점에서 상품권 구매·충전 및 대형시설(백화점/할인점/아울렛/쇼핑몰/휴게소/공항/호텔/리조트/역사) 입점 점포 이용 시 적립 제외",
+   "missing": "MERCHANT_LOCATION 표준값에 휴게소·호텔·리조트",
+   "why": "백화점·할인점·쇼핑몰·공항/역사는 IN_DEPARTMENT_STORE·IN_LARGE_MART·IN_SHOPPING_MALL·IN_TRANSIT_HUB로 적었지만 휴게소·호텔·리조트 입점 점포는 대응하는 값이 없어 그 세 곳은 제외가 걸리지 않는다."
+  }
+ ]
+}

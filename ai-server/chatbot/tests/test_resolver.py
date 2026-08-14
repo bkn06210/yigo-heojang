@@ -82,7 +82,8 @@ def test_겹치지_않는_후보가_여럿이면_고르지_않는다(conn):
 def test_모호하거나_없는_표현은_못_찾은_것으로_둔다(conn):
     # '롯데'는 롯데마트·롯데백화점·롯데시네마 등에 걸린다. 지어내지 않고 되묻게 한다.
     assert not resolve_merchant(conn, "롯데").found
-    assert not resolve_merchant(conn, "메가커피").found
+    # 실재하는 브랜드라도 가맹점 마스터에 없으면 지어내지 않는다.
+    assert not resolve_merchant(conn, "컴포즈커피").found
     assert not resolve_merchant(conn, "").found
 
 
