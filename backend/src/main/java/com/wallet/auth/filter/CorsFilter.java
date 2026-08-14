@@ -1,6 +1,7 @@
 package com.wallet.auth.filter;
 
 import java.io.IOException;
+import java.util.regex.Pattern;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -16,15 +17,32 @@ import javax.servlet.http.HttpServletResponseWrapper;
  * CORS(교차 출처 리소스 공유) 필터.
  *
  * 응답 래퍼를 사용해 모든 응답에 CORS 헤더를 확실히 추가!
- * 프론트(localhost:5173)와 백엔드(localhost:8080)가 다른 포트에 있으니,
+ * 프론트(localhost:5173 등)와 백엔드(localhost:8080)가 다른 포트에 있으니,
  * 브라우저의 CORS 정책을 우회하기 위해 필요
  *
  * 응답이 커밋된 후에도 헤더가 유지되도록 보장한다.
  */
 public class CorsFilter implements Filter {
 
-    private static final String ALLOWED_ORIGIN = "http://localhost:5173";
+    // Vite dev 서버 포트는 5173이 점유되면 5174, 5175...로 밀리기 때문에
+    // 오리진을 하나로 고정하면 그 순간 모든 요청이 CORS로 차단된다.
+    // 로컬 개발 오리진(localhost / 127.0.0.1)은 포트와 무관하게 허용한다.
+    private static final Pattern ALLOWED_ORIGIN_PATTERN =
+            Pattern.compile("^https?://(localhost|127\\.0\\.0\\.1)(:\\d+)?$");
+
     private static final String OPTIONS_METHOD = "OPTIONS";
+
+    /**
+     * 허용된 오리진이면 그대로 돌려주고, 아니면 null을 돌려준다.
+     * Allow-Credentials가 true라 와일드카드(*)를 쓸 수 없으므로
+     * 요청 오리진을 그대로 되돌려주는 방식이어야 한다.
+     */
+    private static String resolveAllowedOrigin(String origin) {
+        if (origin == null) {
+            return null;
+        }
+        return ALLOWED_ORIGIN_PATTERN.matcher(origin).matches() ? origin : null;
+    }
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {}
@@ -35,12 +53,12 @@ public class CorsFilter implements Filter {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         HttpServletResponse httpResponse = (HttpServletResponse) response;
 
-        String origin = httpRequest.getHeader("Origin");
+        final String allowedOrigin = resolveAllowedOrigin(httpRequest.getHeader("Origin"));
 
         // Preflight 요청(OPTIONS)은 여기서 처리하고 반환한다.
         if (OPTIONS_METHOD.equalsIgnoreCase(httpRequest.getMethod())) {
-            if (ALLOWED_ORIGIN.equals(origin)) {
-                httpResponse.setHeader("Access-Control-Allow-Origin", ALLOWED_ORIGIN);
+            if (allowedOrigin != null) {
+                httpResponse.setHeader("Access-Control-Allow-Origin", allowedOrigin);
                 httpResponse.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,PATCH,DELETE,OPTIONS");
                 // Authorization 헤더를 명시적으로 포함해야 브라우저가 인식한다.
                 httpResponse.setHeader("Access-Control-Allow-Headers", "Authorization, Content-Type, Accept, *");
@@ -81,9 +99,9 @@ public class CorsFilter implements Filter {
             }
 
             private void addCorsHeaderIfNeeded() {
-                if (!headerAdded && ALLOWED_ORIGIN.equals(httpRequest.getHeader("Origin"))) {
+                if (!headerAdded && allowedOrigin != null) {
                     if (!containsHeader("Access-Control-Allow-Origin")) {
-                        addHeader("Access-Control-Allow-Origin", ALLOWED_ORIGIN);
+                        addHeader("Access-Control-Allow-Origin", allowedOrigin);
                         addHeader("Access-Control-Allow-Credentials", "true");
                         addHeader("Vary", "Origin");
                     }
@@ -93,8 +111,8 @@ public class CorsFilter implements Filter {
         };
 
         // 허용된 오리진에서 온 요청이면 CORS 헤더를 미리 설정
-        if (ALLOWED_ORIGIN.equals(origin)) {
-            wrappedResponse.setHeader("Access-Control-Allow-Origin", ALLOWED_ORIGIN);
+        if (allowedOrigin != null) {
+            wrappedResponse.setHeader("Access-Control-Allow-Origin", allowedOrigin);
             wrappedResponse.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,PATCH,DELETE,OPTIONS");
             // Authorization 헤더를 명시적으로 포함해야 브라우저가 인식
             wrappedResponse.setHeader("Access-Control-Allow-Headers", "Authorization, Content-Type, Accept, *");

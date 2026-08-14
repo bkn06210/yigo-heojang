@@ -25,4 +25,11 @@ public interface EmailSender {
         String verificationCode,
         long expiresInMinutes
     );
+
+    /** 간편비밀번호 설정·변경 권한을 확인하기 위한 이메일 인증 코드를 발송한다. */
+    void sendSimplePasswordVerificationCode(
+        String toEmail,
+        String verificationCode,
+        long expiresInMinutes
+    );
 }

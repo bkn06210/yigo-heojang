@@ -178,16 +178,29 @@ const nextStep = async () => {
   }
 
   try {
+    const termsAgreements = JSON.parse(
+      sessionStorage.getItem('signupTermsAgreements') || '[]'
+    );
+
+    if (!termsAgreements.length) {
+      showToast('warning', '약관 동의 정보를 다시 확인해주세요.');
+      router.push('/auth/terms');
+      return;
+    }
+
     const userData = {
       name: name.value,
       email: email.value,
       password: password.value,
       signupVerificationToken: signupVerificationToken.value,
+      termsAgreements,
     };
 
     await signup(userData);
 
     showToast('success', '회원가입이 완료되었습니다.');
+
+    sessionStorage.removeItem('signupTermsAgreements');
 
     router.push('/auth/login');
   } catch (error) {

@@ -1,4 +1,5 @@
 <script setup>
+import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 
 
@@ -16,9 +17,28 @@ const props = defineProps({
   message: {
     type: String,
     default: ''
+  },
+
+
+  // 서버가 판단한 브리핑 상황.
+  // NO_CARD / UNUSED_BENEFIT / PERFORMANCE_NEAR / ALL_ACHIEVED / SPENDING_INSIGHT / GETTING_STARTED
+  // 문장을 뜯어 분기하지 말고 이 값으로 분기한다 — 문구는 서버에서 바뀔 수 있다.
+  briefingType: {
+    type: String,
+    default: null
   }
 
 })
+
+
+const emit = defineEmits(['register-card'])
+
+
+// 카드가 없다는 안내에는 바로 할 수 있는 행동을 붙인다.
+// 나머지 상황은 이미 가진 카드 이야기라 문구만 보여준다.
+const showRegisterButton = computed(
+  () => props.briefingType === 'NO_CARD'
+)
 
 
 // 로그인 이동
@@ -77,6 +97,19 @@ const goSignup = () => {
       <p>
         {{ props.message }}
       </p>
+
+
+      <!-- 카드가 없는 상황에만 등록 버튼을 붙인다 -->
+      <div
+        v-if="showRegisterButton"
+        class="buttons"
+      >
+
+        <button @click="emit('register-card')">
+          카드 등록하기
+        </button>
+
+      </div>
 
 
     </template>

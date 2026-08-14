@@ -1,36 +1,49 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, computed, onMounted } from 'vue';
+import { useCardStore } from '@/stores/cardStore';
 
 const emit = defineEmits([
   'close',
   'select',
 ]);
 
-// 임시 데이터
-// 추후 API 연결
-const cards = ref([
+const cardStore = useCardStore();
+
+const maskCardNumber = (number) => {
+  if (!number) return '';
+
+  const lastFour = number.slice(-4);
+
+  return `${lastFour.slice(0, 3)}*`;
+};
+
+// 회원이 실제로 등록한 보유카드(GET /api/user-cards)를 그대로 쓴다.
+// id 0은 "전체"를 뜻하는 화면 전용 값이라 서버 userCardId와 겹치지 않는다(서버 id는 1부터).
+const cards = computed(() => [
   {
     id: 0,
     name: '전체',
     isAll: true,
   },
-  {
-    id: 1,
-    name: 'Deep Dream (체크)',
-    company: '신한카드',
+  ...cardStore.cards.map((card) => ({
+    id: card.id,
+    name: card.name,
+    company: card.company,
+    // 보유카드는 모두 로그인 회원 본인 명의라 소유자 표기는 고정이다.
     owner: '본인',
-    number: '703*',
-    image: '/images/cards/shinhan.png',
-  },
-  {
-    id: 2,
-    name: 'KB My WE:SH',
-    company: 'KB국민카드',
-    owner: '본인',
-    number: '1123',
-    image: '/images/cards/kb.png',
-  },
+    number: maskCardNumber(card.cardNumber),
+    image: card.image,
+  })),
 ]);
+
+// 이미 목록을 받아둔 화면에서 열렸으면 다시 부르지 않는다.
+onMounted(() => {
+  if (!cardStore.cards.length) {
+    cardStore.loadCards().catch((error) => {
+      console.error('보유카드 목록 조회 실패:', error);
+    });
+  }
+});
 
 const selectedCardId = ref(0);
 
@@ -48,14 +61,6 @@ const apply = () => {
 
 const close = () => {
   emit('close');
-};
-
-const maskCardNumber = (number) => {
-  if (!number) return '';
-
-  const lastFour = number.slice(-4);
-
-  return `${lastFour.slice(0, 3)}*`;
 };
 </script>
 

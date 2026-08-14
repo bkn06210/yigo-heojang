@@ -1,7 +1,8 @@
 ﻿<script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useToast } from '@/composables/useToast'
+import { getTerms } from '@/api/authApi'
 
 const router = useRouter()
 const { showToast } = useToast()
@@ -11,28 +12,31 @@ const { showToast } = useToast()
 const agreeAll = ref(false)
 
 
-// 약관 목록
-// 추후 백 API 응답 데이터로 교체
-const terms = ref([
-  {
-    id: 1,
-    title: '서비스 이용약관',
-    required: true,
-    checked: false
-  },
-  {
-    id: 2,
-    title: '개인정보 수집 및 이용',
-    required: true,
-    checked: false
-  },
-  {
-    id: 3,
-    title: '마케팅 정보 수신',
-    required: false,
-    checked: false
+const terms = ref([])
+const loading = ref(true)
+const loadError = ref('')
+const expandedTermId = ref(null)
+
+const loadTerms = async () => {
+  loading.value = true
+  loadError.value = ''
+
+  try {
+    const response = await getTerms()
+    terms.value = (response?.terms ?? []).map((term) => ({
+      ...term,
+      id: term.termsId,
+      title: term.termsName,
+      checked: false,
+    }))
+  } catch (error) {
+    loadError.value = error.response?.data?.message || '약관을 불러오지 못했습니다.'
+  } finally {
+    loading.value = false
   }
-])
+}
+
+onMounted(loadTerms)
 
 
 // 전체 동의 클릭
@@ -65,12 +69,8 @@ const canNext = computed(() => {
 })
 
 
-// 상세보기
-// 추후 백 API 연결 위치
 const openDetail = (term) => {
-
-  console.log('약관 상세:', term.id)
-
+  expandedTermId.value = expandedTermId.value === term.id ? null : term.id
 }
 
 
@@ -82,6 +82,14 @@ const goSignup = () => {
     return
   }
 
+
+  sessionStorage.setItem(
+    'signupTermsAgreements',
+    JSON.stringify(terms.value.map((term) => ({
+      termsVersionId: term.termsVersionId,
+      agreed: term.checked,
+    })))
+  )
 
   router.push('/auth/signup')
 
@@ -109,36 +117,56 @@ const goSignup = () => {
 
 
 
+    <p v-if="loading" class="state-message">약관을 불러오는 중입니다...</p>
+    <div v-else-if="loadError" class="state-block">
+      <p class="state-message error">{{ loadError }}</p>
+      <button type="button" class="retry-button" @click="loadTerms">다시 시도</button>
+    </div>
+
     <div
       v-for="term in terms"
       :key="term.id"
-      class="term-item"
+      class="term-row"
     >
+      <div class="term-item">
+        <label>
 
-      <label>
+          <input
+            type="checkbox"
+            v-model="term.checked"
+            @change="updateAgreeAll"
+          >
 
-        <input
-          type="checkbox"
-          v-model="term.checked"
-          @change="updateAgreeAll"
+          <span :class="{ 'required-badge': term.required, 'optional-badge': !term.required }">
+            {{ term.required ? '(필수)' : '(선택)' }}
+          </span>
+
+          {{ term.title }}
+
+        </label>
+
+
+        <button
+          type="button"
+          class="term-toggle-button"
+          :aria-expanded="expandedTermId === term.id"
+          @click="openDetail(term)"
         >
+          {{ expandedTermId === term.id ? '접기' : '더보기' }}
+        </button>
+      </div>
 
-        <span :class="{ 'required-badge': term.required, 'optional-badge': !term.required }">
-          {{ term.required ? '(필수)' : '(선택)' }}
-        </span>
-
-        {{ term.title }}
-
-      </label>
-
-
-      <button
-        type="button"
-        @click="openDetail(term)"
+      <section
+        v-if="expandedTermId === term.id"
+        class="term-detail"
+        :aria-label="`${term.title} 상세 내용`"
       >
-        더보기
-      </button>
-
+        <div class="term-detail-meta">
+          <strong>{{ term.title }}</strong>
+          <span v-if="term.version">버전 {{ term.version }}</span>
+        </div>
+        <p>{{ term.content || '등록된 약관 내용이 없습니다.' }}</p>
+      </section>
     </div>
 
 
@@ -235,13 +263,16 @@ label input[type="checkbox"] {
   color: var(--color-text-secondary);
 }
 
+.term-row {
+  border-bottom: 1px solid var(--color-border);
+}
+
 .term-item {
   display: flex;
   align-items: center;
   gap: var(--space-md);
   margin-top: var(--space-lg);
   padding: var(--space-md) 0;
-  border-bottom: 1px solid var(--color-border);
 }
 
 .term-item label {
@@ -249,18 +280,23 @@ label input[type="checkbox"] {
   gap: var(--space-sm);
 }
 
-.term-item button {
-  padding: var(--space-xs) var(--space-sm);
+.term-toggle-button {
+  padding: var(--space-xs) 0;
   font-size: var(--font-xs);
   white-space: nowrap;
   background: transparent;
-  border: 1px solid rgba(var(--color-primary-dark-rgb), 0.5);
+  border: 0;
+  border-radius: 0;
   color: var(--color-primary-dark);
+  box-shadow: none;
 }
 
-.term-item button:hover {
-  background: rgba(var(--color-primary-dark-rgb), 0.08);
-  border-color: rgba(var(--color-primary-dark-rgb), 0.7);
+.term-toggle-button:hover,
+.term-toggle-button:focus-visible {
+  background: transparent;
+  color: var(--color-primary);
+  text-decoration: underline;
+  transform: none;
 }
 
 button {
@@ -282,6 +318,59 @@ button:disabled {
   background: var(--color-border);
   color: var(--color-text-tertiary);
   cursor: not-allowed;
+}
+
+.state-block {
+  text-align: center;
+}
+
+.state-message {
+  color: var(--color-text-secondary);
+  font-size: var(--font-sm);
+}
+
+.state-message.error {
+  color: var(--color-error, #e74c3c);
+}
+
+.retry-button {
+  margin-top: var(--space-sm);
+}
+
+.term-detail {
+  margin-bottom: var(--space-md);
+  padding: var(--space-md);
+  border: 1px solid rgba(var(--color-primary-dark-rgb), 0.18);
+  border-radius: var(--radius-md);
+  background: rgba(var(--color-primary-rgb), 0.04);
+}
+
+.term-detail-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-sm);
+}
+
+.term-detail-meta strong {
+  color: var(--color-text-primary);
+  font-size: var(--font-sm);
+}
+
+.term-detail-meta span {
+  color: var(--color-text-tertiary);
+  font-size: var(--font-xs);
+  white-space: nowrap;
+}
+
+.term-detail p {
+  margin: 0;
+  color: var(--color-text-secondary);
+  font-size: var(--font-sm);
+  line-height: 1.7;
+  white-space: pre-wrap;
+  word-break: break-word;
 }
 
 </style>

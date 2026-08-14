@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.wallet.card.mapper.MockCardMapper">
+
+    <resultMap id="mockCardResultMap"
+               type="com.wallet.card.domain.MockCard">
+        <constructor>
+            <idArg column="mockCardId" javaType="Long"/>
+            <arg column="cardId" javaType="Long"/>
+        </constructor>
+    </resultMap>
+
+    <!--
+        카드 상품(card)과 카드사(card_company)까지 조인해 활성 여부를 함께 확인한다.
+        Mock 매핑만 살아 있고 카드 상품이 비활성화된 경우에 등록되면,
+        목록 화면에서 조회되지 않는 유령 보유카드가 생기기 때문이다.
+    -->
+    <select id="findActiveByCardNumber"
+            resultMap="mockCardResultMap">
+        SELECT
+            mc.mock_card_id AS mockCardId,
+            mc.card_id AS cardId
+        FROM mock_card mc
+        INNER JOIN card c ON c.card_id = mc.card_id
+        INNER JOIN card_company cc ON cc.card_company_id = c.card_company_id
+        WHERE mc.card_number = #{cardNumber}
+          AND mc.is_active = 'Y'
+          AND c.is_active = 'Y'
+          AND cc.is_active = 'Y'
+        LIMIT 1
+    </select>
+
+</mapper>

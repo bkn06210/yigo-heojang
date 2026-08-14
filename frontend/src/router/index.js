@@ -37,7 +37,8 @@ import FinancialPointDetailView from '@/views/point/FinancialPointDetailView.vue
 import PointListView from '@/views/point/PointListView.vue'
 import MembershipDetailView from '@/views/point/MembershipDetailView.vue'
 import MembershipRegisterView from '@/views/point/MembershipRegisterView.vue'
-// import BenefitDetailView from '@/views/point/BenefitDetailView.vue'
+// 혜택 상세는 views/card 쪽이 실제 화면이다 (views/point 쪽은 빈 껍데기).
+import BenefitDetailView from '@/views/card/BenefitDetailView.vue'
 
 // Settings
 import SettingsView from '@/views/settings/SettingsView.vue'
@@ -80,7 +81,8 @@ const routes = [
   { path: '/cards', component: CardListView },
   { path: '/cards/:id', component: CardDetailView },
   { path: '/cards/register', component: CardRegisterView },
-  // { path: '/benefits/:id', component: BenefitDetailView },
+  // :id 는 userCardId (카드 상세의 '혜택 보기'가 여기로 보낸다)
+  { path: '/benefits/:id', component: BenefitDetailView },
 
   // Payment
   // 결제 직전 AI 카드 추천 기능 포함이라 /card로 정의함

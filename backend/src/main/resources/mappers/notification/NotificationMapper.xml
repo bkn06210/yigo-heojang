@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.wallet.notification.mapper.NotificationMapper">
+
+    <!--
+        생성자 매핑을 쓰는 이유는 도메인이 불변(final 필드)이기 때문이다.
+        arg 순서가 NotificationSetting 생성자 시그니처와 1:1로 맞아야 한다.
+
+        javaType이 "boolean"이 아니라 "_boolean"인 것에 주의 — MyBatis에서 앞의 것은
+        래퍼 Boolean, 밑줄이 붙은 것이 원시 boolean을 가리키는 별칭이다. 원시 타입 필드에
+        래퍼 별칭을 쓰면 생성자를 못 찾아 매핑이 실패한다.
+    -->
+    <resultMap id="notificationSettingResultMap" type="com.wallet.notification.domain.NotificationSetting">
+        <constructor>
+            <idArg column="notification_setting_id" javaType="Long"/>
+            <arg column="member_id" javaType="Long"/>
+            <arg column="performance_shortage_enabled" javaType="_boolean"/>
+            <arg column="benefit_limit_enabled" javaType="_boolean"/>
+            <arg column="updated_at" javaType="java.time.LocalDateTime"/>
+        </constructor>
+    </resultMap>
+
+    <resultMap id="notificationListItemResultMap" type="com.wallet.notification.domain.NotificationListItemResult">
+        <constructor>
+            <idArg column="notification_id" javaType="Long"/>
+            <arg column="notification_type" javaType="com.wallet.notification.domain.NotificationType"/>
+            <arg column="title" javaType="String"/>
+            <arg column="content" javaType="String"/>
+            <arg column="created_at" javaType="java.time.LocalDateTime"/>
+            <arg column="read_at" javaType="java.time.LocalDateTime"/>
+        </constructor>
+    </resultMap>
+
+    <resultMap id="memberDedupKeyLookupResultMap" type="com.wallet.notification.batch.model.MemberDedupKeyLookup">
+        <constructor>
+            <arg column="member_id" javaType="Long"/>
+            <arg column="deduplication_key" javaType="String"/>
+        </constructor>
+    </resultMap>
+
+    <select id="findSettingByMemberId" resultMap="notificationSettingResultMap">
+        SELECT notification_setting_id,
+               member_id,
+               performance_shortage_enabled,
+               benefit_limit_enabled,
+               updated_at
+        FROM notification_setting
+        WHERE member_id = #{memberId}
+    </select>
+
+    <!--
+        ON DUPLICATE KEY UPDATE: INSERT를 시도하다 UNIQUE 제약(member_id)에 걸리면,
+        새 행을 만드는 대신 그 자리에서 바로 UPDATE로 전환하는 MySQL 문법.
+        "조회 → 있으면 UPDATE 없으면 INSERT"를 두 단계 쿼리로 나누지 않고 한 번의 원자적
+        명령으로 처리해서, 동시에 같은 회원의 설정을 두 번 저장하려 해도 행이 중복되지 않는다.
+
+        updated_at은 컬럼 DEFAULT/ON UPDATE 절이 자동으로 채워주므로 여기서 다루지 않는다.
+    -->
+    <insert id="upsertSetting">
+        INSERT INTO notification_setting (
+            member_id, performance_shortage_enabled, benefit_limit_enabled
+        ) VALUES (
+                     #{setting.memberId}, #{setting.performanceShortageEnabled}, #{setting.benefitLimitEnabled}
+                 )
+            ON DUPLICATE KEY UPDATE
+                                 performance_shortage_enabled = VALUES(performance_shortage_enabled),
+                                 benefit_limit_enabled = VALUES(benefit_limit_enabled)
+    </insert>
+
+    <!--
+        idx_notification_member_created (member_id, deleted_at, created_at) 인덱스를
+        그대로 타도록 WHERE 절 컬럼 순서를 인덱스와 맞췄다.
+        created_at이 같은 값으로 여러 건 들어올 수 있어(배치가 한 번에 여러 건 insert)
+        notification_id를 2차 정렬 기준으로 추가해 순서를 항상 동일하게 고정한다.
+    -->
+    <select id="selectActiveByMemberId" resultMap="notificationListItemResultMap">
+        SELECT notification_id, notification_type, title, content, created_at, read_at
+        FROM notification
+        WHERE member_id = #{memberId}
+          AND deleted_at IS NULL
+        ORDER BY created_at DESC, notification_id DESC
+            LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <!--
+        idx_notification_member_read (member_id, read_at)를 탄다.
+        캐시를 두지 않고 매번 세는 이유는 NotificationUnreadCountService 주석 참고.
+    -->
+    <select id="countUnread" resultType="int">
+        SELECT COUNT(*)
+        FROM notification
+        WHERE member_id = #{memberId}
+          AND read_at IS NULL
+          AND deleted_at IS NULL
+    </select>
+
+    <!--
+        read_at IS NULL 조건이 멱등성의 핵심이다. 이미 읽은 알림에 다시 요청이 와도
+        갱신 건수가 0이 되어, 읽은 시각이 나중 시각으로 덮어써지지 않는다.
+    -->
+    <update id="markAsRead">
+        UPDATE notification
+        SET read_at = NOW()
+        WHERE notification_id = #{notificationId}
+          AND member_id = #{memberId}
+          AND deleted_at IS NULL
+          AND read_at IS NULL
+    </update>
+
+    <select id="existsActiveByIdAndMemberId" resultType="boolean">
+        SELECT EXISTS (
+            SELECT 1
+            FROM notification
+            WHERE notification_id = #{notificationId}
+              AND member_id = #{memberId}
+              AND deleted_at IS NULL
+        )
+    </select>
+
+    <update id="softDeleteByIdAndMemberId">
+        UPDATE notification
+        SET deleted_at = NOW()
+        WHERE notification_id = #{notificationId}
+          AND member_id = #{memberId}
+          AND deleted_at IS NULL
+    </update>
+
+    <!--
+        INSERT IGNORE: MySQL 전용 문법으로, 원래라면 에러가 나야 할 행(여기서는
+        UNIQUE(member_id, deduplication_key) 위반)을 에러 대신 "경고"로 바꾸고
+        그 행만 조용히 건너뛴다. 나머지 행은 정상적으로 들어간다.
+        덕분에 배치를 두 번 돌려도 "이미 보낸 알림"이 다시 쌓이지 않는다.
+
+        트레이드오프: unique 위반이 아닌 다른 문제(예: 필수값 누락)도 같이 경고로 바뀌어
+        조용히 무시될 수 있다. 후보를 만드는 쪽이 필수 컬럼을 항상 채운다는 전제 위에 있다.
+
+        jdbcType을 명시한 컬럼들(*_id, *_at 계열)은 값이 null일 수 있는 컬럼이다.
+        자바 값이 null이면 MyBatis가 컬럼 타입을 스스로 추론하지 못해 에러가 나는
+        경우가 있어서, "이 값이 null이면 이 JDBC 타입으로 취급해라"를 명시해준다.
+    -->
+    <insert id="insertAll">
+        INSERT IGNORE INTO notification (
+        member_id, user_card_id, benefit_id, point_history_id,
+        notification_type, title, content, notification_status,
+        scheduled_at, sent_at, read_at, deleted_at, deduplication_key
+        ) VALUES
+        <foreach collection="notifications" item="n" separator=",">
+            (
+            #{n.memberId},
+            #{n.userCardId, jdbcType=BIGINT},
+            #{n.benefitId, jdbcType=BIGINT},
+            #{n.pointHistoryId, jdbcType=BIGINT},
+            #{n.notificationType},
+            #{n.title},
+            #{n.content},
+            #{n.notificationStatus},
+            #{n.scheduledAt, jdbcType=TIMESTAMP},
+            #{n.sentAt, jdbcType=TIMESTAMP},
+            #{n.readAt, jdbcType=TIMESTAMP},
+            #{n.deletedAt, jdbcType=TIMESTAMP},
+            #{n.deduplicationKey}
+            )
+        </foreach>
+    </insert>
+
+    <!--
+        (회원ID, 중복방지키) 쌍을 UNION ALL로 임시 테이블처럼 만들어 컬럼 대 컬럼으로 JOIN한다.
+
+        예전 형태인
+            WHERE CONCAT(member_id, ':', deduplication_key) IN (...)
+        는 인덱스 컬럼을 함수로 감싸기 때문에 MySQL이 UNIQUE(member_id, deduplication_key)를
+        쓰지 못하고 매번 전체 스캔을 한다. 알림이 쌓일수록 이 조회만 계속 느려진다.
+        아래처럼 컬럼을 그대로 비교하면 그 인덱스를 정상적으로 탄다.
+
+        회원까지 같이 맞추는 이유는, 다른 회원이 우연히 같은 키 문자열을 갖고 있을 때
+        "이미 보냈다"고 잘못 판단하지 않기 위해서다.
+
+        deleted_at을 거르지 않는다 — 사용자가 알림함에서 지웠어도 "발송된 적 있다"는 사실은
+        남아야 하고, UNIQUE 제약도 삭제된 행을 무시하지 않으므로 기준을 맞춘다.
+    -->
+    <select id="findExistingMemberDedupKeys" resultMap="memberDedupKeyLookupResultMap">
+        SELECT n.member_id, n.deduplication_key
+        FROM notification n
+        JOIN (
+        <foreach collection="lookups" item="lookup" separator=" UNION ALL ">
+            SELECT #{lookup.memberId} AS member_id, #{lookup.deduplicationKey} AS deduplication_key
+        </foreach>
+        ) target
+        ON target.member_id = n.member_id
+        AND target.deduplication_key = n.deduplication_key
+    </select>
+
+</mapper>

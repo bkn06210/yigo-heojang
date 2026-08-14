@@ -1,16 +1,38 @@
 <script setup>
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { useToast } from '@/composables/useToast'
+import { updateSimplePassword } from '@/api/memberApi'
+
+const props = defineProps({
+  // 이메일 인증을 마쳐야 받을 수 있는 일회용 토큰. 이게 없으면 서버가 저장을 거부한다.
+  changeToken: {
+    type: String,
+    required: true
+  },
+
+  // 최초 설정인지 변경인지에 따라 문구만 달라진다. API는 동일하다.
+  isFirstTimeSetup: {
+    type: Boolean,
+    default: false
+  }
+})
 
 const emit = defineEmits(['close', 'success'])
 const { showToast } = useToast()
 
 const pin = ref('')
 const pinConfirm = ref('')
+const submitting = ref(false)
 
-const handleClose = () => {
-  emit('close')
-}
+const title = computed(() =>
+  props.isFirstTimeSetup ? '간편비밀번호 설정' : '간편비밀번호 변경'
+)
+
+const description = computed(() =>
+  props.isFirstTimeSetup
+    ? '사용할 간편비밀번호를 설정해주세요'
+    : '새로운 간편비밀번호를 설정해주세요'
+)
 
 const isFormValid = () => {
   return (
@@ -21,21 +43,65 @@ const isFormValid = () => {
   )
 }
 
+const handleClose = () => {
+  if (submitting.value) {
+    return
+  }
+  emit('close')
+}
+
 const handleKeyPress = (e) => {
   if (!/\d/.test(e.key)) {
     e.preventDefault()
   }
 }
 
-const changePinSuccess = () => {
+const resolveErrorMessage = (error, fallback) =>
+  error?.response?.data?.message || error?.message || fallback
+
+const changePinSuccess = async () => {
   if (!isFormValid()) {
     showToast('warning', '6자리 숫자를 일치하게 입력해주세요.')
     return
   }
 
-  showToast('success', '간편비밀번호가 변경되었습니다.')
-  emit('success')
-  handleClose()
+  if (submitting.value) {
+    return
+  }
+
+  submitting.value = true
+
+  try {
+    await updateSimplePassword({
+      simplePasswordChangeToken: props.changeToken,
+      simplePassword: pin.value,
+      simplePasswordConfirm: pinConfirm.value
+    })
+
+    showToast(
+      'success',
+      props.isFirstTimeSetup
+        ? '간편비밀번호가 설정되었습니다.'
+        : '간편비밀번호가 변경되었습니다.'
+    )
+    emit('success')
+    emit('close')
+  } catch (error) {
+    // 토큰 만료(10분)나 재사용이면 인증부터 다시 해야 해서 모달을 닫는다.
+    const code = error?.response?.data?.code
+    const tokenNoLongerUsable =
+      code === 'SIMPLE_PASSWORD_CHANGE_TOKEN_EXPIRED' ||
+      code === 'SIMPLE_PASSWORD_CHANGE_TOKEN_ALREADY_USED' ||
+      code === 'SIMPLE_PASSWORD_CHANGE_TOKEN_INVALID'
+
+    showToast('error', resolveErrorMessage(error, '간편비밀번호 저장에 실패했습니다.'))
+
+    if (tokenNoLongerUsable) {
+      emit('close')
+    }
+  } finally {
+    submitting.value = false
+  }
 }
 </script>
 
@@ -43,12 +109,12 @@ const changePinSuccess = () => {
   <div class="modal-overlay" @click.self="handleClose">
     <div class="modal-content">
       <div class="modal-header">
-        <h2>간편비밀번호 변경</h2>
+        <h2>{{ title }}</h2>
         <button class="close-btn" @click="handleClose">✕</button>
       </div>
 
       <div class="modal-body">
-        <p class="modal-description">새로운 간편비밀번호를 설정해주세요</p>
+        <p class="modal-description">{{ description }}</p>
 
         <!-- 첫 번째 PIN 입력 -->
         <div class="form-group">
@@ -88,13 +154,13 @@ const changePinSuccess = () => {
       </div>
 
       <div class="modal-footer">
-        <button class="btn-cancel" @click="handleClose">취소</button>
+        <button class="btn-cancel" :disabled="submitting" @click="handleClose">취소</button>
         <button
           class="btn-confirm"
-          :disabled="!isFormValid()"
+          :disabled="!isFormValid() || submitting"
           @click="changePinSuccess"
         >
-          변경하기
+          {{ submitting ? '저장 중...' : (props.isFirstTimeSetup ? '설정하기' : '변경하기') }}
         </button>
       </div>
     </div>

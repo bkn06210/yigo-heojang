@@ -4,6 +4,8 @@ import { useRouter } from 'vue-router';
 import { storeToRefs } from 'pinia';
 
 import { useAuthStore } from '@/stores/authStore';
+import { useToast } from '@/composables/useToast';
+import { updateMyInfo } from '@/api/memberApi';
 
 import PageHeader from '@/components/common/PageHeader.vue';
 import Icon from '@/components/common/Icon.vue';
@@ -15,14 +17,18 @@ const router = useRouter();
 
 
 // 로그인 상태
-// TODO : 백엔드/Pinia 인증 상태 연결
 const authStore = useAuthStore();
 
 const { user } = storeToRefs(authStore);
 
+const { showToast } = useToast();
+
 
 // 프로필 수정 바텀시트
 const isProfileSheetOpen = ref(false);
+
+// 저장 중에는 버튼을 잠가 같은 요청이 두 번 나가지 않게 한다.
+const isSavingProfile = ref(false);
 
 
 // 보기 설정
@@ -126,15 +132,73 @@ const closeProfileEdit = () => {
 
 
 
-// 프로필 저장
-const updateProfile = (updatedUser) => {
+// 프로필 저장 — PATCH /api/members/me
+//
+// 서버가 받는 건 닉네임뿐이다. 프로필 이미지는 아직 저장 API가 없어
+// 예전처럼 로컬에만 남긴다(기기를 바꾸면 사라진다).
+//
+// 저장에 실패하면 시트를 닫지 않는다. 닫아버리면 사용자는 저장된 줄 알고 나가고,
+// 화면에는 서버에 없는 닉네임이 남는다.
+const updateProfile = async (updatedUser) => {
 
-  // TODO : 실제 API 연결 시 수정 API 호출
+  const nickname = (updatedUser?.nickname ?? '').trim();
 
-  authStore.updateUser(updatedUser);
+  // 서버가 빈 닉네임을 400으로 막는다. 굳이 왕복하지 않고 여기서 걸러 안내한다.
+  if (!nickname) {
 
+    showToast('error', '닉네임을 입력해주세요.');
 
-  closeProfileEdit();
+    return;
+
+  }
+
+  if (nickname.length > 50) {
+
+    showToast('error', '닉네임은 50자 이하로 입력해주세요.');
+
+    return;
+
+  }
+
+  if (isSavingProfile.value) {
+
+    return;
+
+  }
+
+  isSavingProfile.value = true;
+
+  try {
+
+    // 서버가 저장 결과를 그대로 돌려준다. 화면에는 내가 보낸 값이 아니라
+    // 서버가 확정한 값을 반영해야 다음 조회와 어긋나지 않는다.
+    const savedMember = await updateMyInfo(nickname);
+
+    authStore.updateUser({
+      ...savedMember,
+      profileImageUrl: updatedUser?.profileImageUrl ?? '',
+    });
+
+    showToast('success', '프로필이 수정되었습니다.');
+
+    closeProfileEdit();
+
+  } catch (error) {
+
+    console.error('프로필 수정 실패:', error);
+
+    showToast(
+      'error',
+      error?.response?.data?.message
+        || error?.message
+        || '프로필 수정에 실패했습니다.',
+    );
+
+  } finally {
+
+    isSavingProfile.value = false;
+
+  }
 
 };
 
@@ -177,8 +241,8 @@ const logout = () => {
 
         <div class="profile-image-wrapper">
           <img
-            v-if="user.profileImage"
-            :src="user.profileImage"
+            v-if="user.profileImageUrl"
+            :src="user.profileImageUrl"
             alt="프로필 이미지"
             class="profile-image"
           />
@@ -403,6 +467,8 @@ const logout = () => {
       v-if="isProfileSheetOpen"
 
       :user="user"
+
+      :saving="isSavingProfile"
 
       @close="closeProfileEdit"
 

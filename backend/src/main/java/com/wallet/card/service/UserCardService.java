@@ -8,8 +8,7 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.wallet.card.domain.Card;
-import com.wallet.card.domain.CardBin;
+import com.wallet.card.domain.MockCard;
 import com.wallet.card.domain.UserCard;
 import com.wallet.card.domain.UserCardDetailResult;
 import com.wallet.card.domain.UserCardListResult;
@@ -20,9 +19,8 @@ import com.wallet.card.dto.UserCardListItemResponse;
 import com.wallet.card.dto.UserCardListResponse;
 import com.wallet.card.dto.UserCardRegisterRequest;
 import com.wallet.card.dto.UserCardRegisterResponse;
-import com.wallet.card.mapper.CardMapper;
+import com.wallet.card.mapper.MockCardMapper;
 import com.wallet.card.mapper.UserCardMapper;
-import com.wallet.card.support.CardBinFinder;
 import com.wallet.card.support.CardMaskingSupport;
 import com.wallet.card.support.CardNumberSupport;
 import com.wallet.common.ErrorCode;
@@ -34,11 +32,19 @@ import com.wallet.member.mapper.MemberMapper;
 public class UserCardService {
     private static final int MAX_REPRESENTATIVE_CARD_COUNT = 3;
 
-    private final CardMapper cardMapper;
+    private final MockCardMapper mockCardMapper;
     private final UserCardMapper userCardMapper;
-    private final CardBinFinder cardBinFinder;
     private final MemberMapper memberMapper;
 
+    /**
+     * 카드번호만으로 보유 카드를 등록한다.
+     * <p>
+     * 클라이언트가 카드 상품(cardId)을 고르지 않는다. 카드번호를 정규화·룬 검증한 뒤,
+     * 서버가 신뢰하는 Mock 매핑에서 카드 상품을 찾아 연결한다. 클라이언트가 cardId를
+     * 직접 보내면 카드번호와 무관한 카드 상품을 등록할 수 있어 매칭 권한을 서버가 갖는다.
+     * <p>
+     * user_card에는 전체 카드번호를 저장하지 않고 마스킹된 값만 남긴다.
+     */
     @Transactional
     public UserCardRegisterResponse registerUserCard(
         Long memberId,
@@ -47,26 +53,24 @@ public class UserCardService {
         String normalizedCardNumber =
             CardNumberSupport.normalizeAndValidate(request.cardNumber());
 
+        MockCard mockCard = findSupportedMockCard(normalizedCardNumber);
+        Long cardId = mockCard.getCardId();
+
         String maskedCardNumber =
             CardMaskingSupport.mask(normalizedCardNumber);
 
-        Card selectedCard = findSelectedCard(request.cardId());
-
-        CardBin cardBin = cardBinFinder.findCardBin(normalizedCardNumber);
-
-        validateCardCompany(selectedCard, cardBin);
-
         UserCard existingUserCard =
-            userCardMapper.findByMemberIdAndCardId(memberId, request.cardId());
+            userCardMapper.findByMemberIdAndCardId(memberId, cardId);
 
         if (existingUserCard == null) {
-            insertUserCard(memberId, request.cardId(), maskedCardNumber);
+            insertUserCard(memberId, cardId, maskedCardNumber);
         } else {
+            // 삭제했던 카드를 다시 등록하면 새 행을 만들지 않고 기존 행을 되살린다.
             registerExistingUserCard(memberId, existingUserCard, maskedCardNumber);
         }
 
         UserCardRegistrationResult result =
-            userCardMapper.findRegistrationResult(memberId, request.cardId());
+            userCardMapper.findRegistrationResult(memberId, cardId);
 
         if (result == null) {
             throw new BusinessException(ErrorCode.USER_CARD_REGISTRATION_FAILED);
@@ -192,20 +196,21 @@ public class UserCardService {
         }
     }
 
-    private Card findSelectedCard(Long cardId) {
-        Card card = cardMapper.findActiveById(cardId);
+    /**
+     * 등록을 허용한 카드번호인지 확인하고, 그 번호가 가리키는 카드 상품을 돌려준다.
+     * <p>
+     * 룬 검증을 통과했더라도 Mock 목록에 없거나 비활성화된 번호는 등록할 수 없다.
+     * 두 경우를 같은 오류로 응답해, 어떤 번호가 목록에 있는지 추측하기 어렵게 한다.
+     */
+    private MockCard findSupportedMockCard(String normalizedCardNumber) {
+        MockCard mockCard =
+            mockCardMapper.findActiveByCardNumber(normalizedCardNumber);
 
-        if (card == null) {
-            throw new BusinessException(ErrorCode.CARD_NOT_FOUND);
+        if (mockCard == null) {
+            throw new BusinessException(ErrorCode.CARD_NOT_SUPPORTED);
         }
 
-        return card;
-    }
-
-    private void validateCardCompany(Card selectedCard, CardBin cardBin) {
-        if (!selectedCard.getCardCompanyId().equals(cardBin.getCardCompanyId())) {
-            throw new BusinessException(ErrorCode.CARD_COMPANY_MISMATCH);
-        }
+        return mockCard;
     }
 
     private void insertUserCard(
@@ -263,8 +268,10 @@ public class UserCardService {
     private UserCardRegisterResponse toResponse(UserCardRegistrationResult result) {
         return new UserCardRegisterResponse(
             result.getUserCardId(),
+            result.getCardId(),
             result.getCardName(),
             result.getCompanyName(),
+            result.getCardType(),
             result.getMaskedCardNumber(),
             result.getImageUrl(),
             result.getRepresentative()

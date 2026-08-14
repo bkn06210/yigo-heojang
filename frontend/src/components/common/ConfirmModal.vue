@@ -14,6 +14,21 @@ const props = defineProps({
   cancelText: {
     type: String,
     default: '취소'
+  },
+
+  reverseActions: {
+    type: Boolean,
+    default: false
+  },
+
+  cancelPrimary: {
+    type: Boolean,
+    default: false
+  },
+
+  cancelDanger: {
+    type: Boolean,
+    default: false
   }
 });
 
@@ -43,7 +58,14 @@ defineEmits([
       </p>
 
 
-      <div class="modal-buttons">
+      <div
+        class="modal-buttons"
+        :class="{
+          'reverse-actions': props.reverseActions,
+          'cancel-primary': props.cancelPrimary,
+          'cancel-danger': props.cancelDanger
+        }"
+      >
 
         <button
           class="cancel-btn"
@@ -175,6 +197,31 @@ button {
   );
 
   color: var(--color-btn-primary-text);
+}
+
+.reverse-actions .confirm-btn {
+  order: -1;
+}
+
+.cancel-primary .cancel-btn {
+  border: none;
+  background: linear-gradient(
+    90deg,
+    var(--color-btn-primary-start),
+    var(--color-btn-primary-end)
+  );
+  color: var(--color-btn-primary-text);
+}
+
+.cancel-primary .confirm-btn {
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+}
+
+.cancel-primary.cancel-danger .cancel-btn {
+  background: var(--color-coral);
+  color: #fff;
 }
 
 

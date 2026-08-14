@@ -23,6 +23,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import com.wallet.auth.domain.MemberTermAgreement;
 import com.wallet.auth.domain.RefreshToken;
+import com.wallet.auth.domain.TermScope;
 import com.wallet.auth.dto.LoginMemberResponse;
 import com.wallet.auth.dto.LoginRequest;
 import com.wallet.auth.dto.LoginResult;
@@ -403,10 +404,10 @@ class AuthServiceTest {
             "signup-token"
         )).thenReturn(1L);
 
-        when(termAgreementMapper.countActiveTermVersionsByIds(List.of(10L, 11L, 12L)))
+        when(termAgreementMapper.countActiveTermVersionsByIds(List.of(10L, 11L, 12L), TermScope.SIGNUP))
             .thenReturn(3);
 
-        when(termAgreementMapper.findActiveRequiredTermVersionIds())
+        when(termAgreementMapper.findActiveRequiredTermVersionIds(TermScope.SIGNUP))
             .thenReturn(List.of(10L, 11L));
 
         when(memberMapper.insertMember(any(Member.class)))
@@ -474,8 +475,8 @@ class AuthServiceTest {
 
         verify(memberMapper).existsByEmail("user@example.com");
         verify(signupEmailVerificationService).markAsUsed(1L);
-        verify(termAgreementMapper).countActiveTermVersionsByIds(List.of(10L, 11L, 12L));
-        verify(termAgreementMapper).findActiveRequiredTermVersionIds();
+        verify(termAgreementMapper).countActiveTermVersionsByIds(List.of(10L, 11L, 12L), TermScope.SIGNUP);
+        verify(termAgreementMapper).findActiveRequiredTermVersionIds(TermScope.SIGNUP);
         verify(memberMapper).findById(1L);
 
     }
@@ -510,8 +511,8 @@ class AuthServiceTest {
 
         verify(memberMapper).existsByEmail("user@example.com");
 
-        verify(termAgreementMapper, never()).countActiveTermVersionsByIds(any());
-        verify(termAgreementMapper, never()).findActiveRequiredTermVersionIds();
+        verify(termAgreementMapper, never()).countActiveTermVersionsByIds(any(), any());
+        verify(termAgreementMapper, never()).findActiveRequiredTermVersionIds(TermScope.SIGNUP);
         verify(memberMapper, never()).insertMember(any());
         verify(termAgreementMapper, never()).insertMemberTermAgreements(any());
     }
@@ -534,7 +535,7 @@ class AuthServiceTest {
         when(memberMapper.existsByEmail("user@example.com"))
             .thenReturn(false);
 
-        when(termAgreementMapper.countActiveTermVersionsByIds(anyList()))
+        when(termAgreementMapper.countActiveTermVersionsByIds(anyList(), any()))
             .thenReturn(1);
 
         // when
@@ -548,8 +549,8 @@ class AuthServiceTest {
             .isEqualTo(ErrorCode.INPUT_INVALID);
 
         verify(memberMapper).existsByEmail("user@example.com");
-        verify(termAgreementMapper).countActiveTermVersionsByIds(anyList());
-        verify(termAgreementMapper, never()).findActiveRequiredTermVersionIds();
+        verify(termAgreementMapper).countActiveTermVersionsByIds(anyList(), any());
+        verify(termAgreementMapper, never()).findActiveRequiredTermVersionIds(TermScope.SIGNUP);
         verify(memberMapper, never()).insertMember(any());
         verify(termAgreementMapper, never()).insertMemberTermAgreements(any());
     }
@@ -573,10 +574,10 @@ class AuthServiceTest {
         when(memberMapper.existsByEmail("user@example.com"))
             .thenReturn(false);
 
-        when(termAgreementMapper.countActiveTermVersionsByIds(List.of(10L, 11L, 12L)))
+        when(termAgreementMapper.countActiveTermVersionsByIds(List.of(10L, 11L, 12L), TermScope.SIGNUP))
             .thenReturn(3);
 
-        when(termAgreementMapper.findActiveRequiredTermVersionIds())
+        when(termAgreementMapper.findActiveRequiredTermVersionIds(TermScope.SIGNUP))
             .thenReturn(List.of(10L, 11L));
 
         // when
@@ -590,8 +591,8 @@ class AuthServiceTest {
             .isEqualTo(ErrorCode.INPUT_INVALID);
 
         verify(memberMapper).existsByEmail("user@example.com");
-        verify(termAgreementMapper).countActiveTermVersionsByIds(List.of(10L, 11L, 12L));
-        verify(termAgreementMapper).findActiveRequiredTermVersionIds();
+        verify(termAgreementMapper).countActiveTermVersionsByIds(List.of(10L, 11L, 12L), TermScope.SIGNUP);
+        verify(termAgreementMapper).findActiveRequiredTermVersionIds(TermScope.SIGNUP);
         verify(memberMapper, never()).insertMember(any());
         verify(termAgreementMapper, never()).insertMemberTermAgreements(any());
     }
@@ -626,8 +627,8 @@ class AuthServiceTest {
 
         verify(memberMapper).existsByEmail("user@example.com");
 
-        verify(termAgreementMapper, never()).countActiveTermVersionsByIds(any());
-        verify(termAgreementMapper, never()).findActiveRequiredTermVersionIds();
+        verify(termAgreementMapper, never()).countActiveTermVersionsByIds(any(), any());
+        verify(termAgreementMapper, never()).findActiveRequiredTermVersionIds(TermScope.SIGNUP);
         verify(memberMapper, never()).insertMember(any());
         verify(termAgreementMapper, never()).insertMemberTermAgreements(any());
     }
@@ -651,10 +652,10 @@ class AuthServiceTest {
         when(memberMapper.existsByEmail("user@example.com"))
             .thenReturn(false);
 
-        when(termAgreementMapper.countActiveTermVersionsByIds(List.of(10L, 11L, 12L)))
+        when(termAgreementMapper.countActiveTermVersionsByIds(List.of(10L, 11L, 12L), TermScope.SIGNUP))
             .thenReturn(3);
         
-        when(termAgreementMapper.findActiveRequiredTermVersionIds())
+        when(termAgreementMapper.findActiveRequiredTermVersionIds(TermScope.SIGNUP))
             .thenReturn(List.of(10L, 11L));
 
         when(memberMapper.insertMember(any(Member.class)))

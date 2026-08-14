@@ -21,7 +21,10 @@ public interface TransactionService {
             String region,
             String transactionType,
             String startDate,
-            String endDate
+            String endDate,
+            // page/size가 null이면 페이지를 나누지 않고 조건에 맞는 전체를 반환한다(기존 동작).
+            Integer page,
+            Integer size
     );
 
     TransactionDetailResponse getTransactionDetail(

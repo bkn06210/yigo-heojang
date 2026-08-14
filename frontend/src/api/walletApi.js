@@ -39,14 +39,15 @@ export const getCardMonthlyStatuses = (params = {}) =>
 export const getCardMonthlyStatus = (userCardId, params = {}) =>
   api.get(`/api/cards/${userCardId}/monthly-status`, { params }).then(data)
 
-// PR #29 연동: 카드번호 BIN으로 등록 가능한 카드 상품 후보를 조회한다.
-export const getUserCardCandidates = (cardNumber) =>
-  api.post('/api/user-cards/candidates', { cardNumber }).then(data)
-
-// 사용자가 입력한 카드명과 카드번호로 보유카드를 등록한다.
-// 백엔드에서 cardNumber로 카드 상품을 자동 조회해 userCardId를 생성한다.
-export const registerUserCard = (cardName, cardNumber) =>
-  api.post('/api/user-cards', { cardName, cardNumber }).then(data)
+// 카드번호만 보내면 서버가 등록 가능한 번호인지 확인하고 카드 상품을 결정한다.
+// 클라이언트는 카드 상품(cardId)을 고르지 않는다 — 카드번호와 무관한 상품이
+// 등록되지 않도록 매칭 권한을 서버가 갖는다.
+//
+// 응답: { userCardId, cardId, cardName, issuerName, cardType, maskedCardNumber, imageUrl, representative }
+// 실패: CARD_NUMBER_INVALID(형식·룬 검증), CARD_NOT_SUPPORTED(등록 미지원 번호),
+//       USER_CARD_ALREADY_EXISTS(이미 등록한 카드)
+export const registerUserCard = (cardNumber) =>
+  api.post('/api/user-cards', { cardNumber }).then(data)
 
 // PR #32 연동: 로그인 회원의 활성 보유카드 기본 목록을 조회한다.
 export const getUserCards = () =>

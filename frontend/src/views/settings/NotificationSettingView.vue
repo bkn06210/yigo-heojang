@@ -2,6 +2,10 @@
 import { ref, watch, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import PageHeader from '@/components/common/PageHeader.vue';
+import {
+  getNotificationSettings,
+  updateNotificationSettings,
+} from '@/api/notificationApi';
 
 const router = useRouter();
 
@@ -11,27 +15,121 @@ const notifications = ref({
   unappliedBenefit: false
 });
 
+// 화면의 토글과 서버 필드 대응.
+//   shortage        ↔ performanceShortageEnabled (실적 부족)
+//   limitExhausted  ↔ benefitLimitEnabled        (혜택 한도 임박·소진)
+//
+// unappliedBenefit(혜택 미적용 결제)은 서버에 대응 필드가 없다.
+// notification_setting 테이블에도 컬럼이 없어서, 이 토글만 예전처럼 브라우저에 남긴다.
+const LOCAL_ONLY_KEY = 'notificationSettings';
+
+// 서버에 반영된 마지막 상태. 저장이 실패하면 여기로 되돌린다 —
+// 실패했는데 토글이 켜진 채로 남으면 사용자는 꺼진 줄 알고 화면을 떠난다.
+const lastSyncedState = ref({
+  shortage: true,
+  limitExhausted: true,
+});
+
+// 서버 응답을 화면에 밀어넣는 동안에는 watch가 다시 저장을 부르지 않게 막는다.
+const isApplyingRemote = ref(false);
+
 const goBack = () => {
   router.go(-1);
 };
 
-// 초기 로드 시 localStorage에서 설정 복원
-onMounted(() => {
-  const saved = localStorage.getItem('notificationSettings');
+const applyRemoteState = (next) => {
+  isApplyingRemote.value = true;
+
+  notifications.value = {
+    ...notifications.value,
+    ...next,
+  };
+
+  lastSyncedState.value = {
+    shortage: notifications.value.shortage,
+    limitExhausted: notifications.value.limitExhausted,
+  };
+
+  // 값 대입으로 예약된 watch 콜백이 실행된 뒤에 잠금을 푼다.
+  setTimeout(() => {
+    isApplyingRemote.value = false;
+  }, 0);
+};
+
+// 초기 로드 — 서버가 원본이고, 서버에 없는 항목만 localStorage에서 복원한다.
+onMounted(async () => {
+  const saved = localStorage.getItem(LOCAL_ONLY_KEY);
+  let localUnappliedBenefit = notifications.value.unappliedBenefit;
+
   if (saved) {
     try {
-      notifications.value = JSON.parse(saved);
+      localUnappliedBenefit = Boolean(JSON.parse(saved)?.unappliedBenefit);
     } catch (e) {
       console.error('알림 설정 복원 실패:', e);
     }
   }
+
+  try {
+    const settings = await getNotificationSettings();
+
+    applyRemoteState({
+      shortage: Boolean(settings?.performanceShortageEnabled),
+      limitExhausted: Boolean(settings?.benefitLimitEnabled),
+      unappliedBenefit: localUnappliedBenefit,
+    });
+  } catch (error) {
+    // 조회에 실패하면 기본값(모두 수신)을 그대로 두되, 그 상태를 "저장된 값"으로 착각하지 않는다.
+    console.error('알림 설정 조회 실패:', error);
+
+    applyRemoteState({ unappliedBenefit: localUnappliedBenefit });
+  }
 });
 
-// 설정 값이 변경될 때마다 localStorage에 저장
-watch(notifications, (newVal) => {
-  localStorage.setItem('notificationSettings', JSON.stringify(newVal));
-  // TODO: 백엔드 API 호출하여 알림 설정 저장
-  console.log('알림 설정 변경됨:', newVal);
+// 설정이 바뀌면 서버에 저장한다.
+// 서버는 토글이 아니라 최종 상태 두 값을 항상 함께 받는다.
+watch(notifications, async (newVal) => {
+  // 서버에 없는 항목은 예전처럼 브라우저에만 남긴다.
+  localStorage.setItem(
+    LOCAL_ONLY_KEY,
+    JSON.stringify({ unappliedBenefit: newVal.unappliedBenefit }),
+  );
+
+  if (isApplyingRemote.value) {
+    return;
+  }
+
+  // 서버가 관리하는 두 값이 그대로면 저장할 것이 없다
+  // (혜택 미적용 토글만 움직인 경우가 여기에 해당한다).
+  if (
+    newVal.shortage === lastSyncedState.value.shortage
+    && newVal.limitExhausted === lastSyncedState.value.limitExhausted
+  ) {
+    return;
+  }
+
+  const requested = {
+    shortage: newVal.shortage,
+    limitExhausted: newVal.limitExhausted,
+  };
+
+  try {
+    const settings = await updateNotificationSettings({
+      performanceShortageEnabled: requested.shortage,
+      benefitLimitEnabled: requested.limitExhausted,
+    });
+
+    // 서버가 확정한 값을 다시 반영한다. 보낸 값과 같더라도 여기서 맞춰두면
+    // 나중에 서버가 값을 보정하더라도 화면이 어긋나지 않는다.
+    applyRemoteState({
+      shortage: Boolean(settings?.performanceShortageEnabled),
+      limitExhausted: Boolean(settings?.benefitLimitEnabled),
+    });
+  } catch (error) {
+    console.error('알림 설정 저장 실패:', error);
+
+    // 저장에 실패했으므로 마지막으로 서버에 반영된 상태로 되돌린다.
+    applyRemoteState({ ...lastSyncedState.value });
+  }
 }, { deep: true });
 </script>
 

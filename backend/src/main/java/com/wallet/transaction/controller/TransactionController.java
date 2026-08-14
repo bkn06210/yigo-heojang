@@ -37,7 +37,11 @@ public class TransactionController {
             @RequestParam(value = "region", required = false) String region,
             @RequestParam(value = "transactionType", required = false) String transactionType,
             @RequestParam(value = "startDate", required = false) String startDate,
-            @RequestParam(value = "endDate", required = false) String endDate
+            @RequestParam(value = "endDate", required = false) String endDate,
+            // page/size를 주면 그만큼만 잘라서 반환하고 응답에 hasNext가 채워진다.
+            // 둘 다 생략하면 예전처럼 조건에 맞는 전체를 반환한다 — 기존 호출부가 그대로 동작한다.
+            @RequestParam(value = "page", required = false) Integer page,
+            @RequestParam(value = "size", required = false) Integer size
     ) {
         Long userId = (Long) request.getAttribute(AUTHENTICATED_MEMBER_ID);
 
@@ -53,7 +57,9 @@ public class TransactionController {
                         region,
                         transactionType,
                         startDate,
-                        endDate
+                        endDate,
+                        page,
+                        size
                 );
 
         return ApiResponse.success("소비내역 목록 조회에 성공했습니다.", data);

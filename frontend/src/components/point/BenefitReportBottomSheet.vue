@@ -1,5 +1,16 @@
 ﻿<script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
+
+
+// 혜택 리포트 (GET /api/benefits/report 응답)
+// 조회는 화면(PointListView)이 하고 여기는 받은 것만 그린다 —
+// 카드와 바텀시트가 같은 응답을 나눠 써야 합계와 상세가 어긋나지 않는다.
+const props = defineProps({
+  report: {
+    type: Object,
+    default: null,
+  },
+})
 
 
 // 바텀시트 닫기 이벤트
@@ -14,56 +25,38 @@ const selectedCategory = ref(null)
 
 
 
-// 임시 데이터
-// 추후 혜택 리포트 API 응답으로 교체 예정
-const benefitCategories = [
-  {
-    id: 1,
-    name: '구독/콘텐츠',
-    amount: 50000,
+// API 응답을 화면이 쓰는 형태로 옮긴다.
+// 부문명은 중분류 거래면 parentCategoryName이 있어 '문화여가 > 스포츠레저'로 보여줄 수 있다.
+// 대분류 거래면 parentCategoryName이 null이라 부문명만 쓴다.
+const benefitCategories = computed(() =>
 
-    details: [
-      {
-        name: '넷플릭스',
-        payment: 17000,
-        benefit: 'KB카드 2,000원 할인'
-      },
-      {
-        name: '디즈니 플러스',
-        payment: 15000,
-        benefit: 'KB카드 1,500원 할인'
-      }
-    ]
-  },
+  (props.report?.categories ?? []).map((category) => ({
 
-  {
-    id: 2,
-    name: '외식',
-    amount: 18000,
+    id: category.categoryId,
 
-    details: [
-      {
-        name: '스타벅스',
-        payment: 6500,
-        benefit: '카페 할인 500원'
-      }
-    ]
-  },
+    name: category.parentCategoryName
+      ? `${category.parentCategoryName} > ${category.categoryName}`
+      : category.categoryName,
 
-  {
-    id: 3,
-    name: '편의점',
-    amount: 5000,
+    amount: category.benefitAmount,
 
-    details: [
-      {
-        name: 'GS25',
-        payment: 5000,
-        benefit: '멤버십 적립'
-      }
-    ]
-  }
-]
+    details: (category.details ?? []).map((detail) => ({
+
+      id: detail.expenseId,
+
+      name: detail.merchantName,
+
+      payment: detail.paymentAmount,
+
+      // 오른쪽에 한 줄로 들어가는 자리라 '어느 카드로 얼마'까지만 담는다.
+      // 혜택 이름(benefitName)은 길어서 줄바꿈이 생긴다.
+      benefit: `${detail.cardName} ${detail.benefitAmount.toLocaleString()}원`,
+
+    })),
+
+  }))
+
+)
 
 
 
@@ -122,7 +115,7 @@ const backToCategory = () => {
 
         <div
           v-for="detail in selectedCategory.details"
-          :key="detail.name"
+          :key="detail.id"
           class="detail-item"
         >
 
@@ -160,6 +153,16 @@ const backToCategory = () => {
         <h2>
           이번 달 혜택 리포트
         </h2>
+
+
+
+        <!-- 받은 혜택이 없는 달도 에러가 아니라 빈 목록으로 온다 -->
+        <p
+          v-if="!benefitCategories.length"
+          class="empty"
+        >
+          이번 달에 받은 혜택이 아직 없어요.
+        </p>
 
 
 
@@ -277,6 +280,18 @@ h2 {
 }
 
 
+
+.empty {
+
+  padding: var(--space-lg) 0;
+
+  text-align: center;
+
+  color: var(--color-text-secondary);
+
+  font-size: var(--font-sm);
+
+}
 
 .category-item {
 

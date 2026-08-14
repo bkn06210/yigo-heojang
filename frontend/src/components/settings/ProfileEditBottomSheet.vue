@@ -1,6 +1,7 @@
 <script setup>
 import { ref, watch } from 'vue';
 
+import { readImageAsResizedDataUrl } from '@/utils/image';
 import AppButton from '@/components/common/AppButton.vue';
 import AppInput from '@/components/common/AppInput.vue';
 import Icon from '@/components/common/Icon.vue';
@@ -10,6 +11,12 @@ const props = defineProps({
   user: {
     type: Object,
     required: true,
+  },
+
+  // 저장 요청이 끝날 때까지 부모가 켜둔다 — 같은 요청이 두 번 나가지 않게 한다.
+  saving: {
+    type: Boolean,
+    default: false,
   },
 });
 
@@ -46,6 +53,10 @@ watch(
 
 
 const saveProfile = () => {
+  if (props.saving) {
+    return;
+  }
+
   emit('save', {
     nickname: form.value.nickname,
     profileImageUrl: form.value.profileImageUrl,
@@ -70,20 +81,22 @@ const openFilePicker = () => {
 
 
 // 선택한 이미지를 미리보기로 반영
-const changeProfileImage = (event) => {
+// 원본 그대로 담으면 localStorage 한도에 걸려 저장이 실패하므로 줄여서 들고 있는다.
+const changeProfileImage = async (event) => {
   const file = event.target.files?.[0];
 
   if (!file) {
     return;
   }
 
-  const reader = new FileReader();
-
-  reader.onload = () => {
-    form.value.profileImageUrl = reader.result;
-  };
-
-  reader.readAsDataURL(file);
+  try {
+    form.value.profileImageUrl = await readImageAsResizedDataUrl(file);
+  } catch (error) {
+    console.error('프로필 이미지 처리 실패:', error);
+  } finally {
+    // 같은 파일을 다시 골라도 change가 뜨도록 값을 비운다.
+    event.target.value = '';
+  }
 };
 </script>
 
@@ -125,7 +138,12 @@ const changeProfileImage = (event) => {
       <div class="button-area">
         <AppButton text="취소" type="secondary" @click="closeSheet" />
 
-        <AppButton text="저장" type="primary" @click="saveProfile" />
+        <AppButton
+          :text="saving ? '저장 중…' : '저장'"
+          type="primary"
+          :disabled="saving"
+          @click="saveProfile"
+        />
       </div>
     </section>
   </div>

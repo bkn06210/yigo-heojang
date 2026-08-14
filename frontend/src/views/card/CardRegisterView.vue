@@ -1,8 +1,9 @@
 <script setup>
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useCardStore } from '@/stores/cardStore';
-import { getUserCardCandidates, registerUserCard } from '@/api/walletApi';
+import { registerUserCard } from '@/api/walletApi';
+import { useToast } from '@/composables/useToast';
 
 import PageHeader from '@/components/common/PageHeader.vue';
 
@@ -12,6 +13,7 @@ import CardRegisterCompleteModal from '@/components/card/CardRegisterCompleteMod
 import Icon from '@/components/common/Icon.vue';
 
 const cardStore = useCardStore();
+const { showToast } = useToast();
 
 // 카드 인식 방법 선택 상태
 const registerType = ref(null);
@@ -31,12 +33,27 @@ const showUpload = ref(false);
 const showComplete = ref(false);
 
 
-// 카드 등록 정보 (테스트용 목데이터: KB국민카드)
-const cardName = ref('ALL point 카드');
-const cardNumber = ref('2228-7900-0000-0000');
+// 카드 등록 정보
+// 카드명·카드사·카드 종류는 사용자가 고르지 않는다. 카드번호를 보내면 서버가
+// 등록 가능한 번호인지 확인하고 어떤 카드 상품인지 결정해서 응답으로 알려준다.
+// 아래 기본값은 시연용 번호(93_seed_mock_card.sql)라 그대로 등록해볼 수 있다.
+// 시드 계정이 이미 보유한 카드를 넣으면 바로 "이미 등록된 카드"가 되므로,
+// 92_seed_user_data.sql이 등록하지 않은 카드(ALL 카드)의 번호를 골랐다.
+const cardNumber = ref('2228-7900-0000-0024');
 const expiryDate = ref('12/25');
 const cvc = ref('123');
 const password = ref('12');
+
+// 등록 요청 진행 상태 — 중복 제출을 막는다.
+const registering = ref(false);
+
+// 서버가 매칭한 카드 상품. 등록 완료 모달에 보여준다.
+const registeredCard = ref(null);
+
+// 카드번호는 하이픈 포함 19자(숫자 16자)여야 보낼 수 있다.
+const canRegister = computed(
+  () => cardNumber.value.replace(/-/g, '').length === 16 && !registering.value
+);
 
 
 // 카드 인식 방법 선택
@@ -61,9 +78,8 @@ const openUpload = () => {
 
 
 // 인식 결과 반영
+// 카드명은 서버가 카드번호로 결정하므로 인식 결과에서 받아도 쓰지 않는다.
 const completeScan = (data) => {
-
-  cardName.value = data.cardName;
 
   cardNumber.value = formatCardNumber(
     data.cardNumber
@@ -145,18 +161,62 @@ const formatPassword = () => {
 };
 
 
+// 서버 응답에서 사람이 읽을 메시지를 뽑는다.
+const resolveErrorMessage = (error, fallback) =>
+  error?.response?.data?.message || error?.message || fallback;
+
+
 const registerCard = async () => {
+
+  if (!canRegister.value) {
+
+    showToast('warning', '카드번호 16자리를 모두 입력해주세요.');
+
+    return;
+
+  }
+
+  registering.value = true;
+
   try {
+
+    // 카드번호만 보낸다. 카드 상품은 서버가 정한다.
     const response = await registerUserCard(
-      cardName.value,
       cardNumber.value.replace(/-/g, '')
     );
 
+    registeredCard.value = response;
+
     await cardStore.loadCards();
+
     showComplete.value = true;
+
   } catch (error) {
-    console.error('카드 등록 실패:', error);
+
+    const code = error?.response?.data?.code;
+
+    // 등록을 막은 이유를 사용자에게 알려준다.
+    // 예전에는 콘솔에만 찍혀서 화면상 아무 반응이 없었다.
+    if (code === 'CARD_NOT_SUPPORTED') {
+
+      showToast('error', '등록을 지원하지 않는 카드번호입니다. 카드번호를 다시 확인해주세요.');
+
+    } else if (code === 'USER_CARD_ALREADY_EXISTS') {
+
+      showToast('warning', '이미 등록된 카드입니다.');
+
+    } else {
+
+      showToast('error', resolveErrorMessage(error, '카드 등록에 실패했습니다.'));
+
+    }
+
+  } finally {
+
+    registering.value = false;
+
   }
+
 };
 
 
@@ -235,20 +295,10 @@ const goCardList = () => {
 카드 정보 입력
 </h3>
 
-<!-- 카드명 -->
-
-<div class="input-box">
-
-<label>
-카드명
-</label>
-
-<input
-v-model="cardName"
-placeholder="카드명을 입력해주세요"
-/>
-
-</div>
+<!-- 카드명·카드사는 입력받지 않는다. 서버가 카드번호로 판별해 알려준다. -->
+<p class="form-hint">
+카드번호를 입력하면 카드사와 카드 종류가 자동으로 확인됩니다.
+</p>
 
 
 <!-- 카드 번호 -->
@@ -333,9 +383,10 @@ placeholder="앞 2자리"
 <!-- 카드 등록 버튼 -->
 <button
   class="register-button"
+  :disabled="!canRegister"
   @click="registerCard"
 >
-  카드 등록
+  {{ registering ? '등록 중...' : '카드 등록' }}
 </button>
 
 
@@ -348,6 +399,7 @@ placeholder="앞 2자리"
 
 <CardRegisterCompleteModal
   v-if="showComplete"
+  :card="registeredCard"
   @close="showComplete=false"
   @confirm="goCardList"
 />
@@ -522,6 +574,30 @@ color: var(--color-btn-primary-text);
 font-size: var(--font-md);
 font-weight: var(--font-semibold);
 cursor: pointer;
+
+}
+
+
+.register-button:disabled{
+
+background: var(--color-btn-disabled-bg);
+
+color: var(--color-btn-disabled-text);
+
+cursor: not-allowed;
+
+}
+
+
+.form-hint{
+
+margin: 0 0 var(--space-md);
+
+font-size: var(--font-xs);
+
+color: var(--color-text-secondary);
+
+line-height: 1.5;
 
 }
 

@@ -1,5 +1,6 @@
 <script setup>
 import { computed, ref } from 'vue';
+import { verifySimplePassword } from '@/api/memberApi';
 
 
 const props = defineProps({
@@ -44,8 +45,92 @@ const passwordDots = computed(() => {
 });
 
 
+// 서버 검증 중에는 키패드를 잠근다.
+const verifying = ref(false);
+
+// 불일치·잠금 사유를 사용자에게 보여준다.
+const errorMessage = ref('');
+
+
+const resolveErrorMessage = (error, fallback) =>
+  error?.response?.data?.message || error?.message || fallback;
+
+
+// 6자리를 다 채우면 서버에 실제로 맞는지 물어본다.
+// 예전에는 자릿수만 채우면 무조건 통과시켰다.
+const submitPassword = async () => {
+
+  verifying.value = true;
+
+  errorMessage.value = '';
+
+
+  try {
+
+    const result = await verifySimplePassword(password.value);
+
+
+    if (result?.matched) {
+
+      password.value = '';
+
+      emit('success');
+
+      return;
+
+    }
+
+
+    // 서버가 200에 matched:false로 답하는 경우 (남은 시도 횟수가 있는 불일치)
+    password.value = '';
+
+    errorMessage.value = '간편비밀번호가 일치하지 않습니다.';
+
+  } catch (error) {
+
+    password.value = '';
+
+
+    const code = error?.response?.data?.code;
+
+
+    // 아직 간편비밀번호를 설정하지 않은 회원이면 설정 화면으로 안내해야 한다.
+    if (code === 'SIMPLE_PASSWORD_NOT_SET') {
+
+      errorMessage.value =
+        '간편비밀번호가 설정되어 있지 않습니다. 계정 및 보안에서 먼저 설정해주세요.';
+
+      return;
+
+    }
+
+
+    // 5회 연속 실패 시 서버가 5분간 잠근다(429).
+    errorMessage.value = resolveErrorMessage(
+
+      error,
+
+      '간편비밀번호 확인에 실패했습니다.'
+
+    );
+
+  } finally {
+
+    verifying.value = false;
+
+  }
+
+};
+
+
 //숫자 입력
 const inputNumber = (number) => {
+
+  if (verifying.value) {
+
+    return;
+
+  }
 
   if (password.value.length >= PASSWORD_LENGTH) {
 
@@ -53,17 +138,13 @@ const inputNumber = (number) => {
 
   }
 
+  errorMessage.value = '';
+
   password.value += number;
 
   if (password.value.length === PASSWORD_LENGTH) {
 
-    setTimeout(() => {
-
-      password.value = '';
-
-      emit('success');
-
-    }, 200);
+    setTimeout(submitPassword, 200);
 
   }
 
@@ -117,6 +198,19 @@ const closeModal = () => {
         />
 
       </div>
+
+      <!-- 서버 검증 결과 안내 (불일치·잠금·미설정) -->
+      <p v-if="errorMessage" class="error-message" role="alert">
+
+        {{ errorMessage }}
+
+      </p>
+
+      <p v-else-if="verifying" class="verifying-message">
+
+        확인 중...
+
+      </p>
 
       <!-- 숫자패드 -->
       <div class="keypad">
@@ -274,6 +368,21 @@ const closeModal = () => {
 
   background:var(--color-primary);
 
+}
+
+.error-message{
+  margin: 0 0 var(--space-md);
+  font-size: var(--font-xs);
+  color: var(--color-input-error);
+  text-align: center;
+  line-height: 1.5;
+}
+
+.verifying-message{
+  margin: 0 0 var(--space-md);
+  font-size: var(--font-xs);
+  color: var(--color-text-secondary);
+  text-align: center;
 }
 
 .keypad{

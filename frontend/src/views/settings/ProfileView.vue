@@ -3,31 +3,40 @@ import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { storeToRefs } from 'pinia';
 import { useAuthStore } from '@/stores/authStore';
+import { readImageAsResizedDataUrl } from '@/utils/image';
 import PageHeader from '@/components/common/PageHeader.vue';
 
 const router = useRouter();
 const authStore = useAuthStore();
 const { user } = storeToRefs(authStore);
 
-const profileImage = ref(user.value?.profileImage || null);
+const profileImage = ref(user.value?.profileImageUrl || null);
 const fileInput = ref(null);
 
 const handleBack = () => {
   router.back();
 };
 
-const handleImageUpload = (e) => {
+// 사진은 아직 서버에 저장할 곳이 없어 브라우저에만 남는다.
+// 원본 그대로 담으면 localStorage 한도에 걸리므로 줄여서 저장한다.
+const handleImageUpload = async (e) => {
   const file = e.target.files?.[0];
   if (!file) return;
 
-  const reader = new FileReader();
-  reader.onload = (event) => {
-    profileImage.value = event.target.result;
+  try {
+    const resized = await readImageAsResizedDataUrl(file);
+
+    profileImage.value = resized;
+
     authStore.updateUser({
-      profileImage: event.target.result
+      profileImageUrl: resized
     });
-  };
-  reader.readAsDataURL(file);
+  } catch (error) {
+    console.error('프로필 이미지 처리 실패:', error);
+  } finally {
+    // 같은 파일을 다시 골라도 change가 뜨도록 값을 비운다.
+    e.target.value = '';
+  }
 };
 
 const triggerFileInput = () => {

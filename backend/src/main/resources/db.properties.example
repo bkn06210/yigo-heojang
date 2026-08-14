@@ -30,3 +30,7 @@ mail.smtp.connectiontimeout=5000
 mail.smtp.timeout=5000
 mail.smtp.writetimeout=5000
 mail.debug=false
+
+# 챗봇 서버(FastAPI, 별도 프로세스) 주소.
+# 외부에 노출하지 않는다 - Spring이 인증을 마친 요청만 넘긴다.
+chatbot.base-url=http://127.0.0.1:8000

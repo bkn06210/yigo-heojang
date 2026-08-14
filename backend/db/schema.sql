@@ -58,6 +58,9 @@ DROP TABLE IF EXISTS benefit;
 DROP TABLE IF EXISTS performance_exclusion;
 DROP TABLE IF EXISTS performance_tier;
 DROP TABLE IF EXISTS user_card;
+DROP TABLE IF EXISTS mock_card;
+DROP TABLE IF EXISTS card_alias;
+DROP TABLE IF EXISTS merchant_alias;
 DROP TABLE IF EXISTS merchant;
 DROP TABLE IF EXISTS category;
 DROP TABLE IF EXISTS card_annual_fee;
@@ -71,6 +74,8 @@ DROP TABLE IF EXISTS term;
 DROP TABLE IF EXISTS refresh_token;
 DROP TABLE IF EXISTS signup_email_verification;
 DROP TABLE IF EXISTS password_reset_verification;
+DROP TABLE IF EXISTS simple_password_verification;
+DROP TABLE IF EXISTS member_withdrawal_archive;
 DROP TABLE IF EXISTS member_withdrawal;
 DROP TABLE IF EXISTS member;
 
@@ -81,15 +86,20 @@ SET FOREIGN_KEY_CHECKS = 1;
 -- ════════════════════════════════════════════════════════════
 
 CREATE TABLE member (
-    member_id     BIGINT       NOT NULL AUTO_INCREMENT COMMENT '회원 ID',
-    email         VARCHAR(255) NOT NULL COMMENT '이메일(로그인 ID)',
-    password_hash VARCHAR(255) NOT NULL COMMENT '비밀번호 해시',
-    name          VARCHAR(50)  NOT NULL COMMENT '회원명',
-    nickname      VARCHAR(50) NOT NULL COMMENT '닉네임',
-    member_status ENUM('ACTIVE','SUSPENDED','WITHDRAWN') NOT NULL DEFAULT 'ACTIVE' COMMENT '회원 상태',
-    created_at    DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '생성일시',
-    updated_at    DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '수정일시',
-    withdrawn_at  DATETIME     NULL COMMENT '탈퇴일시. 상태가 WITHDRAWN이면 필수',
+    member_id            BIGINT       NOT NULL AUTO_INCREMENT COMMENT '회원 ID',
+    email                VARCHAR(255) NOT NULL COMMENT '이메일(로그인 ID)',
+    password_hash        VARCHAR(255) NOT NULL COMMENT '비밀번호 해시',
+    -- 기존 회원은 간편비밀번호를 설정하지 않았으므로 NULL을 허용한다.
+    -- 6자리 원문은 저장하지 않고, 서버에서 BCrypt로 만든 해시만 저장한다.
+    simple_password_hash VARCHAR(255) NULL COMMENT '간편비밀번호 해시',
+    simple_password_failed_attempt_count INT NOT NULL DEFAULT 0 COMMENT '간편비밀번호 연속 검증 실패 횟수',
+    simple_password_locked_until DATETIME NULL COMMENT '간편비밀번호 검증 잠금 만료일시',
+    name                 VARCHAR(50)  NOT NULL COMMENT '회원명',
+    nickname             VARCHAR(50)  NOT NULL COMMENT '닉네임',
+    member_status        ENUM('ACTIVE','SUSPENDED','WITHDRAWN') NOT NULL DEFAULT 'ACTIVE' COMMENT '회원 상태',
+    created_at           DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '생성일시',
+    updated_at           DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '수정일시',
+    withdrawn_at         DATETIME     NULL COMMENT '탈퇴일시. 상태가 WITHDRAWN이면 필수',
     PRIMARY KEY (member_id),
     UNIQUE KEY uk_member_email (email)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT '회원';
@@ -105,6 +115,35 @@ CREATE TABLE member_withdrawal (
     PRIMARY KEY (member_withdrawal_id),
     UNIQUE KEY uk_member_withdrawal_member (member_id)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT '회원 탈퇴 이력';
+
+-- member_withdrawal_archive: 탈퇴 회원의 개인정보를 보관 기간 동안 담아두는 테이블이다.
+-- member 테이블의 email·name은 탈퇴 즉시 마스킹 값으로 바뀌므로(MemberService.withdraw),
+-- 원본 값을 잃어버리기 전에 이 테이블로 옮겨 담는다.
+-- member_withdrawal과 성격이 다르다: member_withdrawal은 "탈퇴 사유"라는 통계성 정보라
+-- 기간 제한 없이 보관해도 되지만, 이 테이블은 실제 개인정보라 파기 배치가 물리 삭제해야 한다.
+-- 두 정보를 한 테이블에 같이 두면 파기 배치가 탈퇴 사유 통계까지 함께 지워버리게 되어 테이블을 분리했다.
+-- member_withdrawal과 마찬가지로 회원 삭제 후에도 이 행 자체는 남아야 하므로 물리 FK를 걸지 않는다 (논리 참조).
+CREATE TABLE member_withdrawal_archive (
+    member_withdrawal_archive_id BIGINT       NOT NULL AUTO_INCREMENT COMMENT '보관 ID',
+    member_id                    BIGINT       NOT NULL COMMENT '회원 ID (논리 참조)',
+    email                        VARCHAR(255) NOT NULL COMMENT '탈퇴 시점 이메일 원본',
+    -- 이메일 원본을 그대로 비교하면 조회 시 매번 문자열 비교라 느리고,
+    -- "이 이메일로 예전에 탈퇴한 적 있는지" 같은 정책이 나중에 추가될 때 인덱스로 바로 조회하기 위해
+    -- SHA-256 해시값을 별도로 저장해둔다. 지금 당장 쓰는 곳은 없지만, 나중에 추가하면
+    -- 이미 보관된 예전 데이터에는 소급 적용을 할 수 없으므로 처음부터 함께 저장한다.
+    email_hash                   CHAR(64)     NOT NULL COMMENT '이메일 SHA-256 해시. 재가입 제한 등 향후 정책 조회용',
+    name                         VARCHAR(50)  NOT NULL COMMENT '탈퇴 시점 회원명 원본',
+    withdrawn_at                 DATETIME     NOT NULL COMMENT '탈퇴일시',
+    retention_reason             VARCHAR(100) NOT NULL COMMENT '보관 근거 (예: 전자상거래법 제6조 소비자 불만·분쟁 처리 기록)',
+    created_at                   DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '생성일시',
+    PRIMARY KEY (member_withdrawal_archive_id),
+    -- 회원 한 명당 보관 행은 하나여야 한다. (탈퇴 → 재가입 → 재탈퇴 시나리오는 범위 밖으로 남겨둔다)
+    UNIQUE KEY uk_withdrawal_archive_member (member_id),
+    -- 파기 배치(추후 구현)가 "탈퇴한 지 오래된" 행을 찾을 때 쓸 인덱스다.
+    -- 몇 년을 기준으로 삼을지는 이 시점에 정하지 않는다 — 배치가 실제로 만들어질 때
+    -- (WHERE withdrawn_at <= NOW() - INTERVAL n YEAR) 그 코드가 정한다.
+    KEY idx_withdrawal_archive_withdrawn_at (withdrawn_at)
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT '탈퇴회원 개인정보 보관';
 
 CREATE TABLE signup_email_verification (
     signup_email_verification_id BIGINT       NOT NULL AUTO_INCREMENT COMMENT '회원가입 이메일 인증 ID',
@@ -147,6 +186,28 @@ CREATE TABLE password_reset_verification (
     CONSTRAINT fk_password_reset_member FOREIGN KEY (member_id) REFERENCES member (member_id)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT '비밀번호 재설정 인증';
 
+-- 이메일 인증 코드와 변경 토큰은 유효 기간이 다르므로 만료일시를 따로 관리한다.
+-- 코드와 토큰의 원문을 DB에 남기지 않아 DB 노출 시 즉시 악용되는 것을 방지한다.
+CREATE TABLE simple_password_verification (
+    simple_password_verification_id BIGINT       NOT NULL AUTO_INCREMENT COMMENT '간편비밀번호 변경 인증 ID',
+    member_id                       BIGINT       NOT NULL COMMENT '회원 ID',
+    verification_code_hash          VARCHAR(255) NOT NULL COMMENT '이메일 인증 코드 단방향 해시',
+    verification_status             ENUM('PENDING','VERIFIED','USED','EXPIRED') NOT NULL DEFAULT 'PENDING' COMMENT '인증 상태',
+    failed_attempt_count            INT          NOT NULL DEFAULT 0 COMMENT '인증 코드 검증 실패 횟수',
+    verification_code_expires_at    DATETIME     NOT NULL COMMENT '인증 코드 만료일시',
+    change_token_hash               VARCHAR(255) NULL COMMENT '간편비밀번호 변경 토큰 단방향 해시',
+    change_token_expires_at         DATETIME     NULL COMMENT '변경 토큰 만료일시',
+    verified_at                     DATETIME     NULL COMMENT '이메일 인증 완료일시',
+    used_at                         DATETIME     NULL COMMENT '간편비밀번호 설정·변경에 사용된 일시',
+    created_at                      DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '생성일시',
+    updated_at                      DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '수정일시',
+    PRIMARY KEY (simple_password_verification_id),
+    UNIQUE KEY uk_simple_password_change_token (change_token_hash),
+    KEY idx_simple_password_verification_member_status (member_id, verification_status),
+    KEY idx_simple_password_verification_code_expiry (verification_code_expires_at),
+    CONSTRAINT fk_simple_password_verification_member FOREIGN KEY (member_id) REFERENCES member (member_id)
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT '간편비밀번호 변경 이메일 인증';
+
 -- 원문은 저장하지 않는다. revoked_at과 revoke_reason은 함께 NULL이거나 함께 값이 있어야 한다.
 CREATE TABLE refresh_token (
     refresh_token_id BIGINT       NOT NULL AUTO_INCREMENT COMMENT 'Refresh Token ID',
@@ -169,6 +230,12 @@ CREATE TABLE refresh_token (
 CREATE TABLE term (
     term_id     BIGINT       NOT NULL AUTO_INCREMENT COMMENT '약관 ID',
     term_code   VARCHAR(50)  NOT NULL COMMENT '약관 코드',
+    -- 이 약관이 어느 화면(시점)에 노출되는지 구분하는 값이다.
+    -- SIGNUP     = 회원가입 화면에서 동의를 받는 약관 (기존 약관 전부 여기 해당)
+    -- WITHDRAWAL = 회원 탈퇴 화면에서 고지하고 동의를 받는 약관
+    -- DEFAULT 'SIGNUP'으로 둔 이유: 기존 약관 행이 전부 회원가입용이므로,
+    -- 값을 안 넣어도 자동으로 기존 동작(회원가입 필수 약관 검사)이 그대로 유지된다.
+    term_scope  VARCHAR(20)  NOT NULL DEFAULT 'SIGNUP' COMMENT '약관 노출 시점: SIGNUP(가입 시) | WITHDRAWAL(탈퇴 시)',
     term_name   VARCHAR(100) NOT NULL COMMENT '약관명',
     is_required TINYINT(1)   NOT NULL COMMENT '필수 동의 여부',
     term_status ENUM('ACTIVE','INACTIVE') NOT NULL DEFAULT 'ACTIVE' COMMENT '약관 상태',
@@ -248,6 +315,27 @@ CREATE TABLE card (
     CONSTRAINT fk_card_company FOREIGN KEY (card_company_id) REFERENCES card_company (card_company_id)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT '카드 마스터';
 
+-- 시연 환경에서 전체 카드번호를 카드 상품에 정확히 연결하기 위한 Mock 카드다.
+-- 외부 카드사 연동이 없어 카드번호만으로는 어떤 카드 상품인지 알 수 없으므로,
+-- 등록을 허용할 번호를 미리 정해두고(allowlist) 그 번호가 가리키는 카드 상품을 서버가 결정한다.
+--
+-- 주의: 실제 발급 카드번호가 아닌 개발·시연용 가상 번호만 저장한다.
+-- 이 구조를 운영 환경의 실제 카드번호 저장에 사용하면 안 된다.
+CREATE TABLE mock_card (
+    mock_card_id BIGINT      NOT NULL AUTO_INCREMENT COMMENT 'Mock 카드 ID',
+    card_id      BIGINT      NOT NULL COMMENT '연결할 카드 상품 ID',
+    -- 사용자가 입력한 카드번호에서 공백과 하이픈을 제거한 값이다.
+    card_number  VARCHAR(19) NOT NULL COMMENT '정규화된 전체 카드번호',
+    is_active    CHAR(1)     NOT NULL DEFAULT 'Y' COMMENT '등록 허용 여부: Y | N',
+    created_at   DATETIME    NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '생성일시',
+    PRIMARY KEY (mock_card_id),
+    UNIQUE KEY uk_mock_card_number (card_number),
+    KEY idx_mock_card_card_active (card_id, is_active),
+    CONSTRAINT fk_mock_card_card FOREIGN KEY (card_id) REFERENCES card (card_id),
+    CONSTRAINT chk_mock_card_number CHECK (card_number REGEXP '^[0-9]{13,19}$'),
+    CONSTRAINT chk_mock_card_active CHECK (is_active IN ('Y', 'N'))
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT '시연용 카드번호와 카드 상품 매핑';
+
 -- 연회비는 하나가 아니다. 국제브랜드(국내전용/VISA/Mastercard)와 발급 형태(실물/모바일단독)에
 -- 따라 갈리고, 기본연회비와 제휴연회비가 따로 청구된다.
 -- card.annual_fee는 대표값으로 남겨 목록·비교 화면이 쓰고, 정확한 금액이 필요하면 이 표를 본다.
@@ -306,6 +394,35 @@ CREATE TABLE merchant (
     KEY idx_merchant_category (category_id),
     CONSTRAINT fk_merchant_category FOREIGN KEY (category_id) REFERENCES category (category_id)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT '가맹점(브랜드)';
+
+-- 사람이 부르는 이름을 정식 명칭에 잇는다. 챗봇이 "스벅에서 얼마 썼어?" 같은 질문을
+-- 처리하려면 필요하다.
+-- 이름 유사도로 대신할 수 없다. "스벅"과 "스타벅스"는 글자가 '스' 하나만 겹쳐
+-- 어떤 문자열 거리로도 가까워지지 않는다. 축약·별명은 등록해두는 것 말고 방법이 없다.
+-- alias를 UNIQUE로 잡은 것은 판단이다. 한 별칭이 두 가맹점을 가리키면 어느 쪽인지
+-- 알 수 없어 조용히 틀린 답이 나간다. 모호한 별칭은 아예 등록하지 않고, 못 찾은 것으로
+-- 두어 되묻게 한다. 후보를 여럿 보여주고 고르게 하려면 이 제약을 풀고 복수 반환으로 바꾼다.
+CREATE TABLE merchant_alias (
+    merchant_alias_id BIGINT      NOT NULL AUTO_INCREMENT COMMENT '가맹점 별칭 ID',
+    merchant_id       BIGINT      NOT NULL COMMENT '가맹점 ID',
+    alias             VARCHAR(50) NOT NULL COMMENT '사용자가 부르는 표현 (예: 스벅)',
+    PRIMARY KEY (merchant_alias_id),
+    UNIQUE KEY uk_merchant_alias (alias),
+    KEY idx_merchant_alias_merchant (merchant_id),
+    CONSTRAINT fk_merchant_alias_merchant FOREIGN KEY (merchant_id) REFERENCES merchant (merchant_id)
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT '가맹점 별칭';
+
+-- 카드명은 길고 사람은 줄여 부른다("신한카드 핏(Fit)" → "핏카드", "신한 핏").
+-- merchant_alias와 같은 이유로 필요하고 같은 규칙을 따른다.
+CREATE TABLE card_alias (
+    card_alias_id BIGINT      NOT NULL AUTO_INCREMENT COMMENT '카드 별칭 ID',
+    card_id       BIGINT      NOT NULL COMMENT '카드 ID',
+    alias         VARCHAR(50) NOT NULL COMMENT '사용자가 부르는 표현 (예: 핏카드)',
+    PRIMARY KEY (card_alias_id),
+    UNIQUE KEY uk_card_alias (alias),
+    KEY idx_card_alias_card (card_id),
+    CONSTRAINT fk_card_alias_card FOREIGN KEY (card_id) REFERENCES card (card_id)
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT '카드 별칭';
 
 -- 카드사가 공시한 약관 원문. benefit으로 구조화하기 전의 원본이다.
 -- 원문을 DB에 두는 이유: 혜택 규칙과 약관이 같은 곳에서 관리돼야 카드를 추가할 때

@@ -1,8 +1,9 @@
 <!-- src/components/transaction/TransactionFilterBottomSheet.vue -->
 
 <script setup>
-import { ref, watch } from 'vue';
+import { ref, watch, onMounted } from 'vue';
 import Icon from '@/components/common/Icon.vue';
+import { getExpenseCategories } from '@/api/walletApi';
 
 
 // 부모 전달값
@@ -51,6 +52,8 @@ const showCardList = ref(false);
 
 
 // 조회 조건
+// category(이름)는 화면 표시용, categoryId는 서버 전달용이다. 이름만 들고 있으면
+// 서버가 카테고리명을 바꿨을 때 필터가 조용히 깨진다.
 const filter = ref({
 
   approval: '승인',
@@ -58,6 +61,12 @@ const filter = ref({
   cardType: '전체',
 
   card: '전체',
+
+  cardId: null,
+
+  category: '전체',
+
+  categoryId: null,
 
   region: '전체',
 
@@ -70,6 +79,51 @@ const filter = ref({
   endDate: '',
 
 });
+
+
+
+
+// 소비 카테고리 목록 — GET /api/expense-categories
+// 카테고리는 서버에서 관리하는 마스터 데이터라 화면에 박아두면 서버와 어긋난다.
+// 조회에 실패해도 필터 자체는 열려야 하므로 "전체"만 남기고 넘어간다.
+const categories = ref([]);
+
+const loadCategories = async () => {
+
+  try {
+
+    const response = await getExpenseCategories();
+
+    categories.value = response?.categories || [];
+
+  } catch (error) {
+
+    console.error('소비 카테고리 조회 실패:', error);
+
+    categories.value = [];
+
+  }
+
+};
+
+
+onMounted(loadCategories);
+
+
+// 카테고리 선택 — "전체"는 categoryId를 비워 서버 조건에서 아예 빠지게 한다.
+const selectCategory = (category) => {
+
+  if (!category) {
+    filter.value.category = '전체';
+    filter.value.categoryId = null;
+    return;
+  }
+
+  filter.value.category = category.categoryName;
+
+  filter.value.categoryId = category.categoryId;
+
+};
 
 
 
@@ -152,11 +206,31 @@ const periods = [
 
 
 // 카드 선택
+// 카드를 고르면 카드종류뿐 아니라 그 카드로도 걸러야 한다.
+// cardId를 안 넘기면 "신한 체크카드"를 골라도 체크카드 전부가 나온다.
 
 const selectCard = (card) => {
 
 
+  if (!card) {
+
+    filter.value.card = '전체';
+
+    filter.value.cardId = null;
+
+    filter.value.cardType = '전체';
+
+    showCardList.value = false;
+
+    return;
+
+  }
+
+
   filter.value.card = card.name;
+
+
+  filter.value.cardId = card.id;
 
 
   filter.value.cardType = card.type;
@@ -273,6 +347,12 @@ const reset = () => {
     cardType:'전체',
 
     card:'전체',
+
+    cardId:null,
+
+    category:'전체',
+
+    categoryId:null,
 
     region:'전체',
 
@@ -489,6 +569,26 @@ class="card-list"
 
 <button
 
+class="card-item"
+
+@click="selectCard(null)"
+
+>
+
+<div>
+
+<strong>
+전체
+</strong>
+
+</div>
+
+</button>
+
+
+
+<button
+
 v-for="card in props.cards"
 
 :key="card.id"
@@ -501,6 +601,8 @@ class="card-item"
 
 
 <img
+
+v-if="card.imageUrl"
 
 :src="card.imageUrl"
 
@@ -531,6 +633,70 @@ class="card-item"
 
 </div>
 
+
+
+</div>
+
+
+
+
+
+
+
+
+
+<!-- 카테고리 -->
+
+
+<div
+class="filter-item"
+v-if="categories.length"
+>
+
+
+<h3>
+카테고리
+</h3>
+
+
+
+<div class="chips wrap">
+
+
+<button
+
+:class="{
+active:filter.categoryId===null
+}"
+
+@click="selectCategory(null)"
+
+>
+전체
+</button>
+
+
+
+<button
+
+v-for="category in categories"
+
+:key="category.categoryId"
+
+:class="{
+active:filter.categoryId===category.categoryId
+}"
+
+@click="selectCategory(category)"
+
+>
+
+{{category.categoryName}}
+
+</button>
+
+
+</div>
 
 
 </div>

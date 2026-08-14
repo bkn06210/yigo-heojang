@@ -891,7 +891,7 @@ main {
 .cards-container {
   position: absolute;
   bottom: 60px; 
-  left: 44.5%;   
+  left: 42.5%;
   width: 100%;
   transform: translateX(-50%);
   height: 40px;

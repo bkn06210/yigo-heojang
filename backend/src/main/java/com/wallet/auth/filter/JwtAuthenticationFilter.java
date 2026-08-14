@@ -24,6 +24,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import com.wallet.auth.jwt.JwtTokenProvider;
 import com.wallet.common.ApiResponse;
 import com.wallet.common.ErrorCode;
+import com.wallet.member.mapper.MemberMapper;
 
 @RequiredArgsConstructor
 @Component("jwtAuthenticationFilter")
@@ -48,8 +49,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         "/api/terms"
     );
 
+    // 회원 상태를 나타내는 member.member_status 값. DB의 ENUM 정의와 이름이 같아야 한다.
+    private static final String MEMBER_STATUS_ACTIVE = "ACTIVE";
+    private static final String MEMBER_STATUS_WITHDRAWN = "WITHDRAWN";
+
     private final JwtTokenProvider jwtTokenProvider;
     private final ObjectMapper objectMapper;
+    private final MemberMapper memberMapper;
 
     @Value("${app.cors.allowed-origin:http://localhost:5173}")
     private String frontendOrigin;
@@ -93,6 +99,27 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             jwtTokenProvider.validateAccessTokenOrThrow(accessToken);
 
             Long memberId = jwtTokenProvider.getMemberIdFromAccessToken(accessToken);
+
+            // Access Token은 서명만 맞으면 만료 전까지 유효하다. 그래서 토큰을 발급받은
+            // 뒤에 탈퇴하거나 정지된 회원도, 남아 있는 토큰으로 API를 계속 호출할 수 있다.
+            // 매 요청마다 현재 회원 상태를 확인해 그 경로를 막는다.
+            String memberStatus = memberMapper.findStatusById(memberId);
+
+            if (memberStatus == null) {
+                writeErrorResponse(request, response, ErrorCode.MEMBER_NOT_FOUND);
+                return;
+            }
+
+            if (MEMBER_STATUS_WITHDRAWN.equals(memberStatus)) {
+                writeErrorResponse(request, response, ErrorCode.MEMBER_WITHDRAWN);
+                return;
+            }
+
+            if (!MEMBER_STATUS_ACTIVE.equals(memberStatus)) {
+                writeErrorResponse(request, response, ErrorCode.MEMBER_SUSPENDED);
+                return;
+            }
+
             request.setAttribute(AUTHENTICATED_MEMBER_ID, memberId);
 
             filterChain.doFilter(request, response);

@@ -1,8 +1,13 @@
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { storeToRefs } from 'pinia';
 import { useAuthStore } from '@/stores/authStore';
+import {
+  getNotifications,
+  markNotificationAsRead,
+  deleteNotification as deleteNotificationApi,
+} from '@/api/notificationApi';
 
 import PageHeader from '@/components/common/PageHeader.vue';
 import NotificationModal from '@/components/notification/NotificationModal.vue';
@@ -14,83 +19,85 @@ const router = useRouter();
 const authStore = useAuthStore();
 const { user } = storeToRefs(authStore);
 
-// 알림 데이터
-// TODO: GET /notifications API 연결 예정
-// 비로그인 상태일 때는 빈 배열로 처리
-const notificationsData = [
-
-  {
-    id: 1,
-
-    title: '카드 사용 한도 초과',
-
-    // 목록에서 보여줄 짧은 내용
-    preview:
-      '이번 달 카드 사용 금액이 한도를 초과했습니다.',
-
-    // 상세 모달 내용
-    detail: {
-      cardName: '신한 Mr.Life',
-      usedAmount: 520000,
-      limitAmount: 500000,
-      message:
-        '설정한 카드 한도를 초과했습니다. 소비 내역을 확인하고 관리해보세요.',
-    },
-
-    createdAt: '10분 전',
-
-    isRead: false,
-
-  },
-
-
-  {
-    id: 2,
-
-    title: 'AI 소비 분석 완료',
-
-    preview:
-      '이번 달 소비 패턴 분석 결과가 생성되었습니다.',
-
-    detail: {
-      summary:
-        '이번 달 구독 서비스 이용 비중이 높아요.',
-      recommendation:
-        '사용하지 않는 구독 서비스를 확인해보세요.',
-    },
-
-    createdAt: '어제',
-
-    isRead: true,
-
-  },
-
-
-  {
-    id: 3,
-
-    title: '결제 취소 완료',
-
-    preview:
-      '결제 취소 처리가 완료되었습니다.',
-
-    detail: {
-      storeName: '올리브영',
-      amount: 32000,
-      message:
-        '취소 금액이 카드 승인 취소 처리되었습니다.',
-    },
-
-    createdAt: '7월 29일',
-
-    isRead: false,
-
-  },
-
-];
-
-const notifications = ref(notificationsData);
+// 서버에서 받아온 알림 목록. GET /api/notifications
+const notifications = ref([]);
 const selectedNotification = ref(null);
+
+// 서버는 한 번에 최대 10건까지만 준다. 이 화면에는 "더보기" 버튼이 없어서,
+// hasNext가 있으면 몇 페이지까지는 이어서 받아 한 목록으로 보여준다.
+// 무한정 받지 않도록 상한을 둔다 — 알림함은 최신 몇십 건이면 충분하고,
+// 그보다 오래된 알림까지 끌어오면 첫 진입이 느려진다.
+const PAGE_SIZE = 10;
+const MAX_PAGES = 5;
+
+// 서버는 생성 시각을 ISO 문자열로 준다. 화면은 '10분 전' 같은 상대 표기를 쓰므로
+// 여기서 변환한다(표시 형식을 바꾸는 게 아니라 원래 형식에 맞춰 채우는 것).
+const formatRelativeTime = (isoString) => {
+  if (!isoString) return '';
+
+  const created = new Date(isoString);
+  if (Number.isNaN(created.getTime())) return '';
+
+  const diffMs = Date.now() - created.getTime();
+  const diffMinutes = Math.floor(diffMs / 60000);
+
+  if (diffMinutes < 1) return '방금 전';
+  if (diffMinutes < 60) return `${diffMinutes}분 전`;
+
+  const diffHours = Math.floor(diffMinutes / 60);
+  if (diffHours < 24) return `${diffHours}시간 전`;
+
+  const diffDays = Math.floor(diffHours / 24);
+  if (diffDays === 1) return '어제';
+  if (diffDays < 7) return `${diffDays}일 전`;
+
+  return `${created.getMonth() + 1}월 ${created.getDate()}일`;
+};
+
+// 서버 응답을 이 화면이 쓰는 형태로 옮긴다.
+//
+// detail은 반드시 객체여야 한다 — 상세 모달이 notification.detail.cardName처럼
+// 바로 접근해서, undefined면 렌더링 중 에러가 난다.
+// 서버는 title/content 두 개만 주므로 본문을 message에 담아 모달의 기본 문구 자리에 채운다.
+const toViewModel = (item) => ({
+  id: item.notificationId,
+  title: item.title,
+  message: item.content,
+  createdAt: formatRelativeTime(item.createdAt),
+  isRead: Boolean(item.read),
+  detail: {
+    message: item.content,
+  },
+});
+
+const loadNotifications = async () => {
+  // 비로그인 상태에서는 호출하지 않는다. 어차피 401이고, 화면은 빈 목록을 보여준다.
+  if (!user.value) {
+    notifications.value = [];
+    return;
+  }
+
+  try {
+    const collected = [];
+
+    for (let page = 0; page < MAX_PAGES; page += 1) {
+      const response = await getNotifications({ page, size: PAGE_SIZE });
+
+      collected.push(...(response?.notifications || []).map(toViewModel));
+
+      if (!response?.hasNext) {
+        break;
+      }
+    }
+
+    notifications.value = collected;
+  } catch (error) {
+    console.error('알림 목록 조회 실패:', error);
+    notifications.value = [];
+  }
+};
+
+onMounted(loadNotifications);
 
 // 비로그인 상태에서는 알림 없음 처리
 const displayNotifications = computed(() => {
@@ -103,18 +110,6 @@ const openNotification = (item) => {
 
 
 
-
-// 읽지 않은 알림 개수
-const unreadCount = computed(() => {
-
-  return displayNotifications.value.filter(
-    item => !item.isRead
-  ).length;
-
-});
-
-
-
 // 뒤로가기
 const goBack = () => {
 
@@ -124,18 +119,36 @@ const goBack = () => {
 
 
 
-// 알림 클릭
-// 읽음 처리
-const readNotification = (id) => {
+// 알림 읽음 처리 — PATCH /api/notifications/{id}/read
+//
+// 화면을 먼저 바꾸고 서버에 보낸다. 응답을 기다렸다가 바꾸면 모달을 닫는 순간
+// 목록이 잠깐 안 읽음으로 남아 깜빡인다. 실패하면 원래 상태로 되돌린다.
+const readNotification = async (id) => {
 
   const target = notifications.value.find(
     item => item.id === id
   );
 
 
-  if(target){
+  if (!target || target.isRead) {
 
-    target.isRead = true;
+    return;
+
+  }
+
+
+  target.isRead = true;
+
+
+  try {
+
+    await markNotificationAsRead(id);
+
+  } catch (error) {
+
+    console.error('알림 읽음 처리 실패:', error);
+
+    target.isRead = false;
 
   }
 
@@ -143,11 +156,40 @@ const readNotification = (id) => {
 
 
 // 모두 읽음
-const readAll = () => {
+// 한 번에 처리하는 API가 없어 안 읽은 것만 골라 각각 호출한다.
+// 화면에 최대 50건이라 요청 수가 통제된다.
+const readAll = async () => {
 
-  notifications.value.forEach(item => {
+  const unread = notifications.value.filter(item => !item.isRead);
 
+
+  if (!unread.length) {
+
+    return;
+
+  }
+
+
+  unread.forEach(item => {
     item.isRead = true;
+  });
+
+
+  const results = await Promise.allSettled(
+    unread.map(item => markNotificationAsRead(item.id)),
+  );
+
+
+  // 실패한 건만 원래대로 되돌린다. 성공한 건까지 되돌리면 서버와 화면이 어긋난다.
+  results.forEach((result, index) => {
+
+    if (result.status === 'rejected') {
+
+      console.error('알림 읽음 처리 실패:', result.reason);
+
+      unread[index].isRead = false;
+
+    }
 
   });
 
@@ -155,22 +197,37 @@ const readAll = () => {
 
 
 
-// 전체 삭제
-const deleteAll = () => {
+// 개별 삭제 — DELETE /api/notifications/{id}
+//
+// 삭제는 되돌리기 어려운 동작이라 서버가 성공을 확인한 뒤에 목록에서 뺀다.
+// 먼저 지웠다가 실패하면 사라진 알림이 다시 나타나 더 혼란스럽다.
+const deleteNotification = async (id) => {
 
-  notifications.value = [];
+  try {
 
-};
+    await deleteNotificationApi(id);
 
+  } catch (error) {
 
+    console.error('알림 삭제 실패:', error);
 
-// 개별 삭제
-const deleteNotification = (id) => {
+    return;
+
+  }
+
 
   notifications.value =
     notifications.value.filter(
       item => item.id !== id
     );
+
+
+  // 지운 알림을 상세로 열어둔 상태였다면 같이 닫는다.
+  if (selectedNotification.value?.id === id) {
+
+    selectedNotification.value = null;
+
+  }
 
 };
 

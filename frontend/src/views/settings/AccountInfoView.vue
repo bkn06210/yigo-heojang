@@ -1,12 +1,14 @@
 ﻿<script setup>
-import { ref, watch, onMounted } from 'vue';
+import { computed, ref, watch, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { storeToRefs } from 'pinia';
 
 import { useAuthStore } from '@/stores/authStore';
 import PageHeader from '@/components/common/PageHeader.vue';
 import AuthVerifyModal from '@/components/auth/AuthVerifyModal.vue';
+import SimplePasswordVerifyModal from '@/components/auth/SimplePasswordVerifyModal.vue';
 import PinChangeModal from '@/components/auth/PinChangeModal.vue';
+import { getMyInfo } from '@/api/memberApi';
 
 const authStore = useAuthStore();
 
@@ -17,6 +19,27 @@ const router = useRouter();
 const showPasswordVerify = ref(false);
 const showPinVerify = ref(false);
 const showPinChangeModal = ref(false);
+
+// 이메일 인증을 통과해야 받을 수 있는 일회용 토큰. 이걸 들고 있어야 저장 모달을 열 수 있다.
+const simplePasswordChangeToken = ref('');
+
+// 간편비밀번호를 이미 설정했는지. 서버가 GET /api/members/me의 simplePasswordSet으로 알려준다.
+// 설정 여부에 따라 메뉴 라벨과 모달 문구가 "설정"/"변경"으로 갈린다.
+const simplePasswordSet = ref(false);
+
+const simplePasswordMenuLabel = computed(() =>
+  simplePasswordSet.value ? '간편비밀번호 변경' : '간편비밀번호 설정'
+);
+
+const loadSimplePasswordState = async () => {
+  try {
+    const info = await getMyInfo();
+    simplePasswordSet.value = Boolean(info?.simplePasswordSet);
+  } catch (error) {
+    // 조회에 실패해도 화면은 떠야 한다. 라벨만 기본값(설정)으로 남는다.
+    console.error('간편비밀번호 설정 여부 조회 실패:', error);
+  }
+};
 
 const goPasswordChange = () => {
   showPasswordVerify.value = false;
@@ -31,17 +54,26 @@ const closePinVerify = () => {
   showPinVerify.value = false;
 };
 
-const handlePinVerifySuccess = () => {
+// 이메일 인증 성공 → 변경 토큰을 받아 저장 모달로 넘긴다.
+const handlePinVerifySuccess = (changeToken) => {
+  simplePasswordChangeToken.value = changeToken ?? '';
   showPinVerify.value = false;
+
+  if (!simplePasswordChangeToken.value) {
+    return;
+  }
+
   showPinChangeModal.value = true;
 };
 
 const closePinChangeModal = () => {
   showPinChangeModal.value = false;
+  // 토큰은 한 번만 쓸 수 있으므로 모달을 닫을 때 버린다.
+  simplePasswordChangeToken.value = '';
 };
 
 const handlePinChangeSuccess = () => {
-  showPinChangeModal.value = false;
+  simplePasswordSet.value = true;
 };
 
 const joinedDate = '2026.07.16';
@@ -53,6 +85,8 @@ const autoLogin = ref(true);
 
 // 초기 로드 시 localStorage에서 보안 설정 복원
 onMounted(() => {
+  loadSimplePasswordState();
+
   const saved = localStorage.getItem('accountSecuritySettings');
   if (saved) {
     try {
@@ -268,7 +302,7 @@ const navigateTo = (path) => {
     >
 
       <span class="menu-label">
-        간편비밀번호 변경
+        {{ simplePasswordMenuLabel }}
       </span>
 
 
@@ -331,11 +365,20 @@ const navigateTo = (path) => {
       @verify-success="goPasswordChange"
     />
 
-    <!-- 간편비밀번호 인증 모달 -->
-    <AuthVerifyModal
+    <!-- 간편비밀번호 이메일 인증 모달 -->
+    <SimplePasswordVerifyModal
       v-if="showPinVerify"
       @close="closePinVerify"
-      @verify-success="handlePinVerifySuccess"
+      @verified="handlePinVerifySuccess"
+    />
+
+    <!-- 간편비밀번호 입력·저장 모달 -->
+    <PinChangeModal
+      v-if="showPinChangeModal"
+      :change-token="simplePasswordChangeToken"
+      :is-first-time-setup="!simplePasswordSet"
+      @close="closePinChangeModal"
+      @success="handlePinChangeSuccess"
     />
 
     <!-- 간편비밀번호 변경 모달 -->

@@ -14,6 +14,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.time.LocalDate;
@@ -24,6 +25,9 @@ import com.wallet.common.exception.BusinessException;
 
 @Service
 public class TransactionServiceImpl implements TransactionService {
+
+    // 한 번에 가져갈 수 있는 최대 건수. size=100000 같은 요청으로 DB에 부담을 주지 못하게 막는다.
+    private static final int MAX_PAGE_SIZE = 100;
 
     private final TransactionMapper transactionMapper;
 
@@ -43,7 +47,9 @@ public class TransactionServiceImpl implements TransactionService {
             String region,
             String transactionType,
             String startDate,
-            String endDate
+            String endDate,
+            Integer page,
+            Integer size
     ) {
         validateFilter(paymentStatus, Set.of("APPROVED", "CANCELED"));
         validateFilter(approvalStatus, Set.of("APPROVED", "CONFIRMED"));
@@ -51,6 +57,14 @@ public class TransactionServiceImpl implements TransactionService {
         validateFilter(region, Set.of("DOMESTIC", "OVERSEAS"));
         validateFilter(transactionType, Set.of("LUMP_SUM", "INSTALLMENT", "CASH_ADVANCE"));
         validateDateRange(startDate, endDate);
+        validatePageRequest(page, size);
+
+        boolean paged = size != null;
+
+        // 다음 페이지가 있는지 알기 위해 요청한 개수보다 한 건 더 읽는다.
+        // 별도 COUNT 쿼리를 한 번 더 돌리는 것보다 싸고, 무한 스크롤에는 총 개수가 필요 없다.
+        Integer limit = paged ? size + 1 : null;
+        Integer offset = paged ? (page == null ? 0 : page) * size : null;
 
         List<TransactionResponse> transactions =
                 transactionMapper.selectTransactionList(
@@ -64,10 +78,35 @@ public class TransactionServiceImpl implements TransactionService {
                         region,
                         transactionType,
                         startDate,
-                        endDate
+                        endDate,
+                        limit,
+                        offset
                 );
 
-        return new TransactionListResponse(transactions);
+        boolean hasNext = paged && transactions.size() > size;
+        if (hasNext) {
+            // 존재 여부를 확인하려고 더 읽은 한 건은 응답에서 덜어낸다.
+            transactions = new ArrayList<>(transactions.subList(0, size));
+        }
+
+        return new TransactionListResponse(transactions, hasNext);
+    }
+
+    /**
+     * page/size는 둘 다 없거나(전체 조회) 유효한 값이어야 한다.
+     * size 없이 page만 보내는 것은 의도를 알 수 없어 거부한다 — 조용히 전체를 반환하면
+     * 호출한 쪽은 페이지를 나눠 받았다고 착각한다.
+     */
+    private void validatePageRequest(Integer page, Integer size) {
+        if (size == null) {
+            if (page != null) {
+                throw new BusinessException(ErrorCode.QUERY_PARAMETER_INVALID);
+            }
+            return;
+        }
+        if (size < 1 || size > MAX_PAGE_SIZE || (page != null && page < 0)) {
+            throw new BusinessException(ErrorCode.QUERY_PARAMETER_INVALID);
+        }
     }
 
     private void validateFilter(String value, Set<String> allowed) {
@@ -109,13 +148,15 @@ public class TransactionServiceImpl implements TransactionService {
             String yearMonth,
             Long userCardId
     ) {
-        // 전체 거래 조회
+        // 전체 거래 조회 — 합계를 내야 하므로 페이지를 나누지 않는다(limit/offset null).
         List<TransactionResponse> transactions =
                 transactionMapper.selectTransactionList(
                         userId,
                         yearMonth,
                         null,
                         userCardId,
+                        null,
+                        null,
                         null,
                         null,
                         null,

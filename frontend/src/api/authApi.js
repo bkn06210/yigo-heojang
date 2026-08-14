@@ -1,6 +1,7 @@
 import api from './axios'
 
-export const getTerms = () => api.get('/api/terms')
+export const getTerms = () =>
+  api.get('/api/terms').then((response) => response.data?.data ?? response.data)
 
 
 // 회원가입 요청

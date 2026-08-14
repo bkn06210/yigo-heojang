@@ -41,7 +41,8 @@ const closeModal = () => {
 
 
 // 확인 버튼
-// TODO: 추후 PATCH /notifications/{id}/read 연결
+// 읽음 처리는 부모(NotificationView)가 PATCH /api/notifications/{id}/read 로 처리한다.
+// 모달은 "확인했다"는 사실만 올려보내고 통신은 관여하지 않는다.
 const confirmNotification = () => {
 
   emit('read', props.notification.id);

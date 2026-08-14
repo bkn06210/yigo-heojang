@@ -19,6 +19,9 @@ import MembershipCard from '@/components/point/MembershipCard.vue';
 import BenefitReportCard from '@/components/point/BenefitReportCard.vue';
 import BenefitReportBottomSheet from '@/components/point/BenefitReportBottomSheet.vue';
 
+// 혜택 리포트 API
+import { getBenefitReport } from '@/api/benefitApi';
+
 const router = useRouter();
 
 const authStore = useAuthStore();
@@ -47,11 +50,26 @@ const goLogin = () => {
 };
 
 // 혜택 리포트
+// GET /api/benefits/report — 이번 달
+//
+// 카드(합계)와 바텀시트(부문별·거래별)가 같은 응답을 나눠 쓴다.
+// 따로 부르면 그 사이 결제가 일어났을 때 합계와 상세가 어긋난다.
+const benefitReportData = ref(null);
 
-// TODO: API 연결
-// GET /api/benefits/report
+// 카드가 쓰는 형태로 옮긴다. 조회 전이거나 받은 혜택이 없는 달이면 0원으로 그린다
+// (혜택이 없는 것은 에러가 아니라 정상 상태다 — topCategoryName이 null로 온다).
+const benefitReport = computed(() => ({
+  totalBenefit: benefitReportData.value?.totalBenefitAmount ?? 0,
+  maxCategory: benefitReportData.value?.topCategoryName ?? '아직 없어요',
+}));
 
-const benefitReport = null;
+const loadBenefitReport = async () => {
+  try {
+    benefitReportData.value = await getBenefitReport();
+  } catch (error) {
+    console.error('혜택 리포트 조회 실패:', error);
+  }
+};
 
 // 혜택 리포트 상세 바텀시트
 
@@ -96,6 +114,7 @@ const refreshPoint = async () => {
   await cardStore.loadCards();
   await cardStore.loadPoints();
   await cardStore.loadMemberships();
+  await loadBenefitReport();
 };
 
 // 페이지 로드 시 데이터 조회
@@ -105,6 +124,7 @@ onMounted(async () => {
   await cardStore.loadCards();
   await cardStore.loadPoints();
   await cardStore.loadMemberships();
+  await loadBenefitReport();
 });
 
 // TODO: API 연결
@@ -257,9 +277,10 @@ const showMoreMembership = () => {
       @close="closePointSheet"
     />
 
-    <!-- 혜택 리포트 상세 -->
+    <!-- 혜택 리포트 상세 (카드와 같은 응답을 그대로 넘긴다) -->
     <BenefitReportBottomSheet
       v-if="showBenefitReport"
+      :report="benefitReportData"
       @close="closeBenefitReport"
     />
   </div>

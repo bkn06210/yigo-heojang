@@ -3,6 +3,7 @@ package com.wallet.engine.seed;
 import com.wallet.engine.dto.PaymentSettlementResult;
 import com.wallet.engine.dto.SettlementCommand;
 import com.wallet.engine.seed.UserSeedScenario.Holding;
+import com.wallet.engine.seed.UserSeedScenario.Selection;
 import com.wallet.engine.seed.UserSeedScenario.Txn;
 import com.wallet.engine.service.SettlementService;
 import org.junit.jupiter.api.Disabled;
@@ -30,8 +31,12 @@ import java.util.StringJoiner;
  * <b>테스트가 아니라 도구다.</b> 검증하는 것이 없어 평소에는 실행하지 않는다(@Disabled).
  * 시드를 다시 만들 때 이 클래스만 골라 실행한다:
  * <pre>
- *   ./mvnw -o test -Dtest=UserSeedReplayTest -DfailIfNoTests=false -Dsurefire.failIfNoSpecifiedTests=false
+ *   ./mvnw -o test -Dtest=UserSeedReplayTest -DfailIfNoTests=false  *          -Dsurefire.failIfNoSpecifiedTests=false  *          -Djunit.jupiter.conditions.deactivate=org.junit.jupiter.engine.extension.DisabledCondition
  * </pre>
+ * 마지막 옵션이 없으면 클래스를 골라 지정해도 &#64;Disabled 때문에 건너뛴다(Skipped 1).
+ *
+ * <b>선행 조건</b>: DB에 schema → data → 91 까지만 들어 있어야 한다. 이 도구는 보유카드·소비내역을
+ * id를 직접 매겨 넣으므로, 이전 92가 적용된 DB에서 돌리면 중복 키로 실패한다.
  *
  * <b>왜 손으로 안 적고 리플레이하나.</b> 소비내역의 적용 혜택·할인액, 월 실적, 한도 소진은
  * 사람이 맞출 수 없다 — 묶음 한도 합산, 구간별 한도 상속, 일 소진 리셋, 스탬프 진행이 서로 얽힌다.
@@ -74,6 +79,9 @@ class UserSeedReplayTest {
         Map<String, Long> categoryIds = lookup("SELECT category_code, category_id FROM category");
 
         Map<String, Long> userCardIds = insertHoldings(cardIds);
+        // 선택은 반드시 리플레이 앞이다 — 엔진이 결제를 계산하면서 그달의 선택을 읽는다.
+        // 뒤에 넣으면 선택이 없는 상태로 계산돼 선택형 혜택이 한 건도 적용되지 않은 시드가 나온다.
+        insertSelections(userCardIds);
         int applied = replay(cardIds, merchantIds, categoryIds, userCardIds);
 
         String sql = dump();
@@ -114,6 +122,27 @@ class UserSeedReplayTest {
             userCardIds.put(key(holding.memberId(), holding.cardName()), userCardId);
         }
         return userCardIds;
+    }
+
+    /**
+     * 선택형 혜택의 월별 선택을 넣는다 — 시나리오의 선택 하나를 거래가 있는 다섯 달에 모두 깐다.
+     *
+     * 달마다 행이 필요한 것은 선택 상태의 PK가 (보유카드, 연월, 묶음)이기 때문이다.
+     * 한 달치만 넣으면 나머지 달은 "고르지 않음"이 되어 그 카드의 묶음 혜택이 통째로 빠진다.
+     */
+    private void insertSelections(Map<String, Long> userCardIds) {
+        for (Selection selection : UserSeedScenario.selections()) {
+            Long userCardId = require(userCardIds,
+                    key(selection.memberId(), selection.cardName()), "보유 카드");
+            for (int month : UserSeedScenario.MONTHS) {
+                jdbc.update("""
+                        INSERT INTO user_card_benefit_selection (user_card_id, base_year_month,
+                                                                 option_group_code, selected_option_key)
+                        VALUES (?, ?, ?, ?)
+                        """, userCardId, "%d-%02d".formatted(UserSeedScenario.YEAR, month),
+                        selection.optionGroupCode(), selection.optionKey());
+            }
+        }
     }
 
     /**
@@ -224,6 +253,13 @@ class UserSeedReplayTest {
                 "SELECT user_card_id, member_id, card_id, masked_card_number, is_representative, card_status "
                         + "FROM user_card ORDER BY user_card_id",
                 "user_card_id, member_id, card_id, masked_card_number, is_representative, card_status"));
+
+        // user_card 바로 뒤에 둔다 — 보유카드를 참조하는 FK라 순서가 뒤바뀌면 적재가 실패한다
+        sb.append(table("user_card_benefit_selection",
+                "SELECT user_card_id, base_year_month, option_group_code, selected_option_key "
+                        + "FROM user_card_benefit_selection "
+                        + "ORDER BY user_card_id, base_year_month, option_group_code",
+                "user_card_id, base_year_month, option_group_code, selected_option_key"));
 
         sb.append(table("expense",
                 "SELECT expense_id, member_id, user_card_id, category_id, merchant_id, merchant_name, "

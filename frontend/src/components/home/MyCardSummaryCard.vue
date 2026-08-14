@@ -1,5 +1,5 @@
 <script setup>
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { Swiper, SwiperSlide } from 'swiper/vue'
 import { Pagination } from 'swiper/modules'
 import 'swiper/css'
@@ -22,6 +22,19 @@ const emit = defineEmits(['click-card', 'click-more'])
 
 // 캐러셀에는 최대 3개까지만 노출
 const displayCards = computed(() => props.cards.slice(0, 3))
+
+// 슬롯은 세로인데 카드 도안은 대부분 가로다. 그대로 넣으면 가운데 띠처럼 들어가고 위아래가 빈다.
+// 가로 도안만 세워서 슬롯을 채우고, 이미 세로인 도안은 건드리지 않는다.
+// 캐러셀에 카드가 여러 장이라 카드별로 판정 결과를 들고 있어야 한다.
+const landscapeCardIds = ref(new Set())
+
+const handleCardImageLoad = (event, cardId) => {
+  const image = event.currentTarget
+
+  if (image.naturalWidth > image.naturalHeight) {
+    landscapeCardIds.value.add(cardId)
+  }
+}
 
 // 도넛 둘레(반지름 45 기준, 2 * PI * 45)
 const DONUT_CIRCUMFERENCE = 282.74
@@ -74,6 +87,8 @@ const donutDashArray = (rate) => {
                 v-if="card.image"
                 :src="card.image"
                 alt="카드 이미지"
+                :class="{ landscape: landscapeCardIds.has(card.id) }"
+                @load="handleCardImageLoad($event, card.id)"
               />
               <div v-else class="image-placeholder">CARD</div>
             </div>
@@ -172,12 +187,28 @@ const donutDashArray = (rate) => {
   height: 145px;
   border-radius: var(--radius-md);
   flex-shrink: 0;
+  /* 세운 도안이 슬롯 밖으로 삐져나가지 않도록 자르고, 안에서 가운데 정렬한다 */
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .card-image img {
+  display: block;
   width: 100%;
   height: 100%;
   object-fit: contain;
+}
+
+/* 가로 도안은 폭/높이를 뒤집고 90도 세운다.
+   145x100 을 회전하면 화면상 100x145 가 되어 슬롯에 딱 맞는다. */
+.card-image img.landscape {
+  width: 145px;
+  height: 100px;
+  max-width: none;
+  flex-shrink: 0;
+  transform: rotate(90deg);
 }
 
 .image-placeholder {

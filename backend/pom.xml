@@ -18,6 +18,8 @@
         <spring.version>5.3.39</spring.version>
         <!-- Spring 5와 호환되는 mybatis-spring 2.x (3.x는 Spring 6 필요) -->
         <mybatis.spring.version>2.1.2</mybatis.spring.version>
+        <!-- 의존성과 컴파일러 annotationProcessorPath가 같은 버전을 쓰도록 한곳에서 관리 -->
+        <lombok.version>1.18.32</lombok.version>
     </properties>
 
     <dependencies>
@@ -202,7 +204,7 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.32</version>
+            <version>${lombok.version}</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
@@ -211,10 +213,24 @@
         <!-- WAR 파일명을 ROOT로 → 톰캣 배포 시 컨텍스트 경로 "/" → /api/health 로 접근 -->
         <finalName>ROOT</finalName>
         <plugins>
+            <!-- 컴파일: JDK 17(release 17) + lombok 애노테이션 프로세서.
+                 annotationProcessorPaths를 쓰면 여기 적힌 프로세서만 동작하므로
+                 컴파일러 설정은 이 한 블록으로 합쳐 둔다(중복 선언 금지). -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.13.0</version>
+                <configuration>
+                    <release>${maven.compiler.release}</release>
+                    <encoding>${project.build.sourceEncoding}</encoding>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>${lombok.version}</version>
+                        </path>
+                    </annotationProcessorPaths>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -227,22 +243,6 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.2.5</version>
-            </plugin>
-
-            <!-- lombok 사용을 위한, 플러그인 설정 -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.13.0</version>
-                <configuration>
-                    <annotationProcessorPaths>
-                        <path>
-                            <groupId>org.projectlombok</groupId>
-                            <artifactId>lombok</artifactId>
-                            <version>1.18.32</version>
-                        </path>
-                    </annotationProcessorPaths>
-                </configuration>
             </plugin>
         </plugins>
     </build>

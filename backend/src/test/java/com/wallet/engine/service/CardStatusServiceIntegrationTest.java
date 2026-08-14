@@ -3,6 +3,7 @@ package com.wallet.engine.service;
 import com.wallet.common.exception.BusinessException;
 import com.wallet.engine.dto.BenefitSummary;
 import com.wallet.engine.dto.BenefitUsageStatus;
+import com.wallet.engine.dto.BriefingType;
 import com.wallet.engine.dto.CardMonthlyStatus;
 import com.wallet.engine.dto.CardStatusOverview;
 import com.wallet.engine.dto.CardStatusSummary;
@@ -156,7 +157,9 @@ class CardStatusServiceIntegrationTest {
         assertThat(overview.briefing()).isNotNull();
         assertThat(overview.briefing().userCardId()).isEqualTo(mainUserCardId);
         assertThat(overview.briefing().achievementRate()).isEqualByComparingTo("80.0");
-        assertThat(overview.briefing().message()).contains("보유하신 카드 2장 중", "80%");
+        assertThat(overview.briefing().type()).isEqualTo(BriefingType.PERFORMANCE_NEAR);
+        // 문구는 달마다 갈리므로 채워진 값만 고정한다. 카드 수는 보유 수(2)다.
+        assertThat(overview.briefing().message()).contains("2장", "현황IT_생활카드", "80%");
     }
 
     @Test
@@ -215,8 +218,8 @@ class CardStatusServiceIntegrationTest {
     }
 
     @Test
-    @DisplayName("보유 카드가 없으면 에러가 아니라 빈 응답이다")
-    void 보유_카드가_없으면_빈_응답이다() {
+    @DisplayName("보유 카드가 없으면 에러가 아니라 카드 등록 안내를 내려준다")
+    void 보유_카드가_없으면_등록을_안내한다() {
         long emptyMemberId = insert(
                 "INSERT INTO member (email, password_hash, name, nickname) VALUES (?, ?, ?, ?)",
                 "status-it-empty@test.local", "x", "현황빈회원", "현황IT빈별명");
@@ -224,7 +227,9 @@ class CardStatusServiceIntegrationTest {
         CardStatusOverview overview = cardStatusService.getOverview(emptyMemberId, BASE_MONTH);
 
         assertThat(overview.cards()).isEmpty();
-        assertThat(overview.briefing()).isNull();
+        // 카드가 없는 것은 정상 상태다. 빈 화면을 두지 않고 다음에 할 일을 안내한다.
+        assertThat(overview.briefing().type()).isEqualTo(BriefingType.NO_CARD);
+        assertThat(overview.briefing().userCardId()).isNull();
     }
 
     // ── 픽스처 ─────────────────────────────────────────────────────────────

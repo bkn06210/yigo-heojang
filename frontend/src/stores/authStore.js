@@ -28,7 +28,22 @@ export const useAuthStore = defineStore(
 
       try {
 
-        return JSON.parse(savedUser)
+        const parsed = JSON.parse(savedUser)
+
+
+        // 프로필 사진 필드가 한때 profileImage와 profileImageUrl 두 이름으로 갈렸다.
+        // 지금은 profileImageUrl 하나만 쓴다 — 예전 이름으로 저장해 둔 기기에서
+        // 사진이 사라지지 않도록 여기서 한 번 옮겨준다.
+        if (parsed && !parsed.profileImageUrl && parsed.profileImage) {
+
+          parsed.profileImageUrl = parsed.profileImage
+
+          delete parsed.profileImage
+
+        }
+
+
+        return parsed
 
       } catch (error) {
 

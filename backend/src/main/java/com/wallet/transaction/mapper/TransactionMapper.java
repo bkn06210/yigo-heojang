@@ -22,7 +22,10 @@ public interface TransactionMapper {
             @Param("region") String region,
             @Param("transactionType") String transactionType,
             @Param("startDate") String startDate,
-            @Param("endDate") String endDate
+            @Param("endDate") String endDate,
+            // limit이 null이면 LIMIT 절이 붙지 않아 조건에 맞는 전체를 반환한다.
+            @Param("limit") Integer limit,
+            @Param("offset") Integer offset
     );
 
     TransactionDetailResponse selectTransactionDetail(

@@ -89,4 +89,18 @@
         </property>
     </bean>
 
+    <!-- 챗봇 서버(별도 프로세스) 호출용 RestTemplate.
+         readTimeout이 긴 것은 답변 생성에 LLM 호출이 들어가 수 초 걸리기 때문이다.
+         챗봇이 이 서버의 엔진 API를 되부를 때 쓰는 타임아웃보다 반드시 길어야 한다 —
+         짧으면 안쪽 조회가 아직 도는데 바깥이 먼저 끊어져 매번 실패로 보인다. -->
+    <bean id="chatbotRequestFactory"
+          class="org.springframework.http.client.SimpleClientHttpRequestFactory">
+        <property name="connectTimeout" value="2000"/>
+        <property name="readTimeout" value="30000"/>
+    </bean>
+
+    <bean id="restTemplate" class="org.springframework.web.client.RestTemplate">
+        <constructor-arg ref="chatbotRequestFactory"/>
+    </bean>
+
 </beans>

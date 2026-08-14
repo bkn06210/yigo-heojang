@@ -5,8 +5,8 @@ import { storeToRefs } from 'pinia';
 
 import { useAuthStore } from '@/stores/authStore';
 import { useCardStore } from '@/stores/cardStore';
-import { useTour } from '@/composables/useTour';
 import { getTransactionsSummary } from '@/api/walletApi';
+import { getBenefitReport } from '@/api/benefitApi';
 
 import HomeHeader from '@/components/home/HomeHeader.vue';
 import Icon from '@/components/common/Icon.vue';
@@ -31,7 +31,8 @@ const { user } = storeToRefs(authStore);
 // 카드 store 연결
 const cardStore = useCardStore();
 
-const { cards, points, memberships } = storeToRefs(cardStore);
+// briefing 은 GET /api/cards/monthly-status 응답에 함께 오고 cardStore 가 채운다.
+const { cards, points, memberships, briefing } = storeToRefs(cardStore);
 
 // 금융 포인트 - 제일 많은 순서로 3개까지
 const topPoints = computed(() =>
@@ -89,15 +90,28 @@ const currentDate = computed(() => {
   return today.toLocaleDateString('ko-KR', options);
 });
 
-// 두리 브리핑 메시지 - 동적 생성
+// 두리 브리핑
+// 문장은 서버가 숫자까지 끼워 완성해 내려준다. 화면에서 다시 조립하지 않는다 —
+// 조립을 양쪽에서 하면 서버가 판단한 상황과 화면에 뜬 문장이 갈린다.
+// 보유 카드가 0장이어도 카드 등록을 안내하는 브리핑이 내려오므로 여기서 따로 만들 것이 없다.
+//
+// 아래 고정 문구는 조회 자체가 실패했을 때만 쓰는 폴백이다.
 const briefingMessage = computed(() => {
   if (!user.value) {
     return '로그인 후 나의 카드 혜택과 포인트 분석을 기반으로 맞춤형 추천을 받을 수 있어요.';
   }
 
+  if (briefing.value?.message) {
+    return briefing.value.message;
+  }
+
   const nickname = user.value.nickname || user.value.name || '사용자';
-  return `${nickname}님, 카드를 등록하면 맞춤 혜택 분석을 받을 수 있어요.`;
+  return `${nickname}님, 이번 달 카드 실적을 확인해보세요.`;
 });
+
+// 상황 구분값(NO_CARD·UNUSED_BENEFIT·PERFORMANCE_NEAR·ALL_ACHIEVED·SPENDING_INSIGHT·GETTING_STARTED).
+// 화면 분기는 이 값으로 한다. 문장을 뜯어 분기하면 문구가 바뀔 때마다 깨진다.
+const briefingType = computed(() => briefing.value?.type ?? null);
 
 // 홈 데이터
 const homeData = ref({
@@ -109,12 +123,27 @@ const homeData = ref({
 });
 
 // 혜택 리포트
-// TODO: GET /benefits/report 연결
+// GET /api/benefits/report — 이번 달
+//
+// 홈 카드는 총액과 최대 부문만 쓴다. 부문별 목록·거래 상세는 같은 응답의
+// categories[]에 들어 있고 혜택 화면(PointListView)의 바텀시트가 쓴다.
+const benefitReportData = ref(null);
 
-const benefitReport = {
-  totalBenefit: 12500,
+// 조회 전과 조회 실패에도 null을 내지 않는다. 카드가 report를 필수로 받는 데다,
+// 여기서 null을 내면 아래 v-if 사슬이 로그인 안내 문구로 떨어져 로그인한 사용자에게
+// 엉뚱한 안내가 나간다. 값이 없을 때는 0원으로 그린다.
+const benefitReport = computed(() => ({
+  totalBenefit: benefitReportData.value?.totalBenefitAmount ?? 0,
+  // 받은 혜택이 없는 달이면 topCategoryName이 null로 온다 (에러가 아니다).
+  maxCategory: benefitReportData.value?.topCategoryName ?? '아직 없어요',
+}));
 
-  maxCategory: '구독/콘텐츠',
+const loadBenefitReport = async () => {
+  try {
+    benefitReportData.value = await getBenefitReport();
+  } catch (error) {
+    console.error('혜택 리포트 조회 실패:', error);
+  }
 };
 
 // 이번 달 소비내역 요약 (홈 화면 소비내역 카드용 데이터)
@@ -239,14 +268,8 @@ onMounted(async () => {
   await cardStore.loadMemberships();
   await loadHome();
   await loadSpendingSummary();
+  await loadBenefitReport();
 
-  // 투어 시작 (처음 방문했을 때만)
-  const { isTourCompleted, startHomeTour } = useTour();
-  if (!isTourCompleted('home')) {
-    setTimeout(() => {
-      startHomeTour();
-    }, 1000);
-  }
 });
 </script>
 
@@ -267,7 +290,7 @@ onMounted(async () => {
         <!-- 프로필 헤더 섹션 -->
         <section v-if="user" class="profile-header-section">
           <div class="profile-avatar-large" @click="goProfile">
-            <img v-if="user.profileImage" :src="user.profileImage" alt="프로필" class="profile-image" />
+            <img v-if="user.profileImageUrl" :src="user.profileImageUrl" alt="프로필" class="profile-image" />
             <span v-else>{{ user.nickname?.charAt(0) || user.name?.charAt(0) || '👤' }}</span>
           </div>
           <p class="profile-date-text">{{ currentDate }}</p>
@@ -287,7 +310,13 @@ onMounted(async () => {
       </div>
 
       <!-- AI 브리핑 -->
-      <AIBriefingCard v-if="user" :is-login="true" :message="briefingMessage" />
+      <AIBriefingCard
+        v-if="user"
+        :is-login="true"
+        :message="briefingMessage"
+        :briefing-type="briefingType"
+        @register-card="goCardList"
+      />
 
       <AIBriefingCard v-else :is-login="false" :message="briefingMessage" />
 

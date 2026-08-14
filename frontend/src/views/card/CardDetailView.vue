@@ -5,7 +5,7 @@ import { useRoute, useRouter } from 'vue-router';
 
 import { useCardStore } from '@/stores/cardStore';
 import { getUserCardDetail } from '@/api/cardApi';
-import { getTransactions } from '@/api/walletApi';
+import { getCardMonthlyStatus, getTransactions } from '@/api/walletApi';
 
 import PageHeader from '@/components/common/PageHeader.vue';
 import BottomNavigation from '@/components/layout/BottomNavigation.vue';
@@ -124,6 +124,50 @@ const card = ref({
 
 const recentTransactions = ref([]);
 
+// 주요 혜택 달성 막대 — GET /api/cards/{userCardId}/monthly-status 의 benefits[]
+const benefitProgress = ref([]);
+
+// 최대 몇 줄까지 보여줄지. 원래 화면이 세 줄이었던 걸 그대로 유지한다.
+const BENEFIT_PROGRESS_LIMIT = 3;
+
+/**
+ * 혜택 이용현황을 진행률 막대가 쓰는 형태로 옮긴다.
+ *
+ * - monthlyLimit이 없는 혜택은 usageRate가 null로 온다. 한도가 없으면 "몇 % 썼다"가
+ *   성립하지 않으므로 막대로 그리지 않고 뺀다.
+ * - limitGroupCode가 같은 혜택들은 한도를 공유해서 서버가 같은 값을 내려준다.
+ *   그대로 두면 같은 수치가 여러 줄 반복되므로 코드당 한 줄로 묶는다.
+ * - 이용률이 높은 것부터 보여준다. 한도가 임박한 혜택이 먼저 눈에 들어와야 한다.
+ */
+const toBenefitProgress = (benefits) => {
+  const seenGroups = new Set();
+  const rows = [];
+
+  for (const benefit of benefits) {
+    if (benefit?.usageRate == null) {
+      continue;
+    }
+
+    if (benefit.limitGroupCode) {
+      if (seenGroups.has(benefit.limitGroupCode)) {
+        continue;
+      }
+      seenGroups.add(benefit.limitGroupCode);
+    }
+
+    rows.push({
+      key: benefit.limitGroupCode || `benefit-${benefit.benefitId}`,
+      name: benefit.benefitName,
+      // 한도를 넘겨 100%를 초과해 오더라도 막대가 칸을 삐져나가지 않게 자른다.
+      rate: Math.min(100, Math.max(0, Math.round(Number(benefit.usageRate)))),
+    });
+  }
+
+  return rows
+    .sort((a, b) => b.rate - a.rate)
+    .slice(0, BENEFIT_PROGRESS_LIMIT);
+};
+
 const loadCard = async () => {
   try {
     const data = await getUserCardDetail(route.params.id);
@@ -147,6 +191,20 @@ const loadCard = async () => {
     }));
   } catch (error) {
     console.error('카드 상세 조회 실패:', error);
+  }
+
+  // 카드 상세 조회가 실패했으면 카드 id를 모르는 상태라 여기서 멈춘다.
+  if (!card.value.userCardId) {
+    return;
+  }
+
+  // 혜택 현황은 별도 API라 따로 잡는다. 이쪽이 실패해도 카드 정보와 이용내역은 남는다.
+  try {
+    const status = await getCardMonthlyStatus(card.value.userCardId);
+    benefitProgress.value = toBenefitProgress(status?.benefits || []);
+  } catch (error) {
+    console.error('카드 혜택 현황 조회 실패:', error);
+    benefitProgress.value = [];
   }
 };
 
@@ -279,42 +337,22 @@ const goTransaction = () => {
     </button>
 
     <!-- 혜택 달성 -->
-    <section class="benefit-progress">
+    <section v-if="benefitProgress.length" class="benefit-progress">
       <h2>주요 혜택 달성</h2>
 
-      <div class="benefit-item">
+      <div
+        v-for="benefit in benefitProgress"
+        :key="benefit.key"
+        class="benefit-item"
+      >
         <div class="benefit-title">
-          <span> 스타벅스 </span>
+          <span> {{ benefit.name }} </span>
 
-          <span> 80% </span>
+          <span> {{ benefit.rate }}% </span>
         </div>
 
         <div class="progress-bar">
-          <div class="progress" style="width: 80%" />
-        </div>
-      </div>
-
-      <div class="benefit-item">
-        <div class="benefit-title">
-          <span> 편의점 </span>
-
-          <span> 60% </span>
-        </div>
-
-        <div class="progress-bar">
-          <div class="progress" style="width: 60%" />
-        </div>
-      </div>
-
-      <div class="benefit-item">
-        <div class="benefit-title">
-          <span> 온라인쇼핑 </span>
-
-          <span> 40% </span>
-        </div>
-
-        <div class="progress-bar">
-          <div class="progress" style="width: 40%" />
+          <div class="progress" :style="{ width: benefit.rate + '%' }" />
         </div>
       </div>
     </section>
