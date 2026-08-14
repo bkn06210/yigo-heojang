@@ -23,6 +23,7 @@ import org.junit.jupiter.api.Test;
 import com.wallet.notification.batch.model.BenefitLimitCandidate;
 import com.wallet.notification.batch.model.BenefitLimitStatus;
 import com.wallet.notification.batch.model.BenefitLimitUnit;
+import com.wallet.notification.batch.model.MemberDedupKeyLookup;
 import com.wallet.notification.batch.model.PerformanceShortageCandidate;
 import com.wallet.notification.batch.model.PerformanceShortageTrigger;
 import com.wallet.notification.domain.Notification;
@@ -260,7 +261,7 @@ class NotificationComposerTest {
         // given
         BenefitLimitCandidate near = individualLimitCandidate(1L, 20L, 100L, "BENEFIT_LIMIT:B:20:100:2026-08:NEAR");
         when(notificationRepository.findExistingMemberDedupKeys(
-            List.of("1:BENEFIT_LIMIT:B:20:100:2026-08:EXHAUSTED")
+            List.of(new MemberDedupKeyLookup(1L, "BENEFIT_LIMIT:B:20:100:2026-08:EXHAUSTED"))
         )).thenReturn(List.of("1:BENEFIT_LIMIT:B:20:100:2026-08:EXHAUSTED"));
 
         // when
@@ -276,7 +277,7 @@ class NotificationComposerTest {
         // given: DB에 같은 dedup key가 없으므로 정상적으로 NEAR 후보가 살아남아야 한다.
         BenefitLimitCandidate near = individualLimitCandidate(1L, 20L, 100L, "BENEFIT_LIMIT:B:20:100:2026-08:NEAR");
         when(notificationRepository.findExistingMemberDedupKeys(
-            List.of("1:BENEFIT_LIMIT:B:20:100:2026-08:EXHAUSTED")
+            List.of(new MemberDedupKeyLookup(1L, "BENEFIT_LIMIT:B:20:100:2026-08:EXHAUSTED"))
         )).thenReturn(List.of());
 
         // when

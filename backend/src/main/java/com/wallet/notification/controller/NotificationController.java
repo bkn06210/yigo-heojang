@@ -2,6 +2,8 @@ package com.wallet.notification.controller;
 
 import static com.wallet.common.constant.RequestAttributeNames.AUTHENTICATED_MEMBER_ID;
 
+import javax.validation.Valid;
+
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.ResponseEntity;
@@ -10,14 +12,18 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestAttribute;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.wallet.common.ApiResponse;
 import com.wallet.notification.dto.NotificationListResponse;
+import com.wallet.notification.dto.NotificationSettingResponse;
+import com.wallet.notification.dto.NotificationSettingUpdateRequest;
 import com.wallet.notification.dto.NotificationUnreadCountResponse;
 import com.wallet.notification.service.NotificationService;
+import com.wallet.notification.service.NotificationSettingService;
 import com.wallet.notification.service.NotificationUnreadCountService;
 
 /**
@@ -34,6 +40,7 @@ public class NotificationController {
 
     private final NotificationService notificationService;
     private final NotificationUnreadCountService notificationUnreadCountService;
+    private final NotificationSettingService notificationSettingService;
 
     /**
      * 로그인 회원의 알림 목록을 조회한다.
@@ -88,5 +95,22 @@ public class NotificationController {
         int unreadCount = notificationUnreadCountService.getUnreadCount(memberId);
         return ResponseEntity.ok(
             ApiResponse.success("안 읽은 알림 수 조회에 성공했습니다.", new NotificationUnreadCountResponse(unreadCount)));
+    }
+
+    @GetMapping("/settings")
+    public ResponseEntity<ApiResponse<NotificationSettingResponse>> getSettings(
+        @RequestAttribute(AUTHENTICATED_MEMBER_ID) Long memberId
+    ) {
+        NotificationSettingResponse response = notificationSettingService.getSetting(memberId);
+        return ResponseEntity.ok(ApiResponse.success("알림 설정 조회에 성공했습니다.", response));
+    }
+
+    @PatchMapping("/settings")
+    public ResponseEntity<ApiResponse<NotificationSettingResponse>> updateSettings(
+        @RequestAttribute(AUTHENTICATED_MEMBER_ID) Long memberId,
+        @Valid @RequestBody NotificationSettingUpdateRequest request
+    ) {
+        NotificationSettingResponse response = notificationSettingService.updateSetting(memberId, request);
+        return ResponseEntity.ok(ApiResponse.success("알림 설정이 변경되었습니다.", response));
     }
 }
