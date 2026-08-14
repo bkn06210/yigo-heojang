@@ -27,6 +27,7 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import com.wallet.auth.service.TermsService;
 import com.wallet.common.exception.GlobalExceptionHandler;
 import com.wallet.member.dto.MemberMeResponse;
 import com.wallet.member.dto.MemberUpdateRequest;
@@ -36,13 +37,14 @@ class MemberControllerTest {
     private static final String AUTHENTICATED_MEMBER_ID = "authenticatedMemberId";
 
     private final MemberService memberService = mock(MemberService.class);
+    private final TermsService termsService = mock(TermsService.class);
 
     private final ObjectMapper objectMapper = new ObjectMapper()
         .registerModule(new JavaTimeModule())
         .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
     private final MockMvc mockMvc = MockMvcBuilders
-        .standaloneSetup(new MemberController(memberService))
+        .standaloneSetup(new MemberController(memberService, termsService))
         .setControllerAdvice(new GlobalExceptionHandler())
         .setMessageConverters(new MappingJackson2HttpMessageConverter(objectMapper))
         .setValidator(validator())

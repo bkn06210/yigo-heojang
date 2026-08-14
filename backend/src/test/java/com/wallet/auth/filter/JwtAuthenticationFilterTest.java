@@ -24,12 +24,14 @@ import org.springframework.mock.web.MockHttpServletResponse;
 
 import com.wallet.auth.jwt.JwtTokenProvider;
 import com.wallet.common.ErrorCode;
+import com.wallet.member.mapper.MemberMapper;
 
 class JwtAuthenticationFilterTest {
 
     private final JwtTokenProvider jwtTokenProvider = mock(JwtTokenProvider.class);
+    private final MemberMapper memberMapper = mock(MemberMapper.class);
     private final JwtAuthenticationFilter jwtAuthenticationFilter =
-        new JwtAuthenticationFilter(jwtTokenProvider, new ObjectMapper());
+        new JwtAuthenticationFilter(jwtTokenProvider, new ObjectMapper(), memberMapper);
 
     @Test
     @DisplayName("공개 경로 요청 - Access Token 없이 필터를 통과한다")
@@ -200,6 +202,9 @@ class JwtAuthenticationFilterTest {
 
         when(jwtTokenProvider.getMemberIdFromAccessToken(accessToken))
             .thenReturn(memberId);
+
+        when(memberMapper.findStatusById(memberId))
+            .thenReturn("ACTIVE");
 
         // when
         jwtAuthenticationFilter.doFilter(request, response, filterChain);
