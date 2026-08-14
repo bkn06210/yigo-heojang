@@ -77,4 +77,12 @@ public interface NotificationMapper {
      * 발송됐는지 한 번에 확인하는 용도(3.6절).
      */
     List<String> findExistingMemberDedupKeys(@Param("memberDedupKeys") List<String> memberDedupKeys);
+
+    /**
+     * 알림 설정을 저장한다. member_id에 이미 행이 있으면 갱신하고, 없으면 새로 만든다
+     * (UNIQUE KEY uk_notification_setting_member 덕분에 이 판단을 MySQL이 원자적으로 해준다 —
+     * "조회해서 있으면 UPDATE, 없으면 INSERT"처럼 애플리케이션에서 직접 분기하면, 그 사이에
+     * 다른 요청이 끼어들어 같은 회원의 행이 중복 생성될 수 있는 경쟁 상태가 생긴다).
+     */
+    void upsertSetting(@Param("setting") NotificationSetting setting);
 }
