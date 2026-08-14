@@ -21,7 +21,7 @@ import json
 import sys
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Dict, Iterable, List, Set
+from typing import Callable, Dict, Iterable, List, Set
 
 from .catalog import collectors
 from .collect.base import DocumentRef
@@ -93,10 +93,10 @@ def run() -> RunReport:
     try:
         for collector in collectors():
             report.merge(
-                _collect(collector, collector.list_documents(), selection, conn)
+                _collect(collector, collector.list_documents, selection, conn)
             )
             report.merge(
-                _collect(collector, collector.list_member_terms(), member_terms, conn)
+                _collect(collector, collector.list_member_terms, member_terms, conn)
             )
     finally:
         conn.close()
@@ -104,7 +104,7 @@ def run() -> RunReport:
     return report
 
 
-def _collect(collector, refs: Iterable[DocumentRef],
+def _collect(collector, list_refs: Callable[[], Iterable[DocumentRef]],
              selection: Dict[str, Set[str]], conn) -> RunReport:
     """고른 이름에 해당하는 문서만 받아 적재한다.
 
@@ -114,6 +114,10 @@ def _collect(collector, refs: Iterable[DocumentRef],
     빠뜨린 하나 때문에 수집 전체가 멈추는 것보다 낫다.
 
     목록 조회 자체가 실패하면 그 카드사 문서를 하나도 못 받으므로 따로 적는다.
+
+    목록을 만드는 함수를 받아 여기서 부르는 이유는, 호출을 인자 자리에서 하면 아래 try
+    밖에서 실행되기 때문이다. 그러면 카드사 한 곳의 목록 조회가 터질 때 그 카드사만
+    실패로 남는 게 아니라 수집 전체가 멈추고, 아직 차례가 오지 않은 카드사는 통째로 빠진다.
     """
     wanted = selection.get(collector.issuer)
     if not wanted:
@@ -123,7 +127,7 @@ def _collect(collector, refs: Iterable[DocumentRef],
     found: Set[str] = set()
 
     try:
-        document_refs = list(refs)
+        document_refs = list(list_refs())
     except Exception as error:
         report.failed.append((f"{collector.issuer} / 목록 조회", _reason(error)))
         return report
