@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 
 import PageHeader from '@/components/common/PageHeader.vue';
@@ -25,6 +25,19 @@ const messages = ref([
   },
 ]);
 
+// 렌더링할 메시지 (중복 제거)
+const displayMessages = computed(() => {
+  const seen = new Set();
+  return messages.value.filter(msg => {
+    const key = `${msg.sender}:${msg.message}`;
+    if (seen.has(key)) {
+      return false;
+    }
+    seen.add(key);
+    return true;
+  });
+});
+
 // 추천 질문
 const quickQuestions = ref([
   '추천 카드 알려줘',
@@ -46,15 +59,55 @@ const isLoading = ref(false);
 const pendingContext = ref(null);
 
 const pushMessage = (sender, message) => {
+  // 마지막 메시지와 동일하면 추가하지 않음 (중복 방지)
+  const lastMsg = messages.value[messages.value.length - 1];
+  if (lastMsg && lastMsg.sender === sender && lastMsg.message === message) {
+    return;
+  }
+
   messages.value.push({
     id: Date.now() + Math.random(),
-
     sender,
-
     message,
-
     time: '방금',
   });
+};
+
+// 텍스트 포맷팅
+const formatAnswer = (text) => {
+  let formatted = text;
+
+  // 1. 날짜 형식 변환: "2026-08" → "8월"
+  formatted = formatted.replace(/\d{4}-(\d{2})/g, (match, month) => {
+    const monthNum = parseInt(month);
+    return `${monthNum}월`;
+  });
+
+  // 2. 제목 패턴: [텍스트] → **텍스트** (볼드 처리)
+  formatted = formatted.replace(/\[([^\]]+)\]/g, '**$1**');
+
+  // 3. 키워드 강조: "받은 혜택", "부문별" 등을 **텍스트** 처리
+  const keywords = ['받은 혜택', '부문별', '추천', '혜택'];
+  keywords.forEach(keyword => {
+    const regex = new RegExp(`(^|\\n)(${keyword})`, 'g');
+    formatted = formatted.replace(regex, '$1**$2**');
+  });
+
+  // 4. 소제목 아이콘 제거
+  formatted = formatted.replace(/^💳 /m, '');
+  formatted = formatted.replace(/^📋 /m, '');
+
+  // 5. 개행 정리 (연속된 빈 줄 제거)
+  formatted = formatted.replace(/\n{3,}/g, '\n\n');
+
+  return formatted;
+};
+
+// 답변을 빈 줄 기준으로 분할 (중복 제거, 단순화)
+const splitAnswer = (answer) => {
+  // 연속된 빈 줄을 하나로 정리하고 분할
+  const parts = answer.split(/\n\n+/).filter(part => part.trim());
+  return parts.length > 0 ? parts : [answer];
 };
 
 // 에러를 사용자 문장으로 바꾼다.
@@ -104,7 +157,9 @@ const sendMessage = async () => {
   try {
     const result = await askChat(question, pendingContext.value);
 
-    pushMessage('ai', result.answer);
+    // 답변 전체를 한 메시지로 추가 (분할 제거, 중복 방지)
+    const formatted = formatAnswer(result.answer);
+    pushMessage('ai', formatted);
 
     // 되물었으면 맥락을 들고 있다가 다음 질문에 실어 보낸다.
     // 되묻지 않았으면 대화가 끝난 것이므로 비운다.
@@ -139,7 +194,7 @@ const selectQuestion = (question) => {
     <!-- 채팅 영역 -->
     <section class="chat-area">
       <ChatMessage
-        v-for="message in messages"
+        v-for="message in displayMessages"
         :key="message.id"
         :message="message"
       />
@@ -193,9 +248,17 @@ const selectQuestion = (question) => {
 
   flex-direction: column;
 
-  gap: var(--space-md);
+  gap: var(--space-lg);
 
-  padding: var(--space-md);
+  padding: var(--space-lg) var(--space-md);
+
+  max-width: 480px;
+
+  margin: 0 auto;
+
+  width: 100%;
+
+  box-sizing: border-box;
 }
 
 .typing {
@@ -227,11 +290,19 @@ const selectQuestion = (question) => {
 
   gap: var(--space-sm);
 
-  padding: var(--space-md);
+  padding: var(--space-md) var(--space-lg);
 
   border-top: 1px solid var(--color-border);
 
   background: var(--color-surface);
+
+  max-width: 480px;
+
+  margin: 0 auto;
+
+  width: 100%;
+
+  box-sizing: border-box;
 }
 
 .input-area input {
