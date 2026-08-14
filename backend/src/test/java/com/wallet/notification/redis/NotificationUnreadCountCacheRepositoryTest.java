@@ -1,6 +1,7 @@
 package com.wallet.notification.redis;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -14,7 +15,6 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 import org.mockito.ArgumentCaptor;
 import org.springframework.scheduling.TaskScheduler;
 
@@ -22,10 +22,9 @@ import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.exceptions.JedisException;
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class NotificationUnreadCountCacheRepositoryTest {
-    private static JedisPool jedisPool;
-    private static Jedis jedis;
+    private JedisPool jedisPool;
+    private Jedis jedis;
     private NotificationUnreadCountCacheRepository cacheRepository;
 
     @BeforeEach
@@ -161,7 +160,53 @@ class NotificationUnreadCountCacheRepositoryTest {
         // when
         repo.invalidate(1L);
 
-        // then: invalidate() 한 번 호출에 schedule()도 딱 한 번만 호출돼야 한다.
+        // then: 예약된 작업을 실행해도 schedule()이 추가로 호출되지 않아야 한다.
+        ArgumentCaptor<Runnable> taskCaptor = ArgumentCaptor.forClass(Runnable.class);
+        verify(taskScheduler).schedule(taskCaptor.capture(), any(Instant.class));
+
+        taskCaptor.getValue().run();
+
         verify(taskScheduler, times(1)).schedule(any(Runnable.class), any(Instant.class));
+        verify(jedis, times(2)).del("noti:unread:1");
+    }
+
+    @Test
+    @DisplayName("즉시 삭제가 실패해도 지연 삭제를 예약해 다시 시도한다")
+    void invalidate_immediateDeleteFailure_schedulesRetry() {
+        // given
+        TaskScheduler taskScheduler = mock(TaskScheduler.class);
+        NotificationUnreadCountCacheRepository repo =
+            new NotificationUnreadCountCacheRepository(jedisPool, 3600, taskScheduler);
+        when(jedis.del("noti:unread:1"))
+            .thenThrow(new JedisException("timeout"))
+            .thenReturn(1L);
+
+        // when
+        repo.invalidate(1L);
+
+        // then
+        ArgumentCaptor<Runnable> taskCaptor = ArgumentCaptor.forClass(Runnable.class);
+        verify(taskScheduler).schedule(taskCaptor.capture(), any(Instant.class));
+
+        taskCaptor.getValue().run();
+
+        verify(jedis, times(2)).del("noti:unread:1");
+    }
+
+    @Test
+    @DisplayName("지연 삭제 예약이 실패해도 예외를 전파하지 않는다")
+    void invalidate_scheduleFailure_doesNotPropagate() {
+        // given
+        TaskScheduler taskScheduler = mock(TaskScheduler.class);
+        NotificationUnreadCountCacheRepository repo =
+            new NotificationUnreadCountCacheRepository(jedisPool, 3600, taskScheduler);
+        when(taskScheduler.schedule(any(Runnable.class), any(Instant.class)))
+            .thenThrow(new RuntimeException("scheduler rejected"));
+
+        // when & then
+        assertThatCode(() -> repo.invalidate(1L))
+            .doesNotThrowAnyException();
+
+        verify(jedis).del("noti:unread:1");
     }
 }

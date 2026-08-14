@@ -115,25 +115,31 @@ public class NotificationUnreadCountCacheRepository {
      * 캐시 값을 신뢰할 수 없을 때(불확실한 갱신, 벌크 INSERT 등) 통째로 지운다.
      */
     public void invalidate(long memberId) {
-        boolean deleted = rawDelete(memberId);
-        if (deleted) {
-            scheduleDelayedInvalidate(memberId);
-        }
+        rawDelete(memberId);
+        // 첫 삭제가 일시적인 Redis 장애로 실패해도, 지연 삭제를 재시도 기회로 남겨 둔다.
+        scheduleDelayedInvalidate(memberId);
     }
 
-    private boolean rawDelete(long memberId) {
+    private void rawDelete(long memberId) {
         try (Jedis jedis = jedisPool.getResource()) {
             jedis.del(RedisKeys.unreadCountKey(memberId));
-            return true;
         } catch (JedisException e) {
             log.warn("Redis 안 읽은 수 캐시 무효화 실패 - 다음 조회에서 다시 MySQL로 채워집니다. memberId={}", memberId, e);
-            return false;
         }
     }
 
     private void scheduleDelayedInvalidate(long memberId) {
         // rawDelete만 예약한다(invalidate가 아니라) — invalidate를 예약하면 그 안에서 또
         // scheduleDelayedInvalidate를 부르면서 영원히 반복 예약되는 문제가 생긴다.
-        taskScheduler.schedule(() -> rawDelete(memberId), Instant.now().plusMillis(DOUBLE_DELETE_DELAY_MILLIS));
+        try {
+            taskScheduler.schedule(
+                () -> rawDelete(memberId),
+                Instant.now().plusMillis(DOUBLE_DELETE_DELAY_MILLIS)
+            );
+        } catch (RuntimeException e) {
+            // 지연 삭제는 캐시 정합성을 높이는 보조 작업이다.
+            // 스케줄러 종료/거부 등이 DB가 이미 커밋된 비즈니스 흐름에 예외로 전파되지 않게 한다.
+            log.warn("안 읽은 수 캐시 지연 무효화 예약 실패. memberId={}", memberId, e);
+        }
     }
 }
