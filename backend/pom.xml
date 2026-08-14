@@ -18,6 +18,8 @@
         <spring.version>5.3.39</spring.version>
         <!-- Spring 5와 호환되는 mybatis-spring 2.x (3.x는 Spring 6 필요) -->
         <mybatis.spring.version>2.1.2</mybatis.spring.version>
+
+        <jedis.version>5.2.0</jedis.version>
     </properties>
 
     <dependencies>
@@ -204,6 +206,13 @@
             <artifactId>lombok</artifactId>
             <version>1.18.32</version>
             <scope>provided</scope>
+        </dependency>
+
+        <!-- Redis 클라이언트. 동기 API라 SET NX EX·EVAL(Lua) 같은 저수준 명령을 그대로 쓰기 쉽다. -->
+        <dependency>
+            <groupId>redis.clients</groupId>
+            <artifactId>jedis</artifactId>
+            <version>${jedis.version}</version>
         </dependency>
     </dependencies>
 

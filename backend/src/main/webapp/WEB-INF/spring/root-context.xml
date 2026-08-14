@@ -3,17 +3,20 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:task="http://www.springframework.org/schema/task"
        xsi:schemaLocation="
            http://www.springframework.org/schema/beans
            http://www.springframework.org/schema/beans/spring-beans.xsd
            http://www.springframework.org/schema/context
            http://www.springframework.org/schema/context/spring-context.xsd
            http://www.springframework.org/schema/tx
-           http://www.springframework.org/schema/tx/spring-tx.xsd">
+           http://www.springframework.org/schema/tx/spring-tx.xsd
+           http://www.springframework.org/schema/task
+           http://www.springframework.org/schema/task/spring-task.xsd">
 
     <!-- DB 접속값은 코드/설정에 직접 쓰지 않고 db.properties에서 읽어 ${...}로 참조.
-         db.properties는 .gitignore로 제외, db.properties.example를 복사해 채운다. -->
-    <context:property-placeholder location="classpath:db.properties"/>
+         db.properties는 .gitignore로 제외, db.properties.example를 복사해 채운다. + redis.properties -->
+    <context:property-placeholder location="classpath:db.properties,classpath:redis.properties"/>
 
     <!-- 서비스 계층 컴포넌트 스캔 (컨트롤러는 제외 → servlet-context가 담당).
          @RestController는 @Controller를 메타 포함하므로 함께 제외된다. -->
@@ -88,6 +91,28 @@
             </props>
         </property>
     </bean>
+
+    <!-- Redis 커넥션 풀 설정 -->
+    <bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig">
+        <property name="maxTotal" value="${redis.pool.max-total}"/>
+        <property name="maxIdle" value="${redis.pool.max-idle}"/>
+        <property name="minIdle" value="${redis.pool.min-idle}"/>
+    </bean>
+
+    <!-- Redis 커넥션 풀. HikariDataSource와 마찬가지로 destroy-method="close"로
+         애플리케이션 종료 시 커넥션을 정리한다. -->
+    <bean id="jedisPool" class="redis.clients.jedis.JedisPool" destroy-method="close">
+        <constructor-arg ref="jedisPoolConfig"/>
+        <constructor-arg value="${redis.host}"/>
+        <constructor-arg value="${redis.port}" type="int"/>
+        <constructor-arg value="${redis.timeout-millis}" type="int"/>
+        <constructor-arg value="${redis.password}"/>
+    </bean>
+
+    <!-- @Scheduled 처리기. pool-size는 동시에 실행될 수 있는 배치 개수(실적 부족·혜택 한도 등)만큼
+     넉넉히 잡아둔다 — 하나가 오래 걸려도 다른 배치가 그 뒤에서 대기하지 않도록. -->
+    <task:scheduler id="notificationTaskScheduler" pool-size="4"/>
+    <task:annotation-driven scheduler="notificationTaskScheduler"/>
 
     <!-- 챗봇 서버(별도 프로세스) 호출용 RestTemplate.
          readTimeout이 긴 것은 답변 생성에 LLM 호출이 들어가 수 초 걸리기 때문이다.
