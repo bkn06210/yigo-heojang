@@ -24,6 +24,7 @@ import com.wallet.common.util.AfterCommitExecutor;
 import com.wallet.notification.batch.model.BenefitLimitCandidate;
 import com.wallet.notification.batch.model.BenefitLimitStatus;
 import com.wallet.notification.batch.model.BenefitLimitUnit;
+import com.wallet.notification.batch.model.MemberDedupKeyLookup;
 import com.wallet.notification.batch.model.PerformanceShortageCandidate;
 import com.wallet.notification.domain.Notification;
 import com.wallet.notification.domain.NotificationStatus;
@@ -114,12 +115,12 @@ public class NotificationComposer {
             return candidates;
         }
 
-        List<String> keysToCheck = nearCandidates.stream()
-            .map(this::toMemberExhaustedKey)
+        List<MemberDedupKeyLookup> lookups = nearCandidates.stream()
+            .map(c -> new MemberDedupKeyLookup(c.memberId(), toExhaustedDedupKey(c)))
             .toList();
 
         Set<String> existingExhaustedKeys = new HashSet<>(
-            notificationRepository.findExistingMemberDedupKeys(keysToCheck)
+            notificationRepository.findExistingMemberDedupKeys(lookups)
         );
 
         return candidates.stream()
@@ -128,14 +129,18 @@ public class NotificationComposer {
             .toList();
     }
 
-    /** 후보의 NEAR 자리에 EXHAUSTED가 있었다면 가질 dedup key를, member_id와 함께 조립한다. */
-    private String toMemberExhaustedKey(BenefitLimitCandidate c) {
-        String exhaustedKey = switch (c.unit()) {
+    /** 후보의 NEAR 자리에 EXHAUSTED가 있었다면 가질 dedup key(member_id 없이). */
+    private String toExhaustedDedupKey(BenefitLimitCandidate c) {
+        return switch (c.unit()) {
             case INDIVIDUAL -> "BENEFIT_LIMIT:B:%d:%d:%s:EXHAUSTED".formatted(c.userCardId(), c.benefitId(), c.yearMonth());
             case GROUP -> "BENEFIT_LIMIT:G:%d:%s:%s:EXHAUSTED".formatted(c.userCardId(), c.limitGroupCode(), c.yearMonth());
             case SHARED -> "BENEFIT_LIMIT:S:%d:%s:EXHAUSTED".formatted(c.userCardId(), c.yearMonth());
         };
-        return "%d:%s".formatted(c.memberId(), exhaustedKey);
+    }
+
+    /** 조회 결과(member_id:dedup_key 문자열)와 비교하기 위한 조합 키. */
+    private String toMemberExhaustedKey(BenefitLimitCandidate c) {
+        return "%d:%s".formatted(c.memberId(), toExhaustedDedupKey(c));
     }
 
     private <T> Map<Long, List<T>> groupByMember(List<T> candidates, Function<T, Long> memberIdExtractor) {

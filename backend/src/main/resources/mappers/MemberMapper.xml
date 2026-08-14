@@ -10,6 +10,9 @@
             member_id AS memberId,
             email,
             password_hash AS password,
+            simple_password_hash AS simplePasswordHash,
+            simple_password_failed_attempt_count AS simplePasswordFailedAttemptCount,
+            simple_password_locked_until AS simplePasswordLockedUntil,
             name,
             nickname,
             member_status AS memberStatus,
@@ -26,6 +29,9 @@
             member_id AS memberId,
             email,
             password_hash AS password,
+            simple_password_hash AS simplePasswordHash,
+            simple_password_failed_attempt_count AS simplePasswordFailedAttemptCount,
+            simple_password_locked_until AS simplePasswordLockedUntil,
             name,
             nickname,
             member_status AS memberStatus,
@@ -49,6 +55,31 @@
             WHERE email = #{email}
         )
     </select>
+
+    <!--
+    JwtAuthenticationFilter 전용 조회. findById와 달리 withdrawn_at 조건을
+    걸지 않는다 — 여기서는 탈퇴 여부 자체를 판별해야 하므로, member_status 문자열 하나만 반환한다.
+-->
+    <select id="findStatusById" resultType="string">
+        SELECT member_status
+        FROM member
+        WHERE member_id = #{memberId}
+    </select>
+
+    <update id="anonymizeMember">
+        UPDATE member
+        SET
+            email = #{anonymizedEmail},
+            name = #{anonymizedName},
+            nickname = #{anonymizedNickname},
+            password_hash = #{anonymizedPasswordHash},
+            member_status = 'WITHDRAWN',
+            withdrawn_at = #{withdrawnAt},
+            updated_at = CURRENT_TIMESTAMP
+        WHERE member_id = #{memberId}
+          AND member_status = 'ACTIVE'
+          AND withdrawn_at IS NULL
+    </update>
 
     <!--
         useGeneratedKeys="true":
@@ -88,6 +119,55 @@
         UPDATE member
         SET
             password_hash = #{encodedPassword},
+            updated_at = CURRENT_TIMESTAMP
+        WHERE member_id = #{memberId}
+          AND member_status = 'ACTIVE'
+          AND withdrawn_at IS NULL
+    </update>
+
+    <!--
+        활성 상태이고 탈퇴하지 않은 회원만 수정한다. 조건에 맞지 않으면 수정 건수가 0이 되므로
+        Service에서 저장 실패를 정상 성공으로 잘못 판단하지 않게 할 수 있다.
+    -->
+    <update id="updateSimplePassword">
+        UPDATE member
+        SET
+            simple_password_hash = #{simplePasswordHash},
+            simple_password_failed_attempt_count = 0,
+            simple_password_locked_until = NULL,
+            updated_at = CURRENT_TIMESTAMP
+        WHERE member_id = #{memberId}
+          AND member_status = 'ACTIVE'
+          AND withdrawn_at IS NULL
+    </update>
+
+    <update id="increaseSimplePasswordFailedAttemptCount">
+        UPDATE member
+        SET
+            simple_password_failed_attempt_count = simple_password_failed_attempt_count + 1,
+            updated_at = CURRENT_TIMESTAMP
+        WHERE member_id = #{memberId}
+          AND member_status = 'ACTIVE'
+          AND withdrawn_at IS NULL
+    </update>
+
+    <!-- 다섯 번째 실패를 기록하는 동시에 잠금 만료시각을 저장한다. -->
+    <update id="lockSimplePasswordVerification">
+        UPDATE member
+        SET
+            simple_password_failed_attempt_count = 5,
+            simple_password_locked_until = #{lockedUntil},
+            updated_at = CURRENT_TIMESTAMP
+        WHERE member_id = #{memberId}
+          AND member_status = 'ACTIVE'
+          AND withdrawn_at IS NULL
+    </update>
+
+    <update id="resetSimplePasswordVerificationFailure">
+        UPDATE member
+        SET
+            simple_password_failed_attempt_count = 0,
+            simple_password_locked_until = NULL,
             updated_at = CURRENT_TIMESTAMP
         WHERE member_id = #{memberId}
           AND member_status = 'ACTIVE'

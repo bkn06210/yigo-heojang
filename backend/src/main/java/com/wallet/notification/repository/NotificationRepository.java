@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Repository;
 
+import com.wallet.notification.batch.model.MemberDedupKeyLookup;
 import com.wallet.notification.domain.Notification;
 import com.wallet.notification.domain.NotificationListItemResult;
 import com.wallet.notification.domain.NotificationSetting;
@@ -49,11 +50,16 @@ public class NotificationRepository {
     }
 
     /** 빈 목록으로 IN ()을 만들면 SQL 문법 오류가 나므로, SQL을 타기 전에 여기서 막는다. */
-    public List<String> findExistingMemberDedupKeys(List<String> memberDedupKeys) {
-        if (memberDedupKeys == null || memberDedupKeys.isEmpty()) {
+    public List<String> findExistingMemberDedupKeys(List<MemberDedupKeyLookup> lookups) {
+        if (lookups == null || lookups.isEmpty()) {
             return List.of();
         }
-        return notificationMapper.findExistingMemberDedupKeys(memberDedupKeys);
+        return notificationMapper.findExistingMemberDedupKeys(lookups);
+    }
+
+    /** 알림 설정값 저장. */
+    public void saveSetting(NotificationSetting setting) {
+        notificationMapper.upsertSetting(setting);
     }
 
     public int countUnread(Long memberId) {

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.wallet.member.mapper.MemberDataCleanupMapper">
+    <!--
+        notification: point_history, user_card를 참조하므로
+        (fk_notification_point_history, fk_notification_user_card)
+        CreditInfoWithdrawalMapper.deletePointHistoryByMemberId,
+        deleteUserCardByMemberId보다 반드시 먼저 실행해야 한다.
+    -->
+    <delete id="deleteNotificationByMemberId">
+        DELETE FROM notification
+        WHERE member_id = #{memberId}
+    </delete>
+
+    <!-- notification_setting: member만 참조하는 독립적인 테이블이다. -->
+    <delete id="deleteNotificationSettingByMemberId">
+        DELETE FROM notification_setting
+        WHERE member_id = #{memberId}
+    </delete>
+
+    <delete id="deleteMemberPreferredCategoryByMemberId">
+        DELETE FROM member_preferred_category
+        WHERE member_id = #{memberId}
+    </delete>
+
+    <delete id="deleteMemberPreferredMerchantByMemberId">
+        DELETE FROM member_preferred_merchant
+        WHERE member_id = #{memberId}
+    </delete>
+
+    <!-- member_personalization_brand가 category를 참조하므로(ON DELETE CASCADE 있음)
+         명시적으로 category보다 먼저 지운다. -->
+    <delete id="deleteMemberPersonalizationBrandByMemberId">
+        DELETE FROM member_personalization_brand
+        WHERE member_id = #{memberId}
+    </delete>
+
+    <delete id="deleteMemberPersonalizationCategoryByMemberId">
+        DELETE FROM member_personalization_category
+        WHERE member_id = #{memberId}
+    </delete>
+
+    <delete id="deletePasswordResetVerificationByMemberId">
+        DELETE FROM password_reset_verification
+        WHERE member_id = #{memberId}
+    </delete>
+
+</mapper>

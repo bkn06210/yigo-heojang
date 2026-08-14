@@ -11,18 +11,18 @@ import org.junit.jupiter.api.Test;
 
 import com.wallet.auth.domain.RefreshToken;
 import com.wallet.auth.mapper.RefreshTokenMapper;
-import com.wallet.auth.support.TokenHashUtil;
+import com.wallet.common.util.Sha256Hasher;
 
 public class RefreshTokenServiceTest {
     private RefreshTokenMapper refreshTokenMapper;
     private RefreshTokenService refreshTokenService;
-    private TokenHashUtil tokenHashUtil;
+    private Sha256Hasher sha256Hasher;
 
     @BeforeEach
     void setUp() {
         refreshTokenMapper = mock(RefreshTokenMapper.class);
-        tokenHashUtil = new TokenHashUtil();
-        refreshTokenService = new RefreshTokenService(refreshTokenMapper, tokenHashUtil);
+        sha256Hasher = new Sha256Hasher();
+        refreshTokenService = new RefreshTokenService(refreshTokenMapper, sha256Hasher);
     }
 
     @Test
@@ -30,7 +30,7 @@ public class RefreshTokenServiceTest {
     void findValidToken_hashesTokenAndFindsToken() {
         // given
         String refreshToken = "refresh.token.value";
-        String expectedHash = tokenHashUtil.sha256(refreshToken);
+        String expectedHash = sha256Hasher.sha256(refreshToken);
 
         RefreshToken savedToken = new RefreshToken();
 
@@ -50,7 +50,7 @@ public class RefreshTokenServiceTest {
     void revokeByToken_hashesTokenAndRevokesIt() {
         // given
         String refreshToken = "refresh.token.value";
-        String expectedHash = tokenHashUtil.sha256(refreshToken);
+        String expectedHash = sha256Hasher.sha256(refreshToken);
 
         // when
         refreshTokenService.revokeByToken(refreshToken);

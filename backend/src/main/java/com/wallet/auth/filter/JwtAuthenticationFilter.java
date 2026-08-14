@@ -24,6 +24,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import com.wallet.auth.jwt.JwtTokenProvider;
 import com.wallet.common.ApiResponse;
 import com.wallet.common.ErrorCode;
+import com.wallet.member.mapper.MemberMapper;
 
 @RequiredArgsConstructor
 @Component("jwtAuthenticationFilter")
@@ -50,6 +51,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtTokenProvider jwtTokenProvider;
     private final ObjectMapper objectMapper;
+    private final MemberMapper memberMapper;
 
     @Value("${app.cors.allowed-origin:http://localhost:5173}")
     private String frontendOrigin;
@@ -76,6 +78,23 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             jwtTokenProvider.validateAccessTokenOrThrow(accessToken);
 
             Long memberId = jwtTokenProvider.getMemberIdFromAccessToken(accessToken);
+            String memberStatus = memberMapper.findStatusById(memberId);
+
+            if (memberStatus == null) {
+                writeErrorResponse(request, response, ErrorCode.MEMBER_NOT_FOUND);
+                return;
+            }
+
+            if ("WITHDRAWN".equals(memberStatus)) {
+                writeErrorResponse(request, response, ErrorCode.MEMBER_WITHDRAWN);
+                return;
+            }
+
+            if (!"ACTIVE".equals(memberStatus)) {
+                writeErrorResponse(request, response, ErrorCode.MEMBER_SUSPENDED);
+                return;
+            }
+
             request.setAttribute(AUTHENTICATED_MEMBER_ID, memberId);
 
             filterChain.doFilter(request, response);

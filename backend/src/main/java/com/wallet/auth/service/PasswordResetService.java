@@ -17,7 +17,7 @@ import com.wallet.auth.dto.PasswordResetCodeVerifyResponse;
 import com.wallet.auth.dto.PasswordResetRequest;
 import com.wallet.auth.mapper.PasswordResetVerificationMapper;
 import com.wallet.auth.support.VerificationTokenGenerator;
-import com.wallet.auth.support.TokenHashUtil;
+import com.wallet.common.util.Sha256Hasher;
 import com.wallet.auth.support.VerificationCodeGenerator;
 import com.wallet.common.ErrorCode;
 import com.wallet.common.exception.BusinessException;
@@ -37,7 +37,7 @@ public class PasswordResetService {
     private final EmailSender emailSender;
     private final VerificationCodeGenerator verificationCodeGenerator;
     private final VerificationTokenGenerator passwordResetTokenGenerator;
-    private final TokenHashUtil tokenHashUtil;
+    private final Sha256Hasher sha256Hasher;
     private final PasswordEncoder passwordEncoder;
     private final RefreshTokenService refreshTokenService;
 
@@ -59,7 +59,7 @@ public class PasswordResetService {
         validateReissueAllowed(existingVerification);
 
         String verificationCode = verificationCodeGenerator.generateSixDigitCode();
-        String verificationCodeHash = tokenHashUtil.sha256(verificationCode);
+        String verificationCodeHash = sha256Hasher.sha256(verificationCode);
         LocalDateTime expiresAt = LocalDateTime.now()
             .plusMinutes(VERIFICATION_CODE_EXPIRE_MINUTES);
 
@@ -105,13 +105,13 @@ public class PasswordResetService {
         validateAttemptLimit(verification);
         validateCodeNotExpired(verification);
 
-        String requestCodeHash = tokenHashUtil.sha256(request.verificationCode());
+        String requestCodeHash = sha256Hasher.sha256(request.verificationCode());
         if (!verification.getVerificationCodeHash().equals(requestCodeHash)) {
             handleCodeMismatch(verification);
         }
 
         String passwordResetToken = passwordResetTokenGenerator.generate();
-        String resetTokenHash = tokenHashUtil.sha256(passwordResetToken);
+        String resetTokenHash = sha256Hasher.sha256(passwordResetToken);
         LocalDateTime resetTokenExpiresAt = LocalDateTime.now()
             .plusMinutes(PASSWORD_RESET_TOKEN_EXPIRE_MINUTES);
 
@@ -133,7 +133,7 @@ public class PasswordResetService {
 
     @Transactional
     public void resetPassword(PasswordResetRequest request) {
-        String resetTokenHash = tokenHashUtil.sha256(request.passwordResetToken());
+        String resetTokenHash = sha256Hasher.sha256(request.passwordResetToken());
 
         PasswordResetVerification verification =
             passwordResetVerificationMapper.findByResetTokenHashForUpdate(resetTokenHash);

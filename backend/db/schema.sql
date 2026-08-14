@@ -74,6 +74,8 @@ DROP TABLE IF EXISTS term;
 DROP TABLE IF EXISTS refresh_token;
 DROP TABLE IF EXISTS signup_email_verification;
 DROP TABLE IF EXISTS password_reset_verification;
+DROP TABLE IF EXISTS simple_password_verification;
+DROP TABLE IF EXISTS member_withdrawal_archive;
 DROP TABLE IF EXISTS member_withdrawal;
 DROP TABLE IF EXISTS member;
 
@@ -84,15 +86,20 @@ SET FOREIGN_KEY_CHECKS = 1;
 -- ════════════════════════════════════════════════════════════
 
 CREATE TABLE member (
-    member_id     BIGINT       NOT NULL AUTO_INCREMENT COMMENT '회원 ID',
-    email         VARCHAR(255) NOT NULL COMMENT '이메일(로그인 ID)',
-    password_hash VARCHAR(255) NOT NULL COMMENT '비밀번호 해시',
-    name          VARCHAR(50)  NOT NULL COMMENT '회원명',
-    nickname      VARCHAR(50) NOT NULL COMMENT '닉네임',
-    member_status ENUM('ACTIVE','SUSPENDED','WITHDRAWN') NOT NULL DEFAULT 'ACTIVE' COMMENT '회원 상태',
-    created_at    DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '생성일시',
-    updated_at    DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '수정일시',
-    withdrawn_at  DATETIME     NULL COMMENT '탈퇴일시. 상태가 WITHDRAWN이면 필수',
+    member_id            BIGINT       NOT NULL AUTO_INCREMENT COMMENT '회원 ID',
+    email                VARCHAR(255) NOT NULL COMMENT '이메일(로그인 ID)',
+    password_hash        VARCHAR(255) NOT NULL COMMENT '비밀번호 해시',
+    -- 기존 회원은 간편비밀번호를 설정하지 않았으므로 NULL을 허용한다.
+    -- 6자리 원문은 저장하지 않고, 서버에서 BCrypt로 만든 해시만 저장한다.
+    simple_password_hash VARCHAR(255) NULL COMMENT '간편비밀번호 해시',
+    simple_password_failed_attempt_count INT NOT NULL DEFAULT 0 COMMENT '간편비밀번호 연속 검증 실패 횟수',
+    simple_password_locked_until DATETIME NULL COMMENT '간편비밀번호 검증 잠금 만료일시',
+    name                 VARCHAR(50)  NOT NULL COMMENT '회원명',
+    nickname             VARCHAR(50)  NOT NULL COMMENT '닉네임',
+    member_status        ENUM('ACTIVE','SUSPENDED','WITHDRAWN') NOT NULL DEFAULT 'ACTIVE' COMMENT '회원 상태',
+    created_at           DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '생성일시',
+    updated_at           DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '수정일시',
+    withdrawn_at         DATETIME     NULL COMMENT '탈퇴일시. 상태가 WITHDRAWN이면 필수',
     PRIMARY KEY (member_id),
     UNIQUE KEY uk_member_email (email)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT '회원';
@@ -108,6 +115,37 @@ CREATE TABLE member_withdrawal (
     PRIMARY KEY (member_withdrawal_id),
     UNIQUE KEY uk_member_withdrawal_member (member_id)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT '회원 탈퇴 이력';
+
+-- member_withdrawal_archive: 탈퇴 회원의 개인정보를 보관 기간 동안 담아두는 테이블이다.
+-- member 테이블의 email·name은 탈퇴 즉시 마스킹 값으로 바뀌므로(회원 서비스 코드에서 처리),
+-- 원본 값을 잃어버리기 전에 이 테이블로 옮겨 담는다.
+-- member_withdrawal과 성격이 다르다: member_withdrawal은 "탈퇴 사유"라는 통계성 정보라
+-- 기간 제한 없이 보관해도 되지만, 이 테이블은 실제 개인정보라 배치가 물리 삭제해야 한다.
+-- 두 정보를 한 테이블에 같이 두면, 파기 배치가 탈퇴 사유 통계까지 함께 지워버리게 되어
+-- 테이블을 분리했다.
+-- member_withdrawal과 마찬가지로 회원 삭제 후에도 이 행 자체는 남아야 하므로 물리 FK를 걸지 않는다(논리 참조).
+CREATE TABLE member_withdrawal_archive (
+    member_withdrawal_archive_id BIGINT       NOT NULL AUTO_INCREMENT COMMENT '보관 ID',
+    member_id                    BIGINT       NOT NULL COMMENT '회원 ID (논리 참조)',
+    email                        VARCHAR(255) NOT NULL COMMENT '탈퇴 시점 이메일 원본',
+    -- 이메일 원본을 그대로 비교하면 조회 시 매번 문자열 비교라 느리고,
+    -- "이 이메일로 예전에 탈퇴한 적 있는지" 같은 정책이 나중에 추가될 때 인덱스로 바로 조회하기 위해
+    -- SHA-256 해시값을 별도로 저장해둔다. 지금 당장 쓰는 곳은 없지만, 나중에 추가하면
+    -- 이미 보관된 예전 데이터에는 소급 적용을 할 수 없으므로 처음부터 함께 저장한다.
+    email_hash                   CHAR(64)     NOT NULL COMMENT '이메일 SHA-256 해시. 재가입 제한 등 향후 정책 조회용',
+    name                         VARCHAR(50)  NOT NULL COMMENT '탈퇴 시점 회원명 원본',
+    withdrawn_at                 DATETIME     NOT NULL COMMENT '탈퇴일시',
+    retention_reason             VARCHAR(100) NOT NULL COMMENT '보관 근거 (예: 전자상거래법 제6조 소비자 불만·분쟁 처리 기록)',
+    created_at                   DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '생성일시',
+    PRIMARY KEY (member_withdrawal_archive_id),
+    -- 회원 한 명당 보관 행은 하나여야 한다. (탈퇴 → 재가입 → 재탈퇴 시나리오는 범위 밖으로 남겨둔다)
+    UNIQUE KEY uk_withdrawal_archive_member (member_id),
+    -- 파기 배치(추후 구현)가 "탈퇴한 지 오래된" 행을 찾을 때 쓸 인덱스다.
+    -- 몇 년을 기준으로 삼을지는 이 시점에 정하지 않는다 — 배치가 실제로
+    -- 만들어질 때(WHERE withdrawn_at <= NOW() - INTERVAL n YEAR) 그 값을
+    -- 그 코드가 정한다.
+    KEY idx_withdrawal_archive_withdrawn_at (withdrawn_at)
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT '탈퇴회원 개인정보 보관';
 
 CREATE TABLE signup_email_verification (
     signup_email_verification_id BIGINT       NOT NULL AUTO_INCREMENT COMMENT '회원가입 이메일 인증 ID',
@@ -150,6 +188,28 @@ CREATE TABLE password_reset_verification (
     CONSTRAINT fk_password_reset_member FOREIGN KEY (member_id) REFERENCES member (member_id)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT '비밀번호 재설정 인증';
 
+-- 이메일 인증 코드와 변경 토큰은 유효 기간이 다르므로 만료일시를 따로 관리한다.
+-- 코드와 토큰의 원문을 DB에 남기지 않아 DB 노출 시 즉시 악용되는 것을 방지한다.
+CREATE TABLE simple_password_verification (
+    simple_password_verification_id BIGINT       NOT NULL AUTO_INCREMENT COMMENT '간편비밀번호 변경 인증 ID',
+    member_id                       BIGINT       NOT NULL COMMENT '회원 ID',
+    verification_code_hash          VARCHAR(255) NOT NULL COMMENT '이메일 인증 코드 단방향 해시',
+    verification_status             ENUM('PENDING','VERIFIED','USED','EXPIRED') NOT NULL DEFAULT 'PENDING' COMMENT '인증 상태',
+    failed_attempt_count            INT          NOT NULL DEFAULT 0 COMMENT '인증 코드 검증 실패 횟수',
+    verification_code_expires_at    DATETIME     NOT NULL COMMENT '인증 코드 만료일시',
+    change_token_hash               VARCHAR(255) NULL COMMENT '간편비밀번호 변경 토큰 단방향 해시',
+    change_token_expires_at         DATETIME     NULL COMMENT '변경 토큰 만료일시',
+    verified_at                     DATETIME     NULL COMMENT '이메일 인증 완료일시',
+    used_at                         DATETIME     NULL COMMENT '간편비밀번호 설정·변경에 사용된 일시',
+    created_at                      DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '생성일시',
+    updated_at                      DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '수정일시',
+    PRIMARY KEY (simple_password_verification_id),
+    UNIQUE KEY uk_simple_password_change_token (change_token_hash),
+    KEY idx_simple_password_verification_member_status (member_id, verification_status),
+    KEY idx_simple_password_verification_code_expiry (verification_code_expires_at),
+    CONSTRAINT fk_simple_password_verification_member FOREIGN KEY (member_id) REFERENCES member (member_id)
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT '간편비밀번호 변경 이메일 인증';
+
 -- 원문은 저장하지 않는다. revoked_at과 revoke_reason은 함께 NULL이거나 함께 값이 있어야 한다.
 CREATE TABLE refresh_token (
     refresh_token_id BIGINT       NOT NULL AUTO_INCREMENT COMMENT 'Refresh Token ID',
@@ -172,6 +232,12 @@ CREATE TABLE refresh_token (
 CREATE TABLE term (
     term_id     BIGINT       NOT NULL AUTO_INCREMENT COMMENT '약관 ID',
     term_code   VARCHAR(50)  NOT NULL COMMENT '약관 코드',
+    -- 이 약관이 어느 화면(시점)에 노출되는지 구분하는 값이다.
+    -- SIGNUP = 회원가입 화면에서 동의를 받는 약관 (기존 약관 전부 여기 해당)
+    -- WITHDRAWAL = 회원 탈퇴 화면에서 고지하고 동의를 받는 약관
+    -- DEFAULT 'SIGNUP'으로 둔 이유: 기존 4개 약관 행이 전부 회원가입용이므로,
+    -- 값을 안 넣어도 자동으로 기존 동작(회원가입 필수 약관 검사)이 그대로 유지된다.
+    term_scope  VARCHAR(20)  NOT NULL DEFAULT 'SIGNUP' COMMENT '약관 노출 시점: SIGNUP(가입 시) | WITHDRAWAL(탈퇴 시)',
     term_name   VARCHAR(100) NOT NULL COMMENT '약관명',
     is_required TINYINT(1)   NOT NULL COMMENT '필수 동의 여부',
     term_status ENUM('ACTIVE','INACTIVE') NOT NULL DEFAULT 'ACTIVE' COMMENT '약관 상태',

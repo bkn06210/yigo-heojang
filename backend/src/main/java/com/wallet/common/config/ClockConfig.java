@@ -1,8 +1,10 @@
 package com.wallet.common.config;
 
 import java.time.Clock;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -31,18 +33,31 @@ public class ClockConfig {
     }
 
     /**
-     * 로컬 전용. -Dtest.clock.date=2026-08-24 VM 옵션을 주면 "오늘"을 설정한 날짜로 고정한다.
-     * 옵션을 안 주면 평소처럼 실제 시각을 쓴다. D-7/D-3처럼 특정 날짜에만 동작하는 배치를
-     * 그 날짜까지 기다리지 않고 테스트하기 위한 용도다.
+     * 로컬 전용. -Dtest.clock.date=2026-08-24 VM 옵션을 주면
+     * 시스템 시각이 흐르는 상태로 애플리케이션의 기준 날짜를 이동한다.
+     *
+     * 배치의 날짜 조건을 원하는 날짜로 테스트하면서도 간편비밀번호 잠금,
+     * 인증 토큰 만료처럼 경과시간을 사용하는 기능이 정상 동작하도록 한다.
      */
     @Bean
     @Profile("local")
     public Clock localClock() {
-        String fixedDate = System.getProperty("test.clock.date");
-        if (fixedDate == null || fixedDate.isBlank()) {
-            return Clock.system(KST);
+        Clock systemClock = Clock.system(KST);
+        String configuredDate = System.getProperty("test.clock.date");
+
+        if (configuredDate == null || configuredDate.isBlank()) {
+            return systemClock;
         }
-        LocalDate date = LocalDate.parse(fixedDate); // "2026-08-24" 형식
-        return Clock.fixed(date.atStartOfDay(KST).toInstant(), KST);
+
+        LocalDate targetDate = LocalDate.parse(configuredDate);
+        LocalDate currentDate = LocalDate.now(systemClock);
+
+        /*
+         * 시스템 시계를 설정한 날짜까지 이동시키되, Clock.fixed와 달리
+         * 실제 시간이 흐르도록 한다. 따라서 5분 잠금 같은 경과시간도 만료된다.
+         */
+        long offsetDays = ChronoUnit.DAYS.between(currentDate, targetDate);
+
+        return Clock.offset(systemClock, Duration.ofDays(offsetDays));
     }
 }

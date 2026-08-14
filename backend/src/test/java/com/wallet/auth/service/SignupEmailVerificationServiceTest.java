@@ -24,7 +24,7 @@ import com.wallet.auth.dto.SignupEmailVerificationRequest;
 import com.wallet.auth.dto.SignupEmailVerificationResponse;
 import com.wallet.auth.mapper.SignupEmailVerificationMapper;
 import com.wallet.auth.support.VerificationTokenGenerator;
-import com.wallet.auth.support.TokenHashUtil;
+import com.wallet.common.util.Sha256Hasher;
 import com.wallet.auth.support.VerificationCodeGenerator;
 import com.wallet.common.ErrorCode;
 import com.wallet.common.exception.BusinessException;
@@ -36,7 +36,7 @@ class SignupEmailVerificationServiceTest {
     private EmailSender emailSender;
     private VerificationCodeGenerator verificationCodeGenerator;
     private VerificationTokenGenerator verificationTokenGenerator;
-    private TokenHashUtil tokenHashUtil;
+    private Sha256Hasher sha256Hasher;
     private SignupEmailVerificationService signupEmailVerificationService;
 
     @BeforeEach
@@ -46,7 +46,7 @@ class SignupEmailVerificationServiceTest {
         emailSender = mock(EmailSender.class);
         verificationCodeGenerator = mock(VerificationCodeGenerator.class);
         verificationTokenGenerator = mock(VerificationTokenGenerator.class);
-        tokenHashUtil = mock(TokenHashUtil.class);
+        sha256Hasher = mock(Sha256Hasher.class);
 
         signupEmailVerificationService = new SignupEmailVerificationService(
             signupEmailVerificationMapper,
@@ -54,7 +54,7 @@ class SignupEmailVerificationServiceTest {
             emailSender,
             verificationCodeGenerator,
             verificationTokenGenerator,
-            tokenHashUtil
+            sha256Hasher
         );
     }
 
@@ -74,7 +74,7 @@ class SignupEmailVerificationServiceTest {
         when(verificationCodeGenerator.generateSixDigitCode())
             .thenReturn("123456");
 
-        when(tokenHashUtil.sha256("123456"))
+        when(sha256Hasher.sha256("123456"))
             .thenReturn("code-hash");
 
         // when
@@ -129,7 +129,7 @@ class SignupEmailVerificationServiceTest {
         when(verificationCodeGenerator.generateSixDigitCode())
             .thenReturn("654321");
 
-        when(tokenHashUtil.sha256("654321"))
+        when(sha256Hasher.sha256("654321"))
             .thenReturn("new-code-hash");
 
         // when
@@ -235,7 +235,7 @@ class SignupEmailVerificationServiceTest {
         when(verificationCodeGenerator.generateSixDigitCode())
             .thenReturn("123456");
 
-        when(tokenHashUtil.sha256("123456"))
+        when(sha256Hasher.sha256("123456"))
             .thenReturn("code-hash");
 
         org.mockito.Mockito.doThrow(new IllegalStateException("SMTP fail"))
@@ -275,13 +275,13 @@ class SignupEmailVerificationServiceTest {
         when(signupEmailVerificationMapper.findByEmailForUpdate("user@example.com"))
             .thenReturn(verification);
 
-        when(tokenHashUtil.sha256("123456"))
+        when(sha256Hasher.sha256("123456"))
             .thenReturn("code-hash");
 
         when(verificationTokenGenerator.generate())
             .thenReturn("signup-token");
 
-        when(tokenHashUtil.sha256("signup-token"))
+        when(sha256Hasher.sha256("signup-token"))
             .thenReturn("signup-token-hash");
 
         when(signupEmailVerificationMapper.verify(
@@ -327,7 +327,7 @@ class SignupEmailVerificationServiceTest {
         assertThat(exception.getErrorCode())
             .isEqualTo(ErrorCode.SIGNUP_EMAIL_VERIFICATION_NOT_FOUND);
 
-        verify(tokenHashUtil, never()).sha256(any());
+        verify(sha256Hasher, never()).sha256(any());
         verify(signupEmailVerificationMapper, never()).verify(any(), any(), any());
     }
 
@@ -361,7 +361,7 @@ class SignupEmailVerificationServiceTest {
         assertThat(exception.getErrorCode())
             .isEqualTo(ErrorCode.SIGNUP_EMAIL_VERIFICATION_CODE_INVALID);
 
-        verify(tokenHashUtil, never()).sha256(any());
+        verify(sha256Hasher, never()).sha256(any());
     }
 
     @Test
@@ -394,7 +394,7 @@ class SignupEmailVerificationServiceTest {
         assertThat(exception.getErrorCode())
             .isEqualTo(ErrorCode.SIGNUP_EMAIL_VERIFICATION_ATTEMPT_LIMIT_EXCEEDED);
 
-        verify(tokenHashUtil, never()).sha256(any());
+        verify(sha256Hasher, never()).sha256(any());
         verify(signupEmailVerificationMapper, never()).increaseFailedAttemptCount(any());
     }
 
@@ -429,7 +429,7 @@ class SignupEmailVerificationServiceTest {
             .isEqualTo(ErrorCode.SIGNUP_EMAIL_VERIFICATION_CODE_EXPIRED);
 
         verify(signupEmailVerificationMapper).expireVerificationCode(1L);
-        verify(tokenHashUtil, never()).sha256(any());
+        verify(sha256Hasher, never()).sha256(any());
     }
 
     @Test
@@ -452,7 +452,7 @@ class SignupEmailVerificationServiceTest {
         when(signupEmailVerificationMapper.findByEmailForUpdate("user@example.com"))
             .thenReturn(verification);
 
-        when(tokenHashUtil.sha256("000000"))
+        when(sha256Hasher.sha256("000000"))
             .thenReturn("wrong-code-hash");
 
         // when
@@ -490,13 +490,13 @@ class SignupEmailVerificationServiceTest {
         when(signupEmailVerificationMapper.findByEmailForUpdate("user@example.com"))
             .thenReturn(verification);
 
-        when(tokenHashUtil.sha256("123456"))
+        when(sha256Hasher.sha256("123456"))
             .thenReturn("code-hash");
 
         when(verificationTokenGenerator.generate())
             .thenReturn("signup-token");
 
-        when(tokenHashUtil.sha256("signup-token"))
+        when(sha256Hasher.sha256("signup-token"))
             .thenReturn("signup-token-hash");
 
         when(signupEmailVerificationMapper.verify(
@@ -527,7 +527,7 @@ class SignupEmailVerificationServiceTest {
             LocalDateTime.now().plusMinutes(5)
         );
 
-        when(tokenHashUtil.sha256("signup-token"))
+        when(sha256Hasher.sha256("signup-token"))
             .thenReturn("signup-token-hash");
 
         when(signupEmailVerificationMapper.findBySignupTokenHashForUpdate("signup-token-hash"))
@@ -542,7 +542,7 @@ class SignupEmailVerificationServiceTest {
         // then
         assertThat(verificationId).isEqualTo(1L);
 
-        verify(tokenHashUtil).sha256("signup-token");
+        verify(sha256Hasher).sha256("signup-token");
         verify(signupEmailVerificationMapper)
             .findBySignupTokenHashForUpdate("signup-token-hash");
     }
@@ -551,7 +551,7 @@ class SignupEmailVerificationServiceTest {
     @DisplayName("회원가입 인증 토큰 검증 실패 - 토큰 해시에 해당하는 인증 정보가 없으면 TOKEN_INVALID 예외가 발생한다")
     void validateSignupVerificationToken_fail_whenTokenNotFound() {
         // given
-        when(tokenHashUtil.sha256("invalid-token"))
+        when(sha256Hasher.sha256("invalid-token"))
             .thenReturn("invalid-token-hash");
 
         when(signupEmailVerificationMapper.findBySignupTokenHashForUpdate("invalid-token-hash"))
@@ -582,7 +582,7 @@ class SignupEmailVerificationServiceTest {
             LocalDateTime.now().plusMinutes(5)
         );
 
-        when(tokenHashUtil.sha256("signup-token"))
+        when(sha256Hasher.sha256("signup-token"))
             .thenReturn("signup-token-hash");
 
         when(signupEmailVerificationMapper.findBySignupTokenHashForUpdate("signup-token-hash"))
@@ -613,7 +613,7 @@ class SignupEmailVerificationServiceTest {
             LocalDateTime.now().plusMinutes(5)
         );
 
-        when(tokenHashUtil.sha256("signup-token"))
+        when(sha256Hasher.sha256("signup-token"))
             .thenReturn("signup-token-hash");
 
         when(signupEmailVerificationMapper.findBySignupTokenHashForUpdate("signup-token-hash"))
@@ -644,7 +644,7 @@ class SignupEmailVerificationServiceTest {
             LocalDateTime.now().minusSeconds(1)
         );
 
-        when(tokenHashUtil.sha256("signup-token"))
+        when(sha256Hasher.sha256("signup-token"))
             .thenReturn("signup-token-hash");
 
         when(signupEmailVerificationMapper.findBySignupTokenHashForUpdate("signup-token-hash"))
@@ -675,7 +675,7 @@ class SignupEmailVerificationServiceTest {
             LocalDateTime.now().plusMinutes(5)
         );
 
-        when(tokenHashUtil.sha256("signup-token"))
+        when(sha256Hasher.sha256("signup-token"))
             .thenReturn("signup-token-hash");
 
         when(signupEmailVerificationMapper.findBySignupTokenHashForUpdate("signup-token-hash"))
