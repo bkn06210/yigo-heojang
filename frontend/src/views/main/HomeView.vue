@@ -205,7 +205,7 @@ const goCardList = () => {
 // 혜택 이동
 
 const goBenefit = () => {
-  router.push('/benefits');
+  router.push('/points');
 };
 
 // 소비내역 이동 (홈에서는 전체 카드 소비내역)

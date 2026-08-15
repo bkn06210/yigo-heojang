@@ -389,13 +389,13 @@ h2 {
 
   width: auto;
 
-  height: 40px;
+  height: auto;
 
-  padding: 0 var(--space-md);
+  padding: 0;
 
-  border: 1px solid var(--color-border);
+  border: none;
 
-  background: var(--color-surface);
+  background: transparent;
 
   color: var(--color-text-primary);
 
@@ -409,7 +409,11 @@ h2 {
 
 }
 
+.back-button:hover {
 
+  opacity: 0.7;
+
+}
 
 .close-button {
 

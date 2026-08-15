@@ -320,6 +320,7 @@ main.login-required {
   display: flex;
   flex-direction: column;
   gap: var(--space-xl);
+  padding-bottom: calc(var(--space-xl) + var(--space-2xl) + var(--space-xl));
 }
 
 /* 섹션 공통 */
