@@ -93,18 +93,13 @@
   },
   {
    "exclusion_type": "TRANSACTION_ATTR",
-   "exclusion_value": "UNAPPROVED",
+   "exclusion_value": "TOLL",
    "_source": "할인 제외 대상 - 고속도로 통행요금 납부건"
   },
   {
    "exclusion_type": "TRANSACTION_ATTR",
    "exclusion_value": "GIFT_CARD",
    "_source": "할인 제외 대상 - 기 프트/선불카드(포인트, 사이버머니 등 전자지급수단 포함) 구매 및 충전, 상품권 구매건"
-  },
-  {
-   "exclusion_type": "PAYMENT_TYPE",
-   "exclusion_value": "SIMPLE_PAY",
-   "_source": "가 맹점 정보가 해당 업체가 아닌 결제대행업체(PG) 또는 간편결제 전용 가맹점으로 확인되는 경우, '결제대행업체' 또는 '간편결제' 가맹점으로 분류되어 할인 대상에서 제외"
   }
  ],
  "performance_tiers": [
@@ -2196,6 +2191,10 @@
   {
    "text": "* 후불교통기능이 탑재되어 발급 * 해외겸용카드는 컨택리스 결제 지원",
    "why": "결제 기능 안내로 혜택 규칙이 아님"
+  },
+  {
+   "text": "가 맹점 정보가 해당 업체가 아닌 결제대행업체(PG) 또는 간편결제 전용 가맹점으로 확인되는 경우, '결제대행업체' 또는 '간편결제' 가맹점으로 분류되어 할인 대상에서 제외",
+   "why": "가맹점명이 PG·간편결제사로 찍히는 경우에 관한 안내다. 간편결제 결제 자체를 배제하는 조항이 아니라 가맹점 식별에 실패한 거래를 가리키는데, 소비내역은 가맹점이 식별된 상태로 들어와 구분할 값이 없다."
   }
  ],
  "_schema_gap": [

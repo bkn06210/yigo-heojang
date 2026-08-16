@@ -580,7 +580,8 @@ CREATE TABLE performance_tier (
 --                       'ANNUAL_FEE'            연회비
 --                       'GOV_SUBSIDY'           정부지원금(보육료·바우처 등)
 --                       'POSTPAID_TRANSIT'      후불교통요금
---                       'UNAPPROVED'            무승인전표(자판기·통행료 등)
+--                       'UNAPPROVED'            무승인전표 전반(자판기·무인정산 등)
+--                       'TOLL'                  고속도로 통행료
 --                       'CANCELED'              취소·부분취소 거래
 --                       'LEVY'                  부담금·준조세(장애인 고용부담금 등)
 --                       'POINT_USED'            포인트로 결제한 금액

@@ -75,7 +75,7 @@
   },
   {
    "exclusion_type": "TRANSACTION_ATTR",
-   "exclusion_value": "UNAPPROVED",
+   "exclusion_value": "TOLL",
    "_source": "고속도로 통행요금"
   },
   {

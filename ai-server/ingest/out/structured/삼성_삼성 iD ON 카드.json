@@ -89,7 +89,7 @@
   },
   {
    "exclusion_type": "TRANSACTION_ATTR",
-   "exclusion_value": "UNAPPROVED",
+   "exclusion_value": "TOLL",
    "_source": "할인 제외 대상: 고속도로 통행요금"
   },
   {
