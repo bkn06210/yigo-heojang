@@ -310,15 +310,17 @@ onMounted(async () => {
       </div>
 
       <!-- AI 브리핑 -->
-      <AIBriefingCard
-        v-if="user"
-        :is-login="true"
-        :message="briefingMessage"
-        :briefing-type="briefingType"
-        @register-card="goCardList"
-      />
+      <section class="home-section">
+        <AIBriefingCard
+          v-if="user"
+          :is-login="true"
+          :message="briefingMessage"
+          :briefing-type="briefingType"
+          @register-card="goCardList"
+        />
 
-      <AIBriefingCard v-else :is-login="false" :message="briefingMessage" />
+        <AIBriefingCard v-else :is-login="false" :message="briefingMessage" />
+      </section>
 
       <!-- 혜택 리포트 -->
 
@@ -595,13 +597,6 @@ onMounted(async () => {
   background: transparent;
 }
 
-/* 브리핑 카드 - 위로 올리고 크기 증가 */
-.home-content > :deep(.ai-briefing-card) {
-  margin-top: calc(var(--space-lg) * 1);
-  margin-bottom: var(--space-lg);
-  padding: calc(var(--space-lg) * 1.7) !important;
-  min-height: 110px;
-}
 
 /* 프로필 헤더 섹션 */
 .profile-header-section {
@@ -660,6 +655,7 @@ onMounted(async () => {
   align-items: center;
   gap: var(--space-sm);
   margin-left: auto;
+  margin-right: -20px;
 }
 
 .header-btn {

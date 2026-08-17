@@ -1,6 +1,7 @@
 <script setup>
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
+import Icon from './Icon.vue'
 
 
 const router = useRouter()
@@ -64,7 +65,8 @@ const goSignup = () => {
     <template v-if="!props.isLogin">
 
       <h3>
-        ✨ 두리 브리핑
+        <Icon name="info" size="sm" style="margin-right: 6px;" />
+        두리 브리핑
       </h3>
 
 
@@ -90,7 +92,8 @@ const goSignup = () => {
     <template v-else>
 
       <h3>
-        ✨ 두리 브리핑
+        <Icon name="info" size="sm" style="margin-right: 6px;" />
+        두리 브리핑
       </h3>
 
 
@@ -177,6 +180,10 @@ h3 {
   font-weight: var(--font-semibold);
 
   text-align: left;
+
+  display: flex;
+
+  align-items: center;
 
 }
 
