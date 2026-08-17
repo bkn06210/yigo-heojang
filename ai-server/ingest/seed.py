@@ -297,6 +297,33 @@ def build() -> str:
     lines.append(",\n".join(rows) + ";")
     lines.append("")
 
+    # ── 발급 초기 실적 유예 ──────────────────────────────────
+    # 구조화 산출물은 구간을 금액으로 적는다(tier_id 는 여기서 매기는 값이라 산출물이 알 수 없다).
+    # 금액으로 위에서 만든 구간을 찾아 잇는다 — 못 찾으면 조용히 빼지 말고 경고를 남긴다.
+    rows = []
+    for card in cards:
+        card_id = card_ids[card["card_name"]]
+        for grace in card["data"].get("performance_grace") or []:
+            period = grace.get("period_type") or "MONTH"
+            amount = grace.get("min_performance_amount") or 0
+            tier_id = tier_ids.get((card_id, period, amount))
+            if tier_id is None:
+                warnings.append(
+                    f"실적 유예 구간을 찾지 못함: {card['card_name']} / {period} {amount:,}원"
+                )
+                continue
+            rows.append(
+                f"    ({card_id}, {sql_value(period)}, {tier_id},"
+                f" {grace.get('grace_periods') or 1})"
+            )
+    if rows:
+        lines.append(
+            "INSERT INTO card_performance_grace"
+            " (card_id, period_type, tier_id, grace_periods) VALUES"
+        )
+        lines.append(",\n".join(rows) + ";")
+        lines.append("")
+
     # ── 실적 제외 ───────────────────────────────────────────
     rows = []
     for card in cards:

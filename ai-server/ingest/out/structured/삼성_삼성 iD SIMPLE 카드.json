@@ -124,6 +124,14 @@
    "_source": "* 전월 이용금액 30만원 이상 시 제공"
   }
  ],
+ "performance_grace": [
+  {
+   "period_type": "MONTH",
+   "min_performance_amount": 300000,
+   "grace_periods": 1,
+   "_source": "* 발급월+1개월까지는 전월 이용금액 30만원 미만 시에도 제공"
+  }
+ ],
  "performance_exclusions": [
   {
    "exclusion_type": "TRANSACTION_ATTR",
@@ -569,11 +577,6 @@
    "text": "전월 이용금액에 관계없이, 할인한도 없이 국내외 가맹점에서 건별 10만원 미만 결제 시 0.7% 결제일할인",
    "missing": "benefit.max_txn_amount (건당 결제금액 상한 조건)",
    "why": "건당 하한(min_txn_amount)만 있고 상한이 없다. max_eligible_amount는 계산 대상 금액을 잘라내는 필드라 의미가 다르다 — 10만원으로 자르면 10만원 이상 건에도 이 혜택이 매칭되어 1% 혜택과 중복 후보가 된다"
-  },
-  {
-   "text": "* 발급월+1개월까지는 전월 이용금액 30만원 미만 시에도 제공",
-   "missing": "카드 발급일(또는 발급 초기 실적 면제 개월 수)",
-   "why": "발급일 정보가 없어 '발급월+1개월'인지 판정할 수 없다"
   },
   {
    "text": "[표] | 해외겸용 | Mastercard | 7천원 | 7천원 | - | / | | UnionPay | | | |",

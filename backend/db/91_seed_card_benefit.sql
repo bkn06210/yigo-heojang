@@ -532,6 +532,32 @@ INSERT INTO performance_tier (tier_id, card_id, period_type, min_performance_amo
     (131, 49, 'MONTH', 0, NULL),
     (132, 50, 'MONTH', 0, NULL);
 
+INSERT INTO card_performance_grace (card_id, period_type, tier_id, grace_periods) VALUES
+    (1, 'MONTH', 2, 1),
+    (2, 'MONTH', 4, 1),
+    (3, 'MONTH', 6, 1),
+    (6, 'MONTH', 14, 1),
+    (9, 'MONTH', 23, 1),
+    (12, 'MONTH', 30, 1),
+    (14, 'MONTH', 39, 1),
+    (15, 'MONTH', 42, 1),
+    (16, 'MONTH', 45, 1),
+    (19, 'MONTH', 55, 1),
+    (28, 'MONTH', 71, 1),
+    (29, 'MONTH', 74, 1),
+    (31, 'MONTH', 82, 1),
+    (34, 'MONTH', 87, 1),
+    (35, 'MONTH', 89, 1),
+    (36, 'MONTH', 92, 1),
+    (37, 'MONTH', 97, 1),
+    (41, 'MONTH', 110, 1),
+    (42, 'MONTH', 113, 1),
+    (42, 'QUARTER', 115, 1),
+    (44, 'MONTH', 121, 1),
+    (45, 'MONTH', 124, 1),
+    (46, 'MONTH', 126, 1),
+    (48, 'MONTH', 129, 1);
+
 INSERT INTO performance_exclusion (card_id, exclusion_type, exclusion_value) VALUES
     (1, 'TRANSACTION_ATTR', 'CASH_ADVANCE'),
     (1, 'TRANSACTION_ATTR', 'CARD_LOAN'),

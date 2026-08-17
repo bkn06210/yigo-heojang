@@ -558,6 +558,32 @@ CREATE TABLE performance_tier (
     CONSTRAINT fk_performance_tier_card FOREIGN KEY (card_id) REFERENCES card (card_id)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT '실적구간별 통합할인한도';
 
+-- 발급 초기 실적 유예. 카드 50장 중 30장에 있는 조항이다.
+--   "최초 카드 사용등록일로부터 다음달 말일까지는 전월 실적이 없어도
+--    '40만원 이상~80만원 미만' 구간의 서비스가 적용됩니다"
+--
+-- 실적을 0으로 보는 것이 아니라 특정 구간에 있는 것으로 친다. 어느 구간으로 쳐주는지가
+-- 카드마다 다르므로(30만원 구간·40만원 구간·50만원 구간) 구간을 직접 가리킨다.
+-- 실적을 0으로 두면 실적 조건이 붙은 혜택이 전부 꺼져 신규 발급 회원의 혜택이 계산되지 않는다.
+--
+-- 월 축과 분기 축이 따로 유예되는 카드가 있어(월은 40만원 구간, 분기는 100만원 구간)
+-- period_type이 PK에 들어간다.
+--
+-- 유예를 구간으로 표현할 수 없는 카드는 행을 만들지 않는다. "구간 한도의 50%까지",
+-- "영역별 월 2,500원 한도까지"처럼 구간이 아니라 한도를 깎는 형태가 있는데,
+-- 구간으로 적으면 한도가 약관의 두 배가 된다. 유예 없음으로 두면 그 카드만 보수적으로 계산된다.
+CREATE TABLE card_performance_grace (
+    card_id       BIGINT      NOT NULL COMMENT '카드 ID',
+    period_type   VARCHAR(10) NOT NULL COMMENT '실적 축: MONTH | QUARTER (performance_tier.period_type과 짝)',
+    tier_id       BIGINT      NOT NULL COMMENT '유예 기간에 적용할 실적 구간',
+    -- 조사한 카드는 전부 1이다("등록월 + 다음달 말일까지", "발급월+1개월까지").
+    -- 그래도 컬럼으로 두는 것은 60일·3개월로 적은 카드가 있어 값이 하나라고 단정할 수 없기 때문이다.
+    grace_periods TINYINT     NOT NULL COMMENT '사용등록 기간 이후 몇 기간까지 유예되는가 (MONTH면 개월, QUARTER면 분기)',
+    PRIMARY KEY (card_id, period_type),
+    CONSTRAINT fk_card_performance_grace_card FOREIGN KEY (card_id) REFERENCES card (card_id),
+    CONSTRAINT fk_card_performance_grace_tier FOREIGN KEY (tier_id) REFERENCES performance_tier (tier_id)
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT '발급 초기 실적 유예';
+
 -- 제외값이 대분류 코드면 하위 중분류 결제까지 제외한다. 혜택 대상(target_category_id)이
 -- 대분류면 하위까지 적용되는 것과 대칭이다. 한쪽만 상향 매칭하면 같은 계층을 두 규칙이
 -- 다르게 해석하게 된다.

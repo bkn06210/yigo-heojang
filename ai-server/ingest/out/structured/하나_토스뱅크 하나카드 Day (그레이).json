@@ -77,6 +77,14 @@
    "shared_monthly_limit": 50000
   }
  ],
+ "performance_grace": [
+  {
+   "period_type": "MONTH",
+   "min_performance_amount": 500000,
+   "grace_periods": 1,
+   "_source": "• 최초 카드 사용등록일로부터 다음달 말일까지는 지난달 카드 실적 50만원 미만이어도 50만원 이상 100만원 미만 기준으로 서비스 제공"
+  }
+ ],
  "performance_exclusions": [
   {
    "exclusion_type": "TRANSACTION_ATTR",
@@ -734,11 +742,6 @@
   }
  ],
  "_schema_gap": [
-  {
-   "text": "• 최초 카드 사용등록일로부터 다음달 말일까지는 지난달 카드 실적 50만원 미만이어도 50만원 이상 100만원 미만 기준으로 서비스 제공",
-   "missing": "user_card의 발급일·최초 사용등록일",
-   "why": "발급 초기 실적 면제를 판정할 날짜가 없다. 이 카드는 모든 혜택이 실적 50만원 이상을 요구하므로, 신규 회원의 혜택이 실제와 달리 전부 미적용으로 계산된다."
-  },
   {
    "text": "• 대상 가맹점의 공식 오프라인 매장 또는 온라인몰(web/App)에서 이용시 할인되며, 상품권 구매/충전 및 대형시설(백화점/할인점/아울렛/쇼핑몰/휴게소, 공항, 호텔, 리조트/역사) 입점 점포 이용 시 할인 제외",
    "missing": "card_exclusions의 MERCHANT_LOCATION 유형",

@@ -100,6 +100,14 @@
    "_source": "■영화/놀이공원 할인 서비스(전월 이용실적 30만원 이상 시 제공)"
   }
  ],
+ "performance_grace": [
+  {
+   "period_type": "MONTH",
+   "min_performance_amount": 300000,
+   "grace_periods": 1,
+   "_source": "▪ 최초 카드 사용등록일로부터 다음달 말일까지 KB ALL point 카드 이용실적이 없는 경우에도 할인 제공됩니다."
+  }
+ ],
  "performance_exclusions": [
   {
    "exclusion_type": "TRANSACTION_ATTR",
@@ -688,11 +696,6 @@
   }
  ],
  "_schema_gap": [
-  {
-   "text": "▪ 최초 카드 사용등록일로부터 다음달 말일까지 KB ALL point 카드 이용실적이 없는 경우에도 할인 제공됩니다.",
-   "missing": "user_card의 발급일(또는 최초 사용등록일) 컬럼과 실적 판정 시의 면제 기간 처리",
-   "why": "발급일 정보가 없어 '발급 후 다음달 말일까지'라는 기간을 판정할 수 없다. 신규 회원이 실적 미달로 판정되어 영화·놀이공원 할인이 적용되지 않는다."
-  },
   {
    "text": "구 분 K-WORLD 국내외겸용(Master) 국내외겸용(Visa) / 일반카드 1만5천원 1만5천원 2만원 / 모바일 단독카드 9천원 9천원 1만4천원",
    "missing": "annual_fees[].brand 열거값에 K-WORLD(JCB 계열)",
