@@ -24,6 +24,8 @@ const emit = defineEmits([
 // 검색 인풋과 모드
 const searchInput = ref('');
 const showSearchInput = ref(false);
+// 사용자가 직접 입력한 임시 가맹점
+const customMerchants = ref({});
 
 // Store에서 활성화된 카테고리만 가져오기
 const activeCategories = computed(() => {
@@ -34,7 +36,15 @@ const activeCategories = computed(() => {
 const getMerchants = () => {
   const result = {};
   personalizationStore.getActiveCategories().forEach(category => {
+    // 기본 가맹점
     result[category.label] = [...category.tags];
+    // 커스텀 가맹점 추가
+    if (customMerchants.value[category.label]) {
+      result[category.label] = [
+        ...result[category.label],
+        ...customMerchants.value[category.label]
+      ];
+    }
   });
   return result;
 };
@@ -172,9 +182,37 @@ const handleSectionClick = () => {
 // 검색어로 가맹점 추가
 const addMerchantFromSearch = () => {
   const value = searchInput.value.trim();
-  if (value) {
+  if (value && props.category) {
+    // customMerchants에 추가
+    if (!customMerchants.value[props.category]) {
+      customMerchants.value[props.category] = [];
+    }
+    if (!customMerchants.value[props.category].includes(value)) {
+      customMerchants.value[props.category].push(value);
+    }
     selectMerchant(value);
   }
+};
+
+// 커스텀 가맹점 제거
+const removeCustomMerchant = (merchantName) => {
+  if (props.category && customMerchants.value[props.category]) {
+    customMerchants.value[props.category] = customMerchants.value[props.category].filter(
+      m => m !== merchantName
+    );
+    // 선택된 가맹점이 제거된 것이면 선택 취소
+    if (props.merchant === merchantName) {
+      emit('update:merchant', null);
+    }
+  }
+};
+
+// 커스텀 가맹점 여부 확인
+const isCustomMerchant = (merchantName) => {
+  return (
+    customMerchants.value[props.category] &&
+    customMerchants.value[props.category].includes(merchantName)
+  );
 };
 
 </script>
@@ -225,9 +263,11 @@ const addMerchantFromSearch = () => {
       :key="mct"
       @click="selectMerchant(mct)"
       :class="{ active: mct === merchant }"
+      class="merchant-button"
     >
       {{ mct }}
-
+      <!-- 커스텀 가맹점에만 X 표시 -->
+      <span v-if="isCustomMerchant(mct)" class="remove-icon" @click.stop="removeCustomMerchant(mct)">✕</span>
     </button>
 
     <!-- 기타 버튼 -->
@@ -364,6 +404,22 @@ const addMerchantFromSearch = () => {
 
 }
 
+/* X 제거 아이콘 */
+.remove-icon {
+  margin-left: 2px;
+  cursor: pointer;
+  font-size: 10px;
+  opacity: 0.6;
+  transition: var(--transition-fast);
+  vertical-align: middle;
+  display: inline-block;
+  line-height: 1;
+}
+
+.merchant-button:hover .remove-icon {
+  opacity: 1;
+}
+
 /* 기타 버튼 */
 .other-btn {
   border-style: dashed;
@@ -464,6 +520,16 @@ const addMerchantFromSearch = () => {
 .suggestion-item strong {
   color: var(--color-primary-dark);
   font-weight: var(--font-bold);
+}
+
+/* 다크모드 */
+[data-theme="dark"] .merchant-chip.active {
+  background: linear-gradient(135deg, rgba(214, 186, 110, 0.24) 0%, rgba(214, 186, 110, 0.08) 100%);
+  border: 1px solid rgba(214, 186, 110, 0.45);
+}
+
+[data-theme="dark"] .merchant-chip.active .merchant-btn {
+  color: var(--color-primary-dark);
 }
 
 </style>

@@ -18,6 +18,7 @@ import PaymentQRModal from '@/components/payment/PaymentQRModal.vue';
 import PaymentTimeoutModal from '@/components/payment/PaymentTimeoutModal.vue';
 import PaymentAmountInput from '@/components/payment/PaymentAmountInput.vue';
 import MerchantSelector from '@/components/payment/MerchantSelector.vue';
+import PaymentMembershipCheck from '@/components/payment/PaymentMembershipCheck.vue';
 
 const paymentStore = usePaymentStore();
 const router = useRouter();
@@ -632,6 +633,9 @@ onMounted(async () => {
         v-model:category="selectedCategory"
         v-model:merchant="selectedMerchant"
       />
+
+      <!-- 가맹점 선택했는데 추천을 아직 안 받았을 때만 표시 (중복 방지) -->
+      <PaymentMembershipCheck v-if="selectedMerchant && hasCards && recommendedCardIds.length === 0" :selected-merchant="selectedMerchant" />
     </div>
 
     <!-- 결제 금액 입력 -->

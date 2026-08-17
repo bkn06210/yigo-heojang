@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
-import { deleteUserCard, getCardMonthlyStatuses, getUserCards, getPoints, getMemberships } from '@/api/walletApi';
+import { deleteUserCard, getCardMonthlyStatuses, getUserCards, getPoints, getMemberships, getPointUsagePlaces } from '@/api/walletApi';
 
 
 export const useCardStore = defineStore(
@@ -144,19 +144,37 @@ export const useCardStore = defineStore(
       error.value = '';
       try {
         const response = await getMemberships();
-        console.log('멤버십 목록 API 응답:', response);
         const rawMemberships = response?.memberships || response || [];
-        console.log('첫 번째 멤버십 데이터:', rawMemberships[0]);
-        memberships.value = rawMemberships.map((m) => ({
-          id: m.membershipRegisterId,
-          providerId: m.pointProviderId,
-          name: m.providerName,
-          providerName: m.providerName,
-          point: m.totalPoint || 0,
-          logoImageUrl: m.logoImageUrl,
-          usagePlaces: m.usagePlaces || [],
-          partnerWebsiteUrl: m.partnerWebsiteUrl,
-        }));
+
+        // 각 멤버십별로 usagePlaces 조회
+        const membershipsWithPlaces = await Promise.all(
+          rawMemberships.map(async (m) => {
+            let usagePlaces = m.usagePlaces || [];
+
+            // usagePlaces가 없으면 API로 조회
+            if (usagePlaces.length === 0 && m.pointProviderId) {
+              try {
+                const placesResponse = await getPointUsagePlaces(m.pointProviderId);
+                usagePlaces = placesResponse?.usagePlaces || placesResponse || [];
+              } catch (err) {
+                console.warn(`usagePlaces 조회 실패 (providerId: ${m.pointProviderId}):`, err);
+              }
+            }
+
+            return {
+              id: m.membershipRegisterId,
+              providerId: m.pointProviderId,
+              name: m.providerName,
+              providerName: m.providerName,
+              point: m.totalPoint || 0,
+              logoImageUrl: m.logoImageUrl,
+              usagePlaces: usagePlaces,
+              partnerWebsiteUrl: m.partnerWebsiteUrl,
+            };
+          })
+        );
+
+        memberships.value = membershipsWithPlaces;
         return response;
       } catch (requestError) {
         error.value = requestError?.response?.data?.message || requestError?.message || '멤버십을 불러오지 못했습니다.';
