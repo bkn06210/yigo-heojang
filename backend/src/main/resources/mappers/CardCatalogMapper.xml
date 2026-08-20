@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.wallet.engine.dao.CardCatalogMapper">
+
+    <!--
+        연회비는 LEFT JOIN + MIN 이다. 브랜드·발급형태별로 행이 여러 개라 하나를 골라야 하고,
+        연회비 행이 아예 없는 카드(체크카드 등)도 목록에서 빠지면 안 된다.
+        COALESCE 로 0 을 채운다 — 연회비 정보가 없는 것과 무료인 것을 여기서는 같게 본다.
+    -->
+    <select id="findByCardIds" resultType="com.wallet.engine.dao.dto.CardCatalogRow">
+        SELECT c.card_id                      AS cardId,
+               c.card_name                    AS cardName,
+               co.company_name                AS cardCompanyName,
+               COALESCE(MIN(f.total_fee), 0)  AS minAnnualFee
+          FROM card c
+          JOIN card_company co ON co.card_company_id = c.card_company_id
+          LEFT JOIN card_annual_fee f ON f.card_id = c.card_id
+         WHERE c.card_id IN
+        <foreach collection="cardIds" item="cardId" open="(" separator="," close=")">
+            #{cardId}
+        </foreach>
+         GROUP BY c.card_id, c.card_name, co.company_name
+    </select>
+
+</mapper>
