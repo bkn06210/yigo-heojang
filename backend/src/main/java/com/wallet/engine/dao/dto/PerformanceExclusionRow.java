@@ -8,6 +8,8 @@ package com.wallet.engine.dao.dto;
  */
 public class PerformanceExclusionRow {
 
+    // 카드 여러 장을 한 번에 조회할 때 어느 카드의 것인지 가른다
+    private long cardId;
     private String exclusionType;
     private String exclusionValue;
 
@@ -25,5 +27,13 @@ public class PerformanceExclusionRow {
 
     public void setExclusionValue(String exclusionValue) {
         this.exclusionValue = exclusionValue;
+    }
+
+    public long getCardId() {
+        return cardId;
+    }
+
+    public void setCardId(long cardId) {
+        this.cardId = cardId;
     }
 }

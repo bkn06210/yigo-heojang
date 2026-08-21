@@ -11,6 +11,10 @@ import com.wallet.engine.dao.CardCatalogMapper;
 import com.wallet.engine.dao.PerformanceMapper;
 import com.wallet.engine.dao.SpendingMapper;
 import com.wallet.engine.dao.UserCardMapper;
+import com.wallet.engine.dao.dto.BenefitExclusionRow;
+import com.wallet.engine.dao.dto.BenefitRow;
+import com.wallet.engine.dao.dto.CardTierSelector;
+import com.wallet.engine.dao.dto.PerformanceExclusionRow;
 import com.wallet.engine.dao.dto.CardCatalogRow;
 import com.wallet.engine.dao.dto.OptionKeyRow;
 import com.wallet.engine.dao.dto.PerformanceTierRow;
@@ -130,12 +134,46 @@ public class CardRecommendationService {
             return CardRecommendationResponse.of(previousYearMonth, 0L, List.of());
         }
 
+        // 조회를 카드 목록 단위로 한 번씩만 한다. 카드마다 돌면서 조회하면 쿼리 수가
+        // 카드 수에 비례해 늘고, 후보를 넓힐 때 그대로 비용이 된다.
         Map<Long, List<PerformanceTierRow>> tiersByCard = performanceMapper.findTiersByCardIds(allCardIds)
                 .stream().collect(Collectors.groupingBy(PerformanceTierRow::getCardId));
+        Map<Long, List<PerformanceExclusionRow>> performanceExclusionsByCard = performanceMapper
+                .findExclusionsByCardIds(allCardIds).stream()
+                .collect(Collectors.groupingBy(PerformanceExclusionRow::getCardId));
+
+        // 실적 판정이 먼저다 — 혜택 조회에 카드별 구간 ID가 필요하다
+        Map<Long, PerformanceStatus[]> statusByCard = new LinkedHashMap<>();
+        for (Long cardId : allCardIds) {
+            statusByCard.put(cardId, judgePerformance(performanceInput,
+                    tiersByCard.getOrDefault(cardId, List.of()),
+                    performanceExclusionsByCard.getOrDefault(cardId, List.of())));
+        }
+
+        List<CardTierSelector> selectors = allCardIds.stream()
+                .map(cardId -> new CardTierSelector(cardId,
+                        statusByCard.get(cardId)[0].tierId(),
+                        statusByCard.get(cardId)[1] == null ? null : statusByCard.get(cardId)[1].tierId()))
+                .toList();
+        Map<Long, List<BenefitExclusionRow>> exclusionsByCard = benefitMapper
+                .findExclusionsByCards(allCardIds).stream()
+                .collect(Collectors.groupingBy(BenefitExclusionRow::getCardId));
+        Map<Long, List<BenefitRow>> benefitsByCard = benefitMapper.findActiveBenefitsByCards(selectors)
+                .stream().collect(Collectors.groupingBy(BenefitRow::getCardId));
+        Map<Long, List<OptionKeyRow>> optionKeysByCard = benefitMapper
+                .findOptionKeysByCards(allCardIds).stream()
+                .collect(Collectors.groupingBy(OptionKeyRow::getCardId));
+
+        Map<Long, List<BenefitCandidate>> candidatesByCard = new LinkedHashMap<>();
+        for (Long cardId : allCardIds) {
+            candidatesByCard.put(cardId, benefitCandidateAssembler.toCandidates(
+                    benefitsByCard.getOrDefault(cardId, List.of()),
+                    exclusionsByCard.getOrDefault(cardId, List.of())));
+        }
 
         List<SimulatedCard> heldSimulated = heldCardIds.stream()
-                .map(cardId -> toSimulatedCard(cardId, performanceInput, payments,
-                        tiersByCard.getOrDefault(cardId, List.of())))
+                .map(cardId -> toSimulatedCard(cardId, payments, statusByCard.get(cardId),
+                        candidatesByCard.get(cardId), optionKeysByCard.getOrDefault(cardId, List.of())))
                 .toList();
 
         PortfolioSimulation current = portfolioSimulator.simulate(heldSimulated, payments);
@@ -145,8 +183,9 @@ public class CardRecommendationService {
 
         List<CardRecommendation> recommendations = new ArrayList<>();
         for (Long candidateCardId : candidateCardIds) {
-            SimulatedCard candidate = toSimulatedCard(candidateCardId, performanceInput, payments,
-                    tiersByCard.getOrDefault(candidateCardId, List.of()));
+            SimulatedCard candidate = toSimulatedCard(candidateCardId, payments,
+                    statusByCard.get(candidateCardId), candidatesByCard.get(candidateCardId),
+                    optionKeysByCard.getOrDefault(candidateCardId, List.of()));
 
             List<SimulatedCard> withCandidate = new ArrayList<>(heldSimulated);
             withCandidate.add(candidate);
@@ -218,13 +257,21 @@ public class CardRecommendationService {
      * 카드마다 혜택을 따로 조회하는 것은 실적 구간이 카드마다 달라 조회 조건이 갈리기 때문이다.
      * 후보 수를 {@link #MAX_CANDIDATE_CARDS}로 묶어 쿼리 수가 카드 수에 비례해 늘지 않게 했다.
      */
-    private SimulatedCard toSimulatedCard(long cardId,
-                                          List<PerformanceTransaction> performanceInput,
-                                          List<SimulatedPayment> payments,
-                                          List<PerformanceTierRow> tierRows) {
+    /**
+     * 카드 하나의 실적을 판정한다 — 전월 축과 전분기 축.
+     *
+     * 배열 두 칸으로 돌려주는 것은 두 축이 늘 짝으로 쓰이기 때문이다.
+     * [0] 전월, [1] 전분기(분기 구간표가 없는 카드면 null).
+     *
+     * 분기 축 실적은 월 실적의 3배로 본다. 분기는 석 달치라 한 달 소비를 그대로 넣으면
+     * 분기 조건이 붙은 혜택이 늘 미충족으로 판정된다.
+     */
+    private PerformanceStatus[] judgePerformance(List<PerformanceTransaction> performanceInput,
+                                                 List<PerformanceTierRow> tierRows,
+                                                 List<PerformanceExclusionRow> exclusionRows) {
         List<PerformanceTier> tiers = performanceInputAssembler.toTiers(tierRows);
         long performanceAmount = performanceAmountCalculator.calculate(performanceInput,
-                performanceInputAssembler.toExclusions(performanceMapper.findExclusions(cardId))).amount();
+                performanceInputAssembler.toExclusions(exclusionRows)).amount();
 
         List<PerformanceTier> monthTiers = tiersOf(tiers, PerformancePeriod.MONTH);
         List<PerformanceTier> quarterTiers = tiersOf(tiers, PerformancePeriod.QUARTER);
@@ -234,13 +281,17 @@ public class CardRecommendationService {
         PerformanceStatus quarterStatus = quarterTiers.isEmpty()
                 ? null
                 : tierResolver.judge(quarterTiers, performanceAmount * 3);
+        return new PerformanceStatus[]{monthStatus, quarterStatus};
+    }
 
-        List<BenefitCandidate> candidates = benefitCandidateAssembler.toCandidates(
-                benefitMapper.findActiveBenefits(cardId, monthStatus.tierId(),
-                        quarterStatus == null ? null : quarterStatus.tierId()),
-                benefitMapper.findExclusions(cardId));
-        return new SimulatedCard(cardId, candidates, monthStatus, quarterStatus,
-                chooseBestOptions(cardId, candidates, monthStatus, quarterStatus, payments));
+    /** 판정·조회가 끝난 값으로 시뮬레이션 입력을 만든다. 여기서는 DB를 부르지 않는다 */
+    private SimulatedCard toSimulatedCard(long cardId,
+                                          List<SimulatedPayment> payments,
+                                          PerformanceStatus[] status,
+                                          List<BenefitCandidate> candidates,
+                                          List<OptionKeyRow> optionKeys) {
+        return new SimulatedCard(cardId, candidates, status[0], status[1],
+                chooseBestOptions(candidates, status[0], status[1], optionKeys, payments));
     }
 
     /**
@@ -253,13 +304,13 @@ public class CardRecommendationService {
      * 묶음을 하나씩 고정해 나간다. 묶음이 여럿이면 조합이 곱으로 늘어나는데, 실제 카드는
      * 묶음이 하나인 경우가 대부분이라 조합까지 따질 이익이 적다.
      */
-    private Map<String, String> chooseBestOptions(long cardId,
-                                                  List<BenefitCandidate> candidates,
+    private Map<String, String> chooseBestOptions(List<BenefitCandidate> candidates,
                                                   PerformanceStatus monthStatus,
                                                   PerformanceStatus quarterStatus,
+                                                  List<OptionKeyRow> optionKeys,
                                                   List<SimulatedPayment> payments) {
         Map<String, List<String>> keysByGroup = new LinkedHashMap<>();
-        for (OptionKeyRow row : benefitMapper.findOptionKeys(cardId)) {
+        for (OptionKeyRow row : optionKeys) {
             keysByGroup.computeIfAbsent(row.getOptionGroupCode(), group -> new ArrayList<>())
                     .add(row.getOptionKey());
         }
