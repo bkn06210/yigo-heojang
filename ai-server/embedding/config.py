@@ -25,9 +25,8 @@ PROVIDER_VOYAGE = "voyage"
 #   MongoDB Atlas 에서 만든 키   → ai.mongodb.com
 _DEFAULT_API_URL = "https://api.voyageai.com/v1/embeddings"
 
-# 차원을 줄이면 저장 자리가 그만큼 준다. 팀원에게 벡터가 붙은 덤프를 넘겨야 해서
-# 무시할 값이 아니다 — 조각 1,550개 기준 1024차원이 약 6MB, SQL 덤프로는 그 두 배다.
-# 대신 줄일수록 뜻을 담는 자리가 줄어 검색이 무뎌지므로 기본값은 모델 권장값을 쓴다.
+# 저장 자리가 차원에 정비례한다(조각 하나당 4바이트 × 차원). 대신 줄일수록 뜻을 담는
+# 자리가 줄어 검색이 무뎌지므로 기본값은 모델 권장값을 쓴다.
 _DEFAULT_DIMENSION = 1024
 
 
