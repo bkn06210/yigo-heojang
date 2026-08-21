@@ -36,6 +36,9 @@ public interface PerformanceMapper {
     /** 카드의 전월실적 제외 규칙을 조회한다. */
     List<PerformanceExclusionRow> findExclusions(@Param("cardId") long cardId);
 
+    /** 카드 여러 장의 실적 제외를 한 번에. 카드 수만큼 쿼리가 늘지 않게 한다 */
+    List<PerformanceExclusionRow> findExclusionsByCardIds(@Param("cardIds") List<Long> cardIds);
+
     /** 카드의 실적구간을 조회한다. 0원 구간을 포함해 최소 1행이 있어야 판정이 성립한다. */
     List<PerformanceTierRow> findTiers(@Param("cardId") long cardId);
 

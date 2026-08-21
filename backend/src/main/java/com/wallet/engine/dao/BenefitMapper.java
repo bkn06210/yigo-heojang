@@ -2,6 +2,7 @@ package com.wallet.engine.dao;
 
 import com.wallet.engine.dao.dto.BenefitExclusionRow;
 import com.wallet.engine.dao.dto.BenefitRow;
+import com.wallet.engine.dao.dto.CardTierSelector;
 import com.wallet.engine.dao.dto.OptionKeyRow;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -58,6 +59,20 @@ public interface BenefitMapper {
      * 선택지를 고를 것이므로, 후보 목록을 받아 가장 유리한 것을 골라 넣는다.
      */
     List<OptionKeyRow> findOptionKeys(@Param("cardId") long cardId);
+
+    /**
+     * 카드 여러 장의 혜택을 한 번에 조회한다 — 카드 수만큼 쿼리가 늘지 않게.
+     *
+     * 구간을 함께 받는 것은 구간별 개별한도를 붙이려면 카드마다 어느 구간으로 판정됐는지
+     * 알아야 하기 때문이다. 카드 목록만으로는 조회 조건이 서지 않는다.
+     */
+    List<BenefitRow> findActiveBenefitsByCards(@Param("selectors") List<CardTierSelector> selectors);
+
+    /** 카드 여러 장의 혜택 예외를 한 번에. 카드 전체 예외를 혜택 수만큼 펼쳐 붙이는 규칙은 같다 */
+    List<BenefitExclusionRow> findExclusionsByCards(@Param("cardIds") List<Long> cardIds);
+
+    /** 카드 여러 장의 선택형 묶음·선택지를 한 번에 */
+    List<OptionKeyRow> findOptionKeysByCards(@Param("cardIds") List<Long> cardIds);
 
     List<Long> findCandidateCardIds(@Param("categoryIds") List<Long> categoryIds,
                                     @Param("merchantIds") List<Long> merchantIds,
