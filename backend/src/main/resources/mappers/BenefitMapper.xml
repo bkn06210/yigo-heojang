@@ -68,6 +68,16 @@
         ORDER BY b.benefit_id
     </select>
 
+    <!--
+      혜택별 예외와 카드 전체 예외를 함께 준다.
+
+      카드 전체 예외(card_benefit_exclusion)는 "이 카드로는 어디서 결제하든 안 되는 것"이라
+      그 카드의 모든 혜택에 걸린다. 그래서 카드 예외 한 줄을 혜택 수만큼 펼쳐 붙인다 —
+      계산기는 예외가 어디서 왔는지 몰라도 되고, 조립부도 그대로 쓴다.
+
+      펼치지 않고 카드 예외를 따로 넘기면 계산기와 조립부 양쪽에 "카드 예외" 개념이
+      새로 생긴다. 예외를 판정하는 코드가 두 벌이 되면 한쪽만 고쳐져 조용히 어긋난다.
+    -->
     <select id="findExclusions"
             resultType="com.wallet.engine.dao.dto.BenefitExclusionRow">
         SELECT x.benefit_id,
@@ -76,6 +86,17 @@
         FROM benefit_exclusion x
         JOIN benefit b ON b.benefit_id = x.benefit_id
         WHERE b.card_id = #{cardId}
+          AND b.is_active = 'Y'
+          AND b.benefit_kind NOT IN ('GIFT', 'INSTALLMENT_FREE', 'RETROACTIVE')
+
+        UNION ALL
+
+        SELECT b.benefit_id,
+               c.exclusion_type,
+               c.exclusion_value
+        FROM card_benefit_exclusion c
+        JOIN benefit b ON b.card_id = c.card_id
+        WHERE c.card_id = #{cardId}
           AND b.is_active = 'Y'
           AND b.benefit_kind NOT IN ('GIFT', 'INSTALLMENT_FREE', 'RETROACTIVE')
     </select>
