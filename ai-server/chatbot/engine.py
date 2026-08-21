@@ -48,6 +48,14 @@ class EngineClient:
         params = {"yearMonth": year_month} if year_month else None
         return self._request("GET", "/api/benefits/report", params=params)
 
+    def card_recommendations(self) -> Dict[str, Any]:
+        """소비 내역을 근거로 한 카드 추천. 입력이 없다 — 근거가 회원의 직전월 소비다.
+
+        금액은 전부 엔진이 계산한 값이다. 순증(monthlyGainAmount)은 지금 카드로 받는 금액과의
+        차액이라 이 서버가 다시 더하거나 빼면 안 된다.
+        """
+        return self._request("GET", "/api/cards/recommendations")
+
     def applicable_benefits(self, merchant_id: Optional[int] = None,
                             category_id: Optional[int] = None) -> Dict[str, Any]:
         """이 가맹점·업종에 걸린 혜택과 그 조건. 금액이 없어도 답할 수 있다.

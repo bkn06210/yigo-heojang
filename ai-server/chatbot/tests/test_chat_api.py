@@ -164,6 +164,30 @@ class FakeEngine:
             ],
         }
 
+    def card_recommendations(self):
+        return {
+            "baseYearMonth": "2026-07",
+            "currentMonthlyBenefitAmount": 12400,
+            "items": [
+                {
+                    "cardId": 34,
+                    "cardName": "삼성카드 taptap O",
+                    "cardCompanyName": "삼성카드",
+                    "monthlyGainAmount": 9000,
+                    "annualFee": 30000,
+                    "breakEvenMonths": 4,
+                },
+                {
+                    "cardId": 12,
+                    "cardName": "K-패스 하나 체크카드",
+                    "cardCompanyName": "하나카드",
+                    "monthlyGainAmount": 3200,
+                    "annualFee": 0,
+                    "breakEvenMonths": 0,
+                },
+            ],
+        }
+
     def applicable_benefits(self, merchant_id=None, category_id=None):
         return {
             "cards": [
@@ -480,3 +504,28 @@ def test_약관_검색은_카드사마다_하나씩만_싣는다(약관_조각):
 
     names = [passage.company_name for passage in passages]
     assert len(names) == len(set(names))
+
+
+@needs_db
+def test_카드_발급_질문은_결제_추천과_다르게_분류된다(fake_engine):
+    body = _ask("내 소비에 맞는 카드 추천해줘")
+
+    # 가맹점·금액이 없고 카드를 새로 만들지 묻는다. 결제 자리가 아니다.
+    assert body["intent"] == IntentName.RECOMMEND_NEW_CARD
+
+
+@needs_db
+def test_카드_추천은_순증과_손익분기를_함께_말한다(fake_engine):
+    body = _ask("내 소비에 맞는 카드 추천해줘")
+
+    # 순증은 지금 카드로 받는 금액과의 차액이다. 서버가 찍어 넘긴 값을 그대로 쓴다.
+    assert "9,000원" in body["answer"]
+    # 연회비를 정렬에 넣지 않는 대신 몇 달이면 넘어서는지를 알려준다
+    assert "4개월" in body["answer"]
+
+
+@needs_db
+def test_연회비_없는_카드는_손익분기를_말하지_않는다(fake_engine):
+    body = _ask("내 소비에 맞는 카드 추천해줘")
+
+    assert "연회비 없음" in body["answer"]

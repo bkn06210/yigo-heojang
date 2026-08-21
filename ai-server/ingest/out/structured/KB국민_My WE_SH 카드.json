@@ -34,18 +34,54 @@
    "exclusion_value": "INTEREST_FREE",
    "_source": "[할인서비스 제외 대상] · 무이자할부 이용금액, 단기카드대출(현금서비스), 장기카드대출(카드론), 상품권 및 선불카드(선불전자지급수단 포함) 구입·충전금액, 아파트관리비, 초·중·고 학교 납입금 전체, 정부지원금(보육료/유치원 보조비/바우처 이용금액 등), 대학(원)등록금, 국세, 지방세, 공과금(전기/수도 등), 4대 사회보험료(건강/연금/고용/산재), 각종 수수료 및 이자, 연체료, 연회비, 신차구매청구(환급) 할인 전표 전체, 취소금액"
   },
-  { "exclusion_type": "TRANSACTION_ATTR", "exclusion_value": "CASH_ADVANCE" },
-  { "exclusion_type": "TRANSACTION_ATTR", "exclusion_value": "CARD_LOAN" },
-  { "exclusion_type": "TRANSACTION_ATTR", "exclusion_value": "GIFT_CARD" },
-  { "exclusion_type": "CATEGORY", "exclusion_value": "APARTMENT_FEE" },
-  { "exclusion_type": "CATEGORY", "exclusion_value": "TUITION" },
-  { "exclusion_type": "TRANSACTION_ATTR", "exclusion_value": "GOV_SUBSIDY" },
-  { "exclusion_type": "TRANSACTION_ATTR", "exclusion_value": "TAX" },
-  { "exclusion_type": "CATEGORY", "exclusion_value": "UTILITY" },
-  { "exclusion_type": "TRANSACTION_ATTR", "exclusion_value": "SOCIAL_INSURANCE" },
-  { "exclusion_type": "TRANSACTION_ATTR", "exclusion_value": "FEE_INTEREST" },
-  { "exclusion_type": "TRANSACTION_ATTR", "exclusion_value": "ANNUAL_FEE" },
-  { "exclusion_type": "TRANSACTION_ATTR", "exclusion_value": "CANCELED" }
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "CASH_ADVANCE"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "CARD_LOAN"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "GIFT_CARD"
+  },
+  {
+   "exclusion_type": "CATEGORY",
+   "exclusion_value": "APARTMENT_FEE"
+  },
+  {
+   "exclusion_type": "CATEGORY",
+   "exclusion_value": "TUITION"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "GOV_SUBSIDY"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "TAX"
+  },
+  {
+   "exclusion_type": "CATEGORY",
+   "exclusion_value": "UTILITY"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "SOCIAL_INSURANCE"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "FEE_INTEREST"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "ANNUAL_FEE"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "CANCELED"
+  }
  ],
  "performance_tiers": [
   {
@@ -61,25 +97,72 @@
    "_source": "· 전월 이용실적 40만원 이상 시 제공 — 카드 전체를 묶는 통합 할인한도 조항이 없고 서비스 묶음별 월 할인한도만 있어 shared_monthly_limit은 null"
   }
  ],
+ "performance_grace": [
+  {
+   "period_type": "MONTH",
+   "min_performance_amount": 400000,
+   "grace_periods": 1,
+   "_source": "※ 최초 발급받은 My WE:SH 카드 사용등록일(KB Pay 등 간편결제 등록 포함)로 부터 다음달 말일(실적유예 기간)까지는 전월 이용실적 40만원 미만시에도 할인 제공됩니다."
+  }
+ ],
  "performance_exclusions": [
   {
    "exclusion_type": "TRANSACTION_ATTR",
    "exclusion_value": "CASH_ADVANCE",
    "_source": "[전월 이용실적 제외 대상] · My WE:SH 카드로 '나한테 진심, 더욱 진심 서비스' 할인 받은 이용건(해당 이용금액 전체), 단기카드대출(현금서비스), 장기카드대출(카드론), 상품권 및 선불카드(선불전자지급수단 포함) 구입/충전금액, 아파트관리비, 초·중·고 학교 납입금 전체, 정부지원금(보육료/유치원보조비/바우처 이용금액 등), 대학(원)등록금, 국세, 지방세, 공과금(전기/수도 등), 4대 사회보험료(건강/연금/고용/산재), 각종 수수료 및 이자, 연체료, 연회비, 무승인전표(교통요금/자판기/터널통행료/항공기내 이용 등), 취소금액 — '할인 받은 이용건'은 카드 전체가 아니라 특정 서비스에 걸린 조건이라 각 혜택의 exclude_from_performance로 적었다"
   },
-  { "exclusion_type": "TRANSACTION_ATTR", "exclusion_value": "CARD_LOAN" },
-  { "exclusion_type": "TRANSACTION_ATTR", "exclusion_value": "GIFT_CARD" },
-  { "exclusion_type": "CATEGORY", "exclusion_value": "APARTMENT_FEE" },
-  { "exclusion_type": "CATEGORY", "exclusion_value": "TUITION" },
-  { "exclusion_type": "TRANSACTION_ATTR", "exclusion_value": "GOV_SUBSIDY" },
-  { "exclusion_type": "TRANSACTION_ATTR", "exclusion_value": "TAX" },
-  { "exclusion_type": "CATEGORY", "exclusion_value": "UTILITY" },
-  { "exclusion_type": "TRANSACTION_ATTR", "exclusion_value": "SOCIAL_INSURANCE" },
-  { "exclusion_type": "TRANSACTION_ATTR", "exclusion_value": "FEE_INTEREST" },
-  { "exclusion_type": "TRANSACTION_ATTR", "exclusion_value": "ANNUAL_FEE" },
-  { "exclusion_type": "TRANSACTION_ATTR", "exclusion_value": "UNAPPROVED" },
-  { "exclusion_type": "TRANSACTION_ATTR", "exclusion_value": "POSTPAID_TRANSIT" },
-  { "exclusion_type": "TRANSACTION_ATTR", "exclusion_value": "CANCELED" }
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "CARD_LOAN"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "GIFT_CARD"
+  },
+  {
+   "exclusion_type": "CATEGORY",
+   "exclusion_value": "APARTMENT_FEE"
+  },
+  {
+   "exclusion_type": "CATEGORY",
+   "exclusion_value": "TUITION"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "GOV_SUBSIDY"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "TAX"
+  },
+  {
+   "exclusion_type": "CATEGORY",
+   "exclusion_value": "UTILITY"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "SOCIAL_INSURANCE"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "FEE_INTEREST"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "ANNUAL_FEE"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "UNAPPROVED"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "POSTPAID_TRANSIT"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "CANCELED"
+  }
  ],
  "benefits": [
   {
@@ -127,7 +210,9 @@
     "require_performance": "· 전월 이용실적 40만원 이상 시 제공",
     "limit_group_code": "표에서 KB Pay 행이 5천원 칸을 단독으로 갖는다 — 다른 서비스와 묶이지 않는다"
    },
-   "_needs_review": ["apply_timing"]
+   "_needs_review": [
+    "apply_timing"
+   ]
   },
   {
    "benefit_name": "나한테 진심 - 음식점 10% 할인",
@@ -168,13 +253,18 @@
      "exclusion_value": "IN_DEPARTMENT_STORE",
      "_source": "※ 백화점/대형마트 등 일부 입점 매장 제외"
     },
-    { "exclusion_type": "MERCHANT_LOCATION", "exclusion_value": "IN_LARGE_MART" }
+    {
+     "exclusion_type": "MERCHANT_LOCATION",
+     "exclusion_value": "IN_LARGE_MART"
+    }
    ],
    "_source": {
     "benefit_value": "나한테 진심 서비스 월 할인한도 - 음식점, 편의점 10% / 5천원 (건당 2,500원 한도)",
     "limit_group_code": "월 할인한도 표에서 음식점과 편의점이 한 행으로 묶여 5천원 칸 하나를 쓴다"
    },
-   "_needs_review": ["apply_timing"]
+   "_needs_review": [
+    "apply_timing"
+   ]
   },
   {
    "benefit_name": "나한테 진심 - 편의점 10% 할인",
@@ -186,7 +276,10 @@
    "target_type": "MERCHANT",
    "target_category_code": null,
    "target_merchant_name": null,
-   "targets": ["GS25", "CU"],
+   "targets": [
+    "GS25",
+    "CU"
+   ],
    "require_performance": "Y",
    "performance_period": "MONTH",
    "require_payment_type": null,
@@ -215,12 +308,17 @@
      "exclusion_value": "IN_DEPARTMENT_STORE",
      "_source": "※ 백화점/대형마트 등 일부 입점 매장 제외"
     },
-    { "exclusion_type": "MERCHANT_LOCATION", "exclusion_value": "IN_LARGE_MART" }
+    {
+     "exclusion_type": "MERCHANT_LOCATION",
+     "exclusion_value": "IN_LARGE_MART"
+    }
    ],
    "_source": {
     "limit_group_code": "음식점과 같은 행의 5천원 칸을 쓴다"
    },
-   "_needs_review": ["apply_timing"]
+   "_needs_review": [
+    "apply_timing"
+   ]
   },
   {
    "benefit_name": "나한테 진심 - 이동통신요금 10% 할인",
@@ -232,7 +330,12 @@
    "target_type": "MERCHANT",
    "target_category_code": null,
    "target_merchant_name": null,
-   "targets": ["SKT", "KT", "LG U+", "Liiv M"],
+   "targets": [
+    "SKT",
+    "KT",
+    "LG U+",
+    "Liiv M"
+   ],
    "require_performance": "Y",
    "performance_period": "MONTH",
    "require_payment_type": "AUTO_TRANSFER",
@@ -260,7 +363,9 @@
     "benefit_value": "나한테 진심 서비스 월 할인한도 - 이동통신요금 10% / 5천원 (건당 2,500원 한도)",
     "limit_group_code": "월 할인한도 표에서 이동통신요금 행과 OTT 행에 걸쳐 5천원 칸이 하나로 병합돼 있다"
    },
-   "_needs_review": ["apply_timing"]
+   "_needs_review": [
+    "apply_timing"
+   ]
   },
   {
    "benefit_name": "나한테 진심 - OTT 30% 할인",
@@ -272,7 +377,13 @@
    "target_type": "MERCHANT",
    "target_category_code": null,
    "target_merchant_name": null,
-   "targets": ["넷플릭스", "유튜브 프리미엄", "웨이브", "티빙", "디즈니 플러스"],
+   "targets": [
+    "넷플릭스",
+    "유튜브 프리미엄",
+    "웨이브",
+    "티빙",
+    "디즈니 플러스"
+   ],
    "require_performance": "Y",
    "performance_period": "MONTH",
    "require_payment_type": null,
@@ -306,7 +417,9 @@
     "benefit_value": "나한테 진심 서비스 월 할인한도 - OTT 30%",
     "limit_group_code": "이동통신요금 행과 병합된 5천원 칸을 함께 쓴다"
    },
-   "_needs_review": ["apply_timing"]
+   "_needs_review": [
+    "apply_timing"
+   ]
   },
   {
    "benefit_name": "더욱 진심(먹는데 진심) - 배달앱 5% 할인",
@@ -318,7 +431,11 @@
    "target_type": "MERCHANT",
    "target_category_code": null,
    "target_merchant_name": null,
-   "targets": ["배달의민족", "요기요", "마켓컬리"],
+   "targets": [
+    "배달의민족",
+    "요기요",
+    "마켓컬리"
+   ],
    "require_performance": "Y",
    "performance_period": "MONTH",
    "require_payment_type": null,
@@ -352,7 +469,9 @@
     "benefit_value": "더욱 진심 서비스 월 할인한도 - 먹는데 진심 / 배달, 커피 5% / 5천원",
     "limit_group_code": "먹는데 진심 한 행에 월 할인한도 5천원이 하나로 제시된다"
    },
-   "_needs_review": ["apply_timing"]
+   "_needs_review": [
+    "apply_timing"
+   ]
   },
   {
    "benefit_name": "더욱 진심(먹는데 진심) - 커피 5% 할인",
@@ -398,12 +517,17 @@
      "exclusion_value": "IN_DEPARTMENT_STORE",
      "_source": "※ 백화점/대형마트 등 일부 입점 매장 제외"
     },
-    { "exclusion_type": "MERCHANT_LOCATION", "exclusion_value": "IN_LARGE_MART" }
+    {
+     "exclusion_type": "MERCHANT_LOCATION",
+     "exclusion_value": "IN_LARGE_MART"
+    }
    ],
    "_source": {
     "limit_group_code": "먹는데 진심 한 행의 5천원 칸을 배달앱과 함께 쓴다"
    },
-   "_needs_review": ["apply_timing"]
+   "_needs_review": [
+    "apply_timing"
+   ]
   },
   {
    "benefit_name": "더욱 진심(노는데 진심) - 택시·커피 5% 할인",
@@ -415,7 +539,10 @@
    "target_type": "CATEGORY",
    "target_category_code": null,
    "target_merchant_name": null,
-   "targets": ["TAXI", "CAFE"],
+   "targets": [
+    "TAXI",
+    "CAFE"
+   ],
    "require_performance": "Y",
    "performance_period": "MONTH",
    "require_payment_type": null,
@@ -444,13 +571,18 @@
      "exclusion_value": "IN_DEPARTMENT_STORE",
      "_source": "※ 백화점/대형마트 등 일부 입점 매장 제외"
     },
-    { "exclusion_type": "MERCHANT_LOCATION", "exclusion_value": "IN_LARGE_MART" }
+    {
+     "exclusion_type": "MERCHANT_LOCATION",
+     "exclusion_value": "IN_LARGE_MART"
+    }
    ],
    "_source": {
     "benefit_value": "더욱 진심 서비스 월 할인한도 - 노는데 진심 / 택시, 커피 5% / 5천원",
     "limit_group_code": "노는데 진심의 택시·커피 행과 영화관 행에 걸쳐 5천원 칸이 하나로 병합돼 있다"
    },
-   "_needs_review": ["apply_timing"]
+   "_needs_review": [
+    "apply_timing"
+   ]
   },
   {
    "benefit_name": "더욱 진심(노는데 진심) - 영화관 30% 할인",
@@ -462,7 +594,11 @@
    "target_type": "MERCHANT",
    "target_category_code": null,
    "target_merchant_name": null,
-   "targets": ["CGV", "롯데시네마", "메가박스"],
+   "targets": [
+    "CGV",
+    "롯데시네마",
+    "메가박스"
+   ],
    "require_performance": "Y",
    "performance_period": "MONTH",
    "require_payment_type": null,
@@ -497,7 +633,9 @@
     "yearly_count_limit": "· 영화관 할인은 연 4회(연 2만원) 이내 제공",
     "count_group_code": "영화관 3사가 연 4회를 나눠 쓴다"
    },
-   "_needs_review": ["apply_timing"]
+   "_needs_review": [
+    "apply_timing"
+   ]
   },
   {
    "benefit_name": "더욱 진심(관리에 진심) - 미용실·스포츠 5% 할인",
@@ -509,7 +647,11 @@
    "target_type": "CATEGORY",
    "target_category_code": null,
    "target_merchant_name": null,
-   "targets": ["PERSONAL_CARE", "SPORTS_LEISURE", "GOLF"],
+   "targets": [
+    "PERSONAL_CARE",
+    "SPORTS_LEISURE",
+    "GOLF"
+   ],
    "require_performance": "Y",
    "performance_period": "MONTH",
    "require_payment_type": null,
@@ -537,7 +679,9 @@
     "benefit_value": "더욱 진심 서비스 월 할인한도 - 관리에 진심 / 미용실, 스포츠 온라인서점, 올리브영 5% / 1만원",
     "limit_group_code": "관리에 진심 한 행에 월 할인한도 1만원이 하나로 제시된다"
    },
-   "_needs_review": ["apply_timing"]
+   "_needs_review": [
+    "apply_timing"
+   ]
   },
   {
    "benefit_name": "더욱 진심(관리에 진심) - 온라인서점 5% 할인",
@@ -549,7 +693,10 @@
    "target_type": "MERCHANT",
    "target_category_code": null,
    "target_merchant_name": null,
-   "targets": ["교보문고", "YES24"],
+   "targets": [
+    "교보문고",
+    "YES24"
+   ],
    "require_performance": "Y",
    "performance_period": "MONTH",
    "require_payment_type": null,
@@ -576,7 +723,9 @@
    "_source": {
     "limit_group_code": "관리에 진심 한 행의 1만원 칸을 함께 쓴다"
    },
-   "_needs_review": ["apply_timing"]
+   "_needs_review": [
+    "apply_timing"
+   ]
   },
   {
    "benefit_name": "더욱 진심(관리에 진심) - 올리브영 5% 할인",
@@ -617,12 +766,17 @@
      "exclusion_value": "IN_DEPARTMENT_STORE",
      "_source": "※ 백화점/대형마트 등 일부 입점 매장 제외"
     },
-    { "exclusion_type": "MERCHANT_LOCATION", "exclusion_value": "IN_LARGE_MART" }
+    {
+     "exclusion_type": "MERCHANT_LOCATION",
+     "exclusion_value": "IN_LARGE_MART"
+    }
    ],
    "_source": {
     "limit_group_code": "관리에 진심 한 행의 1만원 칸을 함께 쓴다"
    },
-   "_needs_review": ["apply_timing"]
+   "_needs_review": [
+    "apply_timing"
+   ]
   }
  ],
  "unmapped": [
@@ -678,11 +832,6 @@
    "text": "전월실적 채워드림 / 전월 이용실적이 부족하여 이번 달 할인혜택을 못 받을 때 할인 혜택이 제공될 수 있도록 My WE:SH카드의 전월 실적을 채워 드리는 서비스 · 서비스 대상 - 전월 이용실적이 35만원 이상 40만원 미만인 고객 · 유의사항 - 본인 회원 기준 월 1회, 연 2회 신청 가능",
    "missing": "회원 신청으로 전월실적 판정을 보정하는 상태값",
    "why": "실적 판정은 소비내역 합계 하나로 정해진다. 회원이 신청한 달에만 실적을 40만원으로 올려 잡는 예외를 기록할 컬럼이 없고, 연 2회라는 신청 횟수를 셀 자리도 없다"
-  },
-  {
-   "text": "※ 최초 발급받은 My WE:SH 카드 사용등록일(KB Pay 등 간편결제 등록 포함)로 부터 다음달 말일(실적유예 기간)까지는 전월 이용실적 40만원 미만시에도 할인 제공됩니다.",
-   "missing": "카드 사용등록일(발급 초기 실적 면제 판정에 필요)",
-   "why": "user_card에 발급일·사용등록일이 없어 유예 기간에 있는 회원인지 판정할 수 없다. 그래서 신규 회원도 실적 미달로 계산된다"
   },
   {
    "text": "노는데 진심 / 택시, 커피 5% · 영화관 30% → 월 할인한도 5천원(두 행이 한 칸으로 병합) · 영화관 할인은 연 4회(연 2만원) 이내 제공",

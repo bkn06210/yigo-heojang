@@ -98,6 +98,14 @@
    "_source": "전월 이용실적에 따른 월 적립 한도 / 60만원 이상"
   }
  ],
+ "performance_grace": [
+  {
+   "period_type": "MONTH",
+   "min_performance_amount": 300000,
+   "grace_periods": 1,
+   "_source": "※ 최초 카드 사용등록일로부터 다음달 말일(실적 유예기간)까지 'KB국민 다담카드' 실적이 없는 경우에도 \"30만원 이상\" 서비스 제공(단, 레저팩 '스피드메이트' 서비스는 예외)"
+  }
+ ],
  "performance_exclusions": [
   {
    "exclusion_type": "TRANSACTION_ATTR",

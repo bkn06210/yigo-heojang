@@ -21,6 +21,10 @@ STUB_SOURCE = "개발용 응답 (LLM 미호출)"
 # 순서가 의미를 갖는다 — "이번 달 얼마 아꼈어"는 금액 질문이지 현황 질문이 아니다.
 _INTENT_RULES: Tuple[Tuple[str, str], ...] = (
     (IntentName.BENEFIT_SUM, r"얼마|할인받|혜택.*받|아꼈|절약"),
+    # "추천"이 RECOMMEND_CARD 규칙에도 있어 이 줄이 먼저 와야 한다.
+    # 발급·교체를 묻는 말은 결제 자리가 아니라 카드 선택의 문제다.
+    (IntentName.RECOMMEND_NEW_CARD,
+     r"내 ?소비|소비.*맞|나한테 ?맞|발급|만들까|만들어야|하나 ?더|바꾸는 ?게|바꿀까"),
     (IntentName.RECOMMEND_CARD, r"어느 ?카드|어떤 ?카드|무슨 ?카드|뭘로|추천"),
     (IntentName.CARD_STATUS, r"실적|한도|남은|달성|채웠|채워"),
     (IntentName.TERM_QA, r"약관|청구|언제 빠져|분실|잃어버|도난|해지|없애|연회비|재발급|수수료"),

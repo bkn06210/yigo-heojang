@@ -139,6 +139,20 @@
    "_source": "[분기 이용금액별 다음 분기 통합 적립한도] 전분기 이용 금액 300만원 이상"
   }
  ],
+ "performance_grace": [
+  {
+   "period_type": "MONTH",
+   "min_performance_amount": 400000,
+   "grace_periods": 1,
+   "_source": "※ 신한카드 핏(Fit) 신규 발급 회원의 경우 카드 사용 등록월의 익월말(등록월+1개월)까지 전월 이용금액 충족여부와 관계없이 서비스가 적용됩니다. / ※ 신한카드 핏(Fit) 신규 발급 회원의 경우 Flex 영역 서비스는 등록 분기~다음 분기까지 100만원 이상 200만원 미만 구간에 해당하는 한도가 적용됩니다."
+  },
+  {
+   "period_type": "QUARTER",
+   "min_performance_amount": 1000000,
+   "grace_periods": 1,
+   "_source": "Flex 영역 서비스는 등록 분기~다음 분기까지 100만원 이상 200만원 미만 구간에 해당하는 한도가 적용됩니다."
+  }
+ ],
  "performance_exclusions": [
   {
    "exclusion_type": "TRANSACTION_ATTR",

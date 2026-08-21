@@ -42,6 +42,9 @@ JSON 하나. 주석이나 설명 문장을 덧붙이지 말고 JSON만 출력한
     { "period_type": "MONTH", "min_performance_amount": 0, "shared_monthly_limit": 0, "_source": "..." },
     { "period_type": "MONTH", "min_performance_amount": 500000, "shared_monthly_limit": 7000, "_source": "..." }
   ],
+  "performance_grace": [
+    { "period_type": "MONTH", "min_performance_amount": 400000, "grace_periods": 1, "_source": "..." }
+  ],
   "performance_exclusions": [
     { "exclusion_type": "CATEGORY | PAYMENT_TYPE | TRANSACTION_ATTR | MIN_TXN_AMOUNT",
       "exclusion_value": "...", "_source": "..." }
@@ -235,6 +238,30 @@ EDUCATION(교육) > ACADEMY(학원) TUITION(학교납입금)
 `require_performance`는 전월실적 조건이 필요하면 `Y`. 충족 기준은 "판정된 구간의
 최소실적금액 > 0"이다. `use_shared_limit`은 약관에 "통합 월 할인한도"가 있고 이 혜택이
 거기 포함되면 `Y`.
+
+### performance_grace — 발급 초기 실적 유예
+
+약관에 자주 나오는 조항이다. 카드 50장 중 30장에 있다.
+
+```
+최초 카드 사용등록일로부터 다음달 말일까지는 전월 이용실적 40만원 미만시에도
+'40만원 이상~80만원 미만' 구간의 서비스가 적용됩니다
+```
+
+**실적을 0으로 봐준다는 뜻이 아니라 특정 구간에 있는 것으로 쳐준다는 뜻이다.**
+`min_performance_amount`에 그 구간의 금액을 적는다. 위 예라면 `400000`이다.
+
+- **조항이 구간을 집어 말하면 그 구간**을 적는다("40만원 이상~80만원 미만" → `400000`)
+- **구간을 안 밝히고 "실적이 없어도 제공"이라고만 하면** 실적 조건이 켜지는 **가장 낮은 구간**을
+  적는다. 그 카드 구간표에서 `min_performance_amount`가 0보다 큰 것 중 최솟값이다.
+  최상위 구간을 적으면 한도가 약관보다 커진다
+- `grace_periods`는 사용등록 기간 이후 몇 기간까지인가다. 조사한 카드는 전부 `1`이다
+  ("다음달 말일까지", "발급월+1개월까지", "등록월의 익월말까지" 모두 같은 뜻)
+- 월 축과 분기 축이 따로 유예되면 **행을 둘** 적는다(월은 40만원 구간, 분기는 100만원 구간)
+
+**구간으로 표현할 수 없으면 적지 마라.** "구간 월할인한도의 50%까지", "영역별 월 2,500원
+한도까지", "통합한도 5천원 이내에서 네 가맹점만"처럼 구간이 아니라 한도를 깎는 형태가 있다.
+구간으로 적으면 한도가 약관의 두 배가 된다. 그런 카드는 `_schema_gap`에 남긴다.
 
 ### exclude_from_performance — 이 혜택을 받은 거래를 실적에서 뺄 때
 

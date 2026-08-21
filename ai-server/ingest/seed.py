@@ -297,6 +297,33 @@ def build() -> str:
     lines.append(",\n".join(rows) + ";")
     lines.append("")
 
+    # ── 발급 초기 실적 유예 ──────────────────────────────────
+    # 구조화 산출물은 구간을 금액으로 적는다(tier_id 는 여기서 매기는 값이라 산출물이 알 수 없다).
+    # 금액으로 위에서 만든 구간을 찾아 잇는다 — 못 찾으면 조용히 빼지 말고 경고를 남긴다.
+    rows = []
+    for card in cards:
+        card_id = card_ids[card["card_name"]]
+        for grace in card["data"].get("performance_grace") or []:
+            period = grace.get("period_type") or "MONTH"
+            amount = grace.get("min_performance_amount") or 0
+            tier_id = tier_ids.get((card_id, period, amount))
+            if tier_id is None:
+                warnings.append(
+                    f"실적 유예 구간을 찾지 못함: {card['card_name']} / {period} {amount:,}원"
+                )
+                continue
+            rows.append(
+                f"    ({card_id}, {sql_value(period)}, {tier_id},"
+                f" {grace.get('grace_periods') or 1})"
+            )
+    if rows:
+        lines.append(
+            "INSERT INTO card_performance_grace"
+            " (card_id, period_type, tier_id, grace_periods) VALUES"
+        )
+        lines.append(",\n".join(rows) + ";")
+        lines.append("")
+
     # ── 실적 제외 ───────────────────────────────────────────
     rows = []
     for card in cards:
@@ -396,7 +423,7 @@ def build() -> str:
 
             benefit_rows.append(
                 "    ({}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {},"
-                " {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {})".format(
+                " {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {})".format(
                     benefit_seq, card_id,
                     sql_value(benefit.get("benefit_name")),
                     sql_value(kind), sql_value(calc), value,
@@ -422,6 +449,11 @@ def build() -> str:
                     sql_value(benefit.get("daily_limit")),
                     sql_value(benefit.get("use_shared_limit") or "N"),
                     sql_value(benefit.get("exclude_from_performance") or "N"),
+                    # 선택형 혜택(매월 택1)은 이 두 값이 있어야 그달에 고른 선택지만 적용된다.
+                    # 비우면 엔진이 "선택형이 아니다"로 보고 묶음의 모든 선택지를 동시에 켜서,
+                    # 고르지도 않은 혜택이 추천 계산과 카드 상세 화면에 함께 나온다.
+                    sql_value(benefit.get("option_group_code")),
+                    sql_value(benefit.get("option_key")),
                 )
             )
 
@@ -477,7 +509,8 @@ def build() -> str:
         " min_txn_amount, max_eligible_amount, max_benefit_per_txn, monthly_limit,"
         " limit_group_code, monthly_count_limit, daily_count_limit, yearly_count_limit,"
         " quarterly_count_limit, quarterly_limit, yearly_limit, count_group_code,"
-        " daily_limit, use_shared_limit, exclude_from_performance) VALUES"
+        " daily_limit, use_shared_limit, exclude_from_performance,"
+        " option_group_code, option_key) VALUES"
     )
     lines.append(",\n".join(benefit_rows) + ";")
     lines.append("")

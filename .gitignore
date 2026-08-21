@@ -6,6 +6,7 @@ CLAUDE.md
 application.properties
 application-*.properties
 db.properties
+redis.properties
 .env
 .env.*
 # 값이 아니라 키 목록이라 공유해야 한다.
