@@ -423,7 +423,7 @@ def build() -> str:
 
             benefit_rows.append(
                 "    ({}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {},"
-                " {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {})".format(
+                " {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {})".format(
                     benefit_seq, card_id,
                     sql_value(benefit.get("benefit_name")),
                     sql_value(kind), sql_value(calc), value,
@@ -449,6 +449,11 @@ def build() -> str:
                     sql_value(benefit.get("daily_limit")),
                     sql_value(benefit.get("use_shared_limit") or "N"),
                     sql_value(benefit.get("exclude_from_performance") or "N"),
+                    # 선택형 혜택(매월 택1)은 이 두 값이 있어야 그달에 고른 선택지만 적용된다.
+                    # 비우면 엔진이 "선택형이 아니다"로 보고 묶음의 모든 선택지를 동시에 켜서,
+                    # 고르지도 않은 혜택이 추천 계산과 카드 상세 화면에 함께 나온다.
+                    sql_value(benefit.get("option_group_code")),
+                    sql_value(benefit.get("option_key")),
                 )
             )
 
@@ -504,7 +509,8 @@ def build() -> str:
         " min_txn_amount, max_eligible_amount, max_benefit_per_txn, monthly_limit,"
         " limit_group_code, monthly_count_limit, daily_count_limit, yearly_count_limit,"
         " quarterly_count_limit, quarterly_limit, yearly_limit, count_group_code,"
-        " daily_limit, use_shared_limit, exclude_from_performance) VALUES"
+        " daily_limit, use_shared_limit, exclude_from_performance,"
+        " option_group_code, option_key) VALUES"
     )
     lines.append(",\n".join(benefit_rows) + ";")
     lines.append("")
