@@ -42,6 +42,9 @@ JSON 하나. 주석이나 설명 문장을 덧붙이지 말고 JSON만 출력한
     { "period_type": "MONTH", "min_performance_amount": 0, "shared_monthly_limit": 0, "_source": "..." },
     { "period_type": "MONTH", "min_performance_amount": 500000, "shared_monthly_limit": 7000, "_source": "..." }
   ],
+  "performance_grace": [
+    { "period_type": "MONTH", "min_performance_amount": 400000, "grace_periods": 1, "_source": "..." }
+  ],
   "performance_exclusions": [
     { "exclusion_type": "CATEGORY | PAYMENT_TYPE | TRANSACTION_ATTR | MIN_TXN_AMOUNT",
       "exclusion_value": "...", "_source": "..." }
@@ -236,6 +239,30 @@ EDUCATION(교육) > ACADEMY(학원) TUITION(학교납입금)
 최소실적금액 > 0"이다. `use_shared_limit`은 약관에 "통합 월 할인한도"가 있고 이 혜택이
 거기 포함되면 `Y`.
 
+### performance_grace — 발급 초기 실적 유예
+
+약관에 자주 나오는 조항이다. 카드 50장 중 30장에 있다.
+
+```
+최초 카드 사용등록일로부터 다음달 말일까지는 전월 이용실적 40만원 미만시에도
+'40만원 이상~80만원 미만' 구간의 서비스가 적용됩니다
+```
+
+**실적을 0으로 봐준다는 뜻이 아니라 특정 구간에 있는 것으로 쳐준다는 뜻이다.**
+`min_performance_amount`에 그 구간의 금액을 적는다. 위 예라면 `400000`이다.
+
+- **조항이 구간을 집어 말하면 그 구간**을 적는다("40만원 이상~80만원 미만" → `400000`)
+- **구간을 안 밝히고 "실적이 없어도 제공"이라고만 하면** 실적 조건이 켜지는 **가장 낮은 구간**을
+  적는다. 그 카드 구간표에서 `min_performance_amount`가 0보다 큰 것 중 최솟값이다.
+  최상위 구간을 적으면 한도가 약관보다 커진다
+- `grace_periods`는 사용등록 기간 이후 몇 기간까지인가다. 조사한 카드는 전부 `1`이다
+  ("다음달 말일까지", "발급월+1개월까지", "등록월의 익월말까지" 모두 같은 뜻)
+- 월 축과 분기 축이 따로 유예되면 **행을 둘** 적는다(월은 40만원 구간, 분기는 100만원 구간)
+
+**구간으로 표현할 수 없으면 적지 마라.** "구간 월할인한도의 50%까지", "영역별 월 2,500원
+한도까지", "통합한도 5천원 이내에서 네 가맹점만"처럼 구간이 아니라 한도를 깎는 형태가 있다.
+구간으로 적으면 한도가 약관의 두 배가 된다. 그런 카드는 `_schema_gap`에 남긴다.
+
 ### exclude_from_performance — 이 혜택을 받은 거래를 실적에서 뺄 때
 
 "○○ 할인을 받은 이용금액은 전월 실적에서 제외"처럼 **특정 혜택에만 걸리는 실적 제외**는
@@ -273,6 +300,12 @@ EDUCATION(교육) > ACADEMY(학원) TUITION(학교납입금)
 "할인서비스 제외 대상: 무이자할부, 상품권 구입…"   → card_exclusions (한 번)
 "카페 5% (단, 백화점 입점 매장 제외)"              → 그 혜택의 exclusions
 ```
+
+**"가맹점명이 PG업체명·간편결제명으로 확인되는 경우 제외"는 결제수단 제외가 아니다.**
+간편결제로 결제한 거래를 배제하는 조항이 아니라, 가맹점이 무엇인지 식별되지 않은 거래를
+가리키는 안내다. 소비내역은 가맹점이 식별된 상태로 들어와 구분할 값이 없으므로 `unmapped`로
+보낸다. `card_exclusions`에 `PAYMENT_TYPE: SIMPLE_PAY`로 적으면 **그 카드로 간편결제를 하는
+순간 모든 혜택이 사라진다** — 간편결제를 대상으로 삼는 혜택까지 카드 스스로 지운다.
 
 `MERCHANT_LOCATION`은 같은 브랜드 안에서 매장 위치로 가르는 조건이다. 지금 엔진이 판정하지
 못하지만(가맹점이 브랜드 단위라 지점을 구분하지 않는다) 그래도 적어둔다 — 나중에 가맹점명이
@@ -319,12 +352,17 @@ CARD_LOAN         카드론              GIFT_CARD       상품권·선불카드
 TAX               국세·지방세         SOCIAL_INSURANCE 4대 사회보험료
 FEE_INTEREST      수수료·이자·연체료   ANNUAL_FEE      연회비
 GOV_SUBSIDY       정부지원금          POSTPAID_TRANSIT 후불교통요금
-UNAPPROVED        무승인전표(자판기·통행료 등)
+UNAPPROVED        무승인전표 전반      TOLL            고속도로 통행료
 CANCELED          취소·부분취소 거래   LEVY            부담금·준조세(장애인 고용부담금 등)
 POINT_USED        포인트로 결제한 금액  RECURRING       정기결제·자동이체 등록 건
 INSTALLMENT_CONVERTED  일시불을 할부로 전환한 거래
 CARD_SERVICE_FEE       카드사 부가서비스 이용료(문자알림 등)
 ```
+
+**약관이 집어 말한 것보다 넓은 값을 고르지 마라.** 약관이 "고속도로 통행요금"만 제외했는데
+`UNAPPROVED`(무승인전표 전반)를 고르면 자판기·무인주차장까지 함께 제외된다. 제외 하나가
+약관에 없는 거래까지 막는 것은 누락과 달리 상한 검사로 드러나지 않는다.
+맞는 값이 없으면 넓은 값으로 올리지 말고 `_schema_gap`에 적는다.
 
 ### require_payment_type — 결제수단 조건도 표준값에서 고른다
 
@@ -347,7 +385,7 @@ SSG_PAY  L_PAY  SOL_PAY  COUPAY  SMILE_PAY  HANA_PAY  SK_PAY(11Pay)  TOSS_PAY
 
 사후정산형(가장 많이 쓴 영역 추가적립) · 상품 단위 조건(특정 메뉴·세트) · 전전월 실적 ·
 가족카드 합산 · 월분할청구 · 생애 1회 한정(최초 1회, 신규 고객 한정) · 해외 결제 혜택 ·
-요일·시간대·채널 조건 · 혜택 유효기간
+요일·시간대·채널 조건 · 혜택 유효기간 · 가맹점명이 PG·간편결제사로 찍히는 거래
 
 ## _schema_gap — 스키마를 고쳐야 할 것으로 보이는 것
 

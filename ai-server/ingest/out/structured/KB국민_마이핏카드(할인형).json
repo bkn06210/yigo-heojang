@@ -1,1286 +1,1271 @@
 {
-  "card": {
-    "card_name": "KB국민 마이핏카드(할인형)",
-    "card_type": "CREDIT",
-    "annual_fee": 10000,
-    "annual_fees": [
-      {
-        "brand": "LOCAL",
-        "issue_type": "MOBILE",
-        "base_fee": 1000,
-        "partner_fee": 9000,
-        "_source": "구 분 국내 전용(Local) 국내외겸용(Master) / 모바일 단독카드 1만원(기본연회비 1천원 + 제휴연회비 9천원)"
-      },
-      {
-        "brand": "MASTERCARD",
-        "issue_type": "MOBILE",
-        "base_fee": 1000,
-        "partner_fee": 9000,
-        "_source": "구 분 국내 전용(Local) 국내외겸용(Master) / 모바일 단독카드 1만원(기본연회비 1천원 + 제휴연회비 9천원)"
-      }
-    ],
-    "_source": {
-      "card_name": "KB국민 마이핏카드(할인형)",
-      "card_type": "KB국민 신용카드 설명서(개인) / 'KB국민 마이핏카드(할인형)'는 실물 없는 모바일 단독카드로 KB Pay에 카드 정보를 등록하여 모바일로 이용 가능한 신용카드입니다.",
-      "annual_fee": "모바일 단독카드 1만원(기본연회비 1천원 + 제휴연회비 9천원). 국내전용·국내외겸용(Master) 금액이 같아 대표값이 하나로 정해진다"
-    },
-    "_needs_review": []
+ "card": {
+  "card_name": "KB국민 마이핏카드(할인형)",
+  "card_type": "CREDIT",
+  "annual_fee": 10000,
+  "annual_fees": [
+   {
+    "brand": "LOCAL",
+    "issue_type": "MOBILE",
+    "base_fee": 1000,
+    "partner_fee": 9000,
+    "_source": "구 분 국내 전용(Local) 국내외겸용(Master) / 모바일 단독카드 1만원(기본연회비 1천원 + 제휴연회비 9천원)"
+   },
+   {
+    "brand": "MASTERCARD",
+    "issue_type": "MOBILE",
+    "base_fee": 1000,
+    "partner_fee": 9000,
+    "_source": "구 분 국내 전용(Local) 국내외겸용(Master) / 모바일 단독카드 1만원(기본연회비 1천원 + 제휴연회비 9천원)"
+   }
+  ],
+  "_source": {
+   "card_name": "KB국민 마이핏카드(할인형)",
+   "card_type": "KB국민 신용카드 설명서(개인) / 'KB국민 마이핏카드(할인형)'는 실물 없는 모바일 단독카드로 KB Pay에 카드 정보를 등록하여 모바일로 이용 가능한 신용카드입니다.",
+   "annual_fee": "모바일 단독카드 1만원(기본연회비 1천원 + 제휴연회비 9천원). 국내전용·국내외겸용(Master) 금액이 같아 대표값이 하나로 정해진다"
   },
-  "card_exclusions": [
+  "_needs_review": []
+ },
+ "card_exclusions": [
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "INTEREST_FREE",
+   "_source": "할인서비스 제외대상 • 무이자할부 이용금액, 상품권 및 선불카드(선불전자지급수단 포함) 구입·충전금액"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "GIFT_CARD",
+   "_source": "할인서비스 제외대상 • 무이자할부 이용금액, 상품권 및 선불카드(선불전자지급수단 포함) 구입·충전금액"
+  }
+ ],
+ "performance_tiers": [
+  {
+   "period_type": "MONTH",
+   "min_performance_amount": 0,
+   "shared_monthly_limit": null,
+   "_source": "마이핏카드(할인형) 서비스는 전월 이용실적 30만원 이상 시 제공되며 — 30만원 미만 구간은 서비스가 없다. 카드 전체 통합 할인한도 조항이 없고 서비스(그룹)별 월 할인한도만 있어 shared_monthly_limit은 null"
+  },
+  {
+   "period_type": "MONTH",
+   "min_performance_amount": 300000,
+   "shared_monthly_limit": null,
+   "_source": "전월 이용실적에 따른 월 할인한도 / 30만원 이상 50만원 미만 — 한도가 서비스별로만 제시되고 카드 통합한도는 약관에 없다"
+  },
+  {
+   "period_type": "MONTH",
+   "min_performance_amount": 500000,
+   "shared_monthly_limit": null,
+   "_source": "전월 이용실적에 따른 월 할인한도 / 50만원 이상 100만원 미만 — 한도가 서비스별로만 제시되고 카드 통합한도는 약관에 없다"
+  },
+  {
+   "period_type": "MONTH",
+   "min_performance_amount": 1000000,
+   "shared_monthly_limit": null,
+   "_source": "전월 이용실적에 따른 월 할인한도 / 100만원 이상 — 한도가 서비스별로만 제시되고 카드 통합한도는 약관에 없다"
+  }
+ ],
+ "performance_grace": [
+  {
+   "period_type": "MONTH",
+   "min_performance_amount": 300000,
+   "grace_periods": 1,
+   "_source": "* 최초 카드 사용등록일로부터 다음달 말일(실적 유예기간)까지 KB국민 마이핏카드(할인형) 실적이 없는 경우에도 1구간 (30만원 이상) 서비스가 제공됩니다."
+  }
+ ],
+ "performance_exclusions": [
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "CANCELED",
+   "_source": "전월 이용실적 제외대상 • 취소금액"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "CASH_ADVANCE",
+   "_source": "전월 이용실적 제외대상 • 단기카드대출(현금서비스)"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "CARD_LOAN",
+   "_source": "전월 이용실적 제외대상 • 장기카드대출(카드론)"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "TAX",
+   "_source": "전월 이용실적 제외대상 • 국세, 지방세"
+  },
+  {
+   "exclusion_type": "CATEGORY",
+   "exclusion_value": "UTILITY",
+   "_source": "전월 이용실적 제외대상 • 공과금(전기/수도)"
+  },
+  {
+   "exclusion_type": "CATEGORY",
+   "exclusion_value": "APARTMENT_FEE",
+   "_source": "전월 이용실적 제외대상 • 아파트관리비"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "GOV_SUBSIDY",
+   "_source": "전월 이용실적 제외대상 • 정부지원금(보육료/유치원보조비/바우처 이용금액 등)"
+  },
+  {
+   "exclusion_type": "CATEGORY",
+   "exclusion_value": "TUITION",
+   "_source": "전월 이용실적 제외대상 • 초·중·고등학교 납입금 전체(수업료/교육비/현장학습비/급식비), 대학(대학원)등록금"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "SOCIAL_INSURANCE",
+   "_source": "전월 이용실적 제외대상 • 4대 사회보험료(건강/연금/고용/산재)"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "FEE_INTEREST",
+   "_source": "전월 이용실적 제외대상 • 각종 수수료 및 이자, 연체료"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "ANNUAL_FEE",
+   "_source": "전월 이용실적 제외대상 • 연회비"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "GIFT_CARD",
+   "_source": "전월 이용실적 제외대상 • 상품권 및 선불카드(선불전자지급수단 포함) 구입·충전금액"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "POSTPAID_TRANSIT",
+   "_source": "전월 이용실적 제외대상 • 후불교통요금"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "UNAPPROVED",
+   "_source": "전월 이용실적 제외대상 • 무승인전표(자판기/터널통행료/항공기내 이용 등)"
+  }
+ ],
+ "benefits": [
+  {
+   "benefit_name": "푸드(#외식) VIPS 5% 청구할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 5,
+   "step_count": null,
+   "apply_timing": "BILLED",
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": "VIPS",
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": 10000,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "monthly_limit": 2000,
+   "limit_group_code": "MYFIT_FOOD",
+   "monthly_count_limit": null,
+   "daily_count_limit": null,
+   "daily_limit": null,
+   "yearly_count_limit": null,
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "#외식. 백화점/대형마트 등 일부 입점 매장의 경우 서비스 제외. 푸드(#외식 #커피) 월 할인한도를 함께 소진한다.",
+   "tier_limits": [
     {
-      "exclusion_type": "TRANSACTION_ATTR",
-      "exclusion_value": "INTEREST_FREE",
-      "_source": "할인서비스 제외대상 • 무이자할부 이용금액, 상품권 및 선불카드(선불전자지급수단 포함) 구입·충전금액"
+     "min_performance_amount": 300000,
+     "monthly_limit": 2000,
+     "benefit_value": null,
+     "_source": "푸드 (#외식 #커피) 30만원 이상 50만원 미만 2천원"
     },
     {
-      "exclusion_type": "TRANSACTION_ATTR",
-      "exclusion_value": "GIFT_CARD",
-      "_source": "할인서비스 제외대상 • 무이자할부 이용금액, 상품권 및 선불카드(선불전자지급수단 포함) 구입·충전금액"
+     "min_performance_amount": 500000,
+     "monthly_limit": 5000,
+     "benefit_value": null,
+     "_source": "푸드 (#외식 #커피) 50만원 이상 100만원 미만 5천원"
+    },
+    {
+     "min_performance_amount": 1000000,
+     "monthly_limit": 10000,
+     "benefit_value": null,
+     "_source": "푸드 (#외식 #커피) 100만원 이상 1만원"
     }
-  ],
-  "performance_tiers": [
+   ],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "표의 '청구 할인 5%'는 푸드·편의·생활·쇼핑/배달 네 서비스 행에 걸친 병합 셀이다",
+    "apply_timing": "서비스 구분이 '청구 할인'",
+    "target_merchant_name": "#외식 : VIPS, 아웃백",
+    "min_txn_amount": "* 모든 서비스는 건당 1만원 이상 이용 시 제공",
+    "monthly_limit": "구간별 한도 중 최저 구간 값(30만원 이상 2천원). 실제 적용 한도는 tier_limits가 결정한다",
+    "limit_group_code": "'푸드 (#외식 #커피)' 한 행에 월 할인한도가 하나로 제시된다",
+    "require_performance": "마이핏카드(할인형) 서비스는 전월 이용실적 30만원 이상 시 제공되며",
+    "performance_period": "전월 이용실적 기준 / 전월 1일~말일(승인시점 기준) KB국민 마이핏카드(할인형) 일시불 및 할부 승인(이용)금액",
+    "use_shared_limit": "카드 통합 할인한도 조항이 없고 서비스별 한도만 있다"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "푸드(#외식) 아웃백 5% 청구할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 5,
+   "step_count": null,
+   "apply_timing": "BILLED",
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": "아웃백",
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": 10000,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "monthly_limit": 2000,
+   "limit_group_code": "MYFIT_FOOD",
+   "monthly_count_limit": null,
+   "daily_count_limit": null,
+   "daily_limit": null,
+   "yearly_count_limit": null,
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "#외식. 백화점/대형마트 등 일부 입점 매장의 경우 서비스 제외. 푸드(#외식 #커피) 월 할인한도를 함께 소진한다.",
+   "tier_limits": [
     {
-      "period_type": "MONTH",
-      "min_performance_amount": 0,
-      "shared_monthly_limit": null,
-      "_source": "마이핏카드(할인형) 서비스는 전월 이용실적 30만원 이상 시 제공되며 — 30만원 미만 구간은 서비스가 없다. 카드 전체 통합 할인한도 조항이 없고 서비스(그룹)별 월 할인한도만 있어 shared_monthly_limit은 null"
+     "min_performance_amount": 300000,
+     "monthly_limit": 2000,
+     "benefit_value": null,
+     "_source": "푸드 (#외식 #커피) 30만원 이상 50만원 미만 2천원"
     },
     {
-      "period_type": "MONTH",
-      "min_performance_amount": 300000,
-      "shared_monthly_limit": null,
-      "_source": "전월 이용실적에 따른 월 할인한도 / 30만원 이상 50만원 미만 — 한도가 서비스별로만 제시되고 카드 통합한도는 약관에 없다"
+     "min_performance_amount": 500000,
+     "monthly_limit": 5000,
+     "benefit_value": null,
+     "_source": "푸드 (#외식 #커피) 50만원 이상 100만원 미만 5천원"
     },
     {
-      "period_type": "MONTH",
-      "min_performance_amount": 500000,
-      "shared_monthly_limit": null,
-      "_source": "전월 이용실적에 따른 월 할인한도 / 50만원 이상 100만원 미만 — 한도가 서비스별로만 제시되고 카드 통합한도는 약관에 없다"
-    },
-    {
-      "period_type": "MONTH",
-      "min_performance_amount": 1000000,
-      "shared_monthly_limit": null,
-      "_source": "전월 이용실적에 따른 월 할인한도 / 100만원 이상 — 한도가 서비스별로만 제시되고 카드 통합한도는 약관에 없다"
+     "min_performance_amount": 1000000,
+     "monthly_limit": 10000,
+     "benefit_value": null,
+     "_source": "푸드 (#외식 #커피) 100만원 이상 1만원"
     }
-  ],
-  "performance_exclusions": [
+   ],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "표의 '청구 할인 5%'는 푸드·편의·생활·쇼핑/배달 네 서비스 행에 걸친 병합 셀이다",
+    "apply_timing": "서비스 구분이 '청구 할인'",
+    "target_merchant_name": "#외식 : VIPS, 아웃백",
+    "min_txn_amount": "* 모든 서비스는 건당 1만원 이상 이용 시 제공",
+    "monthly_limit": "구간별 한도 중 최저 구간 값(30만원 이상 2천원). 실제 적용 한도는 tier_limits가 결정한다",
+    "limit_group_code": "'푸드 (#외식 #커피)' 한 행에 월 할인한도가 하나로 제시된다",
+    "require_performance": "마이핏카드(할인형) 서비스는 전월 이용실적 30만원 이상 시 제공되며",
+    "performance_period": "전월 이용실적 기준 / 전월 1일~말일(승인시점 기준) KB국민 마이핏카드(할인형) 일시불 및 할부 승인(이용)금액",
+    "use_shared_limit": "카드 통합 할인한도 조항이 없고 서비스별 한도만 있다"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "푸드(#커피) 스타벅스 5% 청구할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 5,
+   "step_count": null,
+   "apply_timing": "BILLED",
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": "스타벅스",
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": 10000,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "monthly_limit": 2000,
+   "limit_group_code": "MYFIT_FOOD",
+   "monthly_count_limit": null,
+   "daily_count_limit": null,
+   "daily_limit": null,
+   "yearly_count_limit": null,
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "#커피. 사이렌오더 포함. 상품권 구입(사이렌오더 선물하기) 및 선불식 충전카드 이용금액, 백화점·대형마트 등 일부 입점 매장의 경우 서비스 제외. 푸드(#외식 #커피) 월 할인한도를 함께 소진한다.",
+   "tier_limits": [
     {
-      "exclusion_type": "TRANSACTION_ATTR",
-      "exclusion_value": "CANCELED",
-      "_source": "전월 이용실적 제외대상 • 취소금액"
+     "min_performance_amount": 300000,
+     "monthly_limit": 2000,
+     "benefit_value": null,
+     "_source": "푸드 (#외식 #커피) 30만원 이상 50만원 미만 2천원"
     },
     {
-      "exclusion_type": "TRANSACTION_ATTR",
-      "exclusion_value": "CASH_ADVANCE",
-      "_source": "전월 이용실적 제외대상 • 단기카드대출(현금서비스)"
+     "min_performance_amount": 500000,
+     "monthly_limit": 5000,
+     "benefit_value": null,
+     "_source": "푸드 (#외식 #커피) 50만원 이상 100만원 미만 5천원"
     },
     {
-      "exclusion_type": "TRANSACTION_ATTR",
-      "exclusion_value": "CARD_LOAN",
-      "_source": "전월 이용실적 제외대상 • 장기카드대출(카드론)"
-    },
-    {
-      "exclusion_type": "TRANSACTION_ATTR",
-      "exclusion_value": "TAX",
-      "_source": "전월 이용실적 제외대상 • 국세, 지방세"
-    },
-    {
-      "exclusion_type": "CATEGORY",
-      "exclusion_value": "UTILITY",
-      "_source": "전월 이용실적 제외대상 • 공과금(전기/수도)"
-    },
-    {
-      "exclusion_type": "CATEGORY",
-      "exclusion_value": "APARTMENT_FEE",
-      "_source": "전월 이용실적 제외대상 • 아파트관리비"
-    },
-    {
-      "exclusion_type": "TRANSACTION_ATTR",
-      "exclusion_value": "GOV_SUBSIDY",
-      "_source": "전월 이용실적 제외대상 • 정부지원금(보육료/유치원보조비/바우처 이용금액 등)"
-    },
-    {
-      "exclusion_type": "CATEGORY",
-      "exclusion_value": "TUITION",
-      "_source": "전월 이용실적 제외대상 • 초·중·고등학교 납입금 전체(수업료/교육비/현장학습비/급식비), 대학(대학원)등록금"
-    },
-    {
-      "exclusion_type": "TRANSACTION_ATTR",
-      "exclusion_value": "SOCIAL_INSURANCE",
-      "_source": "전월 이용실적 제외대상 • 4대 사회보험료(건강/연금/고용/산재)"
-    },
-    {
-      "exclusion_type": "TRANSACTION_ATTR",
-      "exclusion_value": "FEE_INTEREST",
-      "_source": "전월 이용실적 제외대상 • 각종 수수료 및 이자, 연체료"
-    },
-    {
-      "exclusion_type": "TRANSACTION_ATTR",
-      "exclusion_value": "ANNUAL_FEE",
-      "_source": "전월 이용실적 제외대상 • 연회비"
-    },
-    {
-      "exclusion_type": "TRANSACTION_ATTR",
-      "exclusion_value": "GIFT_CARD",
-      "_source": "전월 이용실적 제외대상 • 상품권 및 선불카드(선불전자지급수단 포함) 구입·충전금액"
-    },
-    {
-      "exclusion_type": "TRANSACTION_ATTR",
-      "exclusion_value": "POSTPAID_TRANSIT",
-      "_source": "전월 이용실적 제외대상 • 후불교통요금"
-    },
-    {
-      "exclusion_type": "TRANSACTION_ATTR",
-      "exclusion_value": "UNAPPROVED",
-      "_source": "전월 이용실적 제외대상 • 무승인전표(자판기/터널통행료/항공기내 이용 등)"
+     "min_performance_amount": 1000000,
+     "monthly_limit": 10000,
+     "benefit_value": null,
+     "_source": "푸드 (#외식 #커피) 100만원 이상 1만원"
     }
-  ],
-  "benefits": [
+   ],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "표의 '청구 할인 5%'는 푸드·편의·생활·쇼핑/배달 네 서비스 행에 걸친 병합 셀이다",
+    "apply_timing": "서비스 구분이 '청구 할인'",
+    "target_merchant_name": "#커피 : 스타벅스(사이렌오더 포함), 커피빈",
+    "min_txn_amount": "* 모든 서비스는 건당 1만원 이상 이용 시 제공",
+    "monthly_limit": "구간별 한도 중 최저 구간 값(30만원 이상 2천원). 실제 적용 한도는 tier_limits가 결정한다",
+    "limit_group_code": "'푸드 (#외식 #커피)' 한 행에 월 할인한도가 하나로 제시된다",
+    "require_performance": "마이핏카드(할인형) 서비스는 전월 이용실적 30만원 이상 시 제공되며",
+    "performance_period": "전월 이용실적 기준 / 전월 1일~말일(승인시점 기준) KB국민 마이핏카드(할인형) 일시불 및 할부 승인(이용)금액",
+    "use_shared_limit": "카드 통합 할인한도 조항이 없고 서비스별 한도만 있다"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "푸드(#커피) 커피빈 5% 청구할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 5,
+   "step_count": null,
+   "apply_timing": "BILLED",
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": "커피빈",
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": 10000,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "monthly_limit": 2000,
+   "limit_group_code": "MYFIT_FOOD",
+   "monthly_count_limit": null,
+   "daily_count_limit": null,
+   "daily_limit": null,
+   "yearly_count_limit": null,
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "#커피. 상품권 구입 및 선불식 충전카드 이용금액, 백화점·대형마트 등 일부 입점 매장의 경우 서비스 제외. 푸드(#외식 #커피) 월 할인한도를 함께 소진한다.",
+   "tier_limits": [
     {
-      "benefit_name": "푸드(#외식) VIPS 5% 청구할인",
-      "benefit_kind": "DISCOUNT",
-      "calc_method": "RATE",
-      "benefit_value": 5,
-      "step_count": null,
-      "apply_timing": "BILLED",
-      "target_type": "MERCHANT",
-      "target_category_code": null,
-      "target_merchant_name": "VIPS",
-      "require_performance": "Y",
-      "performance_period": "MONTH",
-      "require_payment_type": null,
-      "min_txn_amount": 10000,
-      "max_eligible_amount": null,
-      "max_benefit_per_txn": null,
-      "monthly_limit": 2000,
-      "limit_group_code": "MYFIT_FOOD",
-      "monthly_count_limit": null,
-      "daily_count_limit": null,
-      "daily_limit": null,
-      "yearly_count_limit": null,
-      "count_group_code": null,
-      "use_shared_limit": "N",
-      "exclude_from_performance": "N",
-      "option_group_code": null,
-      "option_key": null,
-      "description": "#외식. 백화점/대형마트 등 일부 입점 매장의 경우 서비스 제외. 푸드(#외식 #커피) 월 할인한도를 함께 소진한다.",
-      "tier_limits": [
-        {
-          "min_performance_amount": 300000,
-          "monthly_limit": 2000,
-          "benefit_value": null,
-          "_source": "푸드 (#외식 #커피) 30만원 이상 50만원 미만 2천원"
-        },
-        {
-          "min_performance_amount": 500000,
-          "monthly_limit": 5000,
-          "benefit_value": null,
-          "_source": "푸드 (#외식 #커피) 50만원 이상 100만원 미만 5천원"
-        },
-        {
-          "min_performance_amount": 1000000,
-          "monthly_limit": 10000,
-          "benefit_value": null,
-          "_source": "푸드 (#외식 #커피) 100만원 이상 1만원"
-        }
-      ],
-      "exclusions": [],
-      "_source": {
-        "benefit_value": "표의 '청구 할인 5%'는 푸드·편의·생활·쇼핑/배달 네 서비스 행에 걸친 병합 셀이다",
-        "apply_timing": "서비스 구분이 '청구 할인'",
-        "target_merchant_name": "#외식 : VIPS, 아웃백",
-        "min_txn_amount": "* 모든 서비스는 건당 1만원 이상 이용 시 제공",
-        "monthly_limit": "구간별 한도 중 최저 구간 값(30만원 이상 2천원). 실제 적용 한도는 tier_limits가 결정한다",
-        "limit_group_code": "'푸드 (#외식 #커피)' 한 행에 월 할인한도가 하나로 제시된다",
-        "require_performance": "마이핏카드(할인형) 서비스는 전월 이용실적 30만원 이상 시 제공되며",
-        "performance_period": "전월 이용실적 기준 / 전월 1일~말일(승인시점 기준) KB국민 마이핏카드(할인형) 일시불 및 할부 승인(이용)금액",
-        "use_shared_limit": "카드 통합 할인한도 조항이 없고 서비스별 한도만 있다"
-      },
-      "_needs_review": []
+     "min_performance_amount": 300000,
+     "monthly_limit": 2000,
+     "benefit_value": null,
+     "_source": "푸드 (#외식 #커피) 30만원 이상 50만원 미만 2천원"
     },
     {
-      "benefit_name": "푸드(#외식) 아웃백 5% 청구할인",
-      "benefit_kind": "DISCOUNT",
-      "calc_method": "RATE",
-      "benefit_value": 5,
-      "step_count": null,
-      "apply_timing": "BILLED",
-      "target_type": "MERCHANT",
-      "target_category_code": null,
-      "target_merchant_name": "아웃백",
-      "require_performance": "Y",
-      "performance_period": "MONTH",
-      "require_payment_type": null,
-      "min_txn_amount": 10000,
-      "max_eligible_amount": null,
-      "max_benefit_per_txn": null,
-      "monthly_limit": 2000,
-      "limit_group_code": "MYFIT_FOOD",
-      "monthly_count_limit": null,
-      "daily_count_limit": null,
-      "daily_limit": null,
-      "yearly_count_limit": null,
-      "count_group_code": null,
-      "use_shared_limit": "N",
-      "exclude_from_performance": "N",
-      "option_group_code": null,
-      "option_key": null,
-      "description": "#외식. 백화점/대형마트 등 일부 입점 매장의 경우 서비스 제외. 푸드(#외식 #커피) 월 할인한도를 함께 소진한다.",
-      "tier_limits": [
-        {
-          "min_performance_amount": 300000,
-          "monthly_limit": 2000,
-          "benefit_value": null,
-          "_source": "푸드 (#외식 #커피) 30만원 이상 50만원 미만 2천원"
-        },
-        {
-          "min_performance_amount": 500000,
-          "monthly_limit": 5000,
-          "benefit_value": null,
-          "_source": "푸드 (#외식 #커피) 50만원 이상 100만원 미만 5천원"
-        },
-        {
-          "min_performance_amount": 1000000,
-          "monthly_limit": 10000,
-          "benefit_value": null,
-          "_source": "푸드 (#외식 #커피) 100만원 이상 1만원"
-        }
-      ],
-      "exclusions": [],
-      "_source": {
-        "benefit_value": "표의 '청구 할인 5%'는 푸드·편의·생활·쇼핑/배달 네 서비스 행에 걸친 병합 셀이다",
-        "apply_timing": "서비스 구분이 '청구 할인'",
-        "target_merchant_name": "#외식 : VIPS, 아웃백",
-        "min_txn_amount": "* 모든 서비스는 건당 1만원 이상 이용 시 제공",
-        "monthly_limit": "구간별 한도 중 최저 구간 값(30만원 이상 2천원). 실제 적용 한도는 tier_limits가 결정한다",
-        "limit_group_code": "'푸드 (#외식 #커피)' 한 행에 월 할인한도가 하나로 제시된다",
-        "require_performance": "마이핏카드(할인형) 서비스는 전월 이용실적 30만원 이상 시 제공되며",
-        "performance_period": "전월 이용실적 기준 / 전월 1일~말일(승인시점 기준) KB국민 마이핏카드(할인형) 일시불 및 할부 승인(이용)금액",
-        "use_shared_limit": "카드 통합 할인한도 조항이 없고 서비스별 한도만 있다"
-      },
-      "_needs_review": []
+     "min_performance_amount": 500000,
+     "monthly_limit": 5000,
+     "benefit_value": null,
+     "_source": "푸드 (#외식 #커피) 50만원 이상 100만원 미만 5천원"
     },
     {
-      "benefit_name": "푸드(#커피) 스타벅스 5% 청구할인",
-      "benefit_kind": "DISCOUNT",
-      "calc_method": "RATE",
-      "benefit_value": 5,
-      "step_count": null,
-      "apply_timing": "BILLED",
-      "target_type": "MERCHANT",
-      "target_category_code": null,
-      "target_merchant_name": "스타벅스",
-      "require_performance": "Y",
-      "performance_period": "MONTH",
-      "require_payment_type": null,
-      "min_txn_amount": 10000,
-      "max_eligible_amount": null,
-      "max_benefit_per_txn": null,
-      "monthly_limit": 2000,
-      "limit_group_code": "MYFIT_FOOD",
-      "monthly_count_limit": null,
-      "daily_count_limit": null,
-      "daily_limit": null,
-      "yearly_count_limit": null,
-      "count_group_code": null,
-      "use_shared_limit": "N",
-      "exclude_from_performance": "N",
-      "option_group_code": null,
-      "option_key": null,
-      "description": "#커피. 사이렌오더 포함. 상품권 구입(사이렌오더 선물하기) 및 선불식 충전카드 이용금액, 백화점·대형마트 등 일부 입점 매장의 경우 서비스 제외. 푸드(#외식 #커피) 월 할인한도를 함께 소진한다.",
-      "tier_limits": [
-        {
-          "min_performance_amount": 300000,
-          "monthly_limit": 2000,
-          "benefit_value": null,
-          "_source": "푸드 (#외식 #커피) 30만원 이상 50만원 미만 2천원"
-        },
-        {
-          "min_performance_amount": 500000,
-          "monthly_limit": 5000,
-          "benefit_value": null,
-          "_source": "푸드 (#외식 #커피) 50만원 이상 100만원 미만 5천원"
-        },
-        {
-          "min_performance_amount": 1000000,
-          "monthly_limit": 10000,
-          "benefit_value": null,
-          "_source": "푸드 (#외식 #커피) 100만원 이상 1만원"
-        }
-      ],
-      "exclusions": [],
-      "_source": {
-        "benefit_value": "표의 '청구 할인 5%'는 푸드·편의·생활·쇼핑/배달 네 서비스 행에 걸친 병합 셀이다",
-        "apply_timing": "서비스 구분이 '청구 할인'",
-        "target_merchant_name": "#커피 : 스타벅스(사이렌오더 포함), 커피빈",
-        "min_txn_amount": "* 모든 서비스는 건당 1만원 이상 이용 시 제공",
-        "monthly_limit": "구간별 한도 중 최저 구간 값(30만원 이상 2천원). 실제 적용 한도는 tier_limits가 결정한다",
-        "limit_group_code": "'푸드 (#외식 #커피)' 한 행에 월 할인한도가 하나로 제시된다",
-        "require_performance": "마이핏카드(할인형) 서비스는 전월 이용실적 30만원 이상 시 제공되며",
-        "performance_period": "전월 이용실적 기준 / 전월 1일~말일(승인시점 기준) KB국민 마이핏카드(할인형) 일시불 및 할부 승인(이용)금액",
-        "use_shared_limit": "카드 통합 할인한도 조항이 없고 서비스별 한도만 있다"
-      },
-      "_needs_review": []
-    },
-    {
-      "benefit_name": "푸드(#커피) 커피빈 5% 청구할인",
-      "benefit_kind": "DISCOUNT",
-      "calc_method": "RATE",
-      "benefit_value": 5,
-      "step_count": null,
-      "apply_timing": "BILLED",
-      "target_type": "MERCHANT",
-      "target_category_code": null,
-      "target_merchant_name": "커피빈",
-      "require_performance": "Y",
-      "performance_period": "MONTH",
-      "require_payment_type": null,
-      "min_txn_amount": 10000,
-      "max_eligible_amount": null,
-      "max_benefit_per_txn": null,
-      "monthly_limit": 2000,
-      "limit_group_code": "MYFIT_FOOD",
-      "monthly_count_limit": null,
-      "daily_count_limit": null,
-      "daily_limit": null,
-      "yearly_count_limit": null,
-      "count_group_code": null,
-      "use_shared_limit": "N",
-      "exclude_from_performance": "N",
-      "option_group_code": null,
-      "option_key": null,
-      "description": "#커피. 상품권 구입 및 선불식 충전카드 이용금액, 백화점·대형마트 등 일부 입점 매장의 경우 서비스 제외. 푸드(#외식 #커피) 월 할인한도를 함께 소진한다.",
-      "tier_limits": [
-        {
-          "min_performance_amount": 300000,
-          "monthly_limit": 2000,
-          "benefit_value": null,
-          "_source": "푸드 (#외식 #커피) 30만원 이상 50만원 미만 2천원"
-        },
-        {
-          "min_performance_amount": 500000,
-          "monthly_limit": 5000,
-          "benefit_value": null,
-          "_source": "푸드 (#외식 #커피) 50만원 이상 100만원 미만 5천원"
-        },
-        {
-          "min_performance_amount": 1000000,
-          "monthly_limit": 10000,
-          "benefit_value": null,
-          "_source": "푸드 (#외식 #커피) 100만원 이상 1만원"
-        }
-      ],
-      "exclusions": [],
-      "_source": {
-        "benefit_value": "표의 '청구 할인 5%'는 푸드·편의·생활·쇼핑/배달 네 서비스 행에 걸친 병합 셀이다",
-        "apply_timing": "서비스 구분이 '청구 할인'",
-        "target_merchant_name": "#커피 : 스타벅스(사이렌오더 포함), 커피빈",
-        "min_txn_amount": "* 모든 서비스는 건당 1만원 이상 이용 시 제공",
-        "monthly_limit": "구간별 한도 중 최저 구간 값(30만원 이상 2천원). 실제 적용 한도는 tier_limits가 결정한다",
-        "limit_group_code": "'푸드 (#외식 #커피)' 한 행에 월 할인한도가 하나로 제시된다",
-        "require_performance": "마이핏카드(할인형) 서비스는 전월 이용실적 30만원 이상 시 제공되며",
-        "performance_period": "전월 이용실적 기준 / 전월 1일~말일(승인시점 기준) KB국민 마이핏카드(할인형) 일시불 및 할부 승인(이용)금액",
-        "use_shared_limit": "카드 통합 할인한도 조항이 없고 서비스별 한도만 있다"
-      },
-      "_needs_review": []
-    },
-    {
-      "benefit_name": "편의(#편의점) GS25 5% 청구할인",
-      "benefit_kind": "DISCOUNT",
-      "calc_method": "RATE",
-      "benefit_value": 5,
-      "step_count": null,
-      "apply_timing": "BILLED",
-      "target_type": "MERCHANT",
-      "target_category_code": null,
-      "target_merchant_name": "GS25",
-      "require_performance": "Y",
-      "performance_period": "MONTH",
-      "require_payment_type": null,
-      "min_txn_amount": 10000,
-      "max_eligible_amount": null,
-      "max_benefit_per_txn": null,
-      "monthly_limit": 2000,
-      "limit_group_code": "MYFIT_CONVENIENCE",
-      "monthly_count_limit": null,
-      "daily_count_limit": null,
-      "daily_limit": null,
-      "yearly_count_limit": null,
-      "count_group_code": null,
-      "use_shared_limit": "N",
-      "exclude_from_performance": "N",
-      "option_group_code": null,
-      "option_key": null,
-      "description": "#편의점. 백화점/대형마트 등 일부 입점 매장의 경우 서비스 제외. 편의(#편의점 #뷰티) 월 할인한도를 함께 소진한다.",
-      "tier_limits": [
-        {
-          "min_performance_amount": 300000,
-          "monthly_limit": 2000,
-          "benefit_value": null,
-          "_source": "편의 (#편의점 #뷰티) 30만원 이상 50만원 미만 2천원"
-        },
-        {
-          "min_performance_amount": 500000,
-          "monthly_limit": 5000,
-          "benefit_value": null,
-          "_source": "편의 (#편의점 #뷰티) 50만원 이상 100만원 미만 5천원"
-        },
-        {
-          "min_performance_amount": 1000000,
-          "monthly_limit": 10000,
-          "benefit_value": null,
-          "_source": "편의 (#편의점 #뷰티) 100만원 이상 1만원"
-        }
-      ],
-      "exclusions": [],
-      "_source": {
-        "benefit_value": "표의 '청구 할인 5%'는 푸드·편의·생활·쇼핑/배달 네 서비스 행에 걸친 병합 셀이다",
-        "apply_timing": "서비스 구분이 '청구 할인'",
-        "target_merchant_name": "#편의점 : GS25, CU",
-        "min_txn_amount": "* 모든 서비스는 건당 1만원 이상 이용 시 제공",
-        "monthly_limit": "구간별 한도 중 최저 구간 값(30만원 이상 2천원). 실제 적용 한도는 tier_limits가 결정한다",
-        "limit_group_code": "'편의 (#편의점 #뷰티)' 한 행에 월 할인한도가 하나로 제시된다",
-        "require_performance": "마이핏카드(할인형) 서비스는 전월 이용실적 30만원 이상 시 제공되며",
-        "performance_period": "전월 이용실적 기준 / 전월 1일~말일(승인시점 기준) KB국민 마이핏카드(할인형) 일시불 및 할부 승인(이용)금액",
-        "use_shared_limit": "카드 통합 할인한도 조항이 없고 서비스별 한도만 있다"
-      },
-      "_needs_review": []
-    },
-    {
-      "benefit_name": "편의(#편의점) CU 5% 청구할인",
-      "benefit_kind": "DISCOUNT",
-      "calc_method": "RATE",
-      "benefit_value": 5,
-      "step_count": null,
-      "apply_timing": "BILLED",
-      "target_type": "MERCHANT",
-      "target_category_code": null,
-      "target_merchant_name": "CU",
-      "require_performance": "Y",
-      "performance_period": "MONTH",
-      "require_payment_type": null,
-      "min_txn_amount": 10000,
-      "max_eligible_amount": null,
-      "max_benefit_per_txn": null,
-      "monthly_limit": 2000,
-      "limit_group_code": "MYFIT_CONVENIENCE",
-      "monthly_count_limit": null,
-      "daily_count_limit": null,
-      "daily_limit": null,
-      "yearly_count_limit": null,
-      "count_group_code": null,
-      "use_shared_limit": "N",
-      "exclude_from_performance": "N",
-      "option_group_code": null,
-      "option_key": null,
-      "description": "#편의점. 백화점/대형마트 등 일부 입점 매장의 경우 서비스 제외. 편의(#편의점 #뷰티) 월 할인한도를 함께 소진한다.",
-      "tier_limits": [
-        {
-          "min_performance_amount": 300000,
-          "monthly_limit": 2000,
-          "benefit_value": null,
-          "_source": "편의 (#편의점 #뷰티) 30만원 이상 50만원 미만 2천원"
-        },
-        {
-          "min_performance_amount": 500000,
-          "monthly_limit": 5000,
-          "benefit_value": null,
-          "_source": "편의 (#편의점 #뷰티) 50만원 이상 100만원 미만 5천원"
-        },
-        {
-          "min_performance_amount": 1000000,
-          "monthly_limit": 10000,
-          "benefit_value": null,
-          "_source": "편의 (#편의점 #뷰티) 100만원 이상 1만원"
-        }
-      ],
-      "exclusions": [],
-      "_source": {
-        "benefit_value": "표의 '청구 할인 5%'는 푸드·편의·생활·쇼핑/배달 네 서비스 행에 걸친 병합 셀이다",
-        "apply_timing": "서비스 구분이 '청구 할인'",
-        "target_merchant_name": "#편의점 : GS25, CU",
-        "min_txn_amount": "* 모든 서비스는 건당 1만원 이상 이용 시 제공",
-        "monthly_limit": "구간별 한도 중 최저 구간 값(30만원 이상 2천원). 실제 적용 한도는 tier_limits가 결정한다",
-        "limit_group_code": "'편의 (#편의점 #뷰티)' 한 행에 월 할인한도가 하나로 제시된다",
-        "require_performance": "마이핏카드(할인형) 서비스는 전월 이용실적 30만원 이상 시 제공되며",
-        "performance_period": "전월 이용실적 기준 / 전월 1일~말일(승인시점 기준) KB국민 마이핏카드(할인형) 일시불 및 할부 승인(이용)금액",
-        "use_shared_limit": "카드 통합 할인한도 조항이 없고 서비스별 한도만 있다"
-      },
-      "_needs_review": []
-    },
-    {
-      "benefit_name": "편의(#뷰티) 올리브영 5% 청구할인",
-      "benefit_kind": "DISCOUNT",
-      "calc_method": "RATE",
-      "benefit_value": 5,
-      "step_count": null,
-      "apply_timing": "BILLED",
-      "target_type": "MERCHANT",
-      "target_category_code": null,
-      "target_merchant_name": "올리브영",
-      "require_performance": "Y",
-      "performance_period": "MONTH",
-      "require_payment_type": null,
-      "min_txn_amount": 10000,
-      "max_eligible_amount": null,
-      "max_benefit_per_txn": null,
-      "monthly_limit": 2000,
-      "limit_group_code": "MYFIT_CONVENIENCE",
-      "monthly_count_limit": null,
-      "daily_count_limit": null,
-      "daily_limit": null,
-      "yearly_count_limit": null,
-      "count_group_code": null,
-      "use_shared_limit": "N",
-      "exclude_from_performance": "N",
-      "option_group_code": null,
-      "option_key": null,
-      "description": "#뷰티. 백화점/대형마트 등 일부 입점 매장의 경우 서비스 제외. 편의(#편의점 #뷰티) 월 할인한도를 함께 소진한다.",
-      "tier_limits": [
-        {
-          "min_performance_amount": 300000,
-          "monthly_limit": 2000,
-          "benefit_value": null,
-          "_source": "편의 (#편의점 #뷰티) 30만원 이상 50만원 미만 2천원"
-        },
-        {
-          "min_performance_amount": 500000,
-          "monthly_limit": 5000,
-          "benefit_value": null,
-          "_source": "편의 (#편의점 #뷰티) 50만원 이상 100만원 미만 5천원"
-        },
-        {
-          "min_performance_amount": 1000000,
-          "monthly_limit": 10000,
-          "benefit_value": null,
-          "_source": "편의 (#편의점 #뷰티) 100만원 이상 1만원"
-        }
-      ],
-      "exclusions": [],
-      "_source": {
-        "benefit_value": "표의 '청구 할인 5%'는 푸드·편의·생활·쇼핑/배달 네 서비스 행에 걸친 병합 셀이다",
-        "apply_timing": "서비스 구분이 '청구 할인'",
-        "target_merchant_name": "#뷰티 : 올리브영",
-        "min_txn_amount": "* 모든 서비스는 건당 1만원 이상 이용 시 제공",
-        "monthly_limit": "구간별 한도 중 최저 구간 값(30만원 이상 2천원). 실제 적용 한도는 tier_limits가 결정한다",
-        "limit_group_code": "'편의 (#편의점 #뷰티)' 한 행에 월 할인한도가 하나로 제시된다",
-        "require_performance": "마이핏카드(할인형) 서비스는 전월 이용실적 30만원 이상 시 제공되며",
-        "performance_period": "전월 이용실적 기준 / 전월 1일~말일(승인시점 기준) KB국민 마이핏카드(할인형) 일시불 및 할부 승인(이용)금액",
-        "use_shared_limit": "카드 통합 할인한도 조항이 없고 서비스별 한도만 있다"
-      },
-      "_needs_review": []
-    },
-    {
-      "benefit_name": "생활(#마트) 이마트 5% 청구할인",
-      "benefit_kind": "DISCOUNT",
-      "calc_method": "RATE",
-      "benefit_value": 5,
-      "step_count": null,
-      "apply_timing": "BILLED",
-      "target_type": "MERCHANT",
-      "target_category_code": null,
-      "target_merchant_name": "이마트",
-      "require_performance": "Y",
-      "performance_period": "MONTH",
-      "require_payment_type": null,
-      "min_txn_amount": 10000,
-      "max_eligible_amount": null,
-      "max_benefit_per_txn": null,
-      "monthly_limit": 2000,
-      "limit_group_code": "MYFIT_LIVING",
-      "monthly_count_limit": null,
-      "daily_count_limit": null,
-      "daily_limit": null,
-      "yearly_count_limit": null,
-      "count_group_code": null,
-      "use_shared_limit": "N",
-      "exclude_from_performance": "N",
-      "option_group_code": null,
-      "option_key": null,
-      "description": "#마트. 생활(#마트 #주유 #통신) 월 할인한도를 함께 소진한다.",
-      "tier_limits": [
-        {
-          "min_performance_amount": 300000,
-          "monthly_limit": 2000,
-          "benefit_value": null,
-          "_source": "생활 (#마트 #주유 #통신) 30만원 이상 50만원 미만 2천원"
-        },
-        {
-          "min_performance_amount": 500000,
-          "monthly_limit": 5000,
-          "benefit_value": null,
-          "_source": "생활 (#마트 #주유 #통신) 50만원 이상 100만원 미만 5천원"
-        },
-        {
-          "min_performance_amount": 1000000,
-          "monthly_limit": 10000,
-          "benefit_value": null,
-          "_source": "생활 (#마트 #주유 #통신) 100만원 이상 1만원"
-        }
-      ],
-      "exclusions": [],
-      "_source": {
-        "benefit_value": "표의 '청구 할인 5%'는 푸드·편의·생활·쇼핑/배달 네 서비스 행에 걸친 병합 셀이다",
-        "apply_timing": "서비스 구분이 '청구 할인'",
-        "target_merchant_name": "#마트 : 이마트, 롯데마트",
-        "min_txn_amount": "* 모든 서비스는 건당 1만원 이상 이용 시 제공",
-        "monthly_limit": "구간별 한도 중 최저 구간 값(30만원 이상 2천원). 실제 적용 한도는 tier_limits가 결정한다",
-        "limit_group_code": "'생활 (#마트 #주유 #통신)' 한 행에 월 할인한도가 하나로 제시된다",
-        "require_performance": "마이핏카드(할인형) 서비스는 전월 이용실적 30만원 이상 시 제공되며",
-        "performance_period": "전월 이용실적 기준 / 전월 1일~말일(승인시점 기준) KB국민 마이핏카드(할인형) 일시불 및 할부 승인(이용)금액",
-        "use_shared_limit": "카드 통합 할인한도 조항이 없고 서비스별 한도만 있다"
-      },
-      "_needs_review": []
-    },
-    {
-      "benefit_name": "생활(#마트) 롯데마트 5% 청구할인",
-      "benefit_kind": "DISCOUNT",
-      "calc_method": "RATE",
-      "benefit_value": 5,
-      "step_count": null,
-      "apply_timing": "BILLED",
-      "target_type": "MERCHANT",
-      "target_category_code": null,
-      "target_merchant_name": "롯데마트",
-      "require_performance": "Y",
-      "performance_period": "MONTH",
-      "require_payment_type": null,
-      "min_txn_amount": 10000,
-      "max_eligible_amount": null,
-      "max_benefit_per_txn": null,
-      "monthly_limit": 2000,
-      "limit_group_code": "MYFIT_LIVING",
-      "monthly_count_limit": null,
-      "daily_count_limit": null,
-      "daily_limit": null,
-      "yearly_count_limit": null,
-      "count_group_code": null,
-      "use_shared_limit": "N",
-      "exclude_from_performance": "N",
-      "option_group_code": null,
-      "option_key": null,
-      "description": "#마트. 생활(#마트 #주유 #통신) 월 할인한도를 함께 소진한다.",
-      "tier_limits": [
-        {
-          "min_performance_amount": 300000,
-          "monthly_limit": 2000,
-          "benefit_value": null,
-          "_source": "생활 (#마트 #주유 #통신) 30만원 이상 50만원 미만 2천원"
-        },
-        {
-          "min_performance_amount": 500000,
-          "monthly_limit": 5000,
-          "benefit_value": null,
-          "_source": "생활 (#마트 #주유 #통신) 50만원 이상 100만원 미만 5천원"
-        },
-        {
-          "min_performance_amount": 1000000,
-          "monthly_limit": 10000,
-          "benefit_value": null,
-          "_source": "생활 (#마트 #주유 #통신) 100만원 이상 1만원"
-        }
-      ],
-      "exclusions": [],
-      "_source": {
-        "benefit_value": "표의 '청구 할인 5%'는 푸드·편의·생활·쇼핑/배달 네 서비스 행에 걸친 병합 셀이다",
-        "apply_timing": "서비스 구분이 '청구 할인'",
-        "target_merchant_name": "#마트 : 이마트, 롯데마트",
-        "min_txn_amount": "* 모든 서비스는 건당 1만원 이상 이용 시 제공",
-        "monthly_limit": "구간별 한도 중 최저 구간 값(30만원 이상 2천원). 실제 적용 한도는 tier_limits가 결정한다",
-        "limit_group_code": "'생활 (#마트 #주유 #통신)' 한 행에 월 할인한도가 하나로 제시된다",
-        "require_performance": "마이핏카드(할인형) 서비스는 전월 이용실적 30만원 이상 시 제공되며",
-        "performance_period": "전월 이용실적 기준 / 전월 1일~말일(승인시점 기준) KB국민 마이핏카드(할인형) 일시불 및 할부 승인(이용)금액",
-        "use_shared_limit": "카드 통합 할인한도 조항이 없고 서비스별 한도만 있다"
-      },
-      "_needs_review": []
-    },
-    {
-      "benefit_name": "생활(#주유) SK에너지 5% 청구할인",
-      "benefit_kind": "DISCOUNT",
-      "calc_method": "RATE",
-      "benefit_value": 5,
-      "step_count": null,
-      "apply_timing": "BILLED",
-      "target_type": "MERCHANT",
-      "target_category_code": null,
-      "target_merchant_name": "SK에너지",
-      "require_performance": "Y",
-      "performance_period": "MONTH",
-      "require_payment_type": null,
-      "min_txn_amount": 10000,
-      "max_eligible_amount": null,
-      "max_benefit_per_txn": null,
-      "monthly_limit": 2000,
-      "limit_group_code": "MYFIT_LIVING",
-      "monthly_count_limit": null,
-      "daily_count_limit": null,
-      "daily_limit": null,
-      "yearly_count_limit": null,
-      "count_group_code": null,
-      "use_shared_limit": "N",
-      "exclude_from_performance": "N",
-      "option_group_code": null,
-      "option_key": null,
-      "description": "#주유. 충전소 포함. 생활(#마트 #주유 #통신) 월 할인한도를 함께 소진한다.",
-      "tier_limits": [
-        {
-          "min_performance_amount": 300000,
-          "monthly_limit": 2000,
-          "benefit_value": null,
-          "_source": "생활 (#마트 #주유 #통신) 30만원 이상 50만원 미만 2천원"
-        },
-        {
-          "min_performance_amount": 500000,
-          "monthly_limit": 5000,
-          "benefit_value": null,
-          "_source": "생활 (#마트 #주유 #통신) 50만원 이상 100만원 미만 5천원"
-        },
-        {
-          "min_performance_amount": 1000000,
-          "monthly_limit": 10000,
-          "benefit_value": null,
-          "_source": "생활 (#마트 #주유 #통신) 100만원 이상 1만원"
-        }
-      ],
-      "exclusions": [],
-      "_source": {
-        "benefit_value": "표의 '청구 할인 5%'는 푸드·편의·생활·쇼핑/배달 네 서비스 행에 걸친 병합 셀이다",
-        "apply_timing": "서비스 구분이 '청구 할인'",
-        "target_merchant_name": "#주유 : SK에너지, GS칼텍스 (충전소 포함)",
-        "min_txn_amount": "* 모든 서비스는 건당 1만원 이상 이용 시 제공",
-        "monthly_limit": "구간별 한도 중 최저 구간 값(30만원 이상 2천원). 실제 적용 한도는 tier_limits가 결정한다",
-        "limit_group_code": "'생활 (#마트 #주유 #통신)' 한 행에 월 할인한도가 하나로 제시된다",
-        "require_performance": "마이핏카드(할인형) 서비스는 전월 이용실적 30만원 이상 시 제공되며",
-        "performance_period": "전월 이용실적 기준 / 전월 1일~말일(승인시점 기준) KB국민 마이핏카드(할인형) 일시불 및 할부 승인(이용)금액",
-        "use_shared_limit": "카드 통합 할인한도 조항이 없고 서비스별 한도만 있다"
-      },
-      "_needs_review": []
-    },
-    {
-      "benefit_name": "생활(#주유) GS칼텍스 5% 청구할인",
-      "benefit_kind": "DISCOUNT",
-      "calc_method": "RATE",
-      "benefit_value": 5,
-      "step_count": null,
-      "apply_timing": "BILLED",
-      "target_type": "MERCHANT",
-      "target_category_code": null,
-      "target_merchant_name": "GS칼텍스",
-      "require_performance": "Y",
-      "performance_period": "MONTH",
-      "require_payment_type": null,
-      "min_txn_amount": 10000,
-      "max_eligible_amount": null,
-      "max_benefit_per_txn": null,
-      "monthly_limit": 2000,
-      "limit_group_code": "MYFIT_LIVING",
-      "monthly_count_limit": null,
-      "daily_count_limit": null,
-      "daily_limit": null,
-      "yearly_count_limit": null,
-      "count_group_code": null,
-      "use_shared_limit": "N",
-      "exclude_from_performance": "N",
-      "option_group_code": null,
-      "option_key": null,
-      "description": "#주유. 충전소 포함. 생활(#마트 #주유 #통신) 월 할인한도를 함께 소진한다.",
-      "tier_limits": [
-        {
-          "min_performance_amount": 300000,
-          "monthly_limit": 2000,
-          "benefit_value": null,
-          "_source": "생활 (#마트 #주유 #통신) 30만원 이상 50만원 미만 2천원"
-        },
-        {
-          "min_performance_amount": 500000,
-          "monthly_limit": 5000,
-          "benefit_value": null,
-          "_source": "생활 (#마트 #주유 #통신) 50만원 이상 100만원 미만 5천원"
-        },
-        {
-          "min_performance_amount": 1000000,
-          "monthly_limit": 10000,
-          "benefit_value": null,
-          "_source": "생활 (#마트 #주유 #통신) 100만원 이상 1만원"
-        }
-      ],
-      "exclusions": [],
-      "_source": {
-        "benefit_value": "표의 '청구 할인 5%'는 푸드·편의·생활·쇼핑/배달 네 서비스 행에 걸친 병합 셀이다",
-        "apply_timing": "서비스 구분이 '청구 할인'",
-        "target_merchant_name": "#주유 : SK에너지, GS칼텍스 (충전소 포함)",
-        "min_txn_amount": "* 모든 서비스는 건당 1만원 이상 이용 시 제공",
-        "monthly_limit": "구간별 한도 중 최저 구간 값(30만원 이상 2천원). 실제 적용 한도는 tier_limits가 결정한다",
-        "limit_group_code": "'생활 (#마트 #주유 #통신)' 한 행에 월 할인한도가 하나로 제시된다",
-        "require_performance": "마이핏카드(할인형) 서비스는 전월 이용실적 30만원 이상 시 제공되며",
-        "performance_period": "전월 이용실적 기준 / 전월 1일~말일(승인시점 기준) KB국민 마이핏카드(할인형) 일시불 및 할부 승인(이용)금액",
-        "use_shared_limit": "카드 통합 할인한도 조항이 없고 서비스별 한도만 있다"
-      },
-      "_needs_review": []
-    },
-    {
-      "benefit_name": "생활(#통신) SKT 이동통신 자동납부 5% 청구할인",
-      "benefit_kind": "DISCOUNT",
-      "calc_method": "RATE",
-      "benefit_value": 5,
-      "step_count": null,
-      "apply_timing": "BILLED",
-      "target_type": "MERCHANT",
-      "target_category_code": null,
-      "target_merchant_name": "SKT",
-      "require_performance": "Y",
-      "performance_period": "MONTH",
-      "require_payment_type": null,
-      "min_txn_amount": 10000,
-      "max_eligible_amount": null,
-      "max_benefit_per_txn": null,
-      "monthly_limit": 2000,
-      "limit_group_code": "MYFIT_LIVING",
-      "monthly_count_limit": null,
-      "daily_count_limit": null,
-      "daily_limit": null,
-      "yearly_count_limit": null,
-      "count_group_code": null,
-      "use_shared_limit": "N",
-      "exclude_from_performance": "N",
-      "option_group_code": null,
-      "option_key": null,
-      "description": "#통신. 이동통신 자동납부 건에 한한다. 알뜰폰 이용금액은 서비스 제외. 생활(#마트 #주유 #통신) 월 할인한도를 함께 소진한다.",
-      "tier_limits": [
-        {
-          "min_performance_amount": 300000,
-          "monthly_limit": 2000,
-          "benefit_value": null,
-          "_source": "생활 (#마트 #주유 #통신) 30만원 이상 50만원 미만 2천원"
-        },
-        {
-          "min_performance_amount": 500000,
-          "monthly_limit": 5000,
-          "benefit_value": null,
-          "_source": "생활 (#마트 #주유 #통신) 50만원 이상 100만원 미만 5천원"
-        },
-        {
-          "min_performance_amount": 1000000,
-          "monthly_limit": 10000,
-          "benefit_value": null,
-          "_source": "생활 (#마트 #주유 #통신) 100만원 이상 1만원"
-        }
-      ],
-      "exclusions": [
-        {
-          "exclusion_type": "MERCHANT",
-          "exclusion_value": "알뜰폰",
-          "_source": "#통신 : SKT/KT/LG U+ 이동통신 자동납부 * 알뜰폰 이용금액 서비스 제외"
-        }
-      ],
-      "_source": {
-        "benefit_value": "표의 '청구 할인 5%'는 푸드·편의·생활·쇼핑/배달 네 서비스 행에 걸친 병합 셀이다",
-        "apply_timing": "서비스 구분이 '청구 할인'",
-        "target_merchant_name": "#통신 : SKT/KT/LG U+ 이동통신 자동납부",
-        "min_txn_amount": "* 모든 서비스는 건당 1만원 이상 이용 시 제공",
-        "monthly_limit": "구간별 한도 중 최저 구간 값(30만원 이상 2천원). 실제 적용 한도는 tier_limits가 결정한다",
-        "limit_group_code": "'생활 (#마트 #주유 #통신)' 한 행에 월 할인한도가 하나로 제시된다",
-        "require_performance": "마이핏카드(할인형) 서비스는 전월 이용실적 30만원 이상 시 제공되며",
-        "performance_period": "전월 이용실적 기준 / 전월 1일~말일(승인시점 기준) KB국민 마이핏카드(할인형) 일시불 및 할부 승인(이용)금액",
-        "use_shared_limit": "카드 통합 할인한도 조항이 없고 서비스별 한도만 있다"
-      },
-      "_needs_review": []
-    },
-    {
-      "benefit_name": "생활(#통신) KT 이동통신 자동납부 5% 청구할인",
-      "benefit_kind": "DISCOUNT",
-      "calc_method": "RATE",
-      "benefit_value": 5,
-      "step_count": null,
-      "apply_timing": "BILLED",
-      "target_type": "MERCHANT",
-      "target_category_code": null,
-      "target_merchant_name": "KT",
-      "require_performance": "Y",
-      "performance_period": "MONTH",
-      "require_payment_type": null,
-      "min_txn_amount": 10000,
-      "max_eligible_amount": null,
-      "max_benefit_per_txn": null,
-      "monthly_limit": 2000,
-      "limit_group_code": "MYFIT_LIVING",
-      "monthly_count_limit": null,
-      "daily_count_limit": null,
-      "daily_limit": null,
-      "yearly_count_limit": null,
-      "count_group_code": null,
-      "use_shared_limit": "N",
-      "exclude_from_performance": "N",
-      "option_group_code": null,
-      "option_key": null,
-      "description": "#통신. 이동통신 자동납부 건에 한한다. 알뜰폰 이용금액은 서비스 제외. 생활(#마트 #주유 #통신) 월 할인한도를 함께 소진한다.",
-      "tier_limits": [
-        {
-          "min_performance_amount": 300000,
-          "monthly_limit": 2000,
-          "benefit_value": null,
-          "_source": "생활 (#마트 #주유 #통신) 30만원 이상 50만원 미만 2천원"
-        },
-        {
-          "min_performance_amount": 500000,
-          "monthly_limit": 5000,
-          "benefit_value": null,
-          "_source": "생활 (#마트 #주유 #통신) 50만원 이상 100만원 미만 5천원"
-        },
-        {
-          "min_performance_amount": 1000000,
-          "monthly_limit": 10000,
-          "benefit_value": null,
-          "_source": "생활 (#마트 #주유 #통신) 100만원 이상 1만원"
-        }
-      ],
-      "exclusions": [
-        {
-          "exclusion_type": "MERCHANT",
-          "exclusion_value": "알뜰폰",
-          "_source": "#통신 : SKT/KT/LG U+ 이동통신 자동납부 * 알뜰폰 이용금액 서비스 제외"
-        }
-      ],
-      "_source": {
-        "benefit_value": "표의 '청구 할인 5%'는 푸드·편의·생활·쇼핑/배달 네 서비스 행에 걸친 병합 셀이다",
-        "apply_timing": "서비스 구분이 '청구 할인'",
-        "target_merchant_name": "#통신 : SKT/KT/LG U+ 이동통신 자동납부",
-        "min_txn_amount": "* 모든 서비스는 건당 1만원 이상 이용 시 제공",
-        "monthly_limit": "구간별 한도 중 최저 구간 값(30만원 이상 2천원). 실제 적용 한도는 tier_limits가 결정한다",
-        "limit_group_code": "'생활 (#마트 #주유 #통신)' 한 행에 월 할인한도가 하나로 제시된다",
-        "require_performance": "마이핏카드(할인형) 서비스는 전월 이용실적 30만원 이상 시 제공되며",
-        "performance_period": "전월 이용실적 기준 / 전월 1일~말일(승인시점 기준) KB국민 마이핏카드(할인형) 일시불 및 할부 승인(이용)금액",
-        "use_shared_limit": "카드 통합 할인한도 조항이 없고 서비스별 한도만 있다"
-      },
-      "_needs_review": []
-    },
-    {
-      "benefit_name": "생활(#통신) LG U+ 이동통신 자동납부 5% 청구할인",
-      "benefit_kind": "DISCOUNT",
-      "calc_method": "RATE",
-      "benefit_value": 5,
-      "step_count": null,
-      "apply_timing": "BILLED",
-      "target_type": "MERCHANT",
-      "target_category_code": null,
-      "target_merchant_name": "LG U+",
-      "require_performance": "Y",
-      "performance_period": "MONTH",
-      "require_payment_type": null,
-      "min_txn_amount": 10000,
-      "max_eligible_amount": null,
-      "max_benefit_per_txn": null,
-      "monthly_limit": 2000,
-      "limit_group_code": "MYFIT_LIVING",
-      "monthly_count_limit": null,
-      "daily_count_limit": null,
-      "daily_limit": null,
-      "yearly_count_limit": null,
-      "count_group_code": null,
-      "use_shared_limit": "N",
-      "exclude_from_performance": "N",
-      "option_group_code": null,
-      "option_key": null,
-      "description": "#통신. 이동통신 자동납부 건에 한한다. 알뜰폰 이용금액은 서비스 제외. 생활(#마트 #주유 #통신) 월 할인한도를 함께 소진한다.",
-      "tier_limits": [
-        {
-          "min_performance_amount": 300000,
-          "monthly_limit": 2000,
-          "benefit_value": null,
-          "_source": "생활 (#마트 #주유 #통신) 30만원 이상 50만원 미만 2천원"
-        },
-        {
-          "min_performance_amount": 500000,
-          "monthly_limit": 5000,
-          "benefit_value": null,
-          "_source": "생활 (#마트 #주유 #통신) 50만원 이상 100만원 미만 5천원"
-        },
-        {
-          "min_performance_amount": 1000000,
-          "monthly_limit": 10000,
-          "benefit_value": null,
-          "_source": "생활 (#마트 #주유 #통신) 100만원 이상 1만원"
-        }
-      ],
-      "exclusions": [
-        {
-          "exclusion_type": "MERCHANT",
-          "exclusion_value": "알뜰폰",
-          "_source": "#통신 : SKT/KT/LG U+ 이동통신 자동납부 * 알뜰폰 이용금액 서비스 제외"
-        }
-      ],
-      "_source": {
-        "benefit_value": "표의 '청구 할인 5%'는 푸드·편의·생활·쇼핑/배달 네 서비스 행에 걸친 병합 셀이다",
-        "apply_timing": "서비스 구분이 '청구 할인'",
-        "target_merchant_name": "#통신 : SKT/KT/LG U+ 이동통신 자동납부",
-        "min_txn_amount": "* 모든 서비스는 건당 1만원 이상 이용 시 제공",
-        "monthly_limit": "구간별 한도 중 최저 구간 값(30만원 이상 2천원). 실제 적용 한도는 tier_limits가 결정한다",
-        "limit_group_code": "'생활 (#마트 #주유 #통신)' 한 행에 월 할인한도가 하나로 제시된다",
-        "require_performance": "마이핏카드(할인형) 서비스는 전월 이용실적 30만원 이상 시 제공되며",
-        "performance_period": "전월 이용실적 기준 / 전월 1일~말일(승인시점 기준) KB국민 마이핏카드(할인형) 일시불 및 할부 승인(이용)금액",
-        "use_shared_limit": "카드 통합 할인한도 조항이 없고 서비스별 한도만 있다"
-      },
-      "_needs_review": []
-    },
-    {
-      "benefit_name": "쇼핑/배달 G마켓 5% 청구할인",
-      "benefit_kind": "DISCOUNT",
-      "calc_method": "RATE",
-      "benefit_value": 5,
-      "step_count": null,
-      "apply_timing": "BILLED",
-      "target_type": "MERCHANT",
-      "target_category_code": null,
-      "target_merchant_name": "G마켓",
-      "require_performance": "Y",
-      "performance_period": "MONTH",
-      "require_payment_type": null,
-      "min_txn_amount": 10000,
-      "max_eligible_amount": null,
-      "max_benefit_per_txn": null,
-      "monthly_limit": 1000,
-      "limit_group_code": "MYFIT_SHOPPING_DELIVERY",
-      "monthly_count_limit": null,
-      "daily_count_limit": null,
-      "daily_limit": null,
-      "yearly_count_limit": null,
-      "count_group_code": null,
-      "use_shared_limit": "N",
-      "exclude_from_performance": "N",
-      "option_group_code": null,
-      "option_key": null,
-      "description": "쇼핑/배달. 상품권, 여행, 항공권, 티켓, 도서 이용금액은 서비스 제외. 쇼핑/배달 월 할인한도를 함께 소진한다.",
-      "tier_limits": [
-        {
-          "min_performance_amount": 300000,
-          "monthly_limit": 1000,
-          "benefit_value": null,
-          "_source": "쇼핑/배달 30만원 이상 50만원 미만 1천원"
-        },
-        {
-          "min_performance_amount": 500000,
-          "monthly_limit": 3000,
-          "benefit_value": null,
-          "_source": "쇼핑/배달 50만원 이상 100만원 미만 3천원"
-        },
-        {
-          "min_performance_amount": 1000000,
-          "monthly_limit": 5000,
-          "benefit_value": null,
-          "_source": "쇼핑/배달 100만원 이상 5천원"
-        }
-      ],
-      "exclusions": [],
-      "_source": {
-        "benefit_value": "표의 '청구 할인 5%'는 푸드·편의·생활·쇼핑/배달 네 서비스 행에 걸친 병합 셀이다",
-        "apply_timing": "서비스 구분이 '청구 할인'",
-        "target_merchant_name": "쇼핑/배달 : G마켓, 쿠팡, 배달의민족",
-        "min_txn_amount": "* 모든 서비스는 건당 1만원 이상 이용 시 제공",
-        "monthly_limit": "구간별 한도 중 최저 구간 값(30만원 이상 1천원). 실제 적용 한도는 tier_limits가 결정한다",
-        "limit_group_code": "'쇼핑/배달' 한 행에 월 할인한도가 하나로 제시된다",
-        "require_performance": "마이핏카드(할인형) 서비스는 전월 이용실적 30만원 이상 시 제공되며",
-        "performance_period": "전월 이용실적 기준 / 전월 1일~말일(승인시점 기준) KB국민 마이핏카드(할인형) 일시불 및 할부 승인(이용)금액",
-        "use_shared_limit": "카드 통합 할인한도 조항이 없고 서비스별 한도만 있다"
-      },
-      "_needs_review": []
-    },
-    {
-      "benefit_name": "쇼핑/배달 쿠팡 5% 청구할인",
-      "benefit_kind": "DISCOUNT",
-      "calc_method": "RATE",
-      "benefit_value": 5,
-      "step_count": null,
-      "apply_timing": "BILLED",
-      "target_type": "MERCHANT",
-      "target_category_code": null,
-      "target_merchant_name": "쿠팡",
-      "require_performance": "Y",
-      "performance_period": "MONTH",
-      "require_payment_type": null,
-      "min_txn_amount": 10000,
-      "max_eligible_amount": null,
-      "max_benefit_per_txn": null,
-      "monthly_limit": 1000,
-      "limit_group_code": "MYFIT_SHOPPING_DELIVERY",
-      "monthly_count_limit": null,
-      "daily_count_limit": null,
-      "daily_limit": null,
-      "yearly_count_limit": null,
-      "count_group_code": null,
-      "use_shared_limit": "N",
-      "exclude_from_performance": "N",
-      "option_group_code": null,
-      "option_key": null,
-      "description": "쇼핑/배달. 상품권, 여행, 항공권, 티켓, 도서 이용금액은 서비스 제외. 쇼핑/배달 월 할인한도를 함께 소진한다.",
-      "tier_limits": [
-        {
-          "min_performance_amount": 300000,
-          "monthly_limit": 1000,
-          "benefit_value": null,
-          "_source": "쇼핑/배달 30만원 이상 50만원 미만 1천원"
-        },
-        {
-          "min_performance_amount": 500000,
-          "monthly_limit": 3000,
-          "benefit_value": null,
-          "_source": "쇼핑/배달 50만원 이상 100만원 미만 3천원"
-        },
-        {
-          "min_performance_amount": 1000000,
-          "monthly_limit": 5000,
-          "benefit_value": null,
-          "_source": "쇼핑/배달 100만원 이상 5천원"
-        }
-      ],
-      "exclusions": [],
-      "_source": {
-        "benefit_value": "표의 '청구 할인 5%'는 푸드·편의·생활·쇼핑/배달 네 서비스 행에 걸친 병합 셀이다",
-        "apply_timing": "서비스 구분이 '청구 할인'",
-        "target_merchant_name": "쇼핑/배달 : G마켓, 쿠팡, 배달의민족",
-        "min_txn_amount": "* 모든 서비스는 건당 1만원 이상 이용 시 제공",
-        "monthly_limit": "구간별 한도 중 최저 구간 값(30만원 이상 1천원). 실제 적용 한도는 tier_limits가 결정한다",
-        "limit_group_code": "'쇼핑/배달' 한 행에 월 할인한도가 하나로 제시된다",
-        "require_performance": "마이핏카드(할인형) 서비스는 전월 이용실적 30만원 이상 시 제공되며",
-        "performance_period": "전월 이용실적 기준 / 전월 1일~말일(승인시점 기준) KB국민 마이핏카드(할인형) 일시불 및 할부 승인(이용)금액",
-        "use_shared_limit": "카드 통합 할인한도 조항이 없고 서비스별 한도만 있다"
-      },
-      "_needs_review": []
-    },
-    {
-      "benefit_name": "쇼핑/배달 배달의민족 5% 청구할인",
-      "benefit_kind": "DISCOUNT",
-      "calc_method": "RATE",
-      "benefit_value": 5,
-      "step_count": null,
-      "apply_timing": "BILLED",
-      "target_type": "MERCHANT",
-      "target_category_code": null,
-      "target_merchant_name": "배달의민족",
-      "require_performance": "Y",
-      "performance_period": "MONTH",
-      "require_payment_type": null,
-      "min_txn_amount": 10000,
-      "max_eligible_amount": null,
-      "max_benefit_per_txn": null,
-      "monthly_limit": 1000,
-      "limit_group_code": "MYFIT_SHOPPING_DELIVERY",
-      "monthly_count_limit": null,
-      "daily_count_limit": null,
-      "daily_limit": null,
-      "yearly_count_limit": null,
-      "count_group_code": null,
-      "use_shared_limit": "N",
-      "exclude_from_performance": "N",
-      "option_group_code": null,
-      "option_key": null,
-      "description": "쇼핑/배달. 배달의민족은 '결제수단 > 다른 결제수단 > 신용/체크 결제'를 통해 결제 시에만 서비스 제공. 쇼핑/배달 월 할인한도를 함께 소진한다.",
-      "tier_limits": [
-        {
-          "min_performance_amount": 300000,
-          "monthly_limit": 1000,
-          "benefit_value": null,
-          "_source": "쇼핑/배달 30만원 이상 50만원 미만 1천원"
-        },
-        {
-          "min_performance_amount": 500000,
-          "monthly_limit": 3000,
-          "benefit_value": null,
-          "_source": "쇼핑/배달 50만원 이상 100만원 미만 3천원"
-        },
-        {
-          "min_performance_amount": 1000000,
-          "monthly_limit": 5000,
-          "benefit_value": null,
-          "_source": "쇼핑/배달 100만원 이상 5천원"
-        }
-      ],
-      "exclusions": [],
-      "_source": {
-        "benefit_value": "표의 '청구 할인 5%'는 푸드·편의·생활·쇼핑/배달 네 서비스 행에 걸친 병합 셀이다",
-        "apply_timing": "서비스 구분이 '청구 할인'",
-        "target_merchant_name": "쇼핑/배달 : G마켓, 쿠팡, 배달의민족",
-        "min_txn_amount": "* 모든 서비스는 건당 1만원 이상 이용 시 제공",
-        "monthly_limit": "구간별 한도 중 최저 구간 값(30만원 이상 1천원). 실제 적용 한도는 tier_limits가 결정한다",
-        "limit_group_code": "'쇼핑/배달' 한 행에 월 할인한도가 하나로 제시된다",
-        "require_performance": "마이핏카드(할인형) 서비스는 전월 이용실적 30만원 이상 시 제공되며",
-        "performance_period": "전월 이용실적 기준 / 전월 1일~말일(승인시점 기준) KB국민 마이핏카드(할인형) 일시불 및 할부 승인(이용)금액",
-        "use_shared_limit": "카드 통합 할인한도 조항이 없고 서비스별 한도만 있다"
-      },
-      "_needs_review": []
+     "min_performance_amount": 1000000,
+     "monthly_limit": 10000,
+     "benefit_value": null,
+     "_source": "푸드 (#외식 #커피) 100만원 이상 1만원"
     }
-  ],
-  "unmapped": [
+   ],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "표의 '청구 할인 5%'는 푸드·편의·생활·쇼핑/배달 네 서비스 행에 걸친 병합 셀이다",
+    "apply_timing": "서비스 구분이 '청구 할인'",
+    "target_merchant_name": "#커피 : 스타벅스(사이렌오더 포함), 커피빈",
+    "min_txn_amount": "* 모든 서비스는 건당 1만원 이상 이용 시 제공",
+    "monthly_limit": "구간별 한도 중 최저 구간 값(30만원 이상 2천원). 실제 적용 한도는 tier_limits가 결정한다",
+    "limit_group_code": "'푸드 (#외식 #커피)' 한 행에 월 할인한도가 하나로 제시된다",
+    "require_performance": "마이핏카드(할인형) 서비스는 전월 이용실적 30만원 이상 시 제공되며",
+    "performance_period": "전월 이용실적 기준 / 전월 1일~말일(승인시점 기준) KB국민 마이핏카드(할인형) 일시불 및 할부 승인(이용)금액",
+    "use_shared_limit": "카드 통합 할인한도 조항이 없고 서비스별 한도만 있다"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "편의(#편의점) GS25 5% 청구할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 5,
+   "step_count": null,
+   "apply_timing": "BILLED",
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": "GS25",
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": 10000,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "monthly_limit": 2000,
+   "limit_group_code": "MYFIT_CONVENIENCE",
+   "monthly_count_limit": null,
+   "daily_count_limit": null,
+   "daily_limit": null,
+   "yearly_count_limit": null,
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "#편의점. 백화점/대형마트 등 일부 입점 매장의 경우 서비스 제외. 편의(#편의점 #뷰티) 월 할인한도를 함께 소진한다.",
+   "tier_limits": [
     {
-      "text": "* 해시태그(#) 카테고리는 알파원 오토체인지 설정 가능합니다. (설정: KB Pay > 알파원카드 관리) (알파원 오토체인지 : 해시태그별로 사전 설정한 결제카드로 자동 변환되어 결제되는 기능)",
-      "why": "해시태그별로 어느 카드로 결제할지 정하는 결제 앱 기능이지 혜택을 고르는 조항이 아니다. 푸드·편의·생활·쇼핑/배달 네 서비스는 선택 없이 모두 제공되므로 option_group_code·option_key로 옮길 대상이 없다"
+     "min_performance_amount": 300000,
+     "monthly_limit": 2000,
+     "benefit_value": null,
+     "_source": "편의 (#편의점 #뷰티) 30만원 이상 50만원 미만 2천원"
     },
     {
-      "text": "쇼핑/배달 : G마켓, 쿠팡, 배달의민족 * 쿠팡, G마켓 : 상품권, 여행, 항공권, 티켓, 도서 이용금액 서비스 제외",
-      "why": "상품권을 뺀 여행·항공권·티켓·도서는 가맹점 안에서 파는 상품 분류다. 표준 카테고리 코드로 옮기면 그 카테고리의 다른 가맹점까지 걸리므로 상품 단위 조건(범위 밖)으로 남긴다"
+     "min_performance_amount": 500000,
+     "monthly_limit": 5000,
+     "benefit_value": null,
+     "_source": "편의 (#편의점 #뷰티) 50만원 이상 100만원 미만 5천원"
     },
     {
-      "text": "* 배달의민족 : '결제수단 > 다른 결제수단> 신용/체크 결제'를 통해 결제 시 서비스 제공",
-      "why": "가맹점 앱 안의 결제 경로(채널) 조건이라 범위 밖이다. 결제수단 코드로도 표현되지 않는다"
-    },
-    {
-      "text": "• KB국민 마이핏카드(할인형) 서비스는 KB국민카드 업종분류 기준, 지정 업종에 한하여 제공됩니다.",
-      "why": "카드사 내부 업종분류 기준이라 표준 카테고리 코드로 옮길 수 없다"
-    },
-    {
-      "text": "• 본인회원 기준으로 월간 할인한도가 제공되며, 할인한도 산정기준은 매월 1일~말일까지(승인시점 기준)입니다.",
-      "why": "한도 집계 주기와 기준시점 규약이라 혜택 행이 아니라 엔진 동작 규칙이다"
-    },
-    {
-      "text": "• 이용 순서대로 월간 한도 내 할인되며, 잔여한도는 이월되지 않습니다.",
-      "why": "한도 소진 순서와 이월 여부 규약이라 데이터 컬럼이 아니라 엔진 동작 규칙이다"
-    },
-    {
-      "text": "• 할인 받은 이용건을 취소할 경우 전표가 실시간 접수되지 않아 할인한도가 즉시 복원되지 않을 수 있습니다.",
-      "why": "취소 시 한도 복원 시점 규정이라 혜택 규칙으로 담을 필드가 없다"
-    },
-    {
-      "text": "• KB국민 마이핏카드(할인형)는 가족카드 발급이 불가합니다.",
-      "why": "발급 조건이라 혜택 스키마 대상이 아니다"
-    },
-    {
-      "text": "'KB국민 마이핏카드(할인형)'는 실물 없는 모바일 단독카드로 KB Pay에 카드 정보를 등록하여 모바일로 이용 가능한 신용카드입니다.(카드 실물 발급 불가)",
-      "why": "발급 형태 제약이다. annual_fees의 issue_type=MOBILE로 일부만 드러나고 '실물 발급 불가'라는 제약 자체를 담을 필드가 없다"
-    },
-    {
-      "text": "• 해외 이용 시(해외사이트 거래 포함) 미화(USD)기준 거래미화금액에 접수일의(KB국민은행)최초고시 전신환매도율을 적용한 후, 국제브랜드사가 부과하는 국제브랜드 수수료(Master 1%)와 KB국민카드가 부과하는 해외서비스수수료(0.25%)를 포함하여 원화로 청구됩니다.",
-      "why": "해외 결제 수수료 산출식이라 범위 밖이다"
-    },
-    {
-      "text": "• 초회/차기년도 연회비 면제조건은 없습니다.",
-      "why": "연회비 면제 조건을 담는 필드가 없다"
+     "min_performance_amount": 1000000,
+     "monthly_limit": 10000,
+     "benefit_value": null,
+     "_source": "편의 (#편의점 #뷰티) 100만원 이상 1만원"
     }
-  ],
-  "_schema_gap": [
+   ],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "표의 '청구 할인 5%'는 푸드·편의·생활·쇼핑/배달 네 서비스 행에 걸친 병합 셀이다",
+    "apply_timing": "서비스 구분이 '청구 할인'",
+    "target_merchant_name": "#편의점 : GS25, CU",
+    "min_txn_amount": "* 모든 서비스는 건당 1만원 이상 이용 시 제공",
+    "monthly_limit": "구간별 한도 중 최저 구간 값(30만원 이상 2천원). 실제 적용 한도는 tier_limits가 결정한다",
+    "limit_group_code": "'편의 (#편의점 #뷰티)' 한 행에 월 할인한도가 하나로 제시된다",
+    "require_performance": "마이핏카드(할인형) 서비스는 전월 이용실적 30만원 이상 시 제공되며",
+    "performance_period": "전월 이용실적 기준 / 전월 1일~말일(승인시점 기준) KB국민 마이핏카드(할인형) 일시불 및 할부 승인(이용)금액",
+    "use_shared_limit": "카드 통합 할인한도 조항이 없고 서비스별 한도만 있다"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "편의(#편의점) CU 5% 청구할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 5,
+   "step_count": null,
+   "apply_timing": "BILLED",
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": "CU",
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": 10000,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "monthly_limit": 2000,
+   "limit_group_code": "MYFIT_CONVENIENCE",
+   "monthly_count_limit": null,
+   "daily_count_limit": null,
+   "daily_limit": null,
+   "yearly_count_limit": null,
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "#편의점. 백화점/대형마트 등 일부 입점 매장의 경우 서비스 제외. 편의(#편의점 #뷰티) 월 할인한도를 함께 소진한다.",
+   "tier_limits": [
     {
-      "text": "* 최초 카드 사용등록일로부터 다음달 말일(실적 유예기간)까지 KB국민 마이핏카드(할인형) 실적이 없는 경우에도 1구간 (30만원 이상) 서비스가 제공됩니다.",
-      "missing": "user_card의 사용등록일(발급일), 실적 유예기간과 유예 시 적용할 구간",
-      "why": "카드 등록 시점 정보가 없어 유예기간인지 판정할 수 없고, 유예 중에 어느 구간을 적용할지 지정할 자리도 없다"
+     "min_performance_amount": 300000,
+     "monthly_limit": 2000,
+     "benefit_value": null,
+     "_source": "편의 (#편의점 #뷰티) 30만원 이상 50만원 미만 2천원"
     },
     {
-      "text": "#외식 : VIPS, 아웃백 * 백화점/대형마트 등 일부 입점 매장의 경우 서비스 제외",
-      "missing": "가맹점의 입점 위치(백화점·대형마트 내 매장) 구분",
-      "why": "같은 브랜드라도 입점 위치에 따라 적용이 갈리는데 merchant가 브랜드 단위라 위치를 표현할 축이 없다"
+     "min_performance_amount": 500000,
+     "monthly_limit": 5000,
+     "benefit_value": null,
+     "_source": "편의 (#편의점 #뷰티) 50만원 이상 100만원 미만 5천원"
     },
     {
-      "text": "#커피 : 스타벅스(사이렌오더 포함), 커피빈 * 상품권 구입(사이렌오더 선물하기) 및 선불식 충전카드 이용금액, 백화점, 대형마트 등 일부 입점 매장의 경우 서비스 제외",
-      "missing": "가맹점의 입점 위치(백화점·대형마트 내 매장) 구분",
-      "why": "같은 브랜드라도 입점 위치에 따라 적용이 갈리는데 merchant가 브랜드 단위라 위치를 표현할 축이 없다. 상품권·선불충전 부분은 card_exclusions의 GIFT_CARD로 담았다"
-    },
-    {
-      "text": "#편의점 : GS25, CU * 백화점/대형마트 등 일부 입점 매장의 경우 서비스 제외",
-      "missing": "가맹점의 입점 위치(백화점·대형마트 내 매장) 구분",
-      "why": "같은 브랜드라도 입점 위치에 따라 적용이 갈리는데 merchant가 브랜드 단위라 위치를 표현할 축이 없다"
-    },
-    {
-      "text": "#뷰티 : 올리브영 * 백화점/대형마트 등 일부 입점 매장의 경우 서비스 제외",
-      "missing": "가맹점의 입점 위치(백화점·대형마트 내 매장) 구분",
-      "why": "같은 브랜드라도 입점 위치에 따라 적용이 갈리는데 merchant가 브랜드 단위라 위치를 표현할 축이 없다"
+     "min_performance_amount": 1000000,
+     "monthly_limit": 10000,
+     "benefit_value": null,
+     "_source": "편의 (#편의점 #뷰티) 100만원 이상 1만원"
     }
-  ]
+   ],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "표의 '청구 할인 5%'는 푸드·편의·생활·쇼핑/배달 네 서비스 행에 걸친 병합 셀이다",
+    "apply_timing": "서비스 구분이 '청구 할인'",
+    "target_merchant_name": "#편의점 : GS25, CU",
+    "min_txn_amount": "* 모든 서비스는 건당 1만원 이상 이용 시 제공",
+    "monthly_limit": "구간별 한도 중 최저 구간 값(30만원 이상 2천원). 실제 적용 한도는 tier_limits가 결정한다",
+    "limit_group_code": "'편의 (#편의점 #뷰티)' 한 행에 월 할인한도가 하나로 제시된다",
+    "require_performance": "마이핏카드(할인형) 서비스는 전월 이용실적 30만원 이상 시 제공되며",
+    "performance_period": "전월 이용실적 기준 / 전월 1일~말일(승인시점 기준) KB국민 마이핏카드(할인형) 일시불 및 할부 승인(이용)금액",
+    "use_shared_limit": "카드 통합 할인한도 조항이 없고 서비스별 한도만 있다"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "편의(#뷰티) 올리브영 5% 청구할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 5,
+   "step_count": null,
+   "apply_timing": "BILLED",
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": "올리브영",
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": 10000,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "monthly_limit": 2000,
+   "limit_group_code": "MYFIT_CONVENIENCE",
+   "monthly_count_limit": null,
+   "daily_count_limit": null,
+   "daily_limit": null,
+   "yearly_count_limit": null,
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "#뷰티. 백화점/대형마트 등 일부 입점 매장의 경우 서비스 제외. 편의(#편의점 #뷰티) 월 할인한도를 함께 소진한다.",
+   "tier_limits": [
+    {
+     "min_performance_amount": 300000,
+     "monthly_limit": 2000,
+     "benefit_value": null,
+     "_source": "편의 (#편의점 #뷰티) 30만원 이상 50만원 미만 2천원"
+    },
+    {
+     "min_performance_amount": 500000,
+     "monthly_limit": 5000,
+     "benefit_value": null,
+     "_source": "편의 (#편의점 #뷰티) 50만원 이상 100만원 미만 5천원"
+    },
+    {
+     "min_performance_amount": 1000000,
+     "monthly_limit": 10000,
+     "benefit_value": null,
+     "_source": "편의 (#편의점 #뷰티) 100만원 이상 1만원"
+    }
+   ],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "표의 '청구 할인 5%'는 푸드·편의·생활·쇼핑/배달 네 서비스 행에 걸친 병합 셀이다",
+    "apply_timing": "서비스 구분이 '청구 할인'",
+    "target_merchant_name": "#뷰티 : 올리브영",
+    "min_txn_amount": "* 모든 서비스는 건당 1만원 이상 이용 시 제공",
+    "monthly_limit": "구간별 한도 중 최저 구간 값(30만원 이상 2천원). 실제 적용 한도는 tier_limits가 결정한다",
+    "limit_group_code": "'편의 (#편의점 #뷰티)' 한 행에 월 할인한도가 하나로 제시된다",
+    "require_performance": "마이핏카드(할인형) 서비스는 전월 이용실적 30만원 이상 시 제공되며",
+    "performance_period": "전월 이용실적 기준 / 전월 1일~말일(승인시점 기준) KB국민 마이핏카드(할인형) 일시불 및 할부 승인(이용)금액",
+    "use_shared_limit": "카드 통합 할인한도 조항이 없고 서비스별 한도만 있다"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "생활(#마트) 이마트 5% 청구할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 5,
+   "step_count": null,
+   "apply_timing": "BILLED",
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": "이마트",
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": 10000,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "monthly_limit": 2000,
+   "limit_group_code": "MYFIT_LIVING",
+   "monthly_count_limit": null,
+   "daily_count_limit": null,
+   "daily_limit": null,
+   "yearly_count_limit": null,
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "#마트. 생활(#마트 #주유 #통신) 월 할인한도를 함께 소진한다.",
+   "tier_limits": [
+    {
+     "min_performance_amount": 300000,
+     "monthly_limit": 2000,
+     "benefit_value": null,
+     "_source": "생활 (#마트 #주유 #통신) 30만원 이상 50만원 미만 2천원"
+    },
+    {
+     "min_performance_amount": 500000,
+     "monthly_limit": 5000,
+     "benefit_value": null,
+     "_source": "생활 (#마트 #주유 #통신) 50만원 이상 100만원 미만 5천원"
+    },
+    {
+     "min_performance_amount": 1000000,
+     "monthly_limit": 10000,
+     "benefit_value": null,
+     "_source": "생활 (#마트 #주유 #통신) 100만원 이상 1만원"
+    }
+   ],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "표의 '청구 할인 5%'는 푸드·편의·생활·쇼핑/배달 네 서비스 행에 걸친 병합 셀이다",
+    "apply_timing": "서비스 구분이 '청구 할인'",
+    "target_merchant_name": "#마트 : 이마트, 롯데마트",
+    "min_txn_amount": "* 모든 서비스는 건당 1만원 이상 이용 시 제공",
+    "monthly_limit": "구간별 한도 중 최저 구간 값(30만원 이상 2천원). 실제 적용 한도는 tier_limits가 결정한다",
+    "limit_group_code": "'생활 (#마트 #주유 #통신)' 한 행에 월 할인한도가 하나로 제시된다",
+    "require_performance": "마이핏카드(할인형) 서비스는 전월 이용실적 30만원 이상 시 제공되며",
+    "performance_period": "전월 이용실적 기준 / 전월 1일~말일(승인시점 기준) KB국민 마이핏카드(할인형) 일시불 및 할부 승인(이용)금액",
+    "use_shared_limit": "카드 통합 할인한도 조항이 없고 서비스별 한도만 있다"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "생활(#마트) 롯데마트 5% 청구할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 5,
+   "step_count": null,
+   "apply_timing": "BILLED",
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": "롯데마트",
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": 10000,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "monthly_limit": 2000,
+   "limit_group_code": "MYFIT_LIVING",
+   "monthly_count_limit": null,
+   "daily_count_limit": null,
+   "daily_limit": null,
+   "yearly_count_limit": null,
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "#마트. 생활(#마트 #주유 #통신) 월 할인한도를 함께 소진한다.",
+   "tier_limits": [
+    {
+     "min_performance_amount": 300000,
+     "monthly_limit": 2000,
+     "benefit_value": null,
+     "_source": "생활 (#마트 #주유 #통신) 30만원 이상 50만원 미만 2천원"
+    },
+    {
+     "min_performance_amount": 500000,
+     "monthly_limit": 5000,
+     "benefit_value": null,
+     "_source": "생활 (#마트 #주유 #통신) 50만원 이상 100만원 미만 5천원"
+    },
+    {
+     "min_performance_amount": 1000000,
+     "monthly_limit": 10000,
+     "benefit_value": null,
+     "_source": "생활 (#마트 #주유 #통신) 100만원 이상 1만원"
+    }
+   ],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "표의 '청구 할인 5%'는 푸드·편의·생활·쇼핑/배달 네 서비스 행에 걸친 병합 셀이다",
+    "apply_timing": "서비스 구분이 '청구 할인'",
+    "target_merchant_name": "#마트 : 이마트, 롯데마트",
+    "min_txn_amount": "* 모든 서비스는 건당 1만원 이상 이용 시 제공",
+    "monthly_limit": "구간별 한도 중 최저 구간 값(30만원 이상 2천원). 실제 적용 한도는 tier_limits가 결정한다",
+    "limit_group_code": "'생활 (#마트 #주유 #통신)' 한 행에 월 할인한도가 하나로 제시된다",
+    "require_performance": "마이핏카드(할인형) 서비스는 전월 이용실적 30만원 이상 시 제공되며",
+    "performance_period": "전월 이용실적 기준 / 전월 1일~말일(승인시점 기준) KB국민 마이핏카드(할인형) 일시불 및 할부 승인(이용)금액",
+    "use_shared_limit": "카드 통합 할인한도 조항이 없고 서비스별 한도만 있다"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "생활(#주유) SK에너지 5% 청구할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 5,
+   "step_count": null,
+   "apply_timing": "BILLED",
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": "SK에너지",
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": 10000,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "monthly_limit": 2000,
+   "limit_group_code": "MYFIT_LIVING",
+   "monthly_count_limit": null,
+   "daily_count_limit": null,
+   "daily_limit": null,
+   "yearly_count_limit": null,
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "#주유. 충전소 포함. 생활(#마트 #주유 #통신) 월 할인한도를 함께 소진한다.",
+   "tier_limits": [
+    {
+     "min_performance_amount": 300000,
+     "monthly_limit": 2000,
+     "benefit_value": null,
+     "_source": "생활 (#마트 #주유 #통신) 30만원 이상 50만원 미만 2천원"
+    },
+    {
+     "min_performance_amount": 500000,
+     "monthly_limit": 5000,
+     "benefit_value": null,
+     "_source": "생활 (#마트 #주유 #통신) 50만원 이상 100만원 미만 5천원"
+    },
+    {
+     "min_performance_amount": 1000000,
+     "monthly_limit": 10000,
+     "benefit_value": null,
+     "_source": "생활 (#마트 #주유 #통신) 100만원 이상 1만원"
+    }
+   ],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "표의 '청구 할인 5%'는 푸드·편의·생활·쇼핑/배달 네 서비스 행에 걸친 병합 셀이다",
+    "apply_timing": "서비스 구분이 '청구 할인'",
+    "target_merchant_name": "#주유 : SK에너지, GS칼텍스 (충전소 포함)",
+    "min_txn_amount": "* 모든 서비스는 건당 1만원 이상 이용 시 제공",
+    "monthly_limit": "구간별 한도 중 최저 구간 값(30만원 이상 2천원). 실제 적용 한도는 tier_limits가 결정한다",
+    "limit_group_code": "'생활 (#마트 #주유 #통신)' 한 행에 월 할인한도가 하나로 제시된다",
+    "require_performance": "마이핏카드(할인형) 서비스는 전월 이용실적 30만원 이상 시 제공되며",
+    "performance_period": "전월 이용실적 기준 / 전월 1일~말일(승인시점 기준) KB국민 마이핏카드(할인형) 일시불 및 할부 승인(이용)금액",
+    "use_shared_limit": "카드 통합 할인한도 조항이 없고 서비스별 한도만 있다"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "생활(#주유) GS칼텍스 5% 청구할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 5,
+   "step_count": null,
+   "apply_timing": "BILLED",
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": "GS칼텍스",
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": 10000,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "monthly_limit": 2000,
+   "limit_group_code": "MYFIT_LIVING",
+   "monthly_count_limit": null,
+   "daily_count_limit": null,
+   "daily_limit": null,
+   "yearly_count_limit": null,
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "#주유. 충전소 포함. 생활(#마트 #주유 #통신) 월 할인한도를 함께 소진한다.",
+   "tier_limits": [
+    {
+     "min_performance_amount": 300000,
+     "monthly_limit": 2000,
+     "benefit_value": null,
+     "_source": "생활 (#마트 #주유 #통신) 30만원 이상 50만원 미만 2천원"
+    },
+    {
+     "min_performance_amount": 500000,
+     "monthly_limit": 5000,
+     "benefit_value": null,
+     "_source": "생활 (#마트 #주유 #통신) 50만원 이상 100만원 미만 5천원"
+    },
+    {
+     "min_performance_amount": 1000000,
+     "monthly_limit": 10000,
+     "benefit_value": null,
+     "_source": "생활 (#마트 #주유 #통신) 100만원 이상 1만원"
+    }
+   ],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "표의 '청구 할인 5%'는 푸드·편의·생활·쇼핑/배달 네 서비스 행에 걸친 병합 셀이다",
+    "apply_timing": "서비스 구분이 '청구 할인'",
+    "target_merchant_name": "#주유 : SK에너지, GS칼텍스 (충전소 포함)",
+    "min_txn_amount": "* 모든 서비스는 건당 1만원 이상 이용 시 제공",
+    "monthly_limit": "구간별 한도 중 최저 구간 값(30만원 이상 2천원). 실제 적용 한도는 tier_limits가 결정한다",
+    "limit_group_code": "'생활 (#마트 #주유 #통신)' 한 행에 월 할인한도가 하나로 제시된다",
+    "require_performance": "마이핏카드(할인형) 서비스는 전월 이용실적 30만원 이상 시 제공되며",
+    "performance_period": "전월 이용실적 기준 / 전월 1일~말일(승인시점 기준) KB국민 마이핏카드(할인형) 일시불 및 할부 승인(이용)금액",
+    "use_shared_limit": "카드 통합 할인한도 조항이 없고 서비스별 한도만 있다"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "생활(#통신) SKT 이동통신 자동납부 5% 청구할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 5,
+   "step_count": null,
+   "apply_timing": "BILLED",
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": "SKT",
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": "AUTO_TRANSFER",
+   "min_txn_amount": 10000,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "monthly_limit": 2000,
+   "limit_group_code": "MYFIT_LIVING",
+   "monthly_count_limit": null,
+   "daily_count_limit": null,
+   "daily_limit": null,
+   "yearly_count_limit": null,
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "#통신. 이동통신 자동납부 건에 한한다. 알뜰폰 이용금액은 서비스 제외. 생활(#마트 #주유 #통신) 월 할인한도를 함께 소진한다.",
+   "tier_limits": [
+    {
+     "min_performance_amount": 300000,
+     "monthly_limit": 2000,
+     "benefit_value": null,
+     "_source": "생활 (#마트 #주유 #통신) 30만원 이상 50만원 미만 2천원"
+    },
+    {
+     "min_performance_amount": 500000,
+     "monthly_limit": 5000,
+     "benefit_value": null,
+     "_source": "생활 (#마트 #주유 #통신) 50만원 이상 100만원 미만 5천원"
+    },
+    {
+     "min_performance_amount": 1000000,
+     "monthly_limit": 10000,
+     "benefit_value": null,
+     "_source": "생활 (#마트 #주유 #통신) 100만원 이상 1만원"
+    }
+   ],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "표의 '청구 할인 5%'는 푸드·편의·생활·쇼핑/배달 네 서비스 행에 걸친 병합 셀이다",
+    "apply_timing": "서비스 구분이 '청구 할인'",
+    "target_merchant_name": "#통신 : SKT/KT/LG U+ 이동통신 자동납부",
+    "min_txn_amount": "* 모든 서비스는 건당 1만원 이상 이용 시 제공",
+    "monthly_limit": "구간별 한도 중 최저 구간 값(30만원 이상 2천원). 실제 적용 한도는 tier_limits가 결정한다",
+    "limit_group_code": "'생활 (#마트 #주유 #통신)' 한 행에 월 할인한도가 하나로 제시된다",
+    "require_performance": "마이핏카드(할인형) 서비스는 전월 이용실적 30만원 이상 시 제공되며",
+    "performance_period": "전월 이용실적 기준 / 전월 1일~말일(승인시점 기준) KB국민 마이핏카드(할인형) 일시불 및 할부 승인(이용)금액",
+    "use_shared_limit": "카드 통합 할인한도 조항이 없고 서비스별 한도만 있다"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "생활(#통신) KT 이동통신 자동납부 5% 청구할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 5,
+   "step_count": null,
+   "apply_timing": "BILLED",
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": "KT",
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": "AUTO_TRANSFER",
+   "min_txn_amount": 10000,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "monthly_limit": 2000,
+   "limit_group_code": "MYFIT_LIVING",
+   "monthly_count_limit": null,
+   "daily_count_limit": null,
+   "daily_limit": null,
+   "yearly_count_limit": null,
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "#통신. 이동통신 자동납부 건에 한한다. 알뜰폰 이용금액은 서비스 제외. 생활(#마트 #주유 #통신) 월 할인한도를 함께 소진한다.",
+   "tier_limits": [
+    {
+     "min_performance_amount": 300000,
+     "monthly_limit": 2000,
+     "benefit_value": null,
+     "_source": "생활 (#마트 #주유 #통신) 30만원 이상 50만원 미만 2천원"
+    },
+    {
+     "min_performance_amount": 500000,
+     "monthly_limit": 5000,
+     "benefit_value": null,
+     "_source": "생활 (#마트 #주유 #통신) 50만원 이상 100만원 미만 5천원"
+    },
+    {
+     "min_performance_amount": 1000000,
+     "monthly_limit": 10000,
+     "benefit_value": null,
+     "_source": "생활 (#마트 #주유 #통신) 100만원 이상 1만원"
+    }
+   ],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "표의 '청구 할인 5%'는 푸드·편의·생활·쇼핑/배달 네 서비스 행에 걸친 병합 셀이다",
+    "apply_timing": "서비스 구분이 '청구 할인'",
+    "target_merchant_name": "#통신 : SKT/KT/LG U+ 이동통신 자동납부",
+    "min_txn_amount": "* 모든 서비스는 건당 1만원 이상 이용 시 제공",
+    "monthly_limit": "구간별 한도 중 최저 구간 값(30만원 이상 2천원). 실제 적용 한도는 tier_limits가 결정한다",
+    "limit_group_code": "'생활 (#마트 #주유 #통신)' 한 행에 월 할인한도가 하나로 제시된다",
+    "require_performance": "마이핏카드(할인형) 서비스는 전월 이용실적 30만원 이상 시 제공되며",
+    "performance_period": "전월 이용실적 기준 / 전월 1일~말일(승인시점 기준) KB국민 마이핏카드(할인형) 일시불 및 할부 승인(이용)금액",
+    "use_shared_limit": "카드 통합 할인한도 조항이 없고 서비스별 한도만 있다"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "생활(#통신) LG U+ 이동통신 자동납부 5% 청구할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 5,
+   "step_count": null,
+   "apply_timing": "BILLED",
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": "LG U+",
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": "AUTO_TRANSFER",
+   "min_txn_amount": 10000,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "monthly_limit": 2000,
+   "limit_group_code": "MYFIT_LIVING",
+   "monthly_count_limit": null,
+   "daily_count_limit": null,
+   "daily_limit": null,
+   "yearly_count_limit": null,
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "#통신. 이동통신 자동납부 건에 한한다. 알뜰폰 이용금액은 서비스 제외. 생활(#마트 #주유 #통신) 월 할인한도를 함께 소진한다.",
+   "tier_limits": [
+    {
+     "min_performance_amount": 300000,
+     "monthly_limit": 2000,
+     "benefit_value": null,
+     "_source": "생활 (#마트 #주유 #통신) 30만원 이상 50만원 미만 2천원"
+    },
+    {
+     "min_performance_amount": 500000,
+     "monthly_limit": 5000,
+     "benefit_value": null,
+     "_source": "생활 (#마트 #주유 #통신) 50만원 이상 100만원 미만 5천원"
+    },
+    {
+     "min_performance_amount": 1000000,
+     "monthly_limit": 10000,
+     "benefit_value": null,
+     "_source": "생활 (#마트 #주유 #통신) 100만원 이상 1만원"
+    }
+   ],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "표의 '청구 할인 5%'는 푸드·편의·생활·쇼핑/배달 네 서비스 행에 걸친 병합 셀이다",
+    "apply_timing": "서비스 구분이 '청구 할인'",
+    "target_merchant_name": "#통신 : SKT/KT/LG U+ 이동통신 자동납부",
+    "min_txn_amount": "* 모든 서비스는 건당 1만원 이상 이용 시 제공",
+    "monthly_limit": "구간별 한도 중 최저 구간 값(30만원 이상 2천원). 실제 적용 한도는 tier_limits가 결정한다",
+    "limit_group_code": "'생활 (#마트 #주유 #통신)' 한 행에 월 할인한도가 하나로 제시된다",
+    "require_performance": "마이핏카드(할인형) 서비스는 전월 이용실적 30만원 이상 시 제공되며",
+    "performance_period": "전월 이용실적 기준 / 전월 1일~말일(승인시점 기준) KB국민 마이핏카드(할인형) 일시불 및 할부 승인(이용)금액",
+    "use_shared_limit": "카드 통합 할인한도 조항이 없고 서비스별 한도만 있다"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "쇼핑/배달 G마켓 5% 청구할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 5,
+   "step_count": null,
+   "apply_timing": "BILLED",
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": "G마켓",
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": 10000,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "monthly_limit": 1000,
+   "limit_group_code": "MYFIT_SHOPPING_DELIVERY",
+   "monthly_count_limit": null,
+   "daily_count_limit": null,
+   "daily_limit": null,
+   "yearly_count_limit": null,
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "쇼핑/배달. 상품권, 여행, 항공권, 티켓, 도서 이용금액은 서비스 제외. 쇼핑/배달 월 할인한도를 함께 소진한다.",
+   "tier_limits": [
+    {
+     "min_performance_amount": 300000,
+     "monthly_limit": 1000,
+     "benefit_value": null,
+     "_source": "쇼핑/배달 30만원 이상 50만원 미만 1천원"
+    },
+    {
+     "min_performance_amount": 500000,
+     "monthly_limit": 3000,
+     "benefit_value": null,
+     "_source": "쇼핑/배달 50만원 이상 100만원 미만 3천원"
+    },
+    {
+     "min_performance_amount": 1000000,
+     "monthly_limit": 5000,
+     "benefit_value": null,
+     "_source": "쇼핑/배달 100만원 이상 5천원"
+    }
+   ],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "표의 '청구 할인 5%'는 푸드·편의·생활·쇼핑/배달 네 서비스 행에 걸친 병합 셀이다",
+    "apply_timing": "서비스 구분이 '청구 할인'",
+    "target_merchant_name": "쇼핑/배달 : G마켓, 쿠팡, 배달의민족",
+    "min_txn_amount": "* 모든 서비스는 건당 1만원 이상 이용 시 제공",
+    "monthly_limit": "구간별 한도 중 최저 구간 값(30만원 이상 1천원). 실제 적용 한도는 tier_limits가 결정한다",
+    "limit_group_code": "'쇼핑/배달' 한 행에 월 할인한도가 하나로 제시된다",
+    "require_performance": "마이핏카드(할인형) 서비스는 전월 이용실적 30만원 이상 시 제공되며",
+    "performance_period": "전월 이용실적 기준 / 전월 1일~말일(승인시점 기준) KB국민 마이핏카드(할인형) 일시불 및 할부 승인(이용)금액",
+    "use_shared_limit": "카드 통합 할인한도 조항이 없고 서비스별 한도만 있다"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "쇼핑/배달 쿠팡 5% 청구할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 5,
+   "step_count": null,
+   "apply_timing": "BILLED",
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": "쿠팡",
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": 10000,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "monthly_limit": 1000,
+   "limit_group_code": "MYFIT_SHOPPING_DELIVERY",
+   "monthly_count_limit": null,
+   "daily_count_limit": null,
+   "daily_limit": null,
+   "yearly_count_limit": null,
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "쇼핑/배달. 상품권, 여행, 항공권, 티켓, 도서 이용금액은 서비스 제외. 쇼핑/배달 월 할인한도를 함께 소진한다.",
+   "tier_limits": [
+    {
+     "min_performance_amount": 300000,
+     "monthly_limit": 1000,
+     "benefit_value": null,
+     "_source": "쇼핑/배달 30만원 이상 50만원 미만 1천원"
+    },
+    {
+     "min_performance_amount": 500000,
+     "monthly_limit": 3000,
+     "benefit_value": null,
+     "_source": "쇼핑/배달 50만원 이상 100만원 미만 3천원"
+    },
+    {
+     "min_performance_amount": 1000000,
+     "monthly_limit": 5000,
+     "benefit_value": null,
+     "_source": "쇼핑/배달 100만원 이상 5천원"
+    }
+   ],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "표의 '청구 할인 5%'는 푸드·편의·생활·쇼핑/배달 네 서비스 행에 걸친 병합 셀이다",
+    "apply_timing": "서비스 구분이 '청구 할인'",
+    "target_merchant_name": "쇼핑/배달 : G마켓, 쿠팡, 배달의민족",
+    "min_txn_amount": "* 모든 서비스는 건당 1만원 이상 이용 시 제공",
+    "monthly_limit": "구간별 한도 중 최저 구간 값(30만원 이상 1천원). 실제 적용 한도는 tier_limits가 결정한다",
+    "limit_group_code": "'쇼핑/배달' 한 행에 월 할인한도가 하나로 제시된다",
+    "require_performance": "마이핏카드(할인형) 서비스는 전월 이용실적 30만원 이상 시 제공되며",
+    "performance_period": "전월 이용실적 기준 / 전월 1일~말일(승인시점 기준) KB국민 마이핏카드(할인형) 일시불 및 할부 승인(이용)금액",
+    "use_shared_limit": "카드 통합 할인한도 조항이 없고 서비스별 한도만 있다"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "쇼핑/배달 배달의민족 5% 청구할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 5,
+   "step_count": null,
+   "apply_timing": "BILLED",
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": "배달의민족",
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": 10000,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "monthly_limit": 1000,
+   "limit_group_code": "MYFIT_SHOPPING_DELIVERY",
+   "monthly_count_limit": null,
+   "daily_count_limit": null,
+   "daily_limit": null,
+   "yearly_count_limit": null,
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "쇼핑/배달. 배달의민족은 '결제수단 > 다른 결제수단 > 신용/체크 결제'를 통해 결제 시에만 서비스 제공. 쇼핑/배달 월 할인한도를 함께 소진한다.",
+   "tier_limits": [
+    {
+     "min_performance_amount": 300000,
+     "monthly_limit": 1000,
+     "benefit_value": null,
+     "_source": "쇼핑/배달 30만원 이상 50만원 미만 1천원"
+    },
+    {
+     "min_performance_amount": 500000,
+     "monthly_limit": 3000,
+     "benefit_value": null,
+     "_source": "쇼핑/배달 50만원 이상 100만원 미만 3천원"
+    },
+    {
+     "min_performance_amount": 1000000,
+     "monthly_limit": 5000,
+     "benefit_value": null,
+     "_source": "쇼핑/배달 100만원 이상 5천원"
+    }
+   ],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "표의 '청구 할인 5%'는 푸드·편의·생활·쇼핑/배달 네 서비스 행에 걸친 병합 셀이다",
+    "apply_timing": "서비스 구분이 '청구 할인'",
+    "target_merchant_name": "쇼핑/배달 : G마켓, 쿠팡, 배달의민족",
+    "min_txn_amount": "* 모든 서비스는 건당 1만원 이상 이용 시 제공",
+    "monthly_limit": "구간별 한도 중 최저 구간 값(30만원 이상 1천원). 실제 적용 한도는 tier_limits가 결정한다",
+    "limit_group_code": "'쇼핑/배달' 한 행에 월 할인한도가 하나로 제시된다",
+    "require_performance": "마이핏카드(할인형) 서비스는 전월 이용실적 30만원 이상 시 제공되며",
+    "performance_period": "전월 이용실적 기준 / 전월 1일~말일(승인시점 기준) KB국민 마이핏카드(할인형) 일시불 및 할부 승인(이용)금액",
+    "use_shared_limit": "카드 통합 할인한도 조항이 없고 서비스별 한도만 있다"
+   },
+   "_needs_review": []
+  }
+ ],
+ "unmapped": [
+  {
+   "text": "* 해시태그(#) 카테고리는 알파원 오토체인지 설정 가능합니다. (설정: KB Pay > 알파원카드 관리) (알파원 오토체인지 : 해시태그별로 사전 설정한 결제카드로 자동 변환되어 결제되는 기능)",
+   "why": "해시태그별로 어느 카드로 결제할지 정하는 결제 앱 기능이지 혜택을 고르는 조항이 아니다. 푸드·편의·생활·쇼핑/배달 네 서비스는 선택 없이 모두 제공되므로 option_group_code·option_key로 옮길 대상이 없다"
+  },
+  {
+   "text": "쇼핑/배달 : G마켓, 쿠팡, 배달의민족 * 쿠팡, G마켓 : 상품권, 여행, 항공권, 티켓, 도서 이용금액 서비스 제외",
+   "why": "상품권을 뺀 여행·항공권·티켓·도서는 가맹점 안에서 파는 상품 분류다. 표준 카테고리 코드로 옮기면 그 카테고리의 다른 가맹점까지 걸리므로 상품 단위 조건(범위 밖)으로 남긴다"
+  },
+  {
+   "text": "* 배달의민족 : '결제수단 > 다른 결제수단> 신용/체크 결제'를 통해 결제 시 서비스 제공",
+   "why": "가맹점 앱 안의 결제 경로(채널) 조건이라 범위 밖이다. 결제수단 코드로도 표현되지 않는다"
+  },
+  {
+   "text": "• KB국민 마이핏카드(할인형) 서비스는 KB국민카드 업종분류 기준, 지정 업종에 한하여 제공됩니다.",
+   "why": "카드사 내부 업종분류 기준이라 표준 카테고리 코드로 옮길 수 없다"
+  },
+  {
+   "text": "• 본인회원 기준으로 월간 할인한도가 제공되며, 할인한도 산정기준은 매월 1일~말일까지(승인시점 기준)입니다.",
+   "why": "한도 집계 주기와 기준시점 규약이라 혜택 행이 아니라 엔진 동작 규칙이다"
+  },
+  {
+   "text": "• 이용 순서대로 월간 한도 내 할인되며, 잔여한도는 이월되지 않습니다.",
+   "why": "한도 소진 순서와 이월 여부 규약이라 데이터 컬럼이 아니라 엔진 동작 규칙이다"
+  },
+  {
+   "text": "• 할인 받은 이용건을 취소할 경우 전표가 실시간 접수되지 않아 할인한도가 즉시 복원되지 않을 수 있습니다.",
+   "why": "취소 시 한도 복원 시점 규정이라 혜택 규칙으로 담을 필드가 없다"
+  },
+  {
+   "text": "• KB국민 마이핏카드(할인형)는 가족카드 발급이 불가합니다.",
+   "why": "발급 조건이라 혜택 스키마 대상이 아니다"
+  },
+  {
+   "text": "'KB국민 마이핏카드(할인형)'는 실물 없는 모바일 단독카드로 KB Pay에 카드 정보를 등록하여 모바일로 이용 가능한 신용카드입니다.(카드 실물 발급 불가)",
+   "why": "발급 형태 제약이다. annual_fees의 issue_type=MOBILE로 일부만 드러나고 '실물 발급 불가'라는 제약 자체를 담을 필드가 없다"
+  },
+  {
+   "text": "• 해외 이용 시(해외사이트 거래 포함) 미화(USD)기준 거래미화금액에 접수일의(KB국민은행)최초고시 전신환매도율을 적용한 후, 국제브랜드사가 부과하는 국제브랜드 수수료(Master 1%)와 KB국민카드가 부과하는 해외서비스수수료(0.25%)를 포함하여 원화로 청구됩니다.",
+   "why": "해외 결제 수수료 산출식이라 범위 밖이다"
+  },
+  {
+   "text": "• 초회/차기년도 연회비 면제조건은 없습니다.",
+   "why": "연회비 면제 조건을 담는 필드가 없다"
+  }
+ ],
+ "_schema_gap": [
+  {
+   "text": "#외식 : VIPS, 아웃백 * 백화점/대형마트 등 일부 입점 매장의 경우 서비스 제외",
+   "missing": "가맹점의 입점 위치(백화점·대형마트 내 매장) 구분",
+   "why": "같은 브랜드라도 입점 위치에 따라 적용이 갈리는데 merchant가 브랜드 단위라 위치를 표현할 축이 없다"
+  },
+  {
+   "text": "#커피 : 스타벅스(사이렌오더 포함), 커피빈 * 상품권 구입(사이렌오더 선물하기) 및 선불식 충전카드 이용금액, 백화점, 대형마트 등 일부 입점 매장의 경우 서비스 제외",
+   "missing": "가맹점의 입점 위치(백화점·대형마트 내 매장) 구분",
+   "why": "같은 브랜드라도 입점 위치에 따라 적용이 갈리는데 merchant가 브랜드 단위라 위치를 표현할 축이 없다. 상품권·선불충전 부분은 card_exclusions의 GIFT_CARD로 담았다"
+  },
+  {
+   "text": "#편의점 : GS25, CU * 백화점/대형마트 등 일부 입점 매장의 경우 서비스 제외",
+   "missing": "가맹점의 입점 위치(백화점·대형마트 내 매장) 구분",
+   "why": "같은 브랜드라도 입점 위치에 따라 적용이 갈리는데 merchant가 브랜드 단위라 위치를 표현할 축이 없다"
+  },
+  {
+   "text": "#뷰티 : 올리브영 * 백화점/대형마트 등 일부 입점 매장의 경우 서비스 제외",
+   "missing": "가맹점의 입점 위치(백화점·대형마트 내 매장) 구분",
+   "why": "같은 브랜드라도 입점 위치에 따라 적용이 갈리는데 merchant가 브랜드 단위라 위치를 표현할 축이 없다"
+  }
+ ]
 }

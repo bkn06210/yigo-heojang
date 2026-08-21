@@ -1,0 +1,570 @@
+{
+ "card": {
+  "card_name": "KB국민 가온 올포인트 체크카드",
+  "card_type": "CHECK",
+  "annual_fee": 0,
+  "annual_fees": [
+   {
+    "brand": "ANY",
+    "issue_type": "ANY",
+    "variant": "ANY",
+    "total_fee": 0,
+    "base_fee": null,
+    "partner_fee": null,
+    "_source": "[발급브랜드 및 연회비] 국내전용(Local) : 연회비 없음 / 국내외겸용(Master, VISA, UPI) : 연회비 없음 — 브랜드별로 금액이 갈리지 않아 한 행으로 적었다"
+   }
+  ],
+  "_source": {
+   "annual_fee": "국내전용(Local) : 연회비 없음 / 국내외겸용(Master, VISA, UPI) : 연회비 없음"
+  },
+  "_needs_review": []
+ },
+ "card_exclusions": [
+  {
+   "exclusion_type": "CATEGORY",
+   "exclusion_value": "TUITION",
+   "_source": "※ 포인트리적립제외대상 : 이용금액건당 1천원미만건 , 대학(대학원) 등록금, 각종 수수료및 이자, 상품권및 선불카드 구입(충전)구입, 정부지원금, 연체료, 지방세(상하수도, 세외수입), 아파트관리비, 취소금액, 포인트리충전금액"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "FEE_INTEREST",
+   "_source": "위 목록의 각종 수수료 및 이자, 연체료"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "GIFT_CARD",
+   "_source": "위 목록의 상품권 및 선불카드 구입(충전)"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "GOV_SUBSIDY",
+   "_source": "위 목록의 정부지원금"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "TAX",
+   "_source": "위 목록의 지방세(상하수도, 세외수입)"
+  },
+  {
+   "exclusion_type": "CATEGORY",
+   "exclusion_value": "APARTMENT_FEE",
+   "_source": "위 목록의 아파트관리비"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "CANCELED",
+   "_source": "위 목록의 취소금액"
+  }
+ ],
+ "performance_tiers": [
+  {
+   "period_type": "MONTH",
+   "min_performance_amount": 0,
+   "shared_monthly_limit": null,
+   "_source": "기본 적립만 전월 이용실적 조건이 없어 0원 구간에서도 제공된다. 카드 통합 적립한도 조항이 없어 shared_monthly_limit은 null이다"
+  },
+  {
+   "period_type": "MONTH",
+   "min_performance_amount": 100000,
+   "shared_monthly_limit": null,
+   "_source": "0.2% • 전월 이용실적 10만원 이상 시 적립 (실적 충족시 적립한도 제한없음)"
+  },
+  {
+   "period_type": "MONTH",
+   "min_performance_amount": 300000,
+   "shared_monthly_limit": null,
+   "_source": "• 전월 이용실적 30만원 이상 시 적립 — 3대 대형마트·GS칼텍스 주유소 0.8% 추가 적립의 구간"
+  }
+ ],
+ "performance_exclusions": [
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "POSTPAID_TRANSIT",
+   "_source": "[이용실적 제외 대상] 교통이용금액 및 해외이용금액, 무승인 금액 (자판기, 터널 통행료, 기차/고속버스 취소 반환수수료 등), 정부지원금 이용금액, 포인트리 충전금액, 대학(대학원)등록금, 상품권 및 선불카드 구입(충전)금액, 연체료, 지방세(지방세, 상하수도, 세외수입), 취소금액, 각종 수수료 및 이자"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "OVERSEAS",
+   "_source": "위 목록의 해외이용금액"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "UNAPPROVED",
+   "_source": "위 목록의 무승인 금액"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "GOV_SUBSIDY",
+   "_source": "위 목록의 정부 지원금 이용금액"
+  },
+  {
+   "exclusion_type": "CATEGORY",
+   "exclusion_value": "TUITION",
+   "_source": "위 목록의 대학(대학원)등록금"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "GIFT_CARD",
+   "_source": "위 목록의 상품권 및 선불카드 구입(충전)금액"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "FEE_INTEREST",
+   "_source": "위 목록의 연체료, 각종 수수료 및 이자"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "TAX",
+   "_source": "위 목록의 지방세(지방세, 상하수도, 세외수입)"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "CANCELED",
+   "_source": "위 목록의 취소금액"
+  }
+ ],
+ "benefits": [
+  {
+   "benefit_name": "국내외 전 가맹점 0.2% 포인트리 기본 적립",
+   "benefit_kind": "POINT",
+   "calc_method": "RATE",
+   "benefit_value": 0.2,
+   "step_count": null,
+   "apply_timing": null,
+   "target_type": "ALL",
+   "target_category_code": null,
+   "target_merchant_name": null,
+   "targets": null,
+   "require_performance": "N",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": 1000,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": null,
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "국내외 전 가맹점. 전월 이용실적 조건도 적립한도도 없다. 건당 1천원 미만 이용은 카드 공통 적립 제외 대상이라 min_txn_amount에 1,000을 적었다.",
+   "tier_limits": [],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "기본 적립 국내외 전 가맹점 0.2% • 전월 이용실적 조건 및 적립한도 제한없음",
+    "min_txn_amount": "※ 포인트리적립제외대상 : 이용금액건당 1천원미만건"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "커피/제과·아이스크림 업종 0.4% 포인트리 적립",
+   "benefit_kind": "POINT",
+   "calc_method": "RATE",
+   "benefit_value": 0.4,
+   "step_count": null,
+   "apply_timing": null,
+   "target_type": "CATEGORY",
+   "target_category_code": null,
+   "target_merchant_name": null,
+   "targets": [
+    "CAFE",
+    "BAKERY_DESSERT"
+   ],
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": 1000,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": "GAON_CAFE_BAKERY",
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "제과점·아이스크림·커피·음료전문점 업종. 기본 0.2% + 추가 0.2%의 합산값이다(추가분만 적으면 전 가맹점 기본 적립 행에 밀려 실제보다 낮게 계산된다).",
+   "tier_limits": [],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "추가 적립 커피/제과, 아이스크림 업종 0.2% (확인사항: 제과점/아이스크림/ 커피/음료전문점) — 기본 적립 0.2%에 더한 합산값",
+    "require_performance": "0.2% • 전월 이용실적 10만원 이상 시 적립 (실적 충족시 적립한도 제한없음)"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "3대 이동통신요금 자동이체 0.4% 포인트리 적립",
+   "benefit_kind": "POINT",
+   "calc_method": "RATE",
+   "benefit_value": 0.4,
+   "step_count": null,
+   "apply_timing": null,
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": null,
+   "targets": [
+    "SKT",
+    "KT",
+    "LG U+"
+   ],
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": "AUTO_TRANSFER",
+   "min_txn_amount": 1000,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": "GAON_TELECOM_ADD",
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "SKT, KT Olleh, LG U+ 자동이체. 이 카드로 자동납부 등록 시 제공된다. 기본 0.2% + 추가 0.2%의 합산값이다. 유·무선 통신요금 통합 청구금액은 제외되나 청구 형태를 가릴 값이 없어 담지 못했다. 전월 이용실적 10만원 이상이면 적립한도 제한이 없다.",
+   "tier_limits": [],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "추가 적립 3대 이동통신요금 자동이체 시 0.2% — 기본 적립 0.2%에 더한 합산값",
+    "limit_group_code": "세 통신사가 '3대 이동통신요금 자동이체 시' 한 줄에 함께 적혀 한 서비스로 제공된다"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "GS25 편의점 0.4% 포인트리 적립",
+   "benefit_kind": "POINT",
+   "calc_method": "RATE",
+   "benefit_value": 0.4,
+   "step_count": null,
+   "apply_timing": null,
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": "GS25",
+   "targets": null,
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": 1000,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": null,
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "GS25 편의점. 기본 0.2% + 추가 0.2%의 합산값이다. 전월 이용실적 10만원 이상이면 적립한도 제한이 없다.",
+   "tier_limits": [],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "추가 적립 GS25 편의점 0.2% — 기본 적립 0.2%에 더한 합산값"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "대중교통·택시 0.4% 포인트리 적립",
+   "benefit_kind": "POINT",
+   "calc_method": "RATE",
+   "benefit_value": 0.4,
+   "step_count": null,
+   "apply_timing": null,
+   "target_type": "CATEGORY",
+   "target_category_code": null,
+   "target_merchant_name": null,
+   "targets": [
+    "PUBLIC_TRANSPORT",
+    "TAXI"
+   ],
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": 1000,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": "GAON_TRANSPORT_ADD",
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "대중교통(버스, 지하철), 택시. 기본 0.2% + 추가 0.2%의 합산값이다. 전월 이용실적 10만원 이상이면 적립한도 제한이 없다. 교통이용금액은 카드 단위 실적 제외 대상이라 전월 이용실적에는 잡히지 않는다.",
+   "tier_limits": [],
+   "exclusions": [
+    {
+     "exclusion_type": "CATEGORY",
+     "exclusion_value": "EXPRESS_BUS",
+     "_source": "• 시외버스, 고속버스 제외"
+    }
+   ],
+   "_source": {
+    "benefit_value": "추가 적립 대중교통(버스,지하철)/택시 0.2% — 기본 적립 0.2%에 더한 합산값",
+    "limit_group_code": "대중교통과 택시가 '대중교통(버스,지하철)/택시' 한 줄에 함께 적혀 한 서비스로 제공된다"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "3대 대형마트 1.0% 포인트리 적립",
+   "benefit_kind": "POINT",
+   "calc_method": "RATE",
+   "benefit_value": 1.0,
+   "step_count": null,
+   "apply_timing": null,
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": null,
+   "targets": [
+    "이마트",
+    "롯데마트",
+    "홈플러스"
+   ],
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": 30000,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": "GAON_MART_ADD",
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "이마트, 롯데마트, 홈플러스. 기본 0.2% + 추가 0.8%의 합산값이다. 건당 3만원 이상이고 전월 이용실적 30만원 이상일 때 제공되며 월 이용금액 50만원까지 적립된다. 약관 한도가 적립금액이 아니라 이용금액(월 50만원)이라 요율 1.0%를 곱한 5,000점을 구간 한도로 적었다. 실적 10만원~30만원 미만인 달과 건당 3만원 미만 결제에는 이 행이 아니라 전 가맹점 기본 적립 0.2%가 적용된다.",
+   "tier_limits": [
+    {
+     "min_performance_amount": 100000,
+     "monthly_limit": 0,
+     "quarterly_limit": null,
+     "yearly_limit": null,
+     "benefit_value": null,
+     "_source": "• 전월 이용실적 30만원 이상 시 적립 — 30만원 미만 구간에는 이 추가 적립이 없어 0(혜택 없음)으로 적었다"
+    },
+    {
+     "min_performance_amount": 300000,
+     "monthly_limit": 5000,
+     "quarterly_limit": null,
+     "yearly_limit": null,
+     "benefit_value": null,
+     "_source": "• 3대 대형마트 추가적립 서비스는 이용금액 월 50만원까지 적립 — 이용금액 50만원 × 1.0%"
+    }
+   ],
+   "exclusions": [
+    {
+     "exclusion_type": "CATEGORY",
+     "exclusion_value": "ONLINE_SHOPPING",
+     "_source": "• 온라인 쇼핑몰, 상품권 구매 및 건물 내 임대 매장, SSM(이마트 에브리데이, 홈플러스 익스프레스, 롯데슈퍼)제외"
+    },
+    {
+     "exclusion_type": "MERCHANT_LOCATION",
+     "exclusion_value": "IN_LARGE_MART",
+     "_source": "위 문장의 건물 내 임대 매장"
+    },
+    {
+     "exclusion_type": "MERCHANT",
+     "exclusion_value": "이마트 에브리데이",
+     "_source": "위 문장의 SSM(이마트 에브리데이, 홈플러스 익스프레스, 롯데슈퍼)"
+    },
+    {
+     "exclusion_type": "MERCHANT",
+     "exclusion_value": "홈플러스 익스프레스"
+    },
+    {
+     "exclusion_type": "MERCHANT",
+     "exclusion_value": "롯데슈퍼"
+    }
+   ],
+   "_source": {
+    "benefit_value": "추가 적립 3대 대형마트(이마트, 롯데마트, 홈플러스) 0.8% — 기본 적립 0.2%에 더한 합산값",
+    "min_txn_amount": "• 건당 이용금액 3만원이상 시, 월 50만원 이용금액까지 적립",
+    "limit_group_code": "세 마트가 '3대 대형마트 추가적립 서비스'의 월 50만원 이용금액 한도를 함께 쓴다"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "GS칼텍스 주유소 1.0% 포인트리 적립",
+   "benefit_kind": "POINT",
+   "calc_method": "RATE",
+   "benefit_value": 1.0,
+   "step_count": null,
+   "apply_timing": null,
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": "GS칼텍스",
+   "targets": null,
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": 30000,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": null,
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "GS칼텍스 주유소. 기본 0.2% + 추가 0.8%의 합산값이다. 건당 3만원 이상이고 전월 이용실적 30만원 이상일 때 제공되며 월 이용금액 30만원까지 적립된다. 약관 한도가 적립금액이 아니라 이용금액(월 30만원)이라 요율 1.0%를 곱한 3,000점을 구간 한도로 적었다. LPG 제외와 경유·등유 기준유가 환산 조건은 유종별 조건이라 담지 못했다.",
+   "tier_limits": [
+    {
+     "min_performance_amount": 100000,
+     "monthly_limit": 0,
+     "quarterly_limit": null,
+     "yearly_limit": null,
+     "benefit_value": null,
+     "_source": "• 전월 이용실적 30만원 이상 시 적립 — 30만원 미만 구간에는 이 추가 적립이 없어 0(혜택 없음)으로 적었다"
+    },
+    {
+     "min_performance_amount": 300000,
+     "monthly_limit": 3000,
+     "quarterly_limit": null,
+     "yearly_limit": null,
+     "benefit_value": null,
+     "_source": "• GS칼텍스 추가적립 서비스는 이용금액 월 30만원까지 적립 — 이용금액 30만원 × 1.0%"
+    }
+   ],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "추가 적립 GS칼텍스 주유소 0.8% — 기본 적립 0.2%에 더한 합산값",
+    "min_txn_amount": "• 건당 이용금액 3만원이상 시, 월 30만원 이용금액까지 적립"
+   },
+   "_needs_review": []
+  }
+ ],
+ "unmapped": [
+  {
+   "text": "• 기준유가 : GS칼텍스 본사휘발유가 경유, 등유의 경우 환산하여 적용, LPG는 제외",
+   "why": "유종(휘발유·경유·등유·LPG)에 따라 갈리는 조건이라 상품 단위 조건이다. 결제 데이터에 유종이 들어오지 않아 대상·제외 어느 쪽으로도 표현할 수 없다"
+  },
+  {
+   "text": "아모레퍼시픽 & GS리테일 멤버십 혜택",
+   "why": "표에 제목만 남아 있고 적립률·대상·한도 등 내용이 원문에 없어 혜택 행으로 만들 값이 없다"
+  },
+  {
+   "text": "[이용실적 기준 ] 전월 1일~말일(승인시점 기준) KB국민 가온 올포인트 체크카드 승인(이용)금액 (취소금액은 취소전표가 당사에 접수 된 월의 실적에서 차감됩니다.)",
+   "why": "실적 집계 기간과 취소분 차감 시점 규정이라 제외 대상이 아니라 집계 시점 규칙이다"
+  },
+  {
+   "text": "[발급대상] 만 12세 이상",
+   "why": "발급 조건이라 혜택 스키마 대상이 아니다"
+  },
+  {
+   "text": "[체크카드 포인트리 적립] 체크카드를 이용하고 전표 매입처리 (카드 이용일로부터 약 2~3일 후) 완료 되면 포인트리를 적립하는 방식입니다.",
+   "why": "적립 지급 시점 안내다. apply_timing은 DISCOUNT 전용이라 적립 지급 시점을 담을 필드가 없다"
+  },
+  {
+   "text": "[포인트리 서비스 적용] ∙ KB국민 가온 올포인트 체크카드는 본인 회원 기준으로 월간 적립 한도가 제공되며, 적립한도는 매월 1일~말일까지(승인 시점 기준) 이용금액으로 적용됩니다. ∙ 적립 서비스는 월간 적립한도 내에서 적립이 적용되며, 월간 잔여 적립한도는 이월되지 않습니다 ∙ 할인/적립이 적용된 매출 취소 시, 취소전표가 실시간 매입되지 않아 할인/적립 한도의 복원과 이에 따른 할인/적립이 즉시 적용되지 않을 수 있습니다.",
+   "why": "한도 산정 기간·이월 여부·취소 시 한도 복원 시점 규약이라 데이터 컬럼이 아니라 엔진 동작 규칙이다"
+  },
+  {
+   "text": "∙ 각 상품별 서비스는 해당 가맹점이 KB국민카드의 가맹점 업종 코드상 적립 대상 가맹점 업종으로 등록된 경우에 한하여 제공 됩니다.",
+   "why": "카드사 내부 업종분류 기준이라 표준 카테고리 코드로 옮길 수 없다"
+  },
+  {
+   "text": "∙ PG(결제대행) 업체를 통한 결제 및 호텔, 백화점, 대형마트, 철도역사 등에 입점한 가맹점이나 상품권 구매 시 적립 대상에서 제외될 수 있습니다.",
+   "why": "'일부', '제외될 수 있습니다'라 대상이 특정되지 않아 제외 목록에 넣을 값을 정할 수 없다. 입점 매장 조건도 카드 전체에 걸리는데 card_exclusions에는 MERCHANT_LOCATION 유형이 없다"
+  },
+  {
+   "text": "[체크카드 직불이용한도] 기본한도(카드 발급 시 부여한도) 구분 1회 1일 월간 / 만12세 ~ 만13세 3만원 3만원 30만원 / 만14세 이상 600만원 600만원 2천만원",
+   "why": "카드로 결제할 수 있는 금액의 한도라 혜택 한도가 아니다. daily_limit·monthly_limit에 넣으면 적립한도로 잘못 해석된다"
+  },
+  {
+   "text": "체크카드 해외이용 시 유의사항 [해외이용관련 수수료] 해외 이용 시(해외사이트 거래 포함) 미화(USD)기준 거래 미화금액에 접수일의 (KB국민은행) 최초 고시 전신환 매도율을 적용한 후, 국제브랜드사가 부과하는 국제브랜드수수료(Master 1%, UPI 0.6% ~ 0.8%, Visa 1.1%) 와 KB국민카드가 부과하는 해외서비스수수료(0.25%)를 포함하여 원화로 청구됩니다.",
+   "why": "해외 이용 수수료·환율 산정 안내라 범위 밖(해외 결제)이고 혜택도 아니다"
+  },
+  {
+   "text": "[체크카드 이용제한] 매월 세번째 일요일 00:00~06:00 중에는 은행 전산시스템 점검 관련으로 이용이 제한될 수 있으며, 점검 시간이 변경 될 경우 별도로 고지해 드립니다. / [영업 마감시간 이후 결제계좌 출금] ∙ 결제계좌 개설 기관의 영업 마감시간(16시) 이후 입금 된 금액에 대해서는 당일 출금되지 못하여 연체 처리 될 수 있으니 유의하시기 바랍니다.",
+   "why": "이용 가능 시간과 출금 처리 안내라 혜택 스키마 대상이 아니다"
+  },
+  {
+   "text": "체크카드 소액신용결제서비스 ∙ 소액신용결제서비스를 신청하시면 신청고객의 예금평잔 등 소액신용한도의 결제능력을 평가할 수 있는 기준에 따라 최고 30만원 이내에서 소액신용한도가 부여됩니다.",
+   "why": "잔액 부족 시 신용거래로 처리하는 부가 기능이라 혜택이 아니다"
+  },
+  {
+   "text": "[후불교통기능 탑재] ∙ 버스, 지하철 등 교통이용이 가능하고, 매월 체크카드 결제계좌에서 아래의 지정된 결제일에 자동 출금됩니다. 출금일 말일 + 3영업일",
+   "why": "후불교통 기능과 출금 방식이라 혜택이 아니다"
+  },
+  {
+   "text": "[부가서비스 변경 안내] KB국민 가온 올포인트 체크카드(2017년 7월 3일 출시)를 이용하는 경우 제공되는 포인트 및 할인혜택 등의 부가서비스는 다음 각 호를 제외하고는 변경할 수 없습니다.(단, 회원의 권익을 증진하거나 부담을 완화하는 경우는 제외합니다)",
+   "why": "부가서비스 변경 고지 절차라 혜택 규칙이 아니다"
+  },
+  {
+   "text": "[연체이자율] 회원별/이용상품별 정상이자율 +3%p, 최고 연 20%",
+   "why": "연체이자율 안내라 혜택 규칙이 아니다"
+  }
+ ],
+ "_schema_gap": [
+  {
+   "text": "※ 포인트리적립제외대상 : 이용금액건당 1천원미만건 , 대학(대학원) 등록금, 각종 수수료및 이자, 상품권및 선불카드 구입(충전)구입, 정부지원금, 연체료, 지방세(상하수도, 세외수입), 아파트관리비, 취소금액, 포인트리충전금액",
+   "missing": "card_exclusions의 MIN_TXN_AMOUNT 유형 — 카드 전체에 걸리는 건당 최소 이용금액",
+   "why": "card_exclusions의 유형은 CATEGORY·MERCHANT·PAYMENT_TYPE·TRANSACTION_ATTR뿐이라 '건당 1천원 미만 제외'를 카드 단위로 적을 자리가 없다. 혜택마다 min_txn_amount에 1,000을 적어 계산은 맞췄지만 카드 공통 조건이 혜택 수만큼 복사되어, 혜택을 추가할 때 빠뜨리면 그 혜택만 1천원 미만 건에도 적립된다"
+  },
+  {
+   "text": "※ 포인트리적립제외대상 : … 포인트리충전금액 / [이용실적 제외 대상] … 포인트리 충전금액",
+   "missing": "포인트 충전(구입) 금액에 해당하는 TRANSACTION_ATTR 표준값",
+   "why": "POINT_USED는 '포인트로 결제한 금액'이라 방향이 반대이고, 상품권·선불카드는 같은 목록에 따로 열거되어 GIFT_CARD로 뭉갤 수 없다. 맞는 표준값이 없어 적립 제외·실적 제외 어느 쪽에도 행을 만들지 않았다"
+  },
+  {
+   "text": "• 3대 대형마트 추가적립 서비스는 이용금액 월 50만원까지 적립 / • GS칼텍스 추가적립 서비스는 이용금액 월 30만원까지 적립",
+   "missing": "적립금액이 아니라 '혜택 대상 이용금액'을 기준으로 하는 월 한도 필드",
+   "why": "이 카드는 한도를 적립금액이 아니라 이용금액으로 적는다. 정률 혜택이라 요율 1.0%를 곱해 구간 한도(5,000점·3,000점)로 환산했지만, 시드 숫자가 약관 숫자와 달라 대조가 어렵고 정률이 아닌 혜택에서는 환산 자체가 불가능하다"
+  },
+  {
+   "text": "SKT, KT Olleh, LG U+ 자동이체 시 포인트리 추가 적립 • KB국민 가온 올포인트 체크카드로 자동납부 등록 시 • 유.무선 통신요금 통합 청구금액 제외",
+   "missing": "청구 형태(유·무선 통합 청구)를 가릴 제외 값",
+   "why": "통합 청구는 가맹점·카테고리·결제수단·거래속성 어디에도 해당하지 않아 exclusions에 적을 값이 없다. 통합 청구로 납부하는 회원의 통신요금까지 적립 대상이 되어 그만큼 많게 계산된다"
+  }
+ ]
+}

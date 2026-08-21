@@ -1,24 +1,63 @@
 {
  "_설명": "수집 대상 카드. 카드사가 공시한 이름과 정확히 같아야 한다. 늘릴 때는 줄만 추가한다.",
- "삼성": [
-  "삼성 iD SELECT UP 카드",
-  "삼성 iD ON 카드",
-  "삼성카드 taptap O",
-  "삼성 iD SIMPLE 카드",
-  "삼성카드 & POINT"
+ "KB국민": [
+  "마이핏카드(적립형)",
+  "마이핏카드(할인형)",
+  "ALL 카드",
+  "YOU Wish 카드",
+  "ALL point 카드",
+  "굿데이올림카드",
+  "My WE:SH 카드",
+  "NEED Pay 카드",
+  "YOU Prime 카드",
+  "쿠팡 와우 카드",
+  "K-패스카드",
+  "다담카드(비 OTP)",
+  "Easy all 티타늄카드",
+  "Youth Club 체크카드",
+  "노리2 체크카드(KB Pay)",
+  "틴업 체크카드",
+  "토심이 첵첵 체크카드",
+  "K-패스체크카드",
+  "직장인보너스체크카드",
+  "가온 올포인트 체크카드",
+  "트래블러스 체크카드"
  ],
  "신한": [
   "신한카드 Deep Once",
   "신한카드 Mr.Life",
   "신한카드 The BEST-XO",
   "신한카드 Simple",
-  "신한카드 핏(Fit)"
+  "신한카드 핏(Fit)",
+  "신한카드 Discount Plan+",
+  "신한카드 Simple Plan+",
+  "Deep Oil"
  ],
- "KB국민": [
-  "마이핏카드(적립형)",
-  "마이핏카드(할인형)",
-  "ALL 카드",
-  "YOU Wish 카드",
-  "ALL point 카드"
+ "삼성": [
+  "삼성 iD SELECT UP 카드",
+  "삼성 iD ON 카드",
+  "삼성카드 taptap O",
+  "삼성 iD SIMPLE 카드",
+  "삼성카드 & POINT",
+  "삼성 iD SELECT ALL 카드",
+  "삼성카드 & MILEAGE PLATINUM (스카이패스)",
+  "THE iD. 1st"
+ ],
+ "롯데": [
+  "LOCA 365 카드",
+  "롯데체크카드",
+  "디지로카 London",
+  "LOCA LIKIT 2.0",
+  "경차 smart 롯데 체크카드"
+ ],
+ "하나": [
+  "트래블로그 플러스 신용카드",
+  "JADE Classic",
+  "MOVING카드 ONLINE",
+  "네이버페이 머니 하나 체크카드 (그린)",
+  "트래블로그 체크카드",
+  "모두의 일상 체크카드",
+  "K-패스 하나 체크카드",
+  "토스뱅크 하나카드 Day (그레이)"
  ]
 }

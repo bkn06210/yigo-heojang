@@ -7,10 +7,8 @@
 --   2) data.sql                   이 파일 — 회원·약관·카테고리·포인트
 --   3) 91_seed_card_benefit.sql   카드사·BIN·카드·가맹점·실적구간·혜택
 --   4) 92_seed_user_data.sql      보유카드·소비내역·결제·월별 계산 상태
---   5) 93_seed_mock_card.sql      카드 등록 시연용 번호·카드 상품 매핑
---   6) 94_seed_membership_usage_place.sql 멤버십 주요 사용처·공식 사이트
 --
--- 파일을 나눈 이유:
+-- 파일이 셋인 이유:
 --   · 91은 카드 약관에서 기계로 뽑아낸 결과라 손으로 고치지 않는다.
 --   · 92는 엔진에 거래를 흘려보내 계산 결과까지 채운 것이다. 사람이 맞출 수 없는
 --     묶음 한도·구간별 한도 상속·일 소진 리셋이 얽혀 있어, 손으로 넣으면 규칙과 어긋난다.
@@ -45,15 +43,9 @@ INSERT INTO member (
      '이정지', '별명B', 'SUSPENDED',
      '2026-06-05 09:00:00', '2026-07-18 15:00:00', NULL),
 
-    -- member_id=3은 "탈퇴 처리가 이미 끝난 뒤"의 상태를 나타낸다.
-    -- email/name/nickname/password_hash가 원본 그대로 남아있으면 안 되므로,
-    -- 실제 탈퇴 서비스 코드가 채워 넣을 값의 형태를 그대로 흉내 낸다.
-    -- email: 'withdrawn_{memberId}@deleted.local' 형태로, uk_member_email 제약을 어기지 않으면서
-    --        재가입(원래 이메일로 다시 가입) 시 중복 체크에 걸리지 않게 한다.
-    -- password_hash: 어떤 원문으로도 매칭될 수 없는 무의미한 문자열로, 로그인 자체가 불가능하게 한다.
-    (3, 'withdrawn_3@deleted.local',
-     'WITHDRAWN_MEMBER_CANNOT_LOGIN',
-     '탈퇴회원', '탈퇴회원', 'WITHDRAWN',
+    (3, 'withdrawn@example.com',
+     '$2a$10$Exc5x/juU54pWSz1Wo8E7Opgva7S.1W5uq6in1D/BH.krG3gKs93C',
+     '박탈퇴', '별명C', 'WITHDRAWN',
      '2026-05-01 09:00:00', '2026-07-10 14:00:00', '2026-07-10 14:00:00');
 
 INSERT INTO member_withdrawal (
@@ -62,19 +54,6 @@ INSERT INTO member_withdrawal (
 ) VALUES
     (1, 3, 'LOW_USAGE', '서비스를 자주 사용하지 않아서 탈퇴합니다.',
      '2026-07-10 14:00:00', '2026-07-10 14:00:00');
-
--- member_withdrawal(탈퇴 사유)과 별개로, 위에서 익명화되며 사라진 원본 개인정보(이메일·성명)를
--- 3년 보관 목적으로 옮겨 담은 행이다. 실제 서비스에서는 회원 탈퇴 트랜잭션이
--- 익명화 UPDATE 직전에 원본을 읽어 이 테이블에 INSERT한다.
-INSERT INTO member_withdrawal_archive (
-    member_withdrawal_archive_id, member_id, email, email_hash, name,
-    withdrawn_at, retention_reason
-) VALUES
-    (1, 3, 'withdrawn@example.com',
-     '07aef5eecdfdc974d2007a8453bb7dff05c0279bae91bbb9b17c7c5bc1350719',
-     '박탈퇴',
-     '2026-07-10 14:00:00',
-     '재가입 어뷰징 방지 및 CS 대응을 위한 보관. 탈퇴 시 회원에게 고지하고 동의를 받음');
 
 -- PENDING: 인증번호 발급 직후
 INSERT INTO password_reset_verification (
@@ -120,15 +99,12 @@ INSERT INTO refresh_token (
 -- ============================================================
 
 INSERT INTO term (
-    term_id, term_code, term_scope, term_name, is_required, term_status
+    term_id, term_code, term_name, is_required, term_status
 ) VALUES
-      (1, 'SERVICE_TERMS', 'SIGNUP', '서비스 이용약관', 1, 'ACTIVE'),
-      (2, 'PRIVACY_POLICY', 'SIGNUP', '개인정보 수집 및 이용 동의', 1, 'ACTIVE'),
-      (3, 'MARKETING_CONSENT', 'SIGNUP', '마케팅 정보 수신 동의', 0, 'ACTIVE'),
-      -- 회원 탈퇴 화면에서 고지하고 동의를 받는 약관이다.
-      -- is_required = 1인 이유: 탈퇴는 신용정보 즉시 삭제·개인정보 3년 보관이라는
-      -- 되돌릴 수 없는 처리가 뒤따르므로, 이 고지에 동의하지 않으면 탈퇴 자체를 진행할 수 없다.
-      (4, 'WITHDRAWAL_NOTICE', 'WITHDRAWAL', '회원 탈퇴 안내 및 동의', 1, 'ACTIVE');
+    (1, 'SERVICE_TERMS', '서비스 이용약관', 1, 'ACTIVE'),
+    (2, 'PRIVACY_POLICY', '개인정보 수집 및 이용 동의', 1, 'ACTIVE'),
+    (3, 'MARKETING_CONSENT', '마케팅 정보 수신 동의', 0, 'ACTIVE'),
+    (4, 'LOCATION_TERMS', '위치정보 이용약관', 0, 'INACTIVE');
 
 INSERT INTO term_version (
     term_version_id, term_id, version, content,
@@ -145,11 +121,10 @@ INSERT INTO term_version (
     (3, 3, '2026-06-01',
      '혜택과 이벤트 정보 수신에 동의합니다. 선택 동의이며 동의하지 않아도 서비스 이용이 가능합니다.',
      '2026-06-01 00:00:00', NULL),
-    (4, 4, '2026-07-01',
-     '1. 탈퇴 시 보유카드, 소비내역, 결제내역, 포인트 정보는 즉시 삭제되며 복구할 수 없습니다.
-2. 이메일, 성명 등 회원정보는 소비자 분쟁 처리를 위해 탈퇴일로부터 3년간 보관 후 파기됩니다.
-3. 탈퇴 후 동일 이메일로 재가입할 수 있으나, 이전 데이터는 복원되지 않습니다.',
-     '2026-07-01 00:00:00', NULL);
+
+    (4, 4, '2026-05-01',
+     '위치 기반 서비스 제공을 위한 약관입니다.',
+     '2026-05-01 00:00:00', '2026-06-30 23:59:59');
 
 INSERT INTO member_term_agreement (
     member_term_agreement_id, member_id, term_version_id,
@@ -160,8 +135,7 @@ INSERT INTO member_term_agreement (
     (3, 1, 3, 1, '2026-06-01 09:00:00'),
     (4, 2, 1, 1, '2026-06-05 09:00:00'),
     (5, 2, 2, 1, '2026-06-05 09:00:00'),
-    (6, 2, 3, 0, NULL),
-    (7, 3, 4, 1, '2026-07-10 14:00:00');
+    (6, 2, 3, 0, NULL);
 
 -- ============================================================
 -- 4. 카테고리 표준: 대분류 7 + 중분류 31
@@ -185,7 +159,9 @@ INSERT INTO category VALUES
     (101, 'RESTAURANT', '음식점', 1, 1),
     (102, 'CAFE', '카페', 1, 2),
     (103, 'DELIVERY', '배달앱', 1, 3),
-    (104, 'FAST_FOOD', '패스트푸드', 1, 4);
+    (104, 'FAST_FOOD', '패스트푸드', 1, 4),
+    -- 카페(102)에 넣으면 커피 혜택과 대상이 겹쳐 어느 쪽이 적용되는지 갈린다.
+    (105, 'BAKERY_DESSERT', '제과아이스크림', 1, 5);
 
 -- 쇼핑
 INSERT INTO category VALUES
@@ -204,7 +180,11 @@ INSERT INTO category VALUES
     (303, 'FUEL', '주유', 3, 3),
     (304, 'PARKING_MAINTENANCE', '주차정비', 3, 4),
     (305, 'RAILWAY', '철도', 3, 5),
-    (306, 'EXPRESS_BUS', '고속시외버스', 3, 6);
+    (306, 'EXPRESS_BUS', '고속시외버스', 3, 6),
+    -- 주차정비(304)는 주차장과 정비소를 함께 묶는다. 약관이 "주차장 업종"만 대상으로
+    -- 삼는 카드가 여럿이라, 그 카드에 304를 쓰면 정비 결제까지 혜택을 받는다.
+    (307, 'PARKING', '주차장', 3, 7),
+    (308, 'EV_CHARGING', '전기차충전', 3, 8);
 
 -- 생활
 INSERT INTO category VALUES
@@ -221,7 +201,13 @@ INSERT INTO category VALUES
     (501, 'MOVIE', '영화', 5, 1),
     (502, 'SUBSCRIPTION_STREAMING', '구독스트리밍', 5, 2),
     (503, 'SPORTS_LEISURE', '스포츠레저', 5, 3),
-    (504, 'GOLF', '골프', 5, 4);
+    (504, 'GOLF', '골프', 5, 4),
+    -- 노래방·PC방을 스포츠레저에 넣으면 헬스장·볼링장까지 대상이 된다.
+    -- 청소년·대학생 카드가 이 둘만 묶어 혜택을 주는 경우가 있어 따로 둔다.
+    (505, 'AMUSEMENT_VENUE', '노래방PC방', 5, 5),
+    -- 호텔·리조트·펜션. 여행 관련 브랜드를 대분류(CULTURE_LEISURE)에 두고 있었는데,
+    -- 숙박만 대상으로 삼는 혜택이 여럿이라 대분류를 쓰면 범위가 넓어진다.
+    (506, 'LODGING', '숙박', 5, 6);
 
 -- 의료
 INSERT INTO category VALUES
@@ -232,7 +218,10 @@ INSERT INTO category VALUES
 -- 교육
 INSERT INTO category VALUES
     (701, 'ACADEMY', '학원', 7, 1),
-    (702, 'TUITION', '학교납입금', 7, 2);
+    (702, 'TUITION', '학교납입금', 7, 2),
+    -- 방문학습지는 학원도 학교납입금도 아니다. 생활요금 묶음 혜택에서 통신·보험료와
+    -- 나란히 열거되는 항목이라 둘 중 하나로 뭉개면 대상이 어긋난다.
+    (703, 'LEARNING_SERVICE', '학습지', 7, 3);
 
 -- ============================================================
 -- 12. 포인트
@@ -325,7 +314,6 @@ COMMIT;
 -- 이 파일이 넣는 것만 센다. 카드·혜택은 91, 보유카드·소비내역은 92가 채운다.
 SELECT 'member' AS table_name, COUNT(*) AS row_count FROM member
 UNION ALL SELECT 'term', COUNT(*) FROM term
-UNION ALL SELECT 'member_withdrawal_archive', COUNT(*) FROM member_withdrawal_archive
 UNION ALL SELECT 'category', COUNT(*) FROM category
 UNION ALL SELECT 'point_provider', COUNT(*) FROM point_provider
 UNION ALL SELECT 'point_wallet', COUNT(*) FROM point_wallet;

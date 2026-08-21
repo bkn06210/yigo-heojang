@@ -1,0 +1,378 @@
+{
+ "card": {
+  "card_name": "K-패스 하나 체크카드",
+  "card_type": "CHECK",
+  "annual_fee": 0,
+  "annual_fees": [
+   {
+    "brand": "ANY",
+    "issue_type": "ANY",
+    "variant": "ANY",
+    "total_fee": 0,
+    "base_fee": null,
+    "partner_fee": null,
+    "_source": "* 연회비: 없음 * 발급대상: 만 18세 이상 * 후불교통: 필수 * 발급브랜드: 국내전용 / 국내외겸용(VISA) — 발급 브랜드가 둘이지만 연회비는 갈리지 않고 '없음' 하나라 brand를 ANY로 두고 한 행만 적었다."
+   }
+  ],
+  "_source": {
+   "annual_fee": "* 연회비: 없음"
+  },
+  "_needs_review": []
+ },
+ "card_exclusions": [
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "OVERSEAS",
+   "_source": "* 국내 가맹점 이용건에 한 해 캐쉬백 서비스 제공"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "CANCELED",
+   "_source": "- 매출 접수된 국내외 일시불/할부 이용금액에 따라 서비스를 제공하며, 매출 취소 시 취소가 접수된 월에서 실적 및 캐쉬백 금액을 차감 반영"
+  }
+ ],
+ "performance_tiers": [
+  {
+   "period_type": "MONTH",
+   "min_performance_amount": 0,
+   "shared_monthly_limit": null,
+   "_source": "실적을 못 채웠을 때 제공되는 서비스가 약관에 없어 0원 구간은 판정용으로만 둔다. 캐쉬백 한도가 대상가맹점별로 따로 제시되고 '통합 월 할인한도'라는 표현이 없어 shared_monthly_limit은 비웠다."
+  },
+  {
+   "period_type": "MONTH",
+   "min_performance_amount": 300000,
+   "shared_monthly_limit": null,
+   "_source": "[실적 산정기준] - 지난달 1일부터 말일(승인 시점 기준)까지 국내외 일시불/할부 이용금액 30만원/60만원 이상 시 서비스 차등 제공"
+  },
+  {
+   "period_type": "MONTH",
+   "min_performance_amount": 600000,
+   "shared_monthly_limit": null,
+   "_source": "| 대중교통 | 버스, 지하철 | 10% | 60만원 이상 |"
+  }
+ ],
+ "performance_grace": [
+  {
+   "period_type": "MONTH",
+   "min_performance_amount": 300000,
+   "grace_periods": 1,
+   "_source": "[실적과 관계없이 서비스 제공] - 최초카드 사용등록일로부터 다음 달 말일까지는 지난달 카드실적이 30만원 미만이어도 30만원 이상 60만원 미만 기준으로 서비스 제공"
+  }
+ ],
+ "performance_exclusions": [
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "TAX",
+   "_source": "[실적 제외 대상] 국세, 지방세, 수도/전기요금, 그외 공과금(우편요금, 과태료, 범칙금, 벌금, 국가/공공기관/공공단체가 부과하는 부담금), 도시가스 요금, 아파트관리비, 국민연금/고용보험료/산재보험료/건강보험료 납부금액, 스쿨뱅킹, 초.중.고 학교 납입금, 대학등록금, 대학원등록금, 상품권 및 기프트카드 구매, 선불카드 및 선불전자지급수단(하나머니 등) 충전 금액, 부동산임대료"
+  },
+  {
+   "exclusion_type": "CATEGORY",
+   "exclusion_value": "UTILITY",
+   "_source": "수도/전기요금, 그외 공과금(우편요금, 과태료, 범칙금, 벌금) … 도시가스 요금"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "LEVY",
+   "_source": "국가/공공기관/공공단체가 부과하는 부담금"
+  },
+  {
+   "exclusion_type": "CATEGORY",
+   "exclusion_value": "APARTMENT_FEE",
+   "_source": "아파트관리비"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "SOCIAL_INSURANCE",
+   "_source": "국민연금/고용보험료/산재보험료/건강보험료 납부금액"
+  },
+  {
+   "exclusion_type": "CATEGORY",
+   "exclusion_value": "TUITION",
+   "_source": "스쿨뱅킹, 초.중.고 학교 납입금, 대학등록금, 대학원등록금"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "GIFT_CARD",
+   "_source": "상품권 및 기프트카드 구매, 선불카드 및 선불전자지급수단(하나머니 등) 충전 금액"
+  },
+  {
+   "exclusion_type": "CATEGORY",
+   "exclusion_value": "RENT",
+   "_source": "부동산임대료"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "CANCELED",
+   "_source": "매출 취소 시 취소가 접수된 월에서 실적 및 캐쉬백 금액을 차감 반영"
+  }
+ ],
+ "benefits": [
+  {
+   "benefit_name": "대중교통 10% 캐쉬백",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 10,
+   "step_count": null,
+   "apply_timing": "CASHBACK",
+   "target_type": "CATEGORY",
+   "target_category_code": "PUBLIC_TRANSPORT",
+   "target_merchant_name": null,
+   "targets": null,
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": null,
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "약관이 대상가맹점을 '대중교통 / 버스, 지하철'로 적어 브랜드가 아니라 업종이므로 PUBLIC_TRANSPORT 하나로 두었다. 지급률은 두 실적 구간 모두 10%로 같고 월 캐쉬백 한도만 갈려 한도는 tier_limits에만 적고 본문 monthly_limit은 비웠다. '대중교통으로 이용한 후불교통카드 매출 건에 한해 서비스 제공'이라는 조건은 결제수단 표준값에 후불교통이 없어 _schema_gap에 남겼다. 캐쉬백은 매월 1일~말일 이용분을 다음달 5영업일 이내 일괄 입금한다.",
+   "tier_limits": [
+    {
+     "min_performance_amount": 300000,
+     "monthly_limit": 3000,
+     "quarterly_limit": null,
+     "yearly_limit": null,
+     "benefit_value": null,
+     "_source": "대중교통 버스, 지하철 10% 30만원 이상 60만원 미만 월 3천원"
+    },
+    {
+     "min_performance_amount": 600000,
+     "monthly_limit": 6000,
+     "quarterly_limit": null,
+     "yearly_limit": null,
+     "benefit_value": null,
+     "_source": "60만원 이상 월 6천원"
+    }
+   ],
+   "exclusions": [
+    {
+     "exclusion_type": "CATEGORY",
+     "exclusion_value": "EXPRESS_BUS",
+     "_source": "* 대중교통 : 시외버스, 고속버스, 티머니/캐시비 등 교통카드 충전금액은 서비스 제외"
+    },
+    {
+     "exclusion_type": "TRANSACTION_ATTR",
+     "exclusion_value": "GIFT_CARD",
+     "_source": "티머니/캐시비 등 교통카드 충전금액은 서비스 제외 — 선불전자지급수단 충전이라 GIFT_CARD로 적었다."
+    }
+   ],
+   "_source": {
+    "benefit_value": "| 대중교통 | 버스, 지하철 | 10% | 30만원 이상 60만원 미만 |",
+    "require_performance": "[실적 산정기준] - 지난달 1일부터 말일(승인 시점 기준)까지 국내외 일시불/할부 이용금액 30만원/60만원 이상 시 서비스 차등 제공"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "드럭스토어 1% 캐쉬백",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 1,
+   "step_count": null,
+   "apply_timing": "CASHBACK",
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": null,
+   "targets": [
+    "다이소",
+    "올리브영"
+   ],
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": 1000,
+   "monthly_limit": 10000,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": "DRUGSTORE_10000",
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "약관이 '드럭스토어' 한 줄에 다이소·올리브영을 열거하고 지급률·실적조건·한도를 하나로 제시해 두 가맹점을 targets로 묶고 한도를 limit_group_code로 함께 쓰게 했다. 실적 구간이 30만원 하나뿐이라 60만원 이상에서도 값이 같아 tier_limits는 비웠다. 다이소의 오프라인 결제 한정 조건은 채널 조건이라 담지 못하고 unmapped에 남겼다.",
+   "tier_limits": [],
+   "exclusions": [
+    {
+     "exclusion_type": "MERCHANT_LOCATION",
+     "exclusion_value": "IN_DEPARTMENT_STORE",
+     "_source": "* 드럭스토어, 커피: - 대형시설물 입점점포(백화점, 할인점, 아울렛, 쇼핑몰, 휴게소, 호텔, 리조트, 공항, 역사) 및 임대매장은 서비스에서 제외"
+    },
+    {
+     "exclusion_type": "MERCHANT_LOCATION",
+     "exclusion_value": "IN_LARGE_MART",
+     "_source": "할인점 입점점포는 서비스에서 제외"
+    },
+    {
+     "exclusion_type": "MERCHANT_LOCATION",
+     "exclusion_value": "IN_SHOPPING_MALL",
+     "_source": "쇼핑몰 입점점포 및 임대매장은 서비스에서 제외"
+    },
+    {
+     "exclusion_type": "MERCHANT_LOCATION",
+     "exclusion_value": "IN_TRANSIT_HUB",
+     "_source": "공항, 역사 입점점포는 서비스에서 제외"
+    },
+    {
+     "exclusion_type": "CATEGORY",
+     "exclusion_value": "DELIVERY",
+     "_source": "- 배달앱 등을 통한 주문 결제와 상품권 구입, 선불카드(선불전자 지급수단) 충전은 서비스에서 제외"
+    },
+    {
+     "exclusion_type": "TRANSACTION_ATTR",
+     "exclusion_value": "GIFT_CARD",
+     "_source": "상품권 구입, 선불카드(선불전자 지급수단) 충전은 서비스에서 제외"
+    }
+   ],
+   "_source": {
+    "benefit_value": "| 드럭스토어 | 다이소, 올리브영 | 1% | 30만원 이상 |",
+    "daily_limit": "드럭스토어 1% 30만원 이상 일 1천원 월 1만원",
+    "limit_group_code": "약관이 다이소·올리브영을 '드럭스토어' 한 줄로 묶고 캐쉬백 한도를 그 줄에 하나만 제시한다"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "커피 1% 캐쉬백",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 1,
+   "step_count": null,
+   "apply_timing": "CASHBACK",
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": null,
+   "targets": [
+    "스타벅스",
+    "커피빈"
+   ],
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": 5000,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": "COFFEE_5000",
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "약관이 '커피' 한 줄에 스타벅스·커피빈을 열거하고 지급률·실적조건·한도를 하나로 제시해 두 가맹점을 targets로 묶고 한도를 limit_group_code로 함께 쓰게 했다. 열거된 두 브랜드만 대상이라 CAFE 카테고리로 바꾸지 않았다. 드럭스토어와 캐쉬백 한도가 따로 제시되므로 묶음 코드도 따로 준다.",
+   "tier_limits": [],
+   "exclusions": [
+    {
+     "exclusion_type": "MERCHANT_LOCATION",
+     "exclusion_value": "IN_DEPARTMENT_STORE",
+     "_source": "* 드럭스토어, 커피: - 대형시설물 입점점포(백화점, 할인점, 아울렛, 쇼핑몰, 휴게소, 호텔, 리조트, 공항, 역사) 및 임대매장은 서비스에서 제외"
+    },
+    {
+     "exclusion_type": "MERCHANT_LOCATION",
+     "exclusion_value": "IN_LARGE_MART",
+     "_source": "할인점 입점점포는 서비스에서 제외"
+    },
+    {
+     "exclusion_type": "MERCHANT_LOCATION",
+     "exclusion_value": "IN_SHOPPING_MALL",
+     "_source": "쇼핑몰 입점점포 및 임대매장은 서비스에서 제외"
+    },
+    {
+     "exclusion_type": "MERCHANT_LOCATION",
+     "exclusion_value": "IN_TRANSIT_HUB",
+     "_source": "공항, 역사 입점점포는 서비스에서 제외"
+    },
+    {
+     "exclusion_type": "CATEGORY",
+     "exclusion_value": "DELIVERY",
+     "_source": "- 배달앱 등을 통한 주문 결제와 상품권 구입, 선불카드(선불전자 지급수단) 충전은 서비스에서 제외"
+    },
+    {
+     "exclusion_type": "TRANSACTION_ATTR",
+     "exclusion_value": "GIFT_CARD",
+     "_source": "상품권 구입, 선불카드(선불전자 지급수단) 충전은 서비스에서 제외"
+    }
+   ],
+   "_source": {
+    "benefit_value": "| 커피 | 스타벅스, 커피빈 | 1% | 30만원 이상 |",
+    "monthly_limit": "커피 스타벅스, 커피빈 1% 30만원 이상 월 5천원",
+    "limit_group_code": "약관이 스타벅스·커피빈을 '커피' 한 줄로 묶고 캐쉬백 한도를 그 줄에 하나만 제시한다"
+   },
+   "_needs_review": []
+  }
+ ],
+ "unmapped": [
+  {
+   "text": "* 다이소는 오프라인 결제건에 한하여 서비스 제공",
+   "why": "결제 채널(온라인/오프라인) 조건은 범위 밖이다. 거래에 채널 구분이 없어 그대로 두면 온라인 다이소 결제까지 캐쉬백 대상이 된다."
+  },
+  {
+   "text": "* K-패스는 K-패스 사업참여 대상지역(주민등록 기준) 거주자만 신청할 수 있으며, 참여지역 및 자세한 내용은 K-패스 앱에서 확인",
+   "why": "주민등록 거주지에 따른 발급 신청 자격이라 혜택 조건이 아니고, 회원의 거주지 정보도 없어 판정할 수 없다."
+  },
+  {
+   "text": "•카드이용 시 제공되는 포인트 및 할인혜택 등의 부가서비스는 카드 신규 출시(2023년 7월 4일) 이후 3년 이상 축소 · 폐지 없이 유지됩니다.",
+   "why": "혜택 유효기간은 범위 밖이다. is_active Y/N 토글로만 다룬다."
+  },
+  {
+   "text": "- 모든 서비스는 하나카드에 등록된 가맹점 및 업종 기준에 따라 제공",
+   "why": "카드사 전산의 가맹점·업종 분류를 조건으로 삼는 문장이라 우리 데이터로 판정할 수 없다."
+  },
+  {
+   "text": "•결제은행에 따라 안정적인 서비스 제공을 위한 전산 시스템 점검 시에는 23:00~06:00 중 체크카드 이용이 일시적으로 제한될 수 있습니다.",
+   "why": "시간대 조건은 범위 밖이다. 혜택 조건이 아니라 결제 자체가 막히는 시간이라 혜택 행에 담을 성격도 아니다."
+  }
+ ],
+ "_schema_gap": [
+  {
+   "text": "* 대중교통으로 이용한 후불교통카드 매출 건에 한해 서비스 제공",
+   "missing": "require_payment_type 표준값에 후불교통 매출이 없다",
+   "why": "TRANSACTION_ATTR의 POSTPAID_TRANSIT은 제외 축이라 '후불교통 건에만 준다'는 반대 방향 조건을 적을 자리가 없다. 목록에 없는 값을 문자열로 넣으면 엔진이 매칭하지 못한다."
+  },
+  {
+   "text": "* 드럭스토어, 커피: - 대형시설물 입점점포(백화점, 할인점, 아울렛, 쇼핑몰, 휴게소, 호텔, 리조트, 공항, 역사) 및 임대매장은 서비스에서 제외",
+   "missing": "MERCHANT_LOCATION 값에 아울렛·휴게소·호텔·리조트가 없다",
+   "why": "백화점·할인점·쇼핑몰·공항/역사는 IN_DEPARTMENT_STORE·IN_LARGE_MART·IN_SHOPPING_MALL·IN_TRANSIT_HUB로 적었으나 나머지 넷은 대응 값이 없다. 근접한 값으로 뭉개면 약관이 제외하지 않은 위치까지 빠진다."
+  },
+  {
+   "text": "- 후불교통요금 등 무승인 거래(카드사의 승인없이 이용금액이 카드사에 접수됨)의 경우 매출이 접수된 월의 이용금액에 반영",
+   "missing": "실적 집계의 기준일 구분(승인일 / 매입 접수일)",
+   "why": "실적 산정은 '지난달 1일부터 말일(승인 시점 기준)'인데 무승인 거래만 매입 접수 월로 잡힌다. 거래에 승인일 하나뿐이라 한 카드의 실적에 두 기준을 함께 쓸 수 없다."
+  },
+  {
+   "text": "* 발급대상: 만 18세 이상 * 후불교통: 필수 / [후불교통 기능 이용안내] •발급대상 : 만 18세 이상 고객 (단, 연체 등 특이 정보가 있는 경우 발급이 제한될 수 있음)",
+   "missing": "카드의 발급 자격(연령)과 탑재 기능(후불교통 필수/선택)",
+   "why": "혜택이 아니라 카드 자격·기능 조항이라 benefit에 들어가지 않는데 card에도 담을 컬럼이 없다. 후불교통이 필수인 카드와 선택인 카드는 대중교통 혜택이 실제로 적용되는지가 갈린다."
+  },
+  {
+   "text": "[하이브리드 서비스 이용안내] 하이브리드 서비스에 대한 상세한 내용은 하이브리드 서비스 신청 후 별도로 발송되는 \"하나카드 체크카드 하이브리드 서비스 약관\"을 참고 바랍니다.",
+   "missing": "체크카드의 하이브리드(소액신용) 신청 여부와 한도를 담을 카드·보유카드 속성",
+   "why": "혜택이 아니라 카드 기능이라 benefit_kind·target_type 어디에도 들어가지 않는데, 잔액이 부족해도 결제가 승인되는지와 그 금액의 성격(신용거래)을 바꾼다."
+  }
+ ]
+}

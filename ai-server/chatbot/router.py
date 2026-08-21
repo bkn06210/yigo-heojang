@@ -47,6 +47,9 @@ _MAX_BENEFITS_IN_ANSWER = 5
 # 리포트 답변에 나열할 부문 수. 상위 몇 개면 "어디서 많이 받았나"에 답이 된다.
 _MAX_CATEGORIES_IN_ANSWER = 3
 
+# 추천 카드를 몇 장까지 말할지. 더 넣으면 답변이 목록 낭독이 된다
+_MAX_CARDS_IN_ANSWER = 3
+
 # 약관에서 무엇을 찾을지 알아내지 못했을 때. 질문을 그대로 검색어로 쓰지 않는다 —
 # 일상어와 약관의 낱말이 달라 무관한 조항이 낮은 점수로 걸리고, 그걸 근거로
 # 그럴듯한 답이 만들어지면 사용자가 틀렸다는 것을 알 방법이 없다.
@@ -63,11 +66,63 @@ def route(intent: Intent, conn, engine: EngineClient) -> RouteResult:
         return _card_status(intent, conn, engine)
     if intent.name == IntentName.RECOMMEND_CARD:
         return _recommend(intent, conn, engine)
+    if intent.name == IntentName.RECOMMEND_NEW_CARD:
+        return _recommend_new_card(engine)
     if intent.name == IntentName.BENEFIT_SUM:
         return _benefit_sum(intent, conn, engine)
     if intent.name == IntentName.TERM_QA:
         return _term_qa(intent, conn)
     return RouteResult()
+
+
+# ── 소비 기반 카드 추천 ────────────────────────────────────
+
+
+def _recommend_new_card(engine: EngineClient) -> RouteResult:
+    """"내 소비에 맞는 카드 추천해줘" — 지금 카드에 무엇을 더하면 좋아지는가.
+
+    금액은 전부 엔진이 계산한 값을 옮긴다. 순증은 지금 카드로 받는 금액과의 **차액**이라
+    여기서 다시 더하거나 지금 금액과 합쳐 말하면 실제와 달라진다.
+
+    전제를 문맥에 함께 넣는다 — 이 계산은 "그 카드를 주로 쓴다면"을 가정한 값이라,
+    밝히지 않으면 "카드만 만들면 받는 돈"으로 읽힌다.
+    """
+    try:
+        data = engine.card_recommendations()
+    except EngineError as error:
+        return RouteResult(context=f"[카드 추천]\n조회하지 못했습니다. ({error})")
+
+    items = data.get("items") or []
+    period = data.get("baseYearMonth") or "지난달"
+    if not items:
+        return RouteResult(
+            context=(f"[카드 추천] {period} 소비 기준\n"
+                     "지금 쓰시는 카드보다 나은 카드를 찾지 못했습니다."),
+            sources=["소비 기반 카드 추천"],
+        )
+
+    lines = [
+        f"[카드 추천] {period} 소비 기준",
+        f"[지금 카드로 받는 혜택] 월 {_won(data.get('currentMonthlyBenefitAmount'))}",
+        "[전제] 아래 금액은 그 카드를 주로 쓴다고 볼 때의 값입니다",
+        "[추천 카드]",
+    ]
+    for item in items[:_MAX_CARDS_IN_ANSWER]:
+        line = (f"- {item.get('cardCompanyName')} {item.get('cardName')}:"
+                f" 월 {_won(item.get('monthlyGainAmount'))} 더 받음")
+        annual_fee = item.get("annualFee") or 0
+        if annual_fee > 0:
+            line += (f" (최저 연회비 {_won(annual_fee)},"
+                     f" {item.get('breakEvenMonths')}개월이면 연회비를 넘어섬)")
+        else:
+            line += " (연회비 없음)"
+        lines.append(line)
+
+    hidden = len(items) - len(items[:_MAX_CARDS_IN_ANSWER])
+    if hidden > 0:
+        lines.append(f"- 외 {hidden}장")
+
+    return RouteResult(context="\n".join(lines), sources=["소비 기반 카드 추천"])
 
 
 # ── 실적·한도 현황 ─────────────────────────────────────────

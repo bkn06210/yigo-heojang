@@ -89,7 +89,7 @@
   },
   {
    "exclusion_type": "TRANSACTION_ATTR",
-   "exclusion_value": "UNAPPROVED",
+   "exclusion_value": "TOLL",
    "_source": "할인 제외 대상: 고속도로 통행요금"
   },
   {
@@ -101,16 +101,6 @@
    "exclusion_type": "TRANSACTION_ATTR",
    "exclusion_value": "GIFT_CARD",
    "_source": "할인 제외 대상: 기프트/선불카드(포인트, 사이버머니 등 전자지급수단 포함) 구매 및 충전, 상품권 구매"
-  },
-  {
-   "exclusion_type": "MERCHANT",
-   "exclusion_value": "문자알림서비스",
-   "_source": "할인 제외 대상: 문자알림서비스, 스마트오토서비스 이용금액"
-  },
-  {
-   "exclusion_type": "MERCHANT",
-   "exclusion_value": "스마트오토서비스",
-   "_source": "할인 제외 대상: 문자알림서비스, 스마트오토서비스 이용금액"
   }
  ],
  "performance_tiers": [
@@ -131,6 +121,14 @@
    "min_performance_amount": 600000,
    "shared_monthly_limit": null,
    "_source": "전월 이용금액대별 통합 월 할인한도 60만원 이상. 혜택 묶음마다 별도의 월 할인한도가 있고(영역 30% 10,000원 / 교통·이동통신·스트리밍 10,000~20,000원 / 온라인 간편결제 5,000~10,000원), 카드 전체를 묶는 통합 월 할인한도는 없으므로 shared_monthly_limit은 null"
+  }
+ ],
+ "performance_grace": [
+  {
+   "period_type": "MONTH",
+   "min_performance_amount": 300000,
+   "grace_periods": 1,
+   "_source": "* 전월 이용금액 30만원 이상 시 제공 / * 발급월+1개월까지는 전월 이용금액 30만원 미만 시에도 제공"
   }
  ],
  "performance_exclusions": [
@@ -260,7 +258,7 @@
    "apply_timing": null,
    "target_type": "MERCHANT",
    "target_category_code": null,
-   "target_merchant_name": "이디야커피",
+   "target_merchant_name": "이디야",
    "require_performance": "Y",
    "performance_period": "MONTH",
    "require_payment_type": null,
@@ -1276,7 +1274,7 @@
    "exclusions": [
     {
      "exclusion_type": "PAYMENT_TYPE",
-     "exclusion_value": "간편결제",
+     "exclusion_value": "SIMPLE_PAY",
      "_source": "* 스 트리밍은 간편결제건 및 앱스토어를 통한 결제건(인앱 결제) 제외"
     }
    ],
@@ -1336,7 +1334,7 @@
    "exclusions": [
     {
      "exclusion_type": "PAYMENT_TYPE",
-     "exclusion_value": "간편결제",
+     "exclusion_value": "SIMPLE_PAY",
      "_source": "* 스 트리밍은 간편결제건 및 앱스토어를 통한 결제건(인앱 결제) 제외"
     }
    ],
@@ -1396,7 +1394,7 @@
    "exclusions": [
     {
      "exclusion_type": "PAYMENT_TYPE",
-     "exclusion_value": "간편결제",
+     "exclusion_value": "SIMPLE_PAY",
      "_source": "* 스 트리밍은 간편결제건 및 앱스토어를 통한 결제건(인앱 결제) 제외"
     }
    ],
@@ -1456,7 +1454,7 @@
    "exclusions": [
     {
      "exclusion_type": "PAYMENT_TYPE",
-     "exclusion_value": "간편결제",
+     "exclusion_value": "SIMPLE_PAY",
      "_source": "* 스 트리밍은 간편결제건 및 앱스토어를 통한 결제건(인앱 결제) 제외"
     }
    ],
@@ -1516,7 +1514,7 @@
    "exclusions": [
     {
      "exclusion_type": "PAYMENT_TYPE",
-     "exclusion_value": "간편결제",
+     "exclusion_value": "SIMPLE_PAY",
      "_source": "* 스 트리밍은 간편결제건 및 앱스토어를 통한 결제건(인앱 결제) 제외"
     }
    ],
@@ -1576,7 +1574,7 @@
    "exclusions": [
     {
      "exclusion_type": "PAYMENT_TYPE",
-     "exclusion_value": "간편결제",
+     "exclusion_value": "SIMPLE_PAY",
      "_source": "* 스 트리밍은 간편결제건 및 앱스토어를 통한 결제건(인앱 결제) 제외"
     }
    ],
@@ -2103,11 +2101,6 @@
    "text": "커피전문점·배달앱·델리 영역 중 월 이용금액이 가장 큰 1개 영역에 대해 30% 결제일할인",
    "missing": "월 이용금액 상위 영역이 자동으로 정해진다는 규칙",
    "why": "option_group_code·option_key는 회원이 매월 고르는 선택형을 위한 것이라 이 자동 산정에는 쓸 수 없다. 12개 행을 영역별 option_key(커피전문점/배달앱/델리)로 묶는 것까지는 되지만, 그 셋 중 하나를 '월 이용금액이 가장 큰 것'으로 고르라는 규칙을 담을 필드가 없다. 지금은 benefit_kind=RETROACTIVE로 두어 계산에서 빼고 표시만 한다"
-  },
-  {
-   "text": "* 전월 이용금액 30만원 이상 시 제공 / * 발급월+1개월까지는 전월 이용금액 30만원 미만 시에도 제공",
-   "missing": "user_card의 발급일",
-   "why": "발급일 정보가 없어 발급월+1개월 여부를 판정할 수 없다"
   },
   {
    "text": "* 발급월+1개월까지는 전월 이용금액 30만원 미만 시에도 30만원 이상~60만원 미만 실적구간 혜택 제공(전월 이용금액 60만원 이상 시에는 해당 실적구간 혜택 제공)",

@@ -1,0 +1,318 @@
+{
+ "card": {
+  "card_name": "디지로카 London",
+  "card_type": "CREDIT",
+  "annual_fee": 20000,
+  "annual_fees": [
+   {
+    "brand": "LOCAL",
+    "issue_type": "ANY",
+    "variant": "ANY",
+    "total_fee": 20000,
+    "base_fee": 7000,
+    "partner_fee": 13000,
+    "_source": "구분 총 연회비 기본 연회비 제휴 연회비 / 국내 전용 20,000원 7,000원 13,000원"
+   },
+   {
+    "brand": "ANY",
+    "issue_type": "ANY",
+    "variant": "ANY",
+    "total_fee": 20000,
+    "base_fee": 7000,
+    "partner_fee": 13000,
+    "_source": "해외 겸용 (MASTER, AMEX) 20,000원 7,000원 13,000원 — MASTER·AMEX가 한 칸에 병합된 금액이라 브랜드마다 행을 만들지 않고 한 행으로 적었다."
+   }
+  ],
+  "_source": {
+   "annual_fee": "ㆍ연회비 : 국내전용 20,000원, 해외겸용(MASTER, AMEX) 20,000원 — 모든 조합의 총 연회비가 같아 대표값이 하나로 정해진다."
+  },
+  "_needs_review": []
+ },
+ "card_exclusions": [
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "INTEREST_FREE",
+   "_source": "① 기본 캐시백, 추가 캐시백 적용 제외 대상 … 모든 무이자할부 이용금액"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "INSTALLMENT_CONVERTED",
+   "_source": "① 기본 캐시백, 추가 캐시백 적용 제외 대상 … 나누기 혜택 이용금액 — LOCA 나누기는 일시불 결제 건의 납부개월수를 바꾸는 것이라 일시불을 할부로 전환한 거래에 해당한다."
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "TAX",
+   "_source": "① 기본 캐시백, 추가 캐시백 적용 제외 대상 … 국세, 지방세 … 관세 납부, 인지세"
+  },
+  {
+   "exclusion_type": "CATEGORY",
+   "exclusion_value": "UTILITY",
+   "_source": "① 기본 캐시백, 추가 캐시백 적용 제외 대상 … 수도요금, 도시가스비, 공과금"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "SOCIAL_INSURANCE",
+   "_source": "① 기본 캐시백, 추가 캐시백 적용 제외 대상 … 건강보험, 국민연금, 고용보험, 산재 보험"
+  },
+  {
+   "exclusion_type": "CATEGORY",
+   "exclusion_value": "TUITION",
+   "_source": "① 기본 캐시백, 추가 캐시백 적용 제외 대상 … 초·중·고교 납입금, 대학등록금"
+  },
+  {
+   "exclusion_type": "CATEGORY",
+   "exclusion_value": "RENT",
+   "_source": "① 기본 캐시백, 추가 캐시백 적용 제외 대상 … LH·SH 공사 공공임대료, 부동산 임대료"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "LEVY",
+   "_source": "① 기본 캐시백, 추가 캐시백 적용 제외 대상 … 장애인 고용부담금"
+  },
+  {
+   "exclusion_type": "CATEGORY",
+   "exclusion_value": "APARTMENT_FEE",
+   "_source": "① 기본 캐시백, 추가 캐시백 적용 제외 대상 … 아파트관리비"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "GIFT_CARD",
+   "_source": "① 기본 캐시백, 추가 캐시백 적용 제외 대상 … 기프트·선불카드 충전 및 구매 … 상품권(모바일 상품권 포함)구매"
+  },
+  {
+   "exclusion_type": "CATEGORY",
+   "exclusion_value": "PUBLIC_TRANSPORT",
+   "_source": "① 기본 캐시백, 추가 캐시백 적용 제외 대상 … 대중교통(시내·광역·시외버스, 지하철)"
+  },
+  {
+   "exclusion_type": "CATEGORY",
+   "exclusion_value": "TAXI",
+   "_source": "① 기본 캐시백, 추가 캐시백 적용 제외 대상 … 택시"
+  },
+  {
+   "exclusion_type": "CATEGORY",
+   "exclusion_value": "EXPRESS_BUS",
+   "_source": "① 기본 캐시백, 추가 캐시백 적용 제외 대상 … 고속버스"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "UNAPPROVED",
+   "_source": "① 기본 캐시백, 추가 캐시백 적용 제외 대상 … 무승인전표(자판기, 터널통행료, 항공 기내 이용)"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "CASH_ADVANCE",
+   "_source": "① 기본 캐시백, 추가 캐시백 적용 제외 대상 … 단기카드 대출(현금서비스)"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "CARD_LOAN",
+   "_source": "① 기본 캐시백, 추가 캐시백 적용 제외 대상 … 장기카드대출(카드론)"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "ANNUAL_FEE",
+   "_source": "① 기본 캐시백, 추가 캐시백 적용 제외 대상 … 연회비"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "FEE_INTEREST",
+   "_source": "① 기본 캐시백, 추가 캐시백 적용 제외 대상 … 이자 및 각종 수수료"
+  }
+ ],
+ "performance_tiers": [
+  {
+   "period_type": "MONTH",
+   "min_performance_amount": 0,
+   "shared_monthly_limit": null,
+   "_source": "ㆍ실적 조건 및 한도 없이 혜택을 제공합니다. — 실적 구간이 없는 카드라 0원 구간 하나만 두고, 통합 월 할인한도 개념도 없어 shared_monthly_limit을 비웠다."
+  }
+ ],
+ "performance_exclusions": [],
+ "benefits": [
+  {
+   "benefit_name": "어디서나 0.7% 캐시백",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 0.7,
+   "step_count": null,
+   "apply_timing": "CASHBACK",
+   "target_type": "ALL",
+   "target_category_code": null,
+   "target_merchant_name": null,
+   "targets": null,
+   "require_performance": "N",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": null,
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "국내 모든 가맹점 0.7%, 해외 모든 이용금액 0.7%. 실적 조건과 한도 없이 제공된다. 할부 이용 시 이용일을 기준으로 전체 금액에 대해 캐시백이 제공되나 무이자할부 이용금액은 제외된다. 캐시백은 매달 1일~말일 이용대금에 대해 다음 달 25일 롯데카드에 등록된 자동납부 계좌로 지급된다. 롯데카드에 등록된 가맹점 및 업종을 기준으로 혜택이 제공된다.",
+   "tier_limits": [],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "어디서나 0.7% 캐시백 / 국내 모든 가맹점 0.7%, 해외 모든 이용금액 0.7%",
+    "require_performance": "ㆍ실적 조건 및 한도 없이 혜택을 제공합니다."
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "LOCA 나누기 혜택 (최대 6개월 수수료 없는 분할납부)",
+   "benefit_kind": "INSTALLMENT_FREE",
+   "calc_method": null,
+   "benefit_value": null,
+   "step_count": null,
+   "apply_timing": null,
+   "target_type": "ALL",
+   "target_category_code": null,
+   "target_merchant_name": null,
+   "targets": null,
+   "require_performance": "N",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": 30000,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": null,
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "롯데카드에 접수된 일시불 결제 건의 납부개월수를 롯데카드앱에서 바꿔 추가수수료 없이 나누어 내는 혜택이다. 건당 3만원 이상 30만원 미만은 3개월, 30만원 이상은 3개월 또는 6개월로 나눌 수 있으나 개월 수를 담을 필드가 없어 설명으로만 남긴다. 나누기를 이용한 건에는 캐시백이 제공되지 않는다. 이용일로부터 10일 이내에 신청해야 한다.",
+   "tier_limits": [],
+   "exclusions": [
+    {
+     "exclusion_type": "TRANSACTION_ATTR",
+     "exclusion_value": "CANCELED",
+     "_source": "LOCA 나누기 혜택 제외 대상 … 선결제·부분입금·부분취소·포인트사용 등이 적용된 결제 건"
+    },
+    {
+     "exclusion_type": "TRANSACTION_ATTR",
+     "exclusion_value": "POINT_USED",
+     "_source": "LOCA 나누기 혜택 제외 대상 … 포인트사용 등이 적용된 결제 건"
+    }
+   ],
+   "_source": {
+    "min_txn_amount": "건당 이용금액 나누기 혜택 적용 개월 수 / 3만원 이상 ~ 30만원 미만 3개월",
+    "require_performance": "ㆍLOCA 나누기 혜택은 지난달 실적 기준과 상관없이 제공됩니다."
+   },
+   "_needs_review": [
+    "calc_method",
+    "benefit_value"
+   ]
+  }
+ ],
+ "unmapped": [
+  {
+   "text": "어디서나 0.7% 캐시백 / 국내 모든 가맹점 0.7%, 해외 모든 이용금액 0.7%",
+   "why": "해외 이용분 0.7%는 해외 결제 혜택이라 범위 밖이다. 국내 전 가맹점 0.7%만 혜택 행으로 남겼다."
+  },
+  {
+   "text": "ㆍ가족카드 이용금액도 동일한 기준으로 본인회원에게 합산되어 혜택이 제공됩니다.",
+   "why": "가족카드 합산은 범위 밖이다. 혜택은 카드 단독 이용금액으로만 계산한다."
+  },
+  {
+   "text": "ㆍ캐시백 혜택은 매달 1일-말일 카드 이용대금에 대해 다음 달 25일(휴일인 경우 다음 영업일)에 제공되며, 롯데카드에 등록된 자동납부 계좌로 지급됩니다. / ㆍ캐시백 지급 후 혜택이 제공된 결제 건 취소 시 지급된 캐시백은 다음 캐시백 제공 시점에 차감됩니다. 다음 캐시백 제공 시점에 차감되는 금액이 지급되는 금액보다 큰 경우 모자란 금액은 별도로 청구됩니다.",
+   "why": "지급 시점과 취소 시 차감 절차라 금액 계산 규칙이 아니다."
+  },
+  {
+   "text": "ㆍ해외 이용금액은 롯데카드에 접수되는 현지 매출일자를 기준으로 혜택이 제공됩니다. / ㆍ한 달 동안 이용한 금액이 다음 달에 결제되는 결제 건은(이동통신 등) 롯데카드에 접수 되는 일자를 기준으로 혜택이 제공됩니다.",
+   "why": "혜택이 어느 달에 귀속되는지를 정하는 접수일 기준 규칙이다. 소비내역에는 거래일 하나만 있어 이 기준을 표현할 자리가 없다."
+  },
+  {
+   "text": "ㆍ디지로카 London 카드로 결제 시, 롯데카드가 제공하는 L.POINT 적립서비스가 제공되지 않습니다. 단, 다른 L.POINT 제휴사가 제공하는 L.POINT는 적립 가능합니다.",
+   "why": "혜택이 없다는 설명이라 혜택 행으로 만들 것이 없다."
+  },
+  {
+   "text": "① 기본 캐시백, 추가 캐시백 적용 제외 대상 … 디지로카 London 카드가 아닌 롯데카드 이용금액",
+   "why": "혜택은 카드별로 계산하므로 다른 카드 이용금액은 애초에 대상에 들어오지 않는다."
+  },
+  {
+   "text": "ㆍL OCA 나누기 혜택은 이용일로부터 10일 이내 롯데카드앱에서 신청 가능하며, 자세한 이용방법은 롯데카드 앱에서 확인하세요. / ㆍ롯데카드앱을 통한 LOCA 나누기 신청 건에 한하여 LOCA 나누기 혜택이 적용되며, 홈페이지, 콜센터, 카드센터에서는 LOCA 나누기 혜택 신청이 불가합니다.",
+   "why": "신청 채널·기한 조건이라 범위 밖이다."
+  },
+  {
+   "text": "ㆍ해외 이용 시(해외사이트 거래 포함) 미화(USD)기준 거래미화금액에 접수일의 (우리은행) 최초고시 전신환 매도율을 적용한 후, 국제브랜드사가 부과하는 국제브랜드 수수료(MASTER 1%, AMEX 1.4%)와 롯데카드가 부과하는 해외서비스 수수료(신용 0.2%)를 포함하여 원화로 청구됩니다.",
+   "why": "해외 이용 청구금액 산식이다. 혜택이 아니라 청구 계산 규칙이라 담을 필드가 없다."
+  },
+  {
+   "text": "ㆍ카드 해지 및 연체 시에는 캐시백이 제공되지 않습니다.",
+   "why": "회원의 계약 상태에 걸리는 조건이라 거래 단위로 판정하는 혜택 조건에 담기지 않는다."
+  }
+ ],
+ "_schema_gap": [
+  {
+   "text": "즉시결제 1% 추가 캐시백 / 일시불 이용 후 5일 이내 즉시결제 시 1% / 즉시 결제란? ㆍ카드 결제일 전 이용대금에 대해 미리 내는 것을 의미합니다. / ㆍ일시불 이용 결제 건 별로 이용 다음날부터 5영업일 이내 즉시결제한 금액 기준으로 혜택이 제공됩니다. / ㆍ롯데카드앱 또는 홈페이지에서 이용건 별 즉시결제 시에만 제공됩니다.",
+   "missing": "카드대금 상환 방식을 가리키는 조건 컬럼 (require_payment_type 표준값에 즉시결제·선결제가 없다)",
+   "why": "즉시결제는 가맹점·업종·결제수단이 아니라 결제한 뒤 회원이 대금을 언제 갚는지에 붙는 조건이라 어느 필드에도 담기지 않는다. 조건 없이 기본 0.7%에 1%를 더한 1.7% 행을 만들면 즉시결제를 하지 않은 결제까지 1.7%로 계산되므로 혜택 행을 만들지 않았다."
+  },
+  {
+   "text": "Weekly 자동결제 1% 추가 캐시백 / 일주일 간 일시불 이용금액에 대해 자동결제 시 1% / Weekly 자동결제란? 디지로카 London 카드를 통해 매주 월요일부터 일요일까지 이용한 금액에 대해 그 다음주 화요일(휴일인 경우 다음 영업일)에 자동 출금되는 서비스 / ㆍ일주일 간 일시불 합산 이용금액(롯데카드에 접수 완료된 건 기준)이 5만원 이상인 경우에만 자동결제가 됩니다. / ㆍ해당 주차의 결제금액 전액이 출금되어야 혜택이 제공됩니다. / ※ 즉시결제 1% 추가 캐시백과 Weekly 자동결제 1% 추가 캐시백은 중복 제공되지 않습니다.",
+   "missing": "카드대금 상환 방식 조건 컬럼과 주 단위 집계 축 (한도·조건의 기간 축이 일·월·분기·연 넷뿐이다)",
+   "why": "AUTO_TRANSFER는 자동이체·자동납부로 결제한 거래를 가리키는 값이라 카드대금을 매주 자동 출금하는 상환 방식과 뜻이 어긋난다. '일주일 합산 5만원 이상'과 '해당 주차 전액 출금'도 주 단위 조건이라 기간 축에 없다. 두 추가 캐시백이 서로 중복 제공되지 않는다는 규칙도 혜택 사이의 배타 관계라 표현할 자리가 없다."
+  },
+  {
+   "text": "② 추가캐시백 적용 제외 대상 롯데카드 이자상품 (유이자할부·분할납부 이용금액 및 리볼빙 이용 중 결제한 금액)",
+   "missing": "TRANSACTION_ATTR 표준값 — 유이자할부·분할납부·리볼빙이 적용된 결제 건",
+   "why": "INTEREST_FREE는 무이자할부, INSTALLMENT_CONVERTED는 일시불을 할부로 전환한 건이라 유이자할부·리볼빙을 가리키는 값이 없다. 게다가 이 제외는 추가 캐시백에만 걸리는데 그 혜택 자체가 조건을 표현하지 못해 행이 되지 않았다."
+  },
+  {
+   "text": "건당 이용금액 나누기 혜택 적용 개월 수 / 3만원 이상 ~ 30만원 미만 3개월 / 30만원 이상 3개월 또는 6개월",
+   "missing": "수수료 없이 나눌 수 있는 개월 수, 그리고 건당 이용금액 구간마다 개월 수가 갈리는 구조",
+   "why": "benefit에는 요율과 금액만 있고 개월 수를 담을 열이 없다. tier_limits는 실적 구간별 값이라 건당 이용금액 구간과 축이 다르고, min_txn_amount는 하한 하나만 담아 30만원에서 갈리는 두 번째 구간을 표현하지 못한다."
+  },
+  {
+   "text": "LOCA 나누기 혜택 제외 대상 … 무이자할부·유이자할부·슬림할부·리볼빙·분할납부 적용된 결제 건, 선결제·부분입금·부분취소·포인트사용 등이 적용된 결제 건",
+   "missing": "TRANSACTION_ATTR 표준값 — 슬림할부·선결제·부분입금이 적용된 결제 건",
+   "why": "부분취소는 CANCELED, 포인트사용은 POINT_USED, 무이자할부는 INTEREST_FREE로 담았으나 선결제·부분입금(대금 일부를 미리 갚은 건)과 슬림할부에 해당하는 값이 없다."
+  },
+  {
+   "text": "LOCA 나누기 혜택 제외 대상 … PC방, 귀금속",
+   "missing": "PC방만 가리키는 카테고리 코드와 귀금속 업종 코드",
+   "why": "AMUSEMENT_VENUE는 노래방·PC방·비디오방·게임방을 함께 묶은 코드라 그대로 쓰면 약관이 제외하지 않은 노래방까지 빠진다. 귀금속은 표준 카테고리 40개에 없다."
+  },
+  {
+   "text": "① 기본 캐시백, 추가 캐시백 적용 제외 대상 … 오토·스마트 캐시백 신청 이용 금액",
+   "missing": "TRANSACTION_ATTR 표준값 — 카드사 캐시백 전환을 신청한 이용금액",
+   "why": "오토·스마트 캐시백은 회원이 신청해 이용금액을 캐시백으로 돌리는 롯데카드 서비스다. 표준값에 맞는 것이 없어 제외 대상에서 빠졌다."
+  },
+  {
+   "text": "① 기본 캐시백, 추가 캐시백 적용 제외 대상 … 포인트 충전",
+   "missing": "TRANSACTION_ATTR 표준값 — 포인트 충전",
+   "why": "POINT_USED는 포인트로 결제한 금액이고 GIFT_CARD는 상품권·선불카드 구매·충전이다. 포인트를 사는 거래는 둘 중 어느 쪽이라고 단정할 수 없어 넣지 않았다."
+  },
+  {
+   "text": "① 기본 캐시백, 추가 캐시백 적용 제외 대상 … 고속도로 통행요금",
+   "missing": "통행료를 가리키는 카테고리 코드 또는 TRANSACTION_ATTR 표준값",
+   "why": "UNAPPROVED는 무승인전표(자판기·터널통행료·항공 기내)를 가리키고 고속도로 통행요금은 같은 문장에서 따로 열거된다. 교통 카테고리에도 통행료가 없다."
+  },
+  {
+   "text": "① 기본 캐시백, 추가 캐시백 적용 제외 대상 … 벌금, 과태료, 민원 발급 수수료, 관세 납부, 인지세, 송달료",
+   "missing": "TRANSACTION_ATTR 표준값 — 벌금·과태료 등 제재금과 행정 수수료",
+   "why": "관세·인지세는 국세라 TAX로 넣었으나 벌금·과태료·민원 발급 수수료·송달료는 TAX(국세·지방세)도 LEVY(부담금·준조세)도 FEE_INTEREST(카드 이용에 따르는 수수료·이자)도 아니어서 제외 대상에서 빠졌다."
+  }
+ ]
+}

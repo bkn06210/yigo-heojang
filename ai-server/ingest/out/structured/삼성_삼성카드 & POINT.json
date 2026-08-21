@@ -75,21 +75,6 @@
    "exclusion_type": "TRANSACTION_ATTR",
    "exclusion_value": "GIFT_CARD",
    "_source": "선불카드 충전(삼성유포인트카드, 삼성전자 멤버십 BLUE 삼성선불카드, 삼성올앳카드 등)"
-  },
-  {
-   "exclusion_type": "MERCHANT",
-   "exclusion_value": "휴대폰알림 서비스(S.InfoCare)",
-   "_source": "휴대폰알림 서비스(S.InfoCare), 스마트오토서비스, 이마트 이클럽 등의 이용금액은 제외됩니다."
-  },
-  {
-   "exclusion_type": "MERCHANT",
-   "exclusion_value": "스마트오토서비스",
-   "_source": "휴대폰알림 서비스(S.InfoCare), 스마트오토서비스, 이마트 이클럽 등의 이용금액은 제외됩니다."
-  },
-  {
-   "exclusion_type": "MERCHANT",
-   "exclusion_value": "이마트 이클럽",
-   "_source": "휴대폰알림 서비스(S.InfoCare), 스마트오토서비스, 이마트 이클럽 등의 이용금액은 제외됩니다."
   }
  ],
  "performance_tiers": [

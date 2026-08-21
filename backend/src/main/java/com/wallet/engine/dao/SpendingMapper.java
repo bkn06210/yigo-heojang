@@ -1,6 +1,7 @@
 package com.wallet.engine.dao;
 
 import com.wallet.engine.dao.dto.CategorySpendingRow;
+import com.wallet.engine.dao.dto.SpentTransactionRow;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -21,4 +22,15 @@ public interface SpendingMapper {
      */
     List<CategorySpendingRow> findMonthlySpendingByCategory(@Param("memberId") long memberId,
                                                             @Param("yearMonth") String yearMonth);
+
+    /**
+     * 그달의 결제를 거래 단위로 조회한다. 카드 추천 시뮬레이션의 입력이다.
+     *
+     * 집계가 아니라 거래 하나하나를 내리는 이유는 한도가 결제 건수에 따라 걸리기 때문이다.
+     * 같은 20만원이라도 5천원 40번과 5만원 4번은 받는 혜택이 다르다.
+     *
+     * 취소 건은 뺀다 — 하지 않은 소비를 근거로 카드를 권하게 된다.
+     */
+    List<SpentTransactionRow> findMonthlyTransactions(@Param("memberId") long memberId,
+                                                      @Param("yearMonth") String yearMonth);
 }

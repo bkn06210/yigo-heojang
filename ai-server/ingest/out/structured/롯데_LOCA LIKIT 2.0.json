@@ -1,0 +1,285 @@
+{
+ "card": {
+  "card_name": "LOCA LIKIT 2.0",
+  "card_type": "CREDIT",
+  "annual_fee": 20000,
+  "annual_fees": [
+   {
+    "brand": "ANY",
+    "issue_type": "ANY",
+    "variant": "ANY",
+    "total_fee": 20000,
+    "base_fee": 7000,
+    "partner_fee": 13000,
+    "_source": "연회비 구분 총 연회비 / 기본 연회비 제휴 연회비 / 국내전용 20,000원 7,000원 13,000원 / 해외겸용 20,000원 7,000원 13,000원 (MASTER, AMEX) — 국내전용과 해외겸용(MASTER, AMEX)의 총액·기본·제휴 금액이 모두 같아 브랜드를 가르지 않고 한 행으로 적었다."
+   }
+  ],
+  "_source": {
+   "annual_fee": "· 연 회비 : 국내전용 20,000원, 해외겸용(MASTER, AMEX) 20,000원"
+  },
+  "_needs_review": []
+ },
+ "card_exclusions": [
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "INTEREST_FREE",
+   "_source": "할인 적용 제외 대상 … 모든 무이자할부 이용금액"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "CANCELED",
+   "_source": "할인 적용 제외 대상 … 거래 취소금액"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "TAX",
+   "_source": "할인 적용 제외 대상 … 국세, 지방세"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "SOCIAL_INSURANCE",
+   "_source": "할인 적용 제외 대상 … 건강보험, 국민연금, 고용보험, 산재보험"
+  },
+  {
+   "exclusion_type": "CATEGORY",
+   "exclusion_value": "TUITION",
+   "_source": "할인 적용 제외 대상 … 초·중·고교 납입금, 대학(대학원)등록금"
+  },
+  {
+   "exclusion_type": "CATEGORY",
+   "exclusion_value": "RENT",
+   "_source": "할인 적용 제외 대상 … LH·SH 공사 공공임대료, 부동산 임대료"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "LEVY",
+   "_source": "할인 적용 제외 대상 … 장애인 고용부담금"
+  },
+  {
+   "exclusion_type": "CATEGORY",
+   "exclusion_value": "UTILITY",
+   "_source": "할인 적용 제외 대상 … 도시가스요금, 전기요금, 수도요금, 공과금"
+  },
+  {
+   "exclusion_type": "CATEGORY",
+   "exclusion_value": "APARTMENT_FEE",
+   "_source": "할인 적용 제외 대상 … 아파트관리비"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "GIFT_CARD",
+   "_source": "할인 적용 제외 대상 … 기프트·선불카드 충전 및 구매(기후동행카드 등 포함), 포인트 충전, 상품권(모바일 상품권 포함) 구매"
+  },
+  {
+   "exclusion_type": "CATEGORY",
+   "exclusion_value": "TAXI",
+   "_source": "할인 적용 제외 대상 … 택시"
+  },
+  {
+   "exclusion_type": "CATEGORY",
+   "exclusion_value": "EXPRESS_BUS",
+   "_source": "할인 적용 제외 대상 … 고속버스"
+  },
+  {
+   "exclusion_type": "CATEGORY",
+   "exclusion_value": "PUBLIC_TRANSPORT",
+   "_source": "할인 적용 제외 대상 … 대중교통(시내·광역·시외버스, 지하철)"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "UNAPPROVED",
+   "_source": "할인 적용 제외 대상 … 무승인전표(자판기, 터널통행료, 항공 기내 이용 등)"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "CASH_ADVANCE",
+   "_source": "할인 적용 제외 대상 … 단기카드대출(현금서비스)"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "CARD_LOAN",
+   "_source": "할인 적용 제외 대상 … 장기카드대출(카드론)"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "ANNUAL_FEE",
+   "_source": "할인 적용 제외 대상 … 연회비"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "FEE_INTEREST",
+   "_source": "할인 적용 제외 대상 … 이자 및 각종 수수료"
+  }
+ ],
+ "performance_tiers": [
+  {
+   "period_type": "MONTH",
+   "min_performance_amount": 0,
+   "shared_monthly_limit": null,
+   "_source": "· 실적조건 및 할인한도 없이 혜택을 제공합니다. — 실적 구간이 없는 카드라 0원 구간 한 줄만 두었고, 통합 할인한도 개념이 없어 shared_monthly_limit은 null이다."
+  }
+ ],
+ "performance_exclusions": [],
+ "benefits": [
+  {
+   "benefit_name": "국내 가맹점 1.2% 결제일 할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 1.2,
+   "step_count": null,
+   "apply_timing": "BILLED",
+   "target_type": "ALL",
+   "target_category_code": null,
+   "target_merchant_name": null,
+   "targets": null,
+   "require_performance": "N",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": null,
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "국내 가맹점 이용금액의 1.2%를 결제일에 할인한다. 실적조건과 할인한도가 없다. 롯데카드에 등록된 가맹점 및 업종을 기준으로 혜택이 제공된다. 롯데카드의 다른 결제일 할인(청구할인) 혜택과 중복될 경우 할인금액이 큰 혜택 하나만 제공된다. 무이자 할부 혜택이 제공된 결제 건에는 이 할인이 제공되지 않는다.",
+   "tier_limits": [],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "국내 가맹점 1.2% 결제일 할인",
+    "require_performance": "· 실적조건 및 할인한도 없이 혜택을 제공합니다. — 실적조건이 없어 N, 할인한도가 없어 금액·횟수 한도 필드를 모두 null로 두었다."
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "국내 가맹점 2~3개월 무이자 할부",
+   "benefit_kind": "INSTALLMENT_FREE",
+   "calc_method": null,
+   "benefit_value": null,
+   "step_count": null,
+   "apply_timing": null,
+   "target_type": "ALL",
+   "target_category_code": null,
+   "target_merchant_name": null,
+   "targets": null,
+   "require_performance": "N",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": 50000,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": null,
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "국내 가맹점에서 5만원 이상 2~3개월 할부 결제 시 무이자 할부가 제공된다. 지난달 실적 조건은 없다. 해외 및 일시불 이용 건을 할부로 전환하거나 할부 개월 수를 변경하면 제공되지 않는다. 무이자 할부가 제공된 결제 건은 다른 결제일 할인 및 포인트 적립 혜택을 받지 못한다. 무이자 개월 수(2~3개월)를 담을 필드가 없어 설명으로만 남긴다.",
+   "tier_limits": [],
+   "exclusions": [
+    {
+     "exclusion_type": "TRANSACTION_ATTR",
+     "exclusion_value": "INSTALLMENT_CONVERTED",
+     "_source": "· 해 외 및 일시불 이용 건을 할부로 전환하거나, 할부 개월 수 변경 시 무이자 할부 혜택이 제공되지 않습니다."
+    },
+    {
+     "exclusion_type": "TRANSACTION_ATTR",
+     "exclusion_value": "OVERSEAS",
+     "_source": "· 해 외 및 일시불 이용 건을 할부로 전환하거나, 할부 개월 수 변경 시 무이자 할부 혜택이 제공되지 않습니다."
+    }
+   ],
+   "_source": {
+    "min_txn_amount": "· L OCA LIKIT 2.0 카드로 국내 가맹점에서 5만원 이상 2~3개월 할부 결제 시 무이자 할부 혜택이 제공됩니다.",
+    "require_performance": "· 국내 가맹점 2~3개월 무이자 할부 혜택은 지난달 실적 조건 없이 제공됩니다."
+   },
+   "_needs_review": [
+    "calc_method",
+    "benefit_value"
+   ]
+  }
+ ],
+ "unmapped": [
+  {
+   "text": "해외 가맹점 / 해외 가맹점 2.0% 결제일 할인 / · 실적조건 및 할인한도 없이 혜택을 제공합니다. / · 해외 가맹점 할인은 국내외 겸용 카드에 한해 적용됩니다.",
+   "why": "해외 결제 혜택은 범위 밖이다. 해외 가맹점 데이터가 들어오지 않아 추천 계산 대상이 되지 않는다."
+  },
+  {
+   "text": "· 해 외 온라인 가맹점 이용 시, 국내 가맹점번호로 승인처리되는 일부 결제 건은 국내 가맹점 1.2% 혜택이 제공됩니다. - 예시) 간편결제, PG결제(결제대행) 등의 국내가맹점으로 결제되는 경우",
+   "why": "해외 가맹점을 국내로 볼지 가르는 조건인데, 거래에 해외 여부도 승인 가맹점번호 구분도 들어오지 않는다."
+  },
+  {
+   "text": "· 해 외 이용금액은 롯데카드에 접수되는 현지 매출일자를 기준으로 혜택이 제공되며, 롯데카드에 접수된 후 확인 가능합니다.",
+   "why": "해외 이용분의 혜택 반영 시점 규정이다. 해외 결제 혜택 자체가 범위 밖이고 매입 시차를 담을 자리도 없다."
+  },
+  {
+   "text": "· 할 부 결제 건은 이용일을 기준으로 전체 이용금액에 대하여 할인 혜택이 제공됩니다.",
+   "why": "할부 건의 할인 산정 시점 규정이다. 월분할청구 처리는 범위 밖이라 혜택 규칙으로 담지 않는다."
+  },
+  {
+   "text": "· 한 달 동안 이용한 금액이 다음 달에 결제되는 결제 건은(이동통신 등) 롯데카드에 접수되는 일자를 기준으로 혜택이 제공됩니다.",
+   "why": "매입 시차에 따라 혜택 반영 월이 달라지는 규정이다. 거래마다 기준월이 달라지는 것을 담을 자리가 없다(전전월 실적과 같은 계열로 범위 밖)."
+  },
+  {
+   "text": "· L OCA LIKIT 2.0 카드로 결제 시, 롯데카드가 제공하는 L.POINT 적립 서비스가 제공되지 않습니다. 다른 L.POINT 제휴사가 제공하는 L.POINT는 적립 가능합니다.",
+   "why": "카드사 기본 적립 서비스를 이 카드에서만 끄는 조항이다. 제공되는 혜택이 아니라 다른 제도의 배제라 혜택 행으로 표현할 대상이 없다."
+  },
+  {
+   "text": "· 가 족카드 발급 시 본인카드의 제휴 연회비가 청구됩니다. / · 가 족카드의 부가서비스 이용 조건 및 제공 범위는 본인카드의 이용 조건 및 제공 범위와 동일하며 본인카드와 합산 적용됩니다.",
+   "why": "가족카드 합산은 범위 밖이다. 연회비도 혜택 한도도 카드 한 장 단위로만 표현된다."
+  },
+  {
+   "text": "· 카드 이용 시 제공되는 추가적인 혜택은 카드 신규출시 이후 3년 이상 축소·폐지 없이 유지됩니다.",
+   "why": "혜택 유효기간은 범위 밖이다. is_active 토글로만 다룬다."
+  }
+ ],
+ "_schema_gap": [
+  {
+   "text": "· 해 외 가맹점 할인은 국내외 겸용 카드에 한해 적용됩니다.",
+   "missing": "혜택이 적용되는 카드 브랜드·발급 형태를 가리키는 조건 컬럼(benefit의 brand 또는 issue_type)",
+   "why": "같은 카드라도 국내전용으로 발급하면 이 혜택이 없다. 브랜드 축은 연회비(card.annual_fees)에만 있고 혜택에는 없어, 국내전용 회원에게도 해외 할인이 있는 것으로 표시된다."
+  },
+  {
+   "text": "· L OCA LIKIT 2.0 카드로 국내 가맹점에서 5만원 이상 2~3개월 할부 결제 시 무이자 할부 혜택이 제공됩니다.",
+   "missing": "무이자 할부 개월 수 범위 컬럼(installment_months_from / installment_months_to)",
+   "why": "INSTALLMENT_FREE 혜택에 몇 개월까지 무이자인지 적을 필드가 없다. 2~3개월 카드와 2~6개월 카드가 같은 행 모양이 되어 카드 상세 화면에서 구분되지 않는다."
+  },
+  {
+   "text": "오토·스마트 캐시백 신청 이용금액, 오토 할부서비스 이용금액",
+   "missing": "카드사 자체 부가 프로그램으로 처리된 거래를 가리키는 TRANSACTION_ATTR 표준값",
+   "why": "표준값 목록에 대응하는 값이 없다. 임의로 값을 만들면 카드사마다 다른 문자열이 되어 엔진이 매칭하지 못하므로 이 제외 항목을 담지 못했다."
+  },
+  {
+   "text": "관세납부, 벌금, 과태료, 민원 발급 수수료, 인지세, 송달료",
+   "missing": "행정 수수료·벌과금을 가리키는 TRANSACTION_ATTR 표준값",
+   "why": "TAX는 국세·지방세, LEVY는 부담금·준조세라 벌금·과태료·민원 발급 수수료·인지세·송달료가 어느 쪽에도 들어가지 않는다. 억지로 넣으면 약관이 제외하지 않은 거래까지 제외된다."
+  },
+  {
+   "text": "공공기관/공공단체에서 개설한 가맹점 이용금액",
+   "missing": "가맹점 개설 주체(공공기관 여부)를 나타내는 값",
+   "why": "가맹점이 브랜드 단위라 개설 주체를 구분하지 않는다. 업종으로도 갈리지 않아(같은 업종에 민간·공공이 섞인다) 카테고리 제외로 대신할 수 없다."
+  },
+  {
+   "text": "TV 수신료, 고속도로 통행요금, 티머니 인증",
+   "missing": "이 셋에 대응하는 카테고리 코드 또는 TRANSACTION_ATTR 표준값",
+   "why": "카테고리 표준에 TV 수신료·고속도로 통행요금·티머니 인증이 없다. 고속도로 통행요금은 무승인전표(UNAPPROVED)와 별도로 열거돼 있어 그 값으로 대신할 수 없고, TV 수신료를 UTILITY로 넣으면 약관이 따로 열거한 항목을 공과금 전체와 같은 값으로 뭉개게 된다."
+  }
+ ]
+}

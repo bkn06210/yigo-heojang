@@ -1,0 +1,885 @@
+{
+ "card": {
+  "card_name": "KB Youth Club 체크카드",
+  "card_type": "CHECK",
+  "annual_fee": 0,
+  "annual_fees": [
+   {
+    "brand": "ANY",
+    "issue_type": "ANY",
+    "variant": "ANY",
+    "total_fee": 0,
+    "base_fee": null,
+    "partner_fee": null,
+    "_source": "∙ 브랜드: 국내전용(Local), 국내외겸용(Mastercard) / ∙ 연회비 : 없음 — 브랜드별로 금액이 갈리지 않아 한 행으로 적었다"
+   }
+  ],
+  "_source": {
+   "annual_fee": "• 연회비: 없음"
+  },
+  "_needs_review": []
+ },
+ "card_exclusions": [
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "GIFT_CARD",
+   "_source": "∙ 상품권 및 선불카드(선불전자지급수단 포함) 구입∙충전 금액의 경우 할인대상에서 제외됩니다."
+  }
+ ],
+ "performance_tiers": [
+  {
+   "period_type": "MONTH",
+   "min_performance_amount": 0,
+   "shared_monthly_limit": null,
+   "_source": "※ 전월이용실적조건: 전월이용실적20만원이상시할인혜택제공됩니다. — 20만원 미만 구간은 할인이 없다. 카드 통합 할인한도 조항이 없고 영역별 월 할인한도만 있어 shared_monthly_limit은 null"
+  },
+  {
+   "period_type": "MONTH",
+   "min_performance_amount": 200000,
+   "shared_monthly_limit": null,
+   "_source": "※ 전월이용실적조건: 전월이용실적20만원이상시할인혜택제공됩니다."
+  }
+ ],
+ "performance_exclusions": [
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "GIFT_CARD",
+   "_source": "전월 이용실적 제외 대상 ∙ … 상품권 및 선불카드 구입∙충전 금액"
+  },
+  {
+   "exclusion_type": "CATEGORY",
+   "exclusion_value": "APARTMENT_FEE",
+   "_source": "전월 이용실적 제외 대상 ∙ … 아파트관리비"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "GOV_SUBSIDY",
+   "_source": "전월 이용실적 제외 대상 ∙ … 정부지원금(보육료, 유치원보조비, 바우처 이용금액 등)"
+  },
+  {
+   "exclusion_type": "CATEGORY",
+   "exclusion_value": "TUITION",
+   "_source": "전월 이용실적 제외 대상 ∙ … 대학(원)등록금"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "TAX",
+   "_source": "전월 이용실적 제외 대상 ∙ … 국세, 지방세"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "SOCIAL_INSURANCE",
+   "_source": "전월 이용실적 제외 대상 ∙ … 4대 사회보험료(건강/연금/고용/산재)"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "FEE_INTEREST",
+   "_source": "전월 이용실적 제외 대상 ∙ … 각종 수수료 및 이자, 연체료"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "UNAPPROVED",
+   "_source": "전월 이용실적 제외 대상 ∙ … 무승인전표(RF후불교통요금/자판기/터널이용료/고속버스 취소 반환수수료 등)"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "POSTPAID_TRANSIT",
+   "_source": "무승인전표(RF후불교통요금/자판기/터널이용료 …) — 후불교통요금이 명시적으로 열거되어 별도 값으로도 적는다"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "CANCELED",
+   "_source": "전월 이용실적 제외 대상 ∙ … 취소금액 / ∙ 취소금액은 취소전표가 당사에 접수된 월의 실적에서 차감"
+  }
+ ],
+ "benefits": [
+  {
+   "benefit_name": "OTT 50% 환급할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 50,
+   "step_count": null,
+   "apply_timing": "CASHBACK",
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": null,
+   "targets": [
+    "넷플릭스",
+    "유튜브 프리미엄",
+    "티빙",
+    "스포티파이"
+   ],
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": 5000,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": "YOUTH_A_OTT_5000",
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": "SERVICE_PACK",
+   "option_key": "PACK_A",
+   "description": "선택형 A팩. 공식홈페이지를 통한 정기결제 이용권 결제 시 제공(인앱결제·단건결제·포인트 및 캐시 충전 등은 제외). 유튜브는 프리미엄 멤버십 결제건에 한한다(채널 구독 등 제외). 네 브랜드가 월 할인한도 5천원을 함께 쓴다. 할인혜택은 환급할인으로 제공된다(이용전표 매입처리 완료 후 접수일의 할인금액을 카드 출금계좌로 환급).",
+   "tier_limits": [],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "OTT 넷플릭스, 유튜브, 티빙, 스포티파이 50% 5,000원",
+    "limit_group_code": "한 행(OTT)에 월 할인한도 5,000원이 한 번만 제시된다",
+    "require_performance": "※ 전월이용실적조건: 전월이용실적20만원이상시할인혜택제공됩니다."
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "APP 30% 환급할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 30,
+   "step_count": null,
+   "apply_timing": "CASHBACK",
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": null,
+   "targets": [
+    "구글플레이스토어",
+    "애플앱스토어"
+   ],
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": 5000,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": 5000,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": "YOUTH_A_APP_5000",
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": "SERVICE_PACK",
+   "option_key": "PACK_A",
+   "description": "선택형 A팩. 두 앱스토어가 월 할인한도 5천원을 함께 쓴다. 할인혜택은 환급할인으로 제공된다(이용전표 매입처리 완료 후 접수일의 할인금액을 카드 출금계좌로 환급).",
+   "tier_limits": [],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "APP 구글플레이스토어, 애플앱스토어 30% 5,000원 • 건당5천원이상이용시제공",
+    "limit_group_code": "한 행(APP)에 월 할인한도 5,000원이 한 번만 제시된다",
+    "require_performance": "※ 전월이용실적조건: 전월이용실적20만원이상시할인혜택제공됩니다."
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "여가(노래방·PC방) 20% 환급할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 20,
+   "step_count": null,
+   "apply_timing": "CASHBACK",
+   "target_type": "CATEGORY",
+   "target_category_code": "AMUSEMENT_VENUE",
+   "target_merchant_name": null,
+   "targets": null,
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": 5000,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": 2000,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": null,
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": "SERVICE_PACK",
+   "option_key": "PACK_A",
+   "description": "선택형 A팩. 노래방 및 비디오방/게임방 업종 결제건에 한한다. 할인혜택은 환급할인으로 제공된다(이용전표 매입처리 완료 후 접수일의 할인금액을 카드 출금계좌로 환급).",
+   "tier_limits": [],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "여가 노래방, PC방 20% 2,000원 • 건당5천원이상이용시제공",
+    "require_performance": "※ 전월이용실적조건: 전월이용실적20만원이상시할인혜택제공됩니다."
+   },
+   "_needs_review": [
+    "target_category_code"
+   ]
+  },
+  {
+   "benefit_name": "교통(택시·철도) 20% 환급할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 20,
+   "step_count": null,
+   "apply_timing": "CASHBACK",
+   "target_type": "CATEGORY",
+   "target_category_code": null,
+   "target_merchant_name": null,
+   "targets": [
+    "TAXI",
+    "RAILWAY"
+   ],
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": 5000,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": 2000,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": "YOUTH_A_TRANSPORT_2000",
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": "SERVICE_PACK",
+   "option_key": "PACK_A",
+   "description": "선택형 A팩. 택시 및 철도 업종 결제건에 한한다. 두 업종이 월 할인한도 2천원을 함께 쓴다. 할인혜택은 환급할인으로 제공된다(이용전표 매입처리 완료 후 접수일의 할인금액을 카드 출금계좌로 환급).",
+   "tier_limits": [],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "교통 택시, 철도 20% 2,000원 • 건당5천원이상이용시제공",
+    "limit_group_code": "한 행(교통)에 월 할인한도 2,000원이 한 번만 제시된다",
+    "require_performance": "※ 전월이용실적조건: 전월이용실적20만원이상시할인혜택제공됩니다."
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "편의점 KB Pay 결제 20% 환급할인(A팩)",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 20,
+   "step_count": null,
+   "apply_timing": "CASHBACK",
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": null,
+   "targets": [
+    "GS25",
+    "CU"
+   ],
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": "KB_PAY",
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": 2000,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": "YOUTH_A_CVS_2000",
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": "SERVICE_PACK",
+   "option_key": "PACK_A",
+   "description": "선택형 A팩. 오프라인 매장에서 KB Pay로 이용 시 제공된다. 두 브랜드가 월 할인한도 2천원을 함께 쓴다. 할인혜택은 환급할인으로 제공된다(이용전표 매입처리 완료 후 접수일의 할인금액을 카드 출금계좌로 환급).",
+   "tier_limits": [],
+   "exclusions": [
+    {
+     "exclusion_type": "MERCHANT_LOCATION",
+     "exclusion_value": "IN_DEPARTMENT_STORE",
+     "_source": "백화점, 대형마트등일부입점매장제외"
+    },
+    {
+     "exclusion_type": "MERCHANT_LOCATION",
+     "exclusion_value": "IN_LARGE_MART",
+     "_source": "백화점, 대형마트등일부입점매장제외"
+    }
+   ],
+   "_source": {
+    "benefit_value": "편의점 GS25, CU에서KB Pay로결제 20% 2,000원",
+    "limit_group_code": "한 행(편의점)에 월 할인한도 2,000원이 한 번만 제시된다",
+    "require_performance": "※ 전월이용실적조건: 전월이용실적20만원이상시할인혜택제공됩니다."
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "영화 4,000원 환급할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "FIXED",
+   "benefit_value": 4000,
+   "step_count": null,
+   "apply_timing": "CASHBACK",
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": null,
+   "targets": [
+    "CGV",
+    "롯데시네마",
+    "메가박스"
+   ],
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": 15000,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": 4000,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": 1,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": "YOUTH_A_MOVIE_4000",
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": "SERVICE_PACK",
+   "option_key": "PACK_A",
+   "description": "선택형 A팩. 공식홈페이지/모바일앱 및 영화관 현장 결제건에 한한다(매점·관람권(상품권) 구입·예매대행사이트 등 제외). 영화관 3사가 월 1회(4,000원) 한도를 함께 쓴다. 할인혜택은 환급할인으로 제공된다(이용전표 매입처리 완료 후 접수일의 할인금액을 카드 출금계좌로 환급).",
+   "tier_limits": [],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "영화 CGV, 롯데시네마, 메가박스 4,000원 1회(4,000원) • 건당1만5천원이상이용시제공",
+    "monthly_count_limit": "월 할인한도 칸이 '1회 (4,000원)'이라 월 1회·월 4,000원 두 축을 함께 적었다",
+    "limit_group_code": "한 행(영화)에 1회(4,000원) 한도가 한 번만 제시된다 — 금액 묶음과 횟수 묶음의 범위가 같아 count_group_code는 비운다",
+    "require_performance": "※ 전월이용실적조건: 전월이용실적20만원이상시할인혜택제공됩니다."
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "쇼핑멤버십 50% 환급할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 50,
+   "step_count": null,
+   "apply_timing": "CASHBACK",
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": null,
+   "targets": [
+    "네이버플러스 멤버십",
+    "쿠팡 와우 멤버십"
+   ],
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": 5000,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": "YOUTH_B_MEMBERSHIP_5000",
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": "SERVICE_PACK",
+   "option_key": "PACK_B",
+   "description": "선택형 B팩. 공식홈페이지/모바일앱을 통한 정기결제 이용권 결제 시 제공된다. 두 멤버십이 월 할인한도 5천원을 함께 쓴다. 할인혜택은 환급할인으로 제공된다(이용전표 매입처리 완료 후 접수일의 할인금액을 카드 출금계좌로 환급).",
+   "tier_limits": [],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "쇼핑 멤버십 네이버플러스멤버십, 쿠팡와우멤버십 50% 5,000원",
+    "limit_group_code": "한 행(쇼핑 멤버십)에 월 할인한도 5,000원이 한 번만 제시된다",
+    "require_performance": "※ 전월이용실적조건: 전월이용실적20만원이상시할인혜택제공됩니다."
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "통신요금 자동납부 30% 환급할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 30,
+   "step_count": null,
+   "apply_timing": "CASHBACK",
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": null,
+   "targets": [
+    "SKT",
+    "KT",
+    "LG U+",
+    "Liiv M"
+   ],
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": "AUTO_TRANSFER",
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": 5000,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": "YOUTH_B_TELECOM_5000",
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": "SERVICE_PACK",
+   "option_key": "PACK_B",
+   "description": "선택형 B팩. 이동통신요금 자동납부 시 납부금액 기준으로 제공된다(인터넷·IPTV 등 결합상품 제외). 약관이 통신사 네 곳을 열거했으므로 TELECOM 카테고리로 묶지 않고 브랜드 대상으로 적었다. 네 브랜드가 월 할인한도 5천원을 함께 쓴다. 할인혜택은 환급할인으로 제공된다(이용전표 매입처리 완료 후 접수일의 할인금액을 카드 출금계좌로 환급).",
+   "tier_limits": [],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "통신요금 SKT, KT, LG U+, LiivM 30% 5,000원 • 이동통신요금자동납부시납부금액기준제공",
+    "limit_group_code": "한 행(통신요금)에 월 할인한도 5,000원이 한 번만 제시된다",
+    "require_performance": "※ 전월이용실적조건: 전월이용실적20만원이상시할인혜택제공됩니다."
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "패션/라이프 온라인몰·야놀자 20% 환급할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 20,
+   "step_count": null,
+   "apply_timing": "CASHBACK",
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": null,
+   "targets": [
+    "무신사",
+    "29CM",
+    "W컨셉",
+    "지그재그",
+    "에이블리",
+    "야놀자"
+   ],
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": 2000,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": "YOUTH_B_FASHION_2000",
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": "SERVICE_PACK",
+   "option_key": "PACK_B",
+   "description": "선택형 B팩. 공식홈페이지/모바일앱 결제 시 제공된다(온라인몰은 오프라인 매장결제 제외). 같은 표의 올리브영은 입점 매장 제외 조건이 달라 혜택을 따로 적고 limit_group_code로 월 2천원 한도를 함께 묶었다. 할인혜택은 환급할인으로 제공된다(이용전표 매입처리 완료 후 접수일의 할인금액을 카드 출금계좌로 환급).",
+   "tier_limits": [],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "패션/ 라이프 온라인몰(무신사, 29CM, W컨셉, 지그재그, 에이블리), 올리브영, 야놀자 20% 2,000원",
+    "limit_group_code": "패션/라이프 한 행에 월 할인한도 2,000원이 한 번만 제시된다 — 올리브영 혜택과 같은 코드로 묶는다",
+    "require_performance": "※ 전월이용실적조건: 전월이용실적20만원이상시할인혜택제공됩니다."
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "패션/라이프 올리브영 20% 환급할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 20,
+   "step_count": null,
+   "apply_timing": "CASHBACK",
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": "올리브영",
+   "targets": null,
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": 2000,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": "YOUTH_B_FASHION_2000",
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": "SERVICE_PACK",
+   "option_key": "PACK_B",
+   "description": "선택형 B팩. 올리브영은 오프라인 매장 및 공식홈페이지/모바일앱 결제 시 제공되고 백화점·대형마트 등 일부 입점 매장은 제외된다. 이 제외 조건이 같은 표의 온라인몰·야놀자와 달라 혜택을 나누고 월 2천원 한도를 limit_group_code로 함께 묶었다. 할인혜택은 환급할인으로 제공된다(이용전표 매입처리 완료 후 접수일의 할인금액을 카드 출금계좌로 환급).",
+   "tier_limits": [],
+   "exclusions": [
+    {
+     "exclusion_type": "MERCHANT_LOCATION",
+     "exclusion_value": "IN_DEPARTMENT_STORE",
+     "_source": "백화점, 대형마트등일부입점매장제외"
+    },
+    {
+     "exclusion_type": "MERCHANT_LOCATION",
+     "exclusion_value": "IN_LARGE_MART",
+     "_source": "백화점, 대형마트등일부입점매장제외"
+    }
+   ],
+   "_source": {
+    "benefit_value": "패션/ 라이프 … 올리브영 … 20% 2,000원",
+    "limit_group_code": "온라인몰·야놀자 혜택과 월 할인한도 2,000원을 함께 쓴다"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "배달 20% 환급할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 20,
+   "step_count": null,
+   "apply_timing": "CASHBACK",
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": null,
+   "targets": [
+    "배달의민족",
+    "쿠팡이츠"
+   ],
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": 2000,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": "YOUTH_B_DELIVERY_2000",
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": "SERVICE_PACK",
+   "option_key": "PACK_B",
+   "description": "선택형 B팩. 공식 모바일앱 결제 시 제공된다(배달 현장결제건 제외). 멤버십 이용권은 할인 대상에서 빠진다. 두 브랜드가 월 할인한도 2천원을 함께 쓴다. 할인혜택은 환급할인으로 제공된다(이용전표 매입처리 완료 후 접수일의 할인금액을 카드 출금계좌로 환급).",
+   "tier_limits": [],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "배달 배달의민족, 쿠팡이츠 20% 2,000원",
+    "limit_group_code": "한 행(배달)에 월 할인한도 2,000원이 한 번만 제시된다",
+    "require_performance": "※ 전월이용실적조건: 전월이용실적20만원이상시할인혜택제공됩니다."
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "편의점 KB Pay 결제 20% 환급할인(B팩)",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 20,
+   "step_count": null,
+   "apply_timing": "CASHBACK",
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": null,
+   "targets": [
+    "GS25",
+    "CU"
+   ],
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": "KB_PAY",
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": 2000,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": "YOUTH_B_CVS_2000",
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": "SERVICE_PACK",
+   "option_key": "PACK_B",
+   "description": "선택형 B팩. A팩과 조건이 같은 편의점 혜택이지만 선택된 팩에 따라 적용 여부가 갈리고 월 할인한도도 팩별로 따로 제시되어 행을 나눴다. 오프라인 매장에서 KB Pay로 이용 시 제공. 할인혜택은 환급할인으로 제공된다(이용전표 매입처리 완료 후 접수일의 할인금액을 카드 출금계좌로 환급).",
+   "tier_limits": [],
+   "exclusions": [
+    {
+     "exclusion_type": "MERCHANT_LOCATION",
+     "exclusion_value": "IN_DEPARTMENT_STORE",
+     "_source": "백화점, 대형마트등일부입점매장제외"
+    },
+    {
+     "exclusion_type": "MERCHANT_LOCATION",
+     "exclusion_value": "IN_LARGE_MART",
+     "_source": "백화점, 대형마트등일부입점매장제외"
+    }
+   ],
+   "_source": {
+    "benefit_value": "편의점 GS25, CU에서KB Pay로결제 20% 2,000원 (선택형 [B팩] 행)",
+    "limit_group_code": "B팩 편의점 행에 월 할인한도 2,000원이 한 번만 제시된다"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "데이트(레스토랑) 4,000원 환급할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "FIXED",
+   "benefit_value": 4000,
+   "step_count": null,
+   "apply_timing": "CASHBACK",
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": null,
+   "targets": [
+    "아웃백",
+    "VIPS"
+   ],
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": 10000,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": 4000,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": 1,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": "YOUTH_B_DATE_4000",
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": "SERVICE_PACK",
+   "option_key": "PACK_B",
+   "description": "선택형 B팩. 데이트 영역의 레스토랑 대상. 같은 영역의 놀이공원과 월 1회(4,000원) 한도를 함께 쓰므로 같은 limit_group_code를 준다. 할인혜택은 환급할인으로 제공된다(이용전표 매입처리 완료 후 접수일의 할인금액을 카드 출금계좌로 환급).",
+   "tier_limits": [],
+   "exclusions": [
+    {
+     "exclusion_type": "MERCHANT_LOCATION",
+     "exclusion_value": "IN_DEPARTMENT_STORE",
+     "_source": "백화점, 대형마트등일부입점매장제외"
+    },
+    {
+     "exclusion_type": "MERCHANT_LOCATION",
+     "exclusion_value": "IN_LARGE_MART",
+     "_source": "백화점, 대형마트등일부입점매장제외"
+    },
+    {
+     "exclusion_type": "CATEGORY",
+     "exclusion_value": "DELIVERY",
+     "_source": "레스토랑: 백화점/대형마트등일부입점매장및배달제외"
+    }
+   ],
+   "_source": {
+    "benefit_value": "데이트 레스토랑(아웃백스테이크하우스, VIPS), 놀이공원(에버랜드, 롯데월드) 4,000원 1회(4,000원) • 건당1만원이상이용시제공",
+    "monthly_count_limit": "월 할인한도 칸이 '1회 (4,000원)'이라 월 1회·월 4,000원 두 축을 함께 적었다",
+    "limit_group_code": "데이트 한 행에 1회(4,000원) 한도가 한 번만 제시된다 — 레스토랑·놀이공원이 함께 쓴다",
+    "require_performance": "※ 전월이용실적조건: 전월이용실적20만원이상시할인혜택제공됩니다."
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "데이트(놀이공원) 4,000원 환급할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "FIXED",
+   "benefit_value": 4000,
+   "step_count": null,
+   "apply_timing": "CASHBACK",
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": null,
+   "targets": [
+    "에버랜드",
+    "롯데월드 어드벤처"
+   ],
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": 10000,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": 4000,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": 1,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": "YOUTH_B_DATE_4000",
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": "SERVICE_PACK",
+   "option_key": "PACK_B",
+   "description": "선택형 B팩. 놀이공원은 공식 오프라인 창구·발권기 및 공식홈페이지/앱에서 티켓요금을 결제할 때 제공된다(상품권·매점 등 제외). 제외 조건이 레스토랑과 달라 혜택을 나누고 월 1회(4,000원) 한도를 같은 limit_group_code로 묶었다. 할인혜택은 환급할인으로 제공된다(이용전표 매입처리 완료 후 접수일의 할인금액을 카드 출금계좌로 환급).",
+   "tier_limits": [],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "데이트 … 놀이공원(에버랜드, 롯데월드) 4,000원 1회(4,000원)",
+    "limit_group_code": "레스토랑 혜택과 1회(4,000원) 한도를 함께 쓴다"
+   },
+   "_needs_review": []
+  }
+ ],
+ "unmapped": [
+  {
+   "text": "• 공식홈페이지를통한정기결제이용권결제시제공 (인앱결제, 단건결제, 포인트및캐시충전등은제외) • 유튜브는프리미엄멤버십결제건에한함(채널구독등제외)",
+   "why": "결제 경로(공식홈페이지 정기결제)와 상품 종류(프리미엄 멤버십·단건결제) 조건이다. 채널 조건과 상품 단위 조건은 모두 범위 밖이라 담을 필드가 없다"
+  },
+  {
+   "text": "• 오프라인매장에서KB Pay로이용시제공",
+   "why": "KB Pay 조건은 require_payment_type=KB_PAY로 담았지만 '오프라인 매장'이라는 채널 조건은 범위 밖이다"
+  },
+  {
+   "text": "• 공식홈페이지/모바일앱및영화관현장결제건에한함 (매점, 관람권(상품권) 구입, 예매대행사이트등은제외)",
+   "why": "결제 채널 조건이며 매점·관람권은 가맹점 안의 상품 종류 조건이라 표준 카테고리로 옮길 수 없다"
+  },
+  {
+   "text": "• 이동통신요금자동납부시납부금액기준제공 (인터넷, IPTV 등결합상품제외)",
+   "why": "자동납부는 require_payment_type=AUTO_TRANSFER로 담았고, 결합상품 제외는 통신사 안의 상품 종류 조건이라 담을 축이 없다"
+  },
+  {
+   "text": "• 온라인몰: 공식홈페이지/모바일앱결제시제공(오프라인매장결제제외) • 올리브영:오프라인매장및공식홈페이지/모바일앱결제시제공 • 야놀자:공식홈페이지/모바일앱결제시제공",
+   "why": "대상별 결제 채널 조건이다. 채널 조건은 범위 밖이라 description에만 남겼다"
+  },
+  {
+   "text": "• 공식모바일앱결제시제공(배달현장결제건제외) • 멤버십이용권은할인대상제외",
+   "why": "앱 결제 채널 조건과 가맹점 안의 상품 종류(멤버십 이용권) 조건이다"
+  },
+  {
+   "text": "• 놀이공원:공식오프라인창구, 발권기및공식홈페이지/앱에서티켓요금결제시제공(상품권, 매점등은제외)",
+   "why": "발권 채널 조건이고 매점은 상품 종류 조건이다. 상품권은 card_exclusions의 GIFT_CARD로 담았다"
+  },
+  {
+   "text": "※ 할인혜택은환급할인으로해당가맹점이KB국민카드의가맹점업종코드(제휴업체코드)상할인대상가맹점으로등록된경우에한하여제공됩니다. (예: 영화CGV 현장결제및공식홈페이지/앱은할인제공되나, 외부업체홈페이지/모바일앱을통한카드이용은할인미제공)",
+   "why": "카드사 내부 업종코드 등록 여부는 우리 데이터에 없다. 카테고리·가맹점 매핑으로 근사할 뿐 판정할 수 없다"
+  },
+  {
+   "text": "∙ 가맹점 정보가 해당 업체가 아닌 결제 대행업체(PG) 또는 간편결제 전용 가맹점으로 확인되는 경우 '결제대행업체' 또는 '간편결제' 가맹점으로 분류되어 할인대상에서 제외됩니다.",
+   "why": "승인이 어느 가맹점 코드로 잡히는지에 달린 조건이라 카드·혜택 어느 축으로도 표현되지 않는다"
+  },
+  {
+   "text": "∙ 구매/예약 대행사이트를 통한 결제 및 호텔, 백화점, 대형 마트, 철도/역사 등에 입점한 가맹점 이용 시 할인 대상에서 제외될 수 있습니다.",
+   "why": "카드 전체에 걸리는 입점 위치·대행사이트 제외인데 card_exclusions의 유형은 CATEGORY/MERCHANT/PAYMENT_TYPE/TRANSACTION_ATTR뿐이라 위치 조건을 카드 단위로 적을 자리가 없다. 혜택별 MERCHANT_LOCATION으로는 약관이 개별 행에 다시 적은 편의점·올리브영·레스토랑에만 담았다"
+  },
+  {
+   "text": "∙ 본인회원기준으로월간할인한도가제공되며,할인한도는 매월1일~ 말일까지(승인시점기준) 이용금액으로적용됩니다. ∙ 할인서비스는 월간 할인한도 내에서 적용되며, 잔여 한도는 이월되지 않습니다.",
+   "why": "한도 집계 주기와 이월 여부 규약이라 혜택 행이 아니라 엔진 동작 규칙이다"
+  },
+  {
+   "text": "∙ 할인받은 매출을 취소한 경우 취소 전표가 실시간 접수되지 않아 할인한도가 즉시 복원되지 않을 수 있습니다.",
+   "why": "취소 시 한도 복원 시점 규정이라 담을 필드가 없다"
+  },
+  {
+   "text": "∙ 서비스팩2종중선택한옵션에대한혜택만제공 ∙ 서비스팩변경은KB국민카드홈페이지및KB Pay 앱을통해가능 ∙ 선택서비스변경시신청일기준다음달1일부터적용 (월단위로제공되며, 매월변경가능)",
+   "why": "택1 구조 자체는 option_group_code·option_key로 담았다. 변경 신청 경로와 '신청일 기준 다음달 1일부터 적용'이라는 적용 시점 규약은 담을 필드가 없어 description에만 남겼다"
+  },
+  {
+   "text": "∙ Mastercard(국내외겸용) 발급 시 Mastercard 플래티늄 등급의 국제브랜드 기본 서비스가 제공됩니다. - Mastercard 플래티늄 선택서비스는 제공되지 않습니다.",
+   "why": "국제브랜드사가 제공하는 서비스라 결제 이벤트에 붙는 혜택이 아니고 내용도 이 약관에 없다. target_type을 정할 수 없다"
+  },
+  {
+   "text": "∙ 해외 이용 시(해외사이트 거래 포함) 미화(USD)기준 거래 미화금액에 (KB국민은행) 최초 고시 전신환 매도율을 적용한 후, 국제브랜드사가 부과하는 국제브랜드수수료(Mastercard 1.0%)와 KB국민카드가 부과하는 해외서비스수수료(0.25%)를 포함하여 원화로 청구됩니다.",
+   "why": "해외 이용 수수료 안내로 혜택이 아니다. 해외 결제는 범위 밖"
+  },
+  {
+   "text": "체크카드 이용 시 출금 시점 — 일반가맹점 이용: 승인시점 출금계좌에서 즉시 출금 / 무승인·T&E업종 이용: 매출전표 매입일 출금. 승인금액 > 매입금액 차액환급, 승인금액 < 매입금액 차액 추가 출금(계좌 잔액부족 시 신용청구)",
+   "why": "체크카드의 출금·정산 절차 규정이다. 혜택 규칙이 아니라 대금 흐름이라 담을 대상이 없다"
+  },
+  {
+   "text": "∙ 매월 세번째 일요일 00:00~06:00 중에는 은행 전산시스템 점검 관련으로 이용이 제한될 수 있으며, 점검시간이 변경될 경우 별도로 고지해 드립니다",
+   "why": "카드 이용 제한 시간 안내로 혜택 규칙이 아니다"
+  },
+  {
+   "text": "연체이자율 ∙ 회원별/이용상품별 정상이자율 +3%p, 최고 연 20% 이내",
+   "why": "연체이자율은 혜택이 아니다"
+  },
+  {
+   "text": "부가서비스 변경 안내 ∙ KB Youth Club 체크카드(2025.12.08 출시)를 이용하는 경우 제공되는 할인 혜택 등의 부가서비스는 다음 각 호를 제외하고는 변경 할 수 없습니다.",
+   "why": "부가서비스 변경 고지 절차 규정이라 혜택 데이터가 아니다"
+  }
+ ],
+ "_schema_gap": [
+  {
+   "text": "※ 최초발급받은Youth Club 체크카드사용등록일(KB Pay 등간편결제등록포함)로부터다음달말일(실적유예기간)까지는전월이용실적20만원미만시에도영역별할인한도의50%까지할인됩니다.(단, 최초사용등록월의실적이20만원이상일경우에는다음달에해당실적구간의할인한도적용)",
+   "missing": "user_card의 사용등록일과, 유예기간 동안 적용할 한도 비율(영역별 한도의 50%)",
+   "why": "등록일이 없어 유예기간인지 판정할 수 없고, 판정할 수 있더라도 '구간 한도의 몇 %'를 적을 자리가 없다. performance_tier와 tier_limits는 금액만 갖는다. 지금 스키마로는 신규 회원이 0원 구간으로 떨어져 이 카드의 혜택이 전부 계산되지 않는다"
+  },
+  {
+   "text": "체크카드 직불이용한도 ∙ 카드발급 시 부여한도(기본한도) 적용함 / 1회 600만원 · 1일 600만원 · 월간 2천만원",
+   "missing": "카드의 직불(체크) 이용한도 — 1회·1일·월간 승인 한도 컬럼",
+   "why": "card에 이용한도 컬럼이 없다. benefit의 daily_limit·monthly_limit은 혜택 한도지 결제 승인 한도가 아니라 여기에 넣으면 의미가 뒤바뀐다. 체크카드에서 처음 나온 조항이다"
+  },
+  {
+   "text": "후불교통기능 탑재 ∙ 정상 출금 되지않은 경우 교통기능 이용이 불가할 수 있으며, 미납금액에 대해서는 연체료가 부과됩니다. ∙ 이용금액 출금 시 한도가 복원됩니다. 이용일 1일 ~ 말일 / 출금일 말일 + 3영업일 ∙ 후불교통기능은 국내 이용 건에 한하여 적용됩니다.",
+   "missing": "카드의 후불교통 기능 탑재 여부와 그 정산 주기(이용일 1일~말일, 출금일 말일+3영업일)",
+   "why": "card에 기능 탑재 플래그가 없다. 혜택이 아니라 카드 기능이라 benefit으로도 담기지 않는데, 후불교통 이용분은 실적에서 빠지므로(POSTPAID_TRANSIT) 기능 유무가 계산 전제에 영향을 준다. 체크카드에서 처음 나온 조항이다"
+  },
+  {
+   "text": "• 발급대상: 만 18세 ~ 만 29세",
+   "missing": "카드 발급 연령 조건(하한·상한)",
+   "why": "card에 발급 자격 컬럼이 없다. 미보유 카드 추천에서 나이로 거를 수 없어 자격이 안 되는 회원에게도 이 카드가 후보로 남는다"
+  },
+  {
+   "text": "∙ 동일계열카드는 전월이용실적 및 할인한도가 합산됩니다.",
+   "missing": "카드 간 실적·한도 합산 그룹(계열 카드 묶음)",
+   "why": "실적과 한도는 user_card 단위로만 집계된다. 같은 계열 카드를 묶어 합산할 축이 없어 실적은 실제보다 낮게, 한도는 카드 수만큼 많게 계산된다"
+  },
+  {
+   "text": "전월 이용실적 제외 대상 ∙ 포인트리 충전금액, 상품권 및 선불카드 구입∙충전 금액, 아파트관리비, …",
+   "missing": "TRANSACTION_ATTR 표준값에 '포인트 충전금액'이 없다",
+   "why": "GIFT_CARD는 상품권·선불카드 구입/충전이라 포인트리 충전과 다르고, POINT_USED는 포인트로 결제한 금액이라 방향이 반대다. 비슷한 값으로 넣으면 다른 거래까지 실적에서 빠지므로 비워 뒀다"
+  },
+  {
+   "text": "여가 노래방, PC방 20% 2,000원 • 노래방및비디오방/게임방업종결제건에 한함",
+   "missing": "표준 카테고리에 노래방·비디오방/게임방(PC방) 업종 코드",
+   "why": "CULTURE_LEISURE 하위는 MOVIE·SUBSCRIPTION_STREAMING·SPORTS_LEISURE·GOLF뿐이다. SPORTS_LEISURE로 넣으면 헬스장·스크린골프 등 약관에 없는 업종까지 할인 대상이 되어 대상 코드를 비웠고, 그 결과 이 혜택은 시드에서 행이 만들어지지 않는다"
+  },
+  {
+   "text": "∙ 할인서비스는 환급할인으로 제공됩니다. ∙ 체크카드 환급할인은 이용전표가 매입처리 완료 된 후 접수일의 할인금액을 카드 출금계좌로 환급하는 방식입니다.",
+   "missing": "환급 시점(매입 완료 후 접수일)을 담을 축",
+   "why": "지급 방식 자체는 apply_timing=CASHBACK으로 담긴다. 다만 신용카드의 청구할인과 달리 승인 시점에는 전액이 출금되고 나중에 되돌아오는 구조라 회원이 보는 시점이 다른데, apply_timing은 값 세 개뿐이라 그 차이를 적을 자리가 없다"
+  }
+ ]
+}
