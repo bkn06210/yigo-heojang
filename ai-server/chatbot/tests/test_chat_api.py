@@ -10,9 +10,12 @@ LLM 은 stub 이라 호출도 비용도 없고, 엔진은 가짜로 갈아끼워
 import pytest
 from fastapi.testclient import TestClient
 
-from chatbot import main
+from chatbot import main, term_index
 from chatbot.db import connection
 from chatbot.llm import IntentName
+from embedding import create_embedding_client, pack_vector
+
+embedding_client = create_embedding_client()
 
 client = TestClient(main.app)
 
@@ -36,8 +39,12 @@ def 약관_조각():
     조문이 하나도 없고, 원문이 있다고 가정한 테스트는 빈 결과를 받는다. 못 찾는 것과
     "무관한 것은 안 준다"가 같은 모양이 되어 통과 여부가 뒤집힌다.
 
-    확인하려는 것은 검색 규칙(전문검색 점수 하한, 카드사별 한 건)이지 원문 자체가
-    아니므로, 조문을 직접 넣어 규칙만 본다.
+    확인하려는 것은 검색 규칙(유사도 하한, 카드사별 한 건)이지 원문 자체가 아니므로,
+    조문을 직접 넣어 규칙만 본다.
+
+    임베딩까지 만들어 넣는다. 검색이 임베딩으로 도는데 값이 없으면 넣은 조문이 색인에
+    아예 안 잡혀, 규칙을 확인하려던 테스트가 조문이 없는 채로 통과해 버린다.
+    개발용 설정(stub)이면 호출도 비용도 없다.
     """
     documents = [
         ("삼성", "개인회원 표준약관"),
@@ -79,14 +86,20 @@ def 약관_조각():
                 inserted.append(document_id)
 
                 chunks = [("제40조(카드의 분실·도난)", lost_card)] + fillers
-                for index, (heading, content) in enumerate(chunks):
+                vectors = embedding_client.embed_documents([content for _, content in chunks])
+                for index, ((heading, content), vector) in enumerate(zip(chunks, vectors)):
                     cursor.execute(
                         "INSERT INTO card_term_chunk"
-                        " (card_term_document_id, chunk_index, heading, content)"
-                        " VALUES (%s, %s, %s, %s)",
-                        (document_id, index, heading, content),
+                        " (card_term_document_id, chunk_index, heading, content,"
+                        "  embedding, embedding_model)"
+                        " VALUES (%s, %s, %s, %s, %s, %s)",
+                        (document_id, index, heading, content,
+                         pack_vector(vector), embedding_client.model_tag),
                     )
         conn.commit()
+
+    # 메모리에 담아둔 색인은 넣은 조문을 모른다. 다시 읽게 한다.
+    term_index.reset()
 
     yield
 
@@ -101,6 +114,9 @@ def 약관_조각():
                 (tuple(inserted),),
             )
         conn.commit()
+
+    # 지운 조문이 메모리에 남아 뒤 테스트에 걸리지 않게 한다.
+    term_index.reset()
 
 
 class FakeEngine:
@@ -253,12 +269,21 @@ def _ask(question: str) -> dict:
     return response.json()
 
 
-def test_헬스체크는_현재_LLM_제공자를_알려준다():
+def test_헬스체크는_현재_LLM_임베딩_제공자를_알려준다():
+    """지금 무엇으로 돌고 있는지가 응답에 그대로 실려야 한다.
+
+    stub 인 채로 시연에 들어가는 사고를 이 필드로 잡는다. 특히 임베딩 stub 은 답변이
+    그럴듯하게 나오고 약관 검색만 무뎌져 화면으로는 알아채기 어렵다.
+
+    특정 값으로 고정하지 않는 것은 설정이 각자 다르기 때문이다. .env 를 실제 공급자로
+    바꿔둔 사람의 테스트가 그 이유로 깨지면, 고치는 방법이 설정을 되돌리는 것이 되어
+    검증이 아니라 방해가 된다. 여기서 볼 것은 값이 실제 구현과 이어져 있는지다.
+    """
     body = client.get("/health").json()
 
     assert body["status"] == "UP"
-    # stub 인 채로 시연에 들어가는 사고를 이 필드로 잡는다.
-    assert body["llmProvider"] == "stub"
+    assert body["llmProvider"] == main._llm.provider
+    assert body["embeddingProvider"] == main._embedding.provider
 
 
 def test_못_알아들으면_지어내지_않고_되묻는다():
@@ -476,10 +501,9 @@ def test_약관_검색은_무관한_조항을_돌려주지_않는다(약관_조�
     하한이 없으면 어떤 검색어를 넣어도 뭔가는 걸린다. 그걸 근거로 문장을 만들면
     사용자가 틀렸다는 것을 알 방법이 없어, 낱말이 안 겹치는 질문은 빈 결과로 끊는다.
 
-    <b>다만 하한으로 거를 수 있는 것은 여기까지다.</b> 약관에 흔한 낱말이 섞인 질문은
-    뜻이 무관해도 점수가 오른다(실측: "드론 항공 촬영" 16.8 > "이용대금 연체" 4.7 —
-    약관에 '항공'이 자주 나오기 때문). 조각이 늘수록 이 겹침이 커지므로 뜻으로 찾는
-    검색이 필요하다.
+    실측한 사이는 약관 질문 0.422~0.560, 무관한 질문 0.204~0.263 이다. 낱말 검색으로
+    돌 때는 이 구분이 서지 않았다 — 약관에 흔한 낱말이 섞이면 뜻이 무관해도 점수가 올라,
+    "드론 항공 촬영"(16.8)이 "이용대금 연체"(4.7)보다 높게 나왔다.
     """
     from chatbot import terms
     from chatbot.db import connection
