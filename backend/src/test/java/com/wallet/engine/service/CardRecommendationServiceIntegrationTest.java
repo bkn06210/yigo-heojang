@@ -45,6 +45,7 @@ class CardRecommendationServiceIntegrationTest {
     private long cafeCategoryId;
     private long heldCardId;
     private long strongCafeCardId;
+    private long companyIdForOption;
 
     @Autowired
     void setDataSource(javax.sql.DataSource dataSource) {
@@ -98,6 +99,27 @@ class CardRecommendationServiceIntegrationTest {
     }
 
     @Test
+    @DisplayName("미보유 카드의 선택형 혜택은 소비에 가장 유리한 선택지로 계산된다")
+    void 선택형_혜택은_유리한_선택지로_계산된다() {
+        // 회원이 고른 기록이 없는 카드다. 아무것도 안 고른 것으로 두면 두 선택지가 모두 꺼져
+        // 순증이 0이 되고 목록에서 빠진다.
+        long optionCardId = insertCard(companyIdForOption, "추천IT_선택형카드");
+        insertTier(optionCardId, 0L);
+        insertOptionBenefit(optionCardId, "추천IT_선택_카페", "20.00", "PICK", "CAFE_PACK");
+        insertOptionBenefit(optionCardId, "추천IT_선택_주유", "20.00", "PICK", "FUEL_PACK");
+
+        CardRecommendationResponse response = cardRecommendationService.recommend(memberId, TODAY);
+
+        // 소비가 전부 카페이므로 카페팩을 고른 것으로 계산돼야 한다.
+        // 20% x 10,000원 x 10건 = 20,000원, 기존 1,000원과의 차액이 순증이다
+        assertThat(response.items())
+                .anySatisfy(item -> {
+                    assertThat(item.cardId()).isEqualTo(optionCardId);
+                    assertThat(item.monthlyGainAmount()).isEqualTo(19_000L);
+                });
+    }
+
+    @Test
     @DisplayName("소비 내역이 없으면 빈 응답이다")
     void 소비가_없으면_빈_응답이다() {
         jdbc.update("DELETE FROM expense WHERE member_id = ?", memberId);
@@ -124,6 +146,7 @@ class CardRecommendationServiceIntegrationTest {
         jdbc.update("INSERT INTO card_company (company_code, company_name)"
                 + " VALUES ('IT_REC_COMPANY', '추천IT카드사')");
         long companyId = jdbc.queryForObject("SELECT LAST_INSERT_ID()", Long.class);
+        companyIdForOption = companyId;
 
         heldCardId = insertCard(companyId, "추천IT_보유카드");
         strongCafeCardId = insertCard(companyId, "추천IT_카페강자");
@@ -162,6 +185,16 @@ class CardRecommendationServiceIntegrationTest {
                 + " benefit_value, target_type, target_category_id, require_performance, is_active)"
                 + " VALUES (?, ?, 'DISCOUNT', 'RATE', ?, 'CATEGORY', ?, 'N', 'Y')",
                 cardId, name, new java.math.BigDecimal(rate), cafeCategoryId);
+    }
+
+    /** 같은 묶음의 선택지 둘. 회원이 고른 기록은 넣지 않는다 — 미보유 카드 상황이다 */
+    private void insertOptionBenefit(long cardId, String name, String rate,
+                                     String groupCode, String optionKey) {
+        jdbc.update("INSERT INTO benefit (card_id, benefit_name, benefit_kind, calc_method,"
+                + " benefit_value, target_type, target_category_id, require_performance,"
+                + " option_group_code, option_key, is_active)"
+                + " VALUES (?, ?, 'DISCOUNT', 'RATE', ?, 'CATEGORY', ?, 'N', ?, ?, 'Y')",
+                cardId, name, new java.math.BigDecimal(rate), cafeCategoryId, groupCode, optionKey);
     }
 
     private long insertTier(long cardId, long minPerformanceAmount) {

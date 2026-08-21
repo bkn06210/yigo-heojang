@@ -25,10 +25,13 @@ class IntentName:
     BENEFIT_SUM = "BENEFIT_SUM"  # 이번 달 얼마나 할인받았나
     CARD_STATUS = "CARD_STATUS"  # 실적 달성률·남은 한도
     RECOMMEND_CARD = "RECOMMEND_CARD"  # 여기서 결제하면 어느 카드가 유리한가
+    # 위와 다르다. 위는 "이번 결제에 어느 카드를 쓸까"라 보유 카드로 한 건을 계산하고,
+    # 이쪽은 "어떤 카드를 발급할까"라 미보유 카드까지 놓고 한 달치를 계산한다.
+    RECOMMEND_NEW_CARD = "RECOMMEND_NEW_CARD"  # 내 소비에 맞는 카드를 발급할까
     TERM_QA = "TERM_QA"  # 약관 질문 (청구 시점·분실 처리 등)
     UNKNOWN = "UNKNOWN"
 
-    ALL = (BENEFIT_SUM, CARD_STATUS, RECOMMEND_CARD, TERM_QA, UNKNOWN)
+    ALL = (BENEFIT_SUM, CARD_STATUS, RECOMMEND_CARD, RECOMMEND_NEW_CARD, TERM_QA, UNKNOWN)
 
 
 @dataclass(frozen=True)

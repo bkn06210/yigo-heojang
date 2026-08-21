@@ -82,6 +82,24 @@
 
 
     <!--
+        선택형 혜택의 묶음·선택지 목록. 회원이 고른 기록이 아니라 카드가 제공하는 선택지다.
+
+        DISTINCT 인 것은 선택지 하나가 혜택 여러 행으로 이뤄지기 때문이다(배달팩 = 4행).
+        행마다 돌려주면 같은 선택지를 여러 번 계산하게 된다.
+    -->
+    <select id="findOptionKeys" resultType="com.wallet.engine.dao.dto.OptionKeyRow">
+        SELECT DISTINCT b.option_group_code AS optionGroupCode,
+                        b.option_key        AS optionKey
+          FROM benefit b
+         WHERE b.card_id = #{cardId}
+           AND b.is_active = 'Y'
+           AND b.option_group_code IS NOT NULL
+           AND b.option_key IS NOT NULL
+           AND b.benefit_kind NOT IN ('GIFT', 'INSTALLMENT_FREE', 'RETROACTIVE')
+         ORDER BY b.option_group_code, b.option_key
+    </select>
+
+    <!--
         추천 후보 축소 — 그 회원이 결제한 업종·가맹점에 혜택이 걸린 미보유 카드.
 
         대분류로도 매칭한다. 혜택이 대분류(외식)를 겨냥하면 하위 중분류(카페) 결제도 대상인데,

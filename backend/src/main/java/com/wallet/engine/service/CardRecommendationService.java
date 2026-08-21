@@ -3,6 +3,7 @@ package com.wallet.engine.service;
 import com.wallet.engine.assembler.BenefitCandidateAssembler;
 import com.wallet.engine.assembler.PerformanceInputAssembler;
 import com.wallet.engine.calculator.CardPortfolioSimulator;
+import com.wallet.engine.calculator.CardSpendingSimulator;
 import com.wallet.engine.calculator.PerformanceAmountCalculator;
 import com.wallet.engine.calculator.PerformanceTierResolver;
 import com.wallet.engine.dao.BenefitMapper;
@@ -11,6 +12,7 @@ import com.wallet.engine.dao.PerformanceMapper;
 import com.wallet.engine.dao.SpendingMapper;
 import com.wallet.engine.dao.UserCardMapper;
 import com.wallet.engine.dao.dto.CardCatalogRow;
+import com.wallet.engine.dao.dto.OptionKeyRow;
 import com.wallet.engine.dao.dto.PerformanceTierRow;
 import com.wallet.engine.dao.dto.SpentTransactionRow;
 import com.wallet.engine.dao.dto.UserCardRow;
@@ -32,6 +34,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -81,6 +84,7 @@ public class CardRecommendationService {
     private final PerformanceTierResolver tierResolver = new PerformanceTierResolver();
     private final PerformanceAmountCalculator performanceAmountCalculator = new PerformanceAmountCalculator();
     private final CardPortfolioSimulator portfolioSimulator = new CardPortfolioSimulator();
+    private final CardSpendingSimulator spendingSimulator = new CardSpendingSimulator();
 
     public CardRecommendationService(SpendingMapper spendingMapper,
                                      UserCardMapper userCardMapper,
@@ -130,7 +134,7 @@ public class CardRecommendationService {
                 .stream().collect(Collectors.groupingBy(PerformanceTierRow::getCardId));
 
         List<SimulatedCard> heldSimulated = heldCardIds.stream()
-                .map(cardId -> toSimulatedCard(cardId, performanceInput,
+                .map(cardId -> toSimulatedCard(cardId, performanceInput, payments,
                         tiersByCard.getOrDefault(cardId, List.of())))
                 .toList();
 
@@ -141,7 +145,7 @@ public class CardRecommendationService {
 
         List<CardRecommendation> recommendations = new ArrayList<>();
         for (Long candidateCardId : candidateCardIds) {
-            SimulatedCard candidate = toSimulatedCard(candidateCardId, performanceInput,
+            SimulatedCard candidate = toSimulatedCard(candidateCardId, performanceInput, payments,
                     tiersByCard.getOrDefault(candidateCardId, List.of()));
 
             List<SimulatedCard> withCandidate = new ArrayList<>(heldSimulated);
@@ -216,6 +220,7 @@ public class CardRecommendationService {
      */
     private SimulatedCard toSimulatedCard(long cardId,
                                           List<PerformanceTransaction> performanceInput,
+                                          List<SimulatedPayment> payments,
                                           List<PerformanceTierRow> tierRows) {
         List<PerformanceTier> tiers = performanceInputAssembler.toTiers(tierRows);
         long performanceAmount = performanceAmountCalculator.calculate(performanceInput,
@@ -234,7 +239,55 @@ public class CardRecommendationService {
                 benefitMapper.findActiveBenefits(cardId, monthStatus.tierId(),
                         quarterStatus == null ? null : quarterStatus.tierId()),
                 benefitMapper.findExclusions(cardId));
-        return new SimulatedCard(cardId, candidates, monthStatus, quarterStatus, Map.of());
+        return new SimulatedCard(cardId, candidates, monthStatus, quarterStatus,
+                chooseBestOptions(cardId, candidates, monthStatus, quarterStatus, payments));
+    }
+
+    /**
+     * 선택형 혜택 묶음마다 이 회원의 소비에 가장 유리한 선택지를 고른다.
+     *
+     * 회원이 고른 기록을 쓰지 않는 이유는 <b>아직 발급하지 않은 카드</b>이기 때문이다.
+     * 고른 것이 없다고 두면 그 묶음의 혜택이 전부 꺼져 선택형 카드만 과소평가된다.
+     * 카드를 발급한다면 자기 소비에 맞는 선택지를 고를 것이므로 그렇게 가정한다.
+     *
+     * 묶음을 하나씩 고정해 나간다. 묶음이 여럿이면 조합이 곱으로 늘어나는데, 실제 카드는
+     * 묶음이 하나인 경우가 대부분이라 조합까지 따질 이익이 적다.
+     */
+    private Map<String, String> chooseBestOptions(long cardId,
+                                                  List<BenefitCandidate> candidates,
+                                                  PerformanceStatus monthStatus,
+                                                  PerformanceStatus quarterStatus,
+                                                  List<SimulatedPayment> payments) {
+        Map<String, List<String>> keysByGroup = new LinkedHashMap<>();
+        for (OptionKeyRow row : benefitMapper.findOptionKeys(cardId)) {
+            keysByGroup.computeIfAbsent(row.getOptionGroupCode(), group -> new ArrayList<>())
+                    .add(row.getOptionKey());
+        }
+        if (keysByGroup.isEmpty()) {
+            return Map.of();
+        }
+
+        Map<String, String> chosen = new LinkedHashMap<>();
+        keysByGroup.forEach((group, keys) -> {
+            String bestKey = null;
+            long bestAmount = -1L;
+            for (String key : keys) {
+                Map<String, String> trial = new LinkedHashMap<>(chosen);
+                trial.put(group, key);
+                long amount = spendingSimulator
+                        .simulate(candidates, monthStatus, quarterStatus, trial, payments)
+                        .totalBenefitAmount();
+                // 동점이면 먼저 나온 선택지 — 정렬이 고정이라 같은 입력에 같은 답이 나온다
+                if (amount > bestAmount) {
+                    bestAmount = amount;
+                    bestKey = key;
+                }
+            }
+            if (bestKey != null) {
+                chosen.put(group, bestKey);
+            }
+        });
+        return chosen;
     }
 
     private List<PerformanceTier> tiersOf(List<PerformanceTier> tiers, PerformancePeriod period) {
