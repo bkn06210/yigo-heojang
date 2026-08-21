@@ -6,7 +6,6 @@ CLAUDE.md
 application.properties
 application-*.properties
 db.properties
-redis.properties
 .env
 .env.*
 # 값이 아니라 키 목록이라 공유해야 한다.
@@ -40,6 +39,8 @@ venv/
 ai-server/ingest/raw/
 # 추출한 약관 본문도 원문이다. DB(card_term_document)에 들어가고 파이프라인으로 재생성된다.
 ai-server/ingest/out/terms/
+# 공통 문구를 걷어낸 구조화 입력. 줄어들었을 뿐 여전히 약관 원문이라 같은 이유로 제외한다.
+ai-server/ingest/out/pruned/
 # 약관 원문 덤프 SQL(ingest.dump_terms 산출물). 형식만 바뀐 원문이라 같은 이유로 제외한다.
 # 파일은 저장소가 아니라 팀 안에서 따로 주고받는다.
 backend/db/local/

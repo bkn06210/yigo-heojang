@@ -447,7 +447,7 @@ CREATE TABLE card_term_document (
     storage_path          VARCHAR(500) NOT NULL COMMENT '보관한 원본 PDF 경로',
     -- 스캔 이미지로만 된 PDF는 텍스트가 거의 나오지 않는다. 상태를 남겨야
     -- 재처리 대상을 골라낼 수 있다. 상태를 안 남기면 빈 원문이 정상처럼 섞인다.
-    extract_status        VARCHAR(20)  NOT NULL COMMENT '추출 상태: TEXT_OK | IMAGE_ONLY(텍스트 추출 불가)',
+    extract_status        VARCHAR(20)  NOT NULL COMMENT '추출 상태: TEXT_OK | VISION_OK(이미지 PDF를 비전으로 읽음) | IMAGE_ONLY(텍스트 추출 불가)',
     page_count            INT          NULL COMMENT '페이지 수',
     content_text          LONGTEXT     NULL COMMENT '추출된 원문 텍스트. IMAGE_ONLY면 NULL',
     -- 같은 문서를 다시 받았을 때 개정 여부를 판정한다. 해시가 같으면 구조화를 건너뛴다.
