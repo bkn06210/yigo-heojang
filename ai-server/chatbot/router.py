@@ -12,6 +12,7 @@ from datetime import date
 from decimal import Decimal
 from typing import Any, Dict, List, Optional, Tuple
 
+from . import terms
 from .engine import EngineClient, EngineError
 from .llm import Intent, IntentName
 from .resolver import Resolution, resolve_card, resolve_category, resolve_merchant
@@ -46,10 +47,15 @@ _MAX_BENEFITS_IN_ANSWER = 5
 # 리포트 답변에 나열할 부문 수. 상위 몇 개면 "어디서 많이 받았나"에 답이 된다.
 _MAX_CATEGORIES_IN_ANSWER = 3
 
-# 아직 데이터 경로가 없는 의도. 못 하는 것을 못 한다고 말한다.
-_NOT_READY = {
-    IntentName.TERM_QA: "약관 원문이 아직 등록되지 않아 약관 질문에는 답할 수 없습니다.",
-}
+# 약관에서 무엇을 찾을지 알아내지 못했을 때. 질문을 그대로 검색어로 쓰지 않는다 —
+# 일상어와 약관의 낱말이 달라 무관한 조항이 낮은 점수로 걸리고, 그걸 근거로
+# 그럴듯한 답이 만들어지면 사용자가 틀렸다는 것을 알 방법이 없다.
+_TERM_QUERY_MISSING = "약관에서 어떤 내용을 찾아드릴지 조금 더 구체적으로 말씀해 주세요."
+
+# 찾았지만 쓸 만한 조항이 없을 때. 지어내지 않고 없다고 말한다.
+_TERM_NOT_FOUND = (
+    "등록된 약관에서 관련 조항을 찾지 못했습니다. 다른 표현으로 물어봐 주세요."
+)
 
 
 def route(intent: Intent, conn, engine: EngineClient) -> RouteResult:
@@ -59,10 +65,8 @@ def route(intent: Intent, conn, engine: EngineClient) -> RouteResult:
         return _recommend(intent, conn, engine)
     if intent.name == IntentName.BENEFIT_SUM:
         return _benefit_sum(intent, conn, engine)
-
-    message = _NOT_READY.get(intent.name)
-    if message:
-        return RouteResult(follow_up=message)
+    if intent.name == IntentName.TERM_QA:
+        return _term_qa(intent, conn)
     return RouteResult()
 
 
@@ -351,6 +355,46 @@ def _recommendation_line(row: Dict[str, Any]) -> str:
     return (
         f"{row.get('rank')}위 {row.get('cardName')} — "
         f"{_won(row.get('expectedBenefit'))}{estimate} · {row.get('reason')}"
+    )
+
+
+# ── 약관 질문 ──────────────────────────────────────────────
+
+
+def _term_qa(intent: Intent, conn) -> RouteResult:
+    """약관 원문에서 관련 조항을 찾아 컨텍스트로 만든다.
+
+    다른 의도와 달리 엔진을 부르지 않는다. 약관은 계산 규칙이 아니라 텍스트라
+    두 곳에서 규칙이 갈릴 위험이 없고, 엔진이 내려줄 수 있는 모양도 아니다.
+
+    찾은 조항을 그대로 싣고 요약하지 않는다. 줄이는 순간 그 요약이 맞는지
+    아무도 확인할 수 없게 되는데, 약관은 단서 한 줄이 결론을 뒤집는다.
+    """
+    if not intent.term_query:
+        return RouteResult(follow_up=_TERM_QUERY_MISSING)
+
+    card = resolve_card(conn, intent.card_text) if intent.card_text else Resolution()
+    if intent.card_text and not card.found:
+        return RouteResult(follow_up=_ask_again("카드", intent.card_text, card))
+
+    company_ids = None
+    if card.found:
+        company_id = terms.company_id_of_card(conn, card.match.target_id)
+        # 카드사가 안 붙은 카드면 좁히지 않는다. 좁히면 결과가 0건이 되어
+        # "약관이 없다"고 답하게 되는데, 실제로는 있다.
+        company_ids = [company_id] if company_id else None
+
+    passages = terms.search(conn, intent.term_query, company_ids)
+    if not passages:
+        return RouteResult(follow_up=_TERM_NOT_FOUND)
+
+    lines = ["[약관 조항]"]
+    for passage in passages:
+        lines.append(f"\n· {passage.label()}\n{passage.content}")
+
+    return RouteResult(
+        context="\n".join(lines),
+        sources=[passage.label() for passage in passages],
     )
 
 

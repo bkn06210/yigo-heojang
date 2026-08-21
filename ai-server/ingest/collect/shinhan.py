@@ -9,17 +9,37 @@ PC는 파일 키가 조회할 때마다 새로 발급되는 암호화 값이고 
 그다음 묶음이 온다.
 """
 
+import re
 import time
 import urllib.parse
 from typing import Iterator
 
-from .base import Collector, DocType, DocumentRef, clean_text, make_session
+from .base import Collector, DocType, DocumentRef, clean_text, decode_html, make_session
 
 _BOARD_URL = "https://www.shinhancard.com/mob/MOBFM12051N/MOBFM12051R01.shc?page=CRE"
 _LIST_API = "https://www.shinhancard.com/mob/MOBFM12051N/MOBFM12051R01C.ajax"
 _DOWNLOAD_URL = "https://www.shinhancard.com/mob/MOBFM12051N/MOBFM12051R03.shc"
 
 _CARD_TYPE_CREDIT = "0"  # 0=신용, 1=체크
+
+_SITE_ORIGIN = "https://www.shinhancard.com"
+_TERMS_INDEX_URL = f"{_SITE_ORIGIN}/pconts/html/helpdesk/terms/MOBFM170C01.html"
+
+# 약관 목록은 a 태그가 아니라 버튼의 onclick 으로 이동한다. 링크로 뽑히지 않으므로
+# 이동 함수에 들어간 경로와 버튼에 적힌 약관 이름을 함께 읽는다.
+_TERMS_ENTRY = re.compile(
+    r"go\('(/pconts/html/helpdesk/terms/[^']+/index\.html)'\)"
+    r".*?listcard__text--title[^>]*>([^<]+)<",
+    re.S,
+)
+
+# 목록이 가리키는 index.html 에는 본문이 없고 최신 시행본으로 넘기는 한 줄만 들어 있다.
+# 개정되면 이 주소가 바뀌므로 최신본 주소를 코드에 적어두지 않고 매번 따라간다.
+_TERMS_REDIRECT = re.compile(r"location\.replace\('([^']+)'")
+
+# 넘김이 한 번으로 안 끝나는 경우를 대비한 상한. 잘못 만들어진 페이지가
+# 자기 자신을 가리키면 상한이 없을 때 무한히 돈다.
+_MAX_REDIRECT_HOPS = 3
 
 # 모바일 화면이라 모바일 단말로 접근한다.
 _MOBILE_USER_AGENT = (
@@ -55,11 +75,60 @@ class ShinhanCollector(Collector):
                 break
             time.sleep(_REQUEST_INTERVAL_SEC)
 
+    def list_member_terms(self) -> Iterator[DocumentRef]:
+        """약관 목록 화면에 걸린 항목을 그대로 낸다.
+
+        여기서 최신본 주소까지 알아내지 않는 것은 항목이 90개가 넘기 때문이다.
+        항목마다 넘김을 따라가면 목록 한 번에 90번을 요청하게 되는데, 실제로
+        받는 것은 그중 서너 개다. 최신본 판별은 다운로드하는 문서에만 한다.
+        """
+        response = self._session.get(_TERMS_INDEX_URL, timeout=60)
+        response.raise_for_status()
+
+        for path, name in _TERMS_ENTRY.findall(decode_html(response.content)):
+            term_name = clean_text(name)
+            if not term_name:
+                continue
+
+            yield DocumentRef(
+                issuer=self.issuer,
+                card_name=term_name,
+                doc_type=DocType.MEMBER_TERMS,
+                doc_key=path,
+                source_url=f"{_SITE_ORIGIN}{path}",
+                # 시행일은 최신본으로 넘어가 봐야 알 수 있다. 목록 단계에서는 비운다.
+                revised_at=None,
+                file_name=f"{term_name}.html",
+            )
+
     def fetch(self, ref: DocumentRef) -> bytes:
+        if ref.doc_type == DocType.MEMBER_TERMS:
+            return self._fetch_member_terms(ref)
+
         self._ensure_session()
         response = self._session.get(ref.source_url, timeout=90)
         response.raise_for_status()
         return response.content
+
+    def _fetch_member_terms(self, ref: DocumentRef) -> bytes:
+        """최신 시행본까지 넘김을 따라가 본문 HTML을 받는다.
+
+        상품공시 게시판과 달리 세션 쿠키가 필요 없는 정적 화면이라
+        목록 화면을 먼저 여는 절차를 타지 않는다.
+        """
+        url = ref.source_url
+
+        for _ in range(_MAX_REDIRECT_HOPS):
+            response = self._session.get(url, timeout=60)
+            response.raise_for_status()
+            content = response.content
+
+            target = _TERMS_REDIRECT.search(decode_html(content))
+            if target is None:
+                return content
+            url = urllib.parse.urljoin(url, target.group(1))
+
+        raise ValueError(f"약관 페이지 넘김이 끝나지 않는다: {ref.source_url}")
 
     def _ensure_session(self) -> None:
         """목록 화면을 먼저 열어 세션 쿠키를 받는다.

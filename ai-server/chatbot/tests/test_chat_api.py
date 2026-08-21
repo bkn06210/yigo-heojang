@@ -28,6 +28,81 @@ def _db_available() -> bool:
 needs_db = pytest.mark.skipif(not _db_available(), reason="MySQL 연결 불가")
 
 
+@pytest.fixture
+def 약관_조각():
+    """검색이 걸릴 조문을 넣어 두고 끝나면 지운다.
+
+    약관 원문은 카드사 저작물이라 저장소에 두지 않는다. 그래서 시드만 적용한 DB 에는
+    조문이 하나도 없고, 원문이 있다고 가정한 테스트는 빈 결과를 받는다. 못 찾는 것과
+    "무관한 것은 안 준다"가 같은 모양이 되어 통과 여부가 뒤집힌다.
+
+    확인하려는 것은 검색 규칙(전문검색 점수 하한, 카드사별 한 건)이지 원문 자체가
+    아니므로, 조문을 직접 넣어 규칙만 본다.
+    """
+    documents = [
+        ("삼성", "개인회원 표준약관"),
+        ("신한", "개인회원 표준약관"),
+        ("KB국민", "개인회원 표준약관"),
+    ]
+    lost_card = (
+        "회원은 카드를 분실하거나 도난당한 경우 지체 없이 카드사에 분실 도난 신고를 "
+        "하여야 하며, 신고 접수 이후 발생한 부정사용 금액은 카드사가 부담합니다."
+    )
+    # 채움 조문. 전문검색 점수는 "몇 개 조각 중 몇 개에 그 낱말이 있나"로 정해져,
+    # 조각이 몇 개뿐이면 찾는 낱말이 흔한 낱말이 되어 점수가 0이 된다.
+    # 무관한 조문을 충분히 섞어야 검색이 실제와 같은 조건에서 돌아간다.
+    fillers = [
+        ("제20조(이용대금명세서)", "카드사는 매월 이용대금명세서를 회원이 지정한 방법으로 교부합니다."),
+        ("제21조(결제일 변경)", "회원은 결제일을 카드사가 정한 날짜 중에서 변경할 수 있습니다."),
+        ("제22조(이용한도)", "카드사는 회원의 신용도에 따라 이용한도를 정하고 조정할 수 있습니다."),
+        ("제23조(연회비)", "연회비는 카드 발급 시점을 기준으로 1년 단위로 청구됩니다."),
+        ("제24조(가족회원)", "본인회원은 가족회원의 카드 이용대금에 대하여 책임을 집니다."),
+        ("제25조(해외이용)", "해외 이용대금은 국제브랜드사가 정한 환율로 환산하여 청구됩니다."),
+        ("제26조(할부거래)", "할부 이용 시 할부수수료가 부과되며 수수료율은 이용대금명세서에 표시됩니다."),
+        ("제27조(포인트)", "적립된 포인트는 카드사가 정한 사용처에서 사용할 수 있습니다."),
+        ("제28조(통지)", "카드사는 회원이 신고한 주소로 각종 서류를 통지합니다."),
+    ]
+
+    inserted = []
+    with connection() as conn:
+        with conn.cursor() as cursor:
+            for issuer, name in documents:
+                cursor.execute(
+                    "INSERT INTO card_term_document"
+                    " (source_card_name, issuer, doc_type, source_url, storage_path,"
+                    "  extract_status, content_hash, fetched_at)"
+                    " VALUES (%s, %s, 'MEMBER_TERMS', 'test://terms', 'test',"
+                    "         'TEXT_OK', %s, NOW())",
+                    (name, issuer, f"test-{issuer}"),
+                )
+                document_id = cursor.lastrowid
+                inserted.append(document_id)
+
+                chunks = [("제40조(카드의 분실·도난)", lost_card)] + fillers
+                for index, (heading, content) in enumerate(chunks):
+                    cursor.execute(
+                        "INSERT INTO card_term_chunk"
+                        " (card_term_document_id, chunk_index, heading, content)"
+                        " VALUES (%s, %s, %s, %s)",
+                        (document_id, index, heading, content),
+                    )
+        conn.commit()
+
+    yield
+
+    with connection() as conn:
+        with conn.cursor() as cursor:
+            cursor.execute(
+                "DELETE FROM card_term_chunk WHERE card_term_document_id IN %s",
+                (tuple(inserted),),
+            )
+            cursor.execute(
+                "DELETE FROM card_term_document WHERE card_term_document_id IN %s",
+                (tuple(inserted),),
+            )
+        conn.commit()
+
+
 class FakeEngine:
     """엔진 응답을 흉내 낸다. 형식은 API 명세와 같다."""
 
@@ -347,8 +422,61 @@ def test_가맹점을_짚어_물으면_그_가맹점_거래만_합산한다(fake
 
 
 @needs_db
-def test_약관_질문은_아직_못_한다고_말한다(fake_engine):
+def test_약관_질문은_원문_조항을_근거로_답한다(fake_engine, 약관_조각):
     body = _ask("카드 잃어버리면 어떻게 해?")
 
     assert body["intent"] == IntentName.TERM_QA
-    assert "약관 원문" in body["answer"]
+    # 엔진이 아니라 약관 원문에서 답이 나온다. 조문 제목이 근거로 실린다.
+    assert "분실" in body["answer"]
+    assert any("약관" in source for source in body["sources"])
+    assert body["followUpQuestion"] is None
+
+
+@needs_db
+def test_약관_검색어를_못_만들면_되묻는다(fake_engine):
+    """무엇을 찾을지 모르면 질문을 그대로 검색어로 쓰지 않는다.
+
+    일상어와 약관의 낱말이 달라, 질문을 그대로 넣으면 무관한 조항이 낮은 점수로
+    걸린다. 그걸 근거로 문장을 만들면 사용자가 틀렸다는 것을 알 방법이 없다.
+    """
+    body = _ask("약관에 우주선 관련 규정 있어?")
+
+    assert body["intent"] == IntentName.TERM_QA
+    assert body["followUpQuestion"] is not None
+
+
+@needs_db
+def test_약관_검색은_무관한_조항을_돌려주지_않는다(약관_조각):
+    """점수가 낮은 것은 못 찾은 것으로 본다.
+
+    하한이 없으면 어떤 검색어를 넣어도 뭔가는 걸린다. 그걸 근거로 문장을 만들면
+    사용자가 틀렸다는 것을 알 방법이 없어, 낱말이 안 겹치는 질문은 빈 결과로 끊는다.
+
+    <b>다만 하한으로 거를 수 있는 것은 여기까지다.</b> 약관에 흔한 낱말이 섞인 질문은
+    뜻이 무관해도 점수가 오른다(실측: "드론 항공 촬영" 16.8 > "이용대금 연체" 4.7 —
+    약관에 '항공'이 자주 나오기 때문). 조각이 늘수록 이 겹침이 커지므로 뜻으로 찾는
+    검색이 필요하다.
+    """
+    from chatbot import terms
+    from chatbot.db import connection
+
+    with connection() as conn:
+        assert terms.search(conn, "분실 도난 신고")
+        assert terms.search(conn, "공룡 화석 발굴") == []
+
+
+@needs_db
+def test_약관_검색은_카드사마다_하나씩만_싣는다(약관_조각):
+    """개인회원 표준약관은 3사 내용이 사실상 같다.
+
+    같은 조문이 카드사 수만큼 실리면 LLM 에게 같은 글을 세 번 주는 셈이라
+    프롬프트 자리만 차지하고 답에 보태는 것이 없다.
+    """
+    from chatbot import terms
+    from chatbot.db import connection
+
+    with connection() as conn:
+        passages = terms.search(conn, "분실 도난 신고")
+
+    names = [passage.company_name for passage in passages]
+    assert len(names) == len(set(names))
