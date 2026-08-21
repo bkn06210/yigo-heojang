@@ -16,7 +16,7 @@
 받는 쪽에서 약관 Q&A 가 여전히 죽어 있다.
 
     python -m ingest.dump_terms            파일 생성
-    mysql -u root -p wallet < <파일>       받는 쪽에서 적용 (schema -> data -> 91 다음)
+    mysql -u root -p wallet < <파일>       받는 쪽에서 적용 (번호 순서상 맨 뒤)
 """
 
 import sys
@@ -27,7 +27,7 @@ from .load import connect
 
 _OUTPUT_PATH = (
     Path(__file__).resolve().parent.parent.parent
-    / "backend" / "db" / "local" / "93_card_term.sql"
+    / "backend" / "db" / "local" / "95_card_term.sql"
 )
 
 # 뽑는 순서가 곧 적용 순서다. 조각이 문서를 참조하므로 문서가 먼저 들어가야 한다.
@@ -39,14 +39,14 @@ _TABLES = ("card_term_document", "card_term_chunk")
 _SKIP_COLUMNS = {}
 
 _HEADER = """-- ============================================================
--- 93_card_term.sql — 카드 약관 원문과 조문 조각
+-- 95_card_term.sql — 카드 약관 원문과 조문 조각
 --
 -- 저장소에 올리지 않는다. 카드사 약관 원문이라 공개 저장소에 넣으면 재배포가 된다.
 -- 이 파일은 ingest/dump_terms.py 가 만들고, 팀 안에서 따로 주고받는다.
 --
--- 적용: schema -> data -> 91 을 넣은 DB에 이어서 적용한다. 문서가 카드사 마스터를
---       참조하므로 91 보다 먼저 넣으면 외래키 제약에 걸린다.
---       수집 파이프라인(ingest.run)을 돌릴 필요가 없다.
+-- 실행 순서: schema.sql -> data.sql -> 91 -> 92 -> 93 -> 94 -> 이 파일
+--            문서가 카드사 마스터를 참조하므로 최소한 91 다음이어야 한다.
+--            수집 파이프라인(ingest.run)을 돌릴 필요가 없다.
 --
 -- 조각의 임베딩까지 들어 있다. 약관 검색이 임베딩으로만 돌아서, 이 값이 없으면
 -- 챗봇이 정상으로 뜬 채 약관 질문에만 "찾지 못했다"고 답한다.
@@ -177,8 +177,8 @@ def main() -> None:
         print()
         print("⚠ 모델이 섞여 있다. build_embeddings 로 한 모델에 맞춘 뒤 다시 뽑아라")
     print("\n이 파일은 저장소에 올리지 않는다. 팀 안에서 따로 전달해라.")
-    print("받는 쪽 적용:  schema -> data -> 91 다음에"
-          "  mysql -u root -p wallet < 93_card_term.sql")
+    print("받는 쪽 적용:  시드 SQL 을 번호 순으로 넣은 다음"
+          "  mysql -u root -p wallet < 95_card_term.sql")
 
 
 if __name__ == "__main__":
