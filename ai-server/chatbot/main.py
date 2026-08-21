@@ -18,6 +18,7 @@ memberId 만 바꿔 남의 소비내역을 물어볼 수 있다.
 import logging
 from typing import Optional
 
+from embedding import EmbeddingClient, create_embedding_client
 from fastapi import FastAPI, Header
 
 from .config import get_settings
@@ -34,6 +35,7 @@ app = FastAPI(title="카드 혜택 챗봇", docs_url="/docs")
 
 _settings = get_settings()
 _llm: LlmClient = create_llm_client(_settings)
+_embedding: EmbeddingClient = create_embedding_client()
 
 _UNKNOWN_FOLLOW_UP = (
     "무엇을 알려드릴지 잘 모르겠습니다. "
@@ -49,11 +51,16 @@ _LLM_DOWN_MESSAGE = (
 
 @app.get("/health", response_model=HealthResponse)
 def health() -> HealthResponse:
-    """서버가 살아 있는지와 지금 어떤 LLM 으로 도는지.
+    """서버가 살아 있는지와 지금 어떤 LLM·임베딩으로 도는지.
 
     provider 를 같이 내려주는 이유는 stub 인 채로 시연에 들어가는 사고를 막기 위해서다.
+    임베딩 stub 은 답변이 그럴듯하게 나와도 약관 검색만 무뎌지므로 화면으로는 알아채기 어렵다.
     """
-    return HealthResponse(status="UP", llm_provider=_llm.provider)
+    return HealthResponse(
+        status="UP",
+        llm_provider=_llm.provider,
+        embedding_provider=_embedding.provider,
+    )
 
 
 @app.post("/chat", response_model=ChatResponse)

@@ -33,12 +33,17 @@
 ```
 python -m ingest.run              수집 → card_term_document   (카드사 사이트를 때린다)
 python -m ingest.build_chunks     조문 단위로 자름 → card_term_chunk
-python -m ingest.build_embeddings 조각에 임베딩 (API 키 필요, 없어도 검색은 동작)
+python -m embedding.check       임베딩 설정 점검 (호출 1건, 색인 전에 먼저)
+python -m ingest.build_embeddings 조각에 임베딩 (EMBEDDING_PROVIDER 로 공급자 선택)
 python -m ingest.seed             혜택 시드 SQL 생성
 ```
 
 `run` 만 네트워크를 쓴다. 자르는 규칙을 고쳤을 때는 `build_chunks` 만 다시 돌리면 된다 —
 원문이 DB 에 있어 카드사 사이트를 다시 받지 않는다.
+
+`build_embeddings` 는 값이 없거나 다른 모델로 만든 조각만 골라 부른다. 중간에 끊겨도
+다시 돌리면 이어서 채우고, 공급자나 차원을 바꾸면 좌표계가 달라지므로 전부 다시 만든다.
+임베딩이 없어도 검색은 동작한다 — 낱말 검색만으로 돌고 정확도만 떨어진다.
 
 ## 실패는 멈추지 않고 모아서 알린다
 
