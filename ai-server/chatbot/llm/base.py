@@ -46,6 +46,10 @@ class Intent:
     card_text: Optional[str] = None
     period_text: Optional[str] = None
     amount: Optional[int] = None
+    # 약관에서 찾을 때 쓸 검색어. 사람이 쓰는 말과 약관에 적힌 말이 달라서 필요하다.
+    # "잃어버렸어요"로는 "분실" 조항이 걸리지 않는다(실측: 일치 0건).
+    # 뜻이 통하는 말끼리 이어주는 일이라 엔티티 표현 추출과 성격이 같다 — 판단이 아니다.
+    term_query: Optional[str] = None
     # 분류 근거로 삼은 표현. 되물을 때 "무엇을 못 알아들었는지" 보여주는 데 쓴다.
     raw: Dict[str, str] = field(default_factory=dict)
 

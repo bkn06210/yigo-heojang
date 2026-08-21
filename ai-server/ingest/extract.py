@@ -1,4 +1,4 @@
-"""PDF 원본에서 텍스트를 뽑는다.
+"""원본 문서에서 텍스트를 뽑는다.
 
 이 단계에는 LLM이 들어가지 않는다. 그래서 몇 번을 다시 돌려도 비용이 없고,
 스키마가 바뀌어 구조화를 다시 해야 할 때도 여기까지는 재사용된다.
@@ -6,10 +6,18 @@
 표를 따로 뽑는 이유가 있다. 줄글로만 추출하면 열 경계가 공백으로 뭉개져서
 어디까지가 할인 대상이고 어디부터가 한도 금액인지 구분되지 않는다.
 약관의 핵심 수치는 대부분 표에 있으므로 표 구조를 살려야 값이 정확해진다.
+
+원본이 PDF만은 아니다. 개인회원 약관은 카드사에 따라 웹페이지 본문으로만
+제공되고, 오히려 그쪽이 조문 구조(제N장·제N조)를 그대로 갖고 있어 다루기 쉽다.
+형식은 호출자가 알려주는 대신 바이트 앞머리로 판정한다. 카드사가 PDF 주소라고
+해놓고 오류 페이지를 HTML로 돌려주는 일이 있어, 선언된 형식을 믿으면
+빈 원문이 정상처럼 저장된다.
 """
 
 import hashlib
+import re
 from dataclasses import dataclass
+from html.parser import HTMLParser
 from io import BytesIO
 from pathlib import Path
 from typing import List, Optional
@@ -36,16 +44,41 @@ _X_TOLERANCE = 1.5
 # 이미지 PDF를 비전으로 읽을 때 쓰는 렌더링 해상도(dpi).
 _VISION_RESOLUTION = 160
 
+# HTML 문서가 이 글자 수에 못 미치면 본문을 못 받았다고 본다.
+# 넉넉히 잡으면 안 된다. 조문이 둘뿐인 부속약관이 612자로 정상인데,
+# 분량으로 정상 여부를 가르면 짧은 약관이 통째로 버려진다.
+# 걸러내려는 것은 넘김 전용 페이지(본문 0자)와 오류 화면이다.
+_MIN_HTML_CHARS = 200
+
+# 본문이 아닌 태그. 안에 든 글자를 그대로 뽑으면 자바스크립트 코드가 원문에 섞인다.
+_HTML_SKIP_TAGS = frozenset({"script", "style", "noscript", "head"})
+
+# 줄바꿈이 필요한 태그. 구분하지 않으면 조문 제목과 본문이 한 줄로 붙어
+# "제3조(카드의 발급)카드를 발급받고자 하는"처럼 경계가 사라진다.
+_HTML_BLOCK_TAGS = frozenset(
+    {"p", "div", "br", "li", "tr", "h1", "h2", "h3", "h4", "h5", "h6", "table", "section"}
+)
+
+# 세 줄 이상 연속된 빈 줄. 태그 사이 공백이 그대로 줄바꿈이 되어 생긴다.
+_EXCESS_BLANK_LINES = re.compile(r"\n{3,}")
+
 
 @dataclass(frozen=True)
 class ExtractResult:
     status: str
-    page_count: int
+    page_count: Optional[int]  # HTML은 페이지 개념이 없어 None
     text: Optional[str]  # IMAGE_ONLY면 None
-    content_hash: str  # 원본 PDF의 SHA-256. 개정 감지에 쓴다
+    content_hash: str  # 원본의 SHA-256. 개정 감지에 쓴다
 
 
-def extract(pdf_bytes: bytes) -> ExtractResult:
+def extract(content: bytes) -> ExtractResult:
+    """원본 바이트에서 텍스트를 뽑는다. PDF·HTML 모두 받는다."""
+    if content.startswith(b"%PDF-"):
+        return _extract_pdf(content)
+    return _extract_html(content)
+
+
+def _extract_pdf(pdf_bytes: bytes) -> ExtractResult:
     content_hash = hashlib.sha256(pdf_bytes).hexdigest()
     pages: List[str] = []
     body_length = 0
@@ -67,6 +100,82 @@ def extract(pdf_bytes: bytes) -> ExtractResult:
         return ExtractResult(ExtractStatus.IMAGE_ONLY, page_count, None, content_hash)
 
     return ExtractResult(ExtractStatus.TEXT_OK, page_count, text, content_hash)
+
+
+def _extract_html(html_bytes: bytes) -> ExtractResult:
+    """웹페이지 본문에서 글자만 뽑는다.
+
+    짧으면 IMAGE_ONLY로 넘기지 않고 예외를 던진다. 스캔 PDF는 나중에 비전으로
+    다시 읽을 수 있는 정상 문서지만, 짧은 HTML은 받아오기가 실패한 것이라
+    성격이 다르다. 상태로 남기면 실패가 정상 데이터에 섞여 조용히 잊힌다.
+    """
+    content_hash = hashlib.sha256(html_bytes).hexdigest()
+    text = _html_to_text(_decode(html_bytes))
+
+    if len(text) < _MIN_HTML_CHARS:
+        raise ValueError(f"HTML 본문이 너무 짧다({len(text)}자). 받아오기가 실패했을 수 있다")
+
+    return ExtractResult(ExtractStatus.TEXT_OK, None, text, content_hash)
+
+
+def _decode(html_bytes: bytes) -> str:
+    """바이트를 문자열로 되돌린다.
+
+    응답 헤더의 charset을 쓰지 않는다. 카드사 약관 페이지 중에는 charset을
+    주지 않는 곳이 있어, 라이브러리가 ISO-8859-1로 추측해 한글이 통째로 깨진다.
+    국내 카드사 문서는 UTF-8 아니면 EUC-KR 둘 중 하나다.
+    """
+    for encoding in ("utf-8-sig", "utf-8", "euc-kr"):
+        try:
+            return html_bytes.decode(encoding)
+        except UnicodeDecodeError:
+            continue
+    # 어느 것으로도 안 되면 읽히는 글자만 남긴다. 여기까지 오면 본문 길이 검사에 걸린다.
+    return html_bytes.decode("utf-8", errors="ignore")
+
+
+class _TextCollector(HTMLParser):
+    """태그를 걷어내고 글자만 모은다.
+
+    외부 파서 라이브러리를 쓰지 않는 것은 이 단계가 표준 라이브러리만으로
+    충분하기 때문이다. 약관 페이지는 문단·목록·표로만 되어 있어 복잡한
+    DOM 조작이 필요 없고, 의존성이 늘면 수집을 돌릴 환경 준비가 그만큼 무거워진다.
+    """
+
+    def __init__(self) -> None:
+        super().__init__(convert_charrefs=True)
+        self._parts: List[str] = []
+        self._skip_depth = 0
+
+    def handle_starttag(self, tag: str, attrs) -> None:
+        if tag in _HTML_SKIP_TAGS:
+            self._skip_depth += 1
+        elif tag in _HTML_BLOCK_TAGS:
+            self._parts.append("\n")
+
+    def handle_endtag(self, tag: str) -> None:
+        if tag in _HTML_SKIP_TAGS:
+            # 여는 태그를 못 본 채 닫는 태그만 나오는 문서가 있다. 음수로 내려가면
+            # 그 뒤 본문이 통째로 건너뛰기 상태에 갇힌다.
+            self._skip_depth = max(0, self._skip_depth - 1)
+        elif tag in _HTML_BLOCK_TAGS:
+            self._parts.append("\n")
+
+    def handle_data(self, data: str) -> None:
+        if self._skip_depth == 0:
+            self._parts.append(data)
+
+    def text(self) -> str:
+        return "".join(self._parts)
+
+
+def _html_to_text(html: str) -> str:
+    collector = _TextCollector()
+    collector.feed(html)
+
+    lines = [line.strip() for line in collector.text().splitlines()]
+    joined = "\n".join(line for line in lines if line)
+    return _EXCESS_BLANK_LINES.sub("\n\n", joined).strip()
 
 
 def render_pages(pdf_bytes: bytes, output_dir: Path, stem: str) -> List[Path]:

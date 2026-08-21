@@ -40,6 +40,9 @@ venv/
 ai-server/ingest/raw/
 # 추출한 약관 본문도 원문이다. DB(card_term_document)에 들어가고 파이프라인으로 재생성된다.
 ai-server/ingest/out/terms/
+# 약관 원문 덤프 SQL(ingest.dump_terms 산출물). 형식만 바뀐 원문이라 같은 이유로 제외한다.
+# 파일은 저장소가 아니라 팀 안에서 따로 주고받는다.
+backend/db/local/
 # 이전 회차 구조화 결과 (비교용 백업)
 ai-server/ingest/out/structured_v1/
 # PDF 페이지 렌더링 (중간 산출물, 재생성 가능)
