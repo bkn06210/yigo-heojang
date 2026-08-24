@@ -58,3 +58,4 @@ class ChatResponse(CamelModel):
 class HealthResponse(CamelModel):
     status: str
     llm_provider: str
+    embedding_provider: str

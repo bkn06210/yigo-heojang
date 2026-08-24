@@ -32,6 +32,21 @@ _SENTENCE_TAIL = re.compile(r"(?:니다|한다|된다|같다)\s*[.]?\s*$|[.]\s*$
 # 달라 대부분을 놓친 것이므로, 그 상태로 자르면 안 잡힌 부분이 한 조각에 뭉쳐 들어간다.
 _MIN_ARTICLES = 3
 
+# 상품설명서·핵심설명서의 제목. 이쪽은 '제N조'가 없고 아래 네 가지로 절을 나눈다.
+#   ■ 포인트리 기본 적립 서비스   /   1. 카드상품의 개요
+#   ◦ 선택 적립 서비스팩(택1)     /   [전월 이용금액 산정기준]
+# 이 구조를 안 쓰면 700자에서 기계적으로 잘려 문장 중간이 끊기고 제목이 남지 않는다.
+# 제목이 없으면 검색 결과에 무슨 조항인지 표시할 수 없고 프롬프트에도 맥락이 안 들어간다.
+_GUIDE_HEADING = re.compile(
+    r"^(?:[■◦●▪]\s*\S[^\n]{0,44}"   # ■ 서비스 제목
+    r"|\d{1,2}\.\s*\S[^\n]{0,44}"       # 1. 카드상품의 개요
+    r"|\[[^\]\n]{2,40}\])$",              # [전월 이용금액 산정기준]
+    re.M,
+)
+
+# 이보다 적게 나오면 구조가 있다고 보지 않는다. 몇 개는 본문 중간의 목록일 수 있다.
+_MIN_GUIDE_HEADINGS = 4
+
 # 장 제목. 조문의 상위 묶음이라 조각에 함께 붙여 어느 장의 조문인지 남긴다.
 _CHAPTER_HEADING = re.compile(r"^제\s*\d+\s*장\s+.{0,40}$", re.M)
 
@@ -70,7 +85,10 @@ class Chunk:
 def split_document(text: str) -> List[Chunk]:
     """원문 하나를 조각 목록으로 만든다."""
     cleaned = preprocess(text)
-    pieces = _split_by_article(cleaned) or _split_by_length(cleaned)
+    # 조문 구조(개인회원 약관) → 절 구조(상품설명서) → 길이. 앞의 것이 있으면 그것을 쓴다.
+    pieces = (_split_by_article(cleaned)
+              or _split_by_guide_heading(cleaned)
+              or _split_by_length(cleaned))
     return _number(_drop_duplicates(pieces))
 
 
@@ -153,6 +171,33 @@ def _split_by_article(text: str) -> List[Chunk]:
 
         for part in _cut_to_length(body, _MAX_CHUNK_CHARS):
             pieces.append(Chunk(index=0, content=f"{label}\n{part}", heading=label))
+
+    return pieces
+
+
+def _split_by_guide_heading(text: str) -> List[Chunk]:
+    """상품설명서의 절 경계로 자른다. 절 구조가 없으면 빈 목록을 낸다.
+
+    조문과 달리 상위 묶음(장)이 없어 제목을 그대로 쓴다. 페이지 표시는 preprocess 가
+    이미 지웠으므로 '[3페이지]' 같은 것이 제목으로 잡히지 않는다.
+    """
+    headings = [m for m in _GUIDE_HEADING.finditer(text) if _is_heading(m.group(0))]
+    if len(headings) < _MIN_GUIDE_HEADINGS:
+        return []
+
+    pieces: List[Chunk] = []
+    preamble = text[: headings[0].start()].strip()
+    for part in _cut_to_length(preamble, _MAX_CHUNK_CHARS):
+        pieces.append(Chunk(index=0, content=part, heading=None))
+
+    for order, heading in enumerate(headings):
+        end = headings[order + 1].start() if order + 1 < len(headings) else len(text)
+        title = heading.group(0).strip()
+        body = text[heading.end() : end].strip()
+        if not body:
+            continue
+        for part in _cut_to_length(body, _MAX_CHUNK_CHARS):
+            pieces.append(Chunk(index=0, content=f"{title}\n{part}", heading=title))
 
     return pieces
 
