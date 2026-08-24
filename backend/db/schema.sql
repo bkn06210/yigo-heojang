@@ -435,7 +435,11 @@ CREATE TABLE card_term_document (
     -- 수집 시점에는 대응하는 card 행이 없을 수 있다. 카드사가 표기한 이름을 그대로 남겨야
     -- card_id가 NULL인 문서를 나중에 어느 카드에 붙일지 판단할 수 있다.
     source_card_name      VARCHAR(200) NOT NULL COMMENT '카드사 표기 카드명. card_id 매칭의 근거',
-    issuer                VARCHAR(50)  NOT NULL COMMENT '카드사 (예: KB국민, 삼성)',
+    -- 수집기가 쓰는 카드사 표기와 카드사 마스터의 정식 명칭이 다르다(KB국민 / KB국민카드).
+    -- 문자열로 이으면 표기가 갈리는 순간 조용히 조인이 비므로 ID로 잇는다.
+    -- 원래 표기는 그대로 남긴다 — 매칭이 틀렸을 때 무엇을 보고 이었는지 근거가 된다.
+    card_company_id       BIGINT       NULL COMMENT '카드사 ID. 마스터와 매칭되기 전이면 NULL',
+    issuer                VARCHAR(50)  NOT NULL COMMENT '수집기가 쓴 카드사 표기 (예: KB국민, 삼성)',
     -- 카드사마다 문서 구성이 다르다. 유형을 ENUM으로 고정하면 카드사를 추가할 때마다
     -- ALTER가 필요하므로 값으로 흡수한다.
     doc_type              VARCHAR(30)  NOT NULL COMMENT '문서 유형: PRODUCT_GUIDE(상품설명서) | KEY_TERMS(주요거래조건)',
@@ -444,7 +448,7 @@ CREATE TABLE card_term_document (
     storage_path          VARCHAR(500) NOT NULL COMMENT '보관한 원본 PDF 경로',
     -- 스캔 이미지로만 된 PDF는 텍스트가 거의 나오지 않는다. 상태를 남겨야
     -- 재처리 대상을 골라낼 수 있다. 상태를 안 남기면 빈 원문이 정상처럼 섞인다.
-    extract_status        VARCHAR(20)  NOT NULL COMMENT '추출 상태: TEXT_OK | IMAGE_ONLY(텍스트 추출 불가)',
+    extract_status        VARCHAR(20)  NOT NULL COMMENT '추출 상태: TEXT_OK | VISION_OK(이미지 PDF를 비전으로 읽음) | IMAGE_ONLY(텍스트 추출 불가)',
     page_count            INT          NULL COMMENT '페이지 수',
     content_text          LONGTEXT     NULL COMMENT '추출된 원문 텍스트. IMAGE_ONLY면 NULL',
     -- 같은 문서를 다시 받았을 때 개정 여부를 판정한다. 해시가 같으면 구조화를 건너뛴다.
@@ -460,8 +464,46 @@ CREATE TABLE card_term_document (
     -- 약관이 개정되면 해시가 달라지므로 새 행으로 쌓여 이력이 남는다.
     UNIQUE KEY uk_card_term_document (issuer, doc_type, content_hash),
     KEY idx_card_term_document_card (card_id),
-    CONSTRAINT fk_card_term_document_card FOREIGN KEY (card_id) REFERENCES card (card_id)
+    KEY idx_card_term_document_company (card_company_id),
+    CONSTRAINT fk_card_term_document_card FOREIGN KEY (card_id) REFERENCES card (card_id),
+    CONSTRAINT fk_card_term_document_company FOREIGN KEY (card_company_id)
+        REFERENCES card_company (card_company_id)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT '카드 약관 원문';
+
+-- 약관 원문을 검색 단위로 자른 조각.
+-- 원문 한 장이 수만 자라 통째로는 프롬프트에 들어가지 않고, 들어가더라도 질문과
+-- 무관한 조항이 대부분이라 답이 흐려진다. 조문 단위로 잘라 두고 질문에 가까운
+-- 몇 개만 골라 넣는다.
+--
+-- 개정된 약관이 새 행으로 쌓이는 원문과 달리, 조각은 현행본만 남긴다.
+-- 옛 조각을 함께 두면 "연회비 반환 기준"에 지난 시행본과 현행본이 나란히 검색돼
+-- 어느 쪽이 지금 맞는 답인지 가릴 수 없다. 원문 이력은 위 테이블에 그대로 남으므로
+-- 조각은 언제든 다시 만들 수 있다.
+CREATE TABLE card_term_chunk (
+    card_term_chunk_id    BIGINT       NOT NULL AUTO_INCREMENT COMMENT '약관 조각 ID',
+    card_term_document_id BIGINT       NOT NULL COMMENT '약관 문서 ID',
+    chunk_index           INT          NOT NULL COMMENT '문서 안에서의 순서. 0부터',
+    -- 조각만 따로 읽는 검색 단계에서 무엇에 관한 규정인지 드러나게 한다.
+    -- 조문 구조가 없는 문서(상품설명서)는 글자 수로 자르므로 값이 없다.
+    heading               VARCHAR(200) NULL COMMENT '속한 장·조 제목. 조문 구조가 없으면 NULL',
+    content               TEXT         NOT NULL COMMENT '조각 본문',
+    -- 임베딩은 float32 배열을 그대로 담는다. JSON 문자열로 두면 숫자 하나가
+    -- 열 바이트 남짓을 먹어 같은 값이 두 배 넘는 자리를 차지한다.
+    -- 파생물이라 값이 없어도 검색은 동작한다(키워드 검색으로만 돌아간다).
+    embedding             BLOB         NULL COMMENT '임베딩 벡터(float32 이진). 미생성이면 NULL',
+    embedding_model       VARCHAR(50)  NULL COMMENT '임베딩을 만든 모델. 섞이면 유사도가 무의미해진다',
+    created_at            DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '생성 일시',
+
+    PRIMARY KEY (card_term_chunk_id),
+    -- 같은 문서를 다시 자르면 조각이 두 벌로 쌓인다. 순서 번호로 막는다.
+    UNIQUE KEY uk_card_term_chunk (card_term_document_id, chunk_index),
+    -- 한글은 띄어쓰기로 단어가 갈리지 않아 기본 파서로는 색인이 되지 않는다.
+    -- ngram 파서는 글자 두 개씩 잘라 색인하므로 '분실신고' 같은 말도 걸린다.
+    FULLTEXT KEY ft_card_term_chunk_content (content) WITH PARSER ngram,
+    -- 문서가 지워지면 조각도 함께 지운다. 남으면 원문 없는 조각이 검색에 걸린다.
+    CONSTRAINT fk_card_term_chunk_document FOREIGN KEY (card_term_document_id)
+        REFERENCES card_term_document (card_term_document_id) ON DELETE CASCADE
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT '약관 원문 검색 조각';
 
 -- ════════════════════════════════════════════════════════════
 -- 4. 보유카드
@@ -517,6 +559,32 @@ CREATE TABLE performance_tier (
     CONSTRAINT fk_performance_tier_card FOREIGN KEY (card_id) REFERENCES card (card_id)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT '실적구간별 통합할인한도';
 
+-- 발급 초기 실적 유예. 카드 50장 중 30장에 있는 조항이다.
+--   "최초 카드 사용등록일로부터 다음달 말일까지는 전월 실적이 없어도
+--    '40만원 이상~80만원 미만' 구간의 서비스가 적용됩니다"
+--
+-- 실적을 0으로 보는 것이 아니라 특정 구간에 있는 것으로 친다. 어느 구간으로 쳐주는지가
+-- 카드마다 다르므로(30만원 구간·40만원 구간·50만원 구간) 구간을 직접 가리킨다.
+-- 실적을 0으로 두면 실적 조건이 붙은 혜택이 전부 꺼져 신규 발급 회원의 혜택이 계산되지 않는다.
+--
+-- 월 축과 분기 축이 따로 유예되는 카드가 있어(월은 40만원 구간, 분기는 100만원 구간)
+-- period_type이 PK에 들어간다.
+--
+-- 유예를 구간으로 표현할 수 없는 카드는 행을 만들지 않는다. "구간 한도의 50%까지",
+-- "영역별 월 2,500원 한도까지"처럼 구간이 아니라 한도를 깎는 형태가 있는데,
+-- 구간으로 적으면 한도가 약관의 두 배가 된다. 유예 없음으로 두면 그 카드만 보수적으로 계산된다.
+CREATE TABLE card_performance_grace (
+    card_id       BIGINT      NOT NULL COMMENT '카드 ID',
+    period_type   VARCHAR(10) NOT NULL COMMENT '실적 축: MONTH | QUARTER (performance_tier.period_type과 짝)',
+    tier_id       BIGINT      NOT NULL COMMENT '유예 기간에 적용할 실적 구간',
+    -- 조사한 카드는 전부 1이다("등록월 + 다음달 말일까지", "발급월+1개월까지").
+    -- 그래도 컬럼으로 두는 것은 60일·3개월로 적은 카드가 있어 값이 하나라고 단정할 수 없기 때문이다.
+    grace_periods TINYINT     NOT NULL COMMENT '사용등록 기간 이후 몇 기간까지 유예되는가 (MONTH면 개월, QUARTER면 분기)',
+    PRIMARY KEY (card_id, period_type),
+    CONSTRAINT fk_card_performance_grace_card FOREIGN KEY (card_id) REFERENCES card (card_id),
+    CONSTRAINT fk_card_performance_grace_tier FOREIGN KEY (tier_id) REFERENCES performance_tier (tier_id)
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT '발급 초기 실적 유예';
+
 -- 제외값이 대분류 코드면 하위 중분류 결제까지 제외한다. 혜택 대상(target_category_id)이
 -- 대분류면 하위까지 적용되는 것과 대칭이다. 한쪽만 상향 매칭하면 같은 계층을 두 규칙이
 -- 다르게 해석하게 된다.
@@ -539,7 +607,8 @@ CREATE TABLE performance_tier (
 --                       'ANNUAL_FEE'            연회비
 --                       'GOV_SUBSIDY'           정부지원금(보육료·바우처 등)
 --                       'POSTPAID_TRANSIT'      후불교통요금
---                       'UNAPPROVED'            무승인전표(자판기·통행료 등)
+--                       'UNAPPROVED'            무승인전표 전반(자판기·무인정산 등)
+--                       'TOLL'                  고속도로 통행료
 --                       'CANCELED'              취소·부분취소 거래
 --                       'LEVY'                  부담금·준조세(장애인 고용부담금 등)
 --                       'POINT_USED'            포인트로 결제한 금액

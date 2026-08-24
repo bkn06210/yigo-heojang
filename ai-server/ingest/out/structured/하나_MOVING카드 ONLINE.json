@@ -1,0 +1,752 @@
+{
+ "card": {
+  "card_name": "MOVING카드 ONLINE",
+  "card_type": "CREDIT",
+  "annual_fee": 20000,
+  "annual_fees": [
+   {
+    "brand": "MASTERCARD",
+    "issue_type": "ANY",
+    "variant": "ANY",
+    "total_fee": 20000,
+    "base_fee": 10000,
+    "partner_fee": 10000,
+    "_source": "연회비 본인 구 분 기본연회비 제휴연회비 총 연회비 / 국내외겸용(Mastercard) 1만원 1만원 2만원"
+   },
+   {
+    "brand": "LOCAL",
+    "issue_type": "ANY",
+    "variant": "ANY",
+    "total_fee": 20000,
+    "base_fee": 10000,
+    "partner_fee": 10000,
+    "_source": "국내전용 1만원 1만원 2만원"
+   }
+  ],
+  "_source": {
+   "annual_fee": "국내외겸용(Mastercard)과 국내전용의 총 연회비가 모두 2만원이라 대표값이 갈리지 않는다."
+  },
+  "_needs_review": []
+ },
+ "card_exclusions": [
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "TAX",
+   "_source": "[서비스(적립) 제외 대상] ⦁ 국세, 지방세, 수도/전기요금, 그외 공과금(우편요금, 과태료, 범칙금, 벌금, 국가/공공기관/공공단체가 부과하는 부담금), 도시가스 요금, 아파트관리비, 국민연금/고용보험료/산재보험료/건강보험료 납부 금액, 스쿨뱅킹, 초·중·고 학교 납입금, 대학교 납입금, 대학원 납입금, 상품권 및 기프트카드 구매, 선불카드 및 선불전자지급수단(예시: 하나머니) 충전 금액, 부동산임대료, 무이자할부 및 부분무이자할부 이용금액 전체"
+  },
+  {
+   "exclusion_type": "CATEGORY",
+   "exclusion_value": "UTILITY"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "LEVY"
+  },
+  {
+   "exclusion_type": "CATEGORY",
+   "exclusion_value": "APARTMENT_FEE"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "SOCIAL_INSURANCE"
+  },
+  {
+   "exclusion_type": "CATEGORY",
+   "exclusion_value": "TUITION"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "GIFT_CARD"
+  },
+  {
+   "exclusion_type": "CATEGORY",
+   "exclusion_value": "RENT"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "INTEREST_FREE",
+   "_source": "⦁ 무이자 할부 및 부분 무이자할부 전체 이용금액은 서비스 제공되지 않습니다."
+  }
+ ],
+ "performance_tiers": [
+  {
+   "period_type": "MONTH",
+   "min_performance_amount": 0,
+   "shared_monthly_limit": null,
+   "_source": "3일 쓰면 2배 적립 … (지난달 실적 조건 없음, 일 실적 조건 1원 이상) — 실적을 못 채워도 기본 적립이 제공되므로 0원 구간을 둔다. 영역별 월 적립 한도만 있고 카드 통합 할인한도가 없어 shared_monthly_limit은 null."
+  },
+  {
+   "period_type": "MONTH",
+   "min_performance_amount": 500000,
+   "shared_monthly_limit": null,
+   "_source": "ONLINE 적립 영역별 50% 하나머니 적립 제공 (지난달 실적 조건 50만원 이상)"
+  }
+ ],
+ "performance_grace": [
+  {
+   "period_type": "MONTH",
+   "min_performance_amount": 500000,
+   "grace_periods": 1,
+   "_source": "[지난달 실적과 관계없이 서비스 제공] ⦁ 최초카드 사용등록일부터 다음달 말일까지는 지난달 카드 실적 50만원 미만이어도 실적 50만원 이상 기준으로 서비스 제공됩니다."
+  }
+ ],
+ "performance_exclusions": [
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "TAX",
+   "_source": "[지난달 실적 제외 대상] ⦁ 국세, 지방세, 수도/전기요금, 그외 공과금(우편요금, 과태료, 범칙금, 벌금, 국가/공공기관/공공단체가 부과하는 부담금), 도시가스 요금, 아파트관리비, 국민연금/고용보험료/산재보험료/건강보험료 납부 금액, 스쿨뱅킹, 초·중·고 학교 납입금, 대학교 납입금, 대학원 납입금, 상품권 및 기프트카드 구매, 선불카드 및 선불전자지급수단(예시: 하나머니) 충전 금액, 부동산임대료, PLAY/LIFE 모드로 서비스(적립) 받은 전체 매출"
+  },
+  {
+   "exclusion_type": "CATEGORY",
+   "exclusion_value": "UTILITY"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "LEVY"
+  },
+  {
+   "exclusion_type": "CATEGORY",
+   "exclusion_value": "APARTMENT_FEE"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "SOCIAL_INSURANCE"
+  },
+  {
+   "exclusion_type": "CATEGORY",
+   "exclusion_value": "TUITION"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "GIFT_CARD"
+  },
+  {
+   "exclusion_type": "CATEGORY",
+   "exclusion_value": "RENT"
+  }
+ ],
+ "benefits": [
+  {
+   "benefit_name": "3일 쓰면 2배 적립 국내외 가맹점 0.5% 하나머니",
+   "benefit_kind": "POINT",
+   "calc_method": "RATE",
+   "benefit_value": 0.5,
+   "step_count": null,
+   "apply_timing": null,
+   "target_type": "ALL",
+   "target_category_code": null,
+   "target_merchant_name": null,
+   "targets": null,
+   "require_performance": "N",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": null,
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "국내외 가맹점 기본 0.5% 하나머니 적립. 3일 연속 이용 시 1.0%로 2배 상향되나 연속 이용일 조건을 담을 필드가 없어 기본 적립률만 적었다. 월 적립 한도는 제한 없음. MOVING 서비스는 신용 결제에 한하여 제공된다. 원문상 해외 가맹점도 대상이나 해외 거래 데이터가 없어 국내 결제에만 적용된다.",
+   "tier_limits": [],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "3) ONLINE 모드 / 3일 쓰면 2배 적립 영역별 3일 연속 이용 시 1.0%~3.0% 하나머니 적립 제공 (지난달 실적 조건 없음, 일 실적 조건 1원 이상) / 국내외 가맹점 국내외 가맹점 기본 0.5% 2배 1.0% 월 적립 한도 제한 없음",
+    "monthly_limit": "월 적립 한도가 '제한 없음'이라 null로 두었다. 0으로 적으면 혜택이 통째로 사라진다."
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "3일 쓰면 2배 적립 온라인 간편결제 1.5% 하나머니 - 하나페이",
+   "benefit_kind": "POINT",
+   "calc_method": "RATE",
+   "benefit_value": 1.5,
+   "step_count": null,
+   "apply_timing": null,
+   "target_type": "ALL",
+   "target_category_code": null,
+   "target_merchant_name": null,
+   "targets": null,
+   "require_performance": "N",
+   "performance_period": "MONTH",
+   "require_payment_type": "HANA_PAY",
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": 30000,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": "ONLINE_SIMPLEPAY_30000",
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "온라인 간편결제 기본 1.5% 하나머니 적립. 3일 연속 이용 시 3.0%로 2배 상향되나 연속 이용일 조건을 담을 필드가 없어 기본 적립률만 적었다. 모바일 단말을 이용한 오프라인 가맹점 결제는 제외된다. 약관이 다섯 간편결제를 한 줄에 열거해 결제수단마다 행을 나누고 한도를 같은 코드로 묶었다.",
+   "tier_limits": [],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "온라인 간편결제 하나페이, 삼성페이, 네이버페이, 카카오페이, 페이코 기본 1.5% 2배 3.0% 월 적립 한도 3만 하나머니",
+    "limit_group_code": "월 적립 한도 3만 하나머니가 다섯 간편결제 수단 한 칸에 병합돼 있어, 수단별로 나눈 행을 한 코드로 묶었다. 안 묶으면 한도가 다섯 배로 샌다."
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "3일 쓰면 2배 적립 온라인 간편결제 1.5% 하나머니 - 삼성페이",
+   "benefit_kind": "POINT",
+   "calc_method": "RATE",
+   "benefit_value": 1.5,
+   "step_count": null,
+   "apply_timing": null,
+   "target_type": "ALL",
+   "target_category_code": null,
+   "target_merchant_name": null,
+   "targets": null,
+   "require_performance": "N",
+   "performance_period": "MONTH",
+   "require_payment_type": "SAMSUNG_PAY",
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": 30000,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": "ONLINE_SIMPLEPAY_30000",
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "온라인 간편결제 기본 1.5% 하나머니 적립. 3일 연속 이용 시 3.0%로 2배 상향되나 연속 이용일 조건을 담을 필드가 없어 기본 적립률만 적었다. 모바일 단말을 이용한 오프라인 가맹점 결제는 제외된다. 약관이 다섯 간편결제를 한 줄에 열거해 결제수단마다 행을 나누고 한도를 같은 코드로 묶었다.",
+   "tier_limits": [],
+   "exclusions": [],
+   "_source": {},
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "3일 쓰면 2배 적립 온라인 간편결제 1.5% 하나머니 - 네이버페이",
+   "benefit_kind": "POINT",
+   "calc_method": "RATE",
+   "benefit_value": 1.5,
+   "step_count": null,
+   "apply_timing": null,
+   "target_type": "ALL",
+   "target_category_code": null,
+   "target_merchant_name": null,
+   "targets": null,
+   "require_performance": "N",
+   "performance_period": "MONTH",
+   "require_payment_type": "NAVER_PAY",
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": 30000,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": "ONLINE_SIMPLEPAY_30000",
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "온라인 간편결제 기본 1.5% 하나머니 적립. 3일 연속 이용 시 3.0%로 2배 상향되나 연속 이용일 조건을 담을 필드가 없어 기본 적립률만 적었다. 모바일 단말을 이용한 오프라인 가맹점 결제는 제외된다. 약관이 다섯 간편결제를 한 줄에 열거해 결제수단마다 행을 나누고 한도를 같은 코드로 묶었다.",
+   "tier_limits": [],
+   "exclusions": [],
+   "_source": {},
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "3일 쓰면 2배 적립 온라인 간편결제 1.5% 하나머니 - 카카오페이",
+   "benefit_kind": "POINT",
+   "calc_method": "RATE",
+   "benefit_value": 1.5,
+   "step_count": null,
+   "apply_timing": null,
+   "target_type": "ALL",
+   "target_category_code": null,
+   "target_merchant_name": null,
+   "targets": null,
+   "require_performance": "N",
+   "performance_period": "MONTH",
+   "require_payment_type": "KAKAO_PAY",
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": 30000,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": "ONLINE_SIMPLEPAY_30000",
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "온라인 간편결제 기본 1.5% 하나머니 적립. 3일 연속 이용 시 3.0%로 2배 상향되나 연속 이용일 조건을 담을 필드가 없어 기본 적립률만 적었다. 모바일 단말을 이용한 오프라인 가맹점 결제는 제외된다. 약관이 다섯 간편결제를 한 줄에 열거해 결제수단마다 행을 나누고 한도를 같은 코드로 묶었다.",
+   "tier_limits": [],
+   "exclusions": [],
+   "_source": {},
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "3일 쓰면 2배 적립 온라인 간편결제 1.5% 하나머니 - 페이코",
+   "benefit_kind": "POINT",
+   "calc_method": "RATE",
+   "benefit_value": 1.5,
+   "step_count": null,
+   "apply_timing": null,
+   "target_type": "ALL",
+   "target_category_code": null,
+   "target_merchant_name": null,
+   "targets": null,
+   "require_performance": "N",
+   "performance_period": "MONTH",
+   "require_payment_type": "PAYCO",
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": 30000,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": "ONLINE_SIMPLEPAY_30000",
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "온라인 간편결제 기본 1.5% 하나머니 적립. 3일 연속 이용 시 3.0%로 2배 상향되나 연속 이용일 조건을 담을 필드가 없어 기본 적립률만 적었다. 모바일 단말을 이용한 오프라인 가맹점 결제는 제외된다. 약관이 다섯 간편결제를 한 줄에 열거해 결제수단마다 행을 나누고 한도를 같은 코드로 묶었다.",
+   "tier_limits": [],
+   "exclusions": [],
+   "_source": {},
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "ONLINE 적립 AI 구독 50% 하나머니",
+   "benefit_kind": "POINT",
+   "calc_method": "RATE",
+   "benefit_value": 50,
+   "step_count": null,
+   "apply_timing": null,
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": null,
+   "targets": [
+    "ChatGPT",
+    "Claude",
+    "Perplexity"
+   ],
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": 10000,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": "ONLINE_AI_10000",
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "ChatGPT, Claude, Perplexity 영문 가맹점명이 포함된 가맹점 결제건에 한하여 제공되며 개발자용 API 종량제 요금 결제건은 제외된다. 세 브랜드는 가맹점 마스터에 없어 약관 표기 그대로 적었다.",
+   "tier_limits": [],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "ONLINE 적립 영역별 50% 하나머니 적립 제공 (지난달 실적 조건 50만원 이상) / AI 구독 ChatGPT, Claude, Perplexity 50% 1만 하나머니",
+    "limit_group_code": "월 적립 한도 1만 하나머니가 세 가맹점에 걸쳐 한 칸으로 적혀 있어 대상 목록을 한 코드로 묶었다.",
+    "require_performance": "ONLINE 적립 영역별 50% 하나머니 적립 제공 (지난달 실적 조건 50만원 이상)"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "ONLINE 적립 디지털 구독 50% 하나머니",
+   "benefit_kind": "POINT",
+   "calc_method": "RATE",
+   "benefit_value": 50,
+   "step_count": null,
+   "apply_timing": null,
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": null,
+   "targets": [
+    "넷플릭스",
+    "디즈니 플러스",
+    "유튜브 프리미엄",
+    "웨이브",
+    "티빙",
+    "멜론",
+    "지니뮤직",
+    "FLO",
+    "스포티파이",
+    "쿠팡 와우 멤버십",
+    "네이버플러스 멤버십",
+    "컬리 컬리멤버스",
+    "배민클럽"
+   ],
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": "AUTO_TRANSFER",
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": 5000,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": "ONLINE_SUBSCRIPTION_5000",
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "디지털 구독 영역(스트리밍·멤버십) 50% 적립. 월 자동납부 건만 제공되며 포인트·캐시·머니 충전, 컨텐츠 개별 결제, 간편결제 및 앱스토어를 통한 결제 건(인앱결제)은 제외된다. 스트리밍과 멤버십은 적립률·한도·실적조건이 모두 같고 월 적립 한도 5천 하나머니를 한 칸으로 함께 쓰므로 한 혜택으로 묶었다. 약관 표기는 '디즈니플러스, 지니, 쿠팡와우멤버십, 네이버플러스멤버십, 컬리멤버스'이며 가맹점 마스터 표기로 옮겼다.",
+   "tier_limits": [],
+   "exclusions": [
+    {
+     "exclusion_type": "PAYMENT_TYPE",
+     "exclusion_value": "SIMPLE_PAY",
+     "_source": "* 디지털 구독: 월 자동납부 건만 서비스 제공되며, 포인트, 캐시, 머니 충전, 컨텐츠 개별 결제, 간편결제 및 앱스토어를 통한 결제 건(인앱결제)은 서비스 제외됨"
+    }
+   ],
+   "_source": {
+    "benefit_value": "디지털 구독 / 스트리밍 넷플릭스, 디즈니플러스, 유튜브 프리미엄, 웨이브, 티빙, 멜론, 지니, FLO, 스포티파이 / 멤버십 쿠팡와우멤버십, 네이버플러스멤버십, 컬리멤버스, 배민클럽 / 50% / 5천 하나머니",
+    "limit_group_code": "월 적립 한도 5천 하나머니가 디지털 구독 영역 전체에 한 칸으로 병합돼 있어 열세 대상을 한 코드로 묶었다."
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "ONLINE 적립 택시 50% 하나머니 - 택시업종",
+   "benefit_kind": "POINT",
+   "calc_method": "RATE",
+   "benefit_value": 50,
+   "step_count": null,
+   "apply_timing": null,
+   "target_type": "CATEGORY",
+   "target_category_code": "TAXI",
+   "target_merchant_name": null,
+   "targets": null,
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": 5000,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": "ONLINE_TAXI_5000",
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "택시 영역 50% 적립 중 택시업종분. 택시업종은 오프라인 결제 건에 한하여 제공된다. 약관이 '택시업종, 카카오T, UT'를 한 줄에 적었으나 업종과 브랜드가 섞여 있어 혜택을 둘로 나누고 한도를 같은 코드로 묶었다.",
+   "tier_limits": [],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "택시 택시업종, 카카오T, UT 50% 5천 하나머니",
+    "limit_group_code": "월 적립 한도 5천 하나머니가 택시업종·카카오T·UT 한 줄에 하나로 적혀 있어 나눈 두 혜택을 한 코드로 묶었다."
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "ONLINE 적립 택시 50% 하나머니 - 카카오T·우티",
+   "benefit_kind": "POINT",
+   "calc_method": "RATE",
+   "benefit_value": 50,
+   "step_count": null,
+   "apply_timing": null,
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": null,
+   "targets": [
+    "카카오T",
+    "우티"
+   ],
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": 5000,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": "ONLINE_TAXI_5000",
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "카카오T와 UT는 공식 앱에서 카드를 등록하여 결제하는 건에 한하여 제공되며 대리운전·퀵서비스·주차·기차와 같이 택시 이외의 결제 건은 제외된다. 약관 표기 'UT'를 가맹점 마스터 표기 '우티'로 옮겼다.",
+   "tier_limits": [],
+   "exclusions": [],
+   "_source": {},
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "ONLINE 적립 푸드 50% 하나머니 - 커피",
+   "benefit_kind": "POINT",
+   "calc_method": "RATE",
+   "benefit_value": 50,
+   "step_count": null,
+   "apply_timing": null,
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": "스타벅스",
+   "targets": null,
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": 5000,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": "ONLINE_FOOD_5000",
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "푸드 영역 50% 적립 중 커피분. 오프라인 매장 결제, 공식앱 또는 공식 홈페이지를 통한 주문 및 결제에 한하여 제공되며 별개의 배달앱 혹은 식당 예약앱을 통한 결제는 제외된다. 커피와 패스트푸드는 결제 채널 조건이 서로 달라 혜택을 나누고 월 적립 한도 5천 하나머니를 같은 코드로 묶었다.",
+   "tier_limits": [],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "푸드 / 커피 스타벅스 / 패스트푸드 맥도날드, 롯데리아, 버거킹, KFC, 쉐이크쉑, 써브웨이, 맘스터치, 파이브가이즈 / 50% / 5천 하나머니",
+    "limit_group_code": "월 적립 한도 5천 하나머니가 푸드 영역(커피+패스트푸드)에 한 칸으로 병합돼 있어 나눈 두 혜택을 한 코드로 묶었다."
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "ONLINE 적립 푸드 50% 하나머니 - 패스트푸드",
+   "benefit_kind": "POINT",
+   "calc_method": "RATE",
+   "benefit_value": 50,
+   "step_count": null,
+   "apply_timing": null,
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": null,
+   "targets": [
+    "맥도날드",
+    "롯데리아",
+    "버거킹",
+    "KFC",
+    "쉐이크쉑",
+    "써브웨이",
+    "맘스터치",
+    "파이브가이즈"
+   ],
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": 5000,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": "ONLINE_FOOD_5000",
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "푸드 영역 50% 적립 중 패스트푸드분. 오프라인 결제 건에 한하여 제공된다. 파이브가이즈는 가맹점 마스터에 없어 약관 표기 그대로 적었다.",
+   "tier_limits": [],
+   "exclusions": [],
+   "_source": {},
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "국내 가맹점 2~3개월 무이자할부",
+   "benefit_kind": "INSTALLMENT_FREE",
+   "calc_method": null,
+   "benefit_value": null,
+   "step_count": null,
+   "apply_timing": null,
+   "target_type": "ALL",
+   "target_category_code": null,
+   "target_merchant_name": null,
+   "targets": null,
+   "require_performance": "N",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": 50000,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": null,
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "국내 할부 거래 가능한 가맹점에서 5만원 이상 2~3개월 결제 시 2~3개월 무이자할부 제공. 무이자할부 결제 전체 이용 금액은 하나머니 적립에서 제외된다. 무이자 개월 수(2~3개월)를 담을 필드가 없어 설명으로만 남긴다.",
+   "tier_limits": [],
+   "exclusions": [],
+   "_source": {
+    "min_txn_amount": "국내 무이자할부 국내 할부 거래 가능한 가맹점에서 5만원 이상 2~3개월 결제 시 2~3개월 무이자할부 서비스 제공 (지난달 실적 조건 없음)"
+   },
+   "_needs_review": []
+  }
+ ],
+ "unmapped": [
+  {
+   "text": "서비스 2) ALLDAY 모드 / 3일 쓰면 2배 적립 영역별 3일 연속 이용 시 1.0%~2.0% 하나머니 적립 제공 (지난달 실적 조건 없음, 일 실적 조건 1원 이상) — 국내외 가맹점 0.5%/1.0% 제한 없음, 온라인 간편결제 하나페이·삼성페이·네이버페이·카카오페이·페이코 1.0%/2.0% 2만 하나머니 / ALLDAY 적립 영역별 2.0%~3.0% 하나머니 적립 제공 (지난달 실적 조건 없음) — 온라인쇼핑 쿠팡·네이버플러스스토어 / 온라인식품 SSG.COM·컬리·오아시스마켓 / 장보기쇼핑 마트 이마트·트레이더스 홀세일 클럽·롯데마트·농협 하나로마트 / 슈퍼마켓 GS THE Fresh·롯데슈퍼·이마트에브리데이·노브랜드 / 백화점 신세계백화점·현대백화점·롯데백화점 / 딜리버리 쿠팡이츠·배달의민족·요기요 2.0%, 대중교통 버스·지하철 / 택시 카카오T·UT·택시업종 3.0%, 통합 5만 하나머니",
+   "why": "ALLDAY 모드는 별개 카드 상품(MOVING카드 ALLDAY)의 혜택이다. 같은 상품설명서에 다섯 모드가 함께 실려 있을 뿐이라, 이 카드(ONLINE)에 넣으면 없는 혜택이 계산된다."
+  },
+  {
+   "text": "서비스 4) PLAY 모드 / 3일 쓰면 2배 적립 영역별 3일 연속 이용 시 20%~60% 하나머니 적립 제공 (지난달 실적 조건 50만원 이상, 일 실적 조건 1원 이상) — 커피 스타벅스·커피빈·이디야·투썸플레이스·메가MGC커피·컴포즈커피 30%/60% 1만 하나머니, 편의점 GS25·CU·이마트24·세븐일레븐 10%/20% 1만 하나머니 / PLAY 적립 영역별 10%~30% 하나머니 적립 제공 (지난달 실적 조건 50만원 이상) — 온라인쇼핑 쿠팡·네이버플러스스토어·SSG.COM·컬리·G마켓·옥션·11번가 10% 1만 하나머니 / 딜리버리 쿠팡이츠·배달의민족·요기요 10% 1만 하나머니 / 트렌디패션 무신사·W컨셉·SSF SHOP·29CM·지그재그 10% 1만 하나머니 / 디지털 구독 스트리밍·멤버십 30% 1만 하나머니",
+   "why": "PLAY 모드는 별개 카드 상품(MOVING카드 PLAY)의 혜택이다."
+  },
+  {
+   "text": "서비스 5) LIFE 모드 / 3일 쓰면 2배 적립 영역별 3일 연속 이용 시 20% 하나머니 적립 제공 (지난달 실적 조건 50만원 이상, 일 실적 조건 1원 이상) — 온라인쇼핑 쿠팡·네이버플러스스토어·SSG.COM·컬리·오아시스마켓 10%/20% 1만 하나머니, 오프라인쇼핑 이마트·트레이더스 홀세일 클럽·롯데마트·농협 하나로마트·GS THE Fresh·롯데슈퍼·이마트에브리데이·노브랜드 10%/20% 1만 하나머니 / LIFE 적립 영역별 10%~30% 하나머니 적립 제공 (지난달 실적 조건 50만원 이상) — 의료 병/의원·약국 10% 1만 하나머니 / 학원 입시·보습·외국어·예체능계 학원 10% 1만 하나머니 / 생활요금 관리비(아파트관리비·전기요금·가스요금)·통신비(SKT·KT·LG U+ 자동납부요금) 10% 1만 하나머니 / 주유 SK에너지·GS칼텍스·S-Oil·HD현대오일뱅크·알뜰주유소 10%, EV충전 제휴 EV(전기차) 충전소 30%, 주유/EV충전 통합 1만 하나머니 / 디지털 구독 30% 1만 하나머니",
+   "why": "LIFE 모드는 별개 카드 상품(MOVING카드 LIFE)의 혜택이다. LIFE 모드에만 적용되는 '전기요금, 도시가스요금, 아파트관리비는 서비스 제공' 단서도 이 카드에는 해당하지 않는다."
+  },
+  {
+   "text": "서비스 6) GLOBAL 모드 / 3일 쓰면 2배 적립 영역별 3일 연속 이용 시 2.0% 하나머니 적립 제공 (지난달 실적 조건 없음, 일 실적 조건 1원 이상) — 온라인 간편결제·온라인쇼핑·마트·슈퍼마켓·편의점·주유·항공·여행·면세 1.0%/2.0% 3만 하나머니 / GLOBAL 적립 해외 해외 가맹점 2.0% 30만 하나머니 (지난달 실적 조건 없음) / GLOBAL 해외이용수수료 면제 — 해외서비스수수료 0.2% 면제, 국제브랜드(Mastercard)수수료 1.1% 면제",
+   "why": "GLOBAL 모드는 별개 카드 상품(MOVING카드 GLOBAL)의 혜택이다. 해외 결제 혜택과 수수료 면제는 그와 별개로도 범위 밖이다."
+  },
+  {
+   "text": "⦁ 카드신청 시 하나카드 빅데이터 분석 및 회원 설문을 통해 추천 모드(Mode)를 제안해 드리며, 카드 발급 완료 시 회원이 선택한 모드(Mode)로 혜택이 적용됩니다. ⦁ 모드(Mode)는 하나페이 앱에서 월 1회 변경 가능하며, 변경 즉시 적용됩니다. (본인 회원만 가능)",
+   "why": "다섯 모드가 카탈로그에서 각각 별개 카드 상품으로 잡혀 있어 한 카드 안의 매월 택 1(option_group_code)로 담지 않았다. 담으려면 다섯 모드 혜택을 한 카드에 모아야 하는데, 그러면 카드 목록·추천에서 한 상품이 다섯 모드 혜택을 모두 가진 것으로 보인다."
+  },
+  {
+   "text": "* 온라인 간편결제: 모바일 단말을 이용한 오프라인 가맹점 결제는 서비스 제외됨 / * AI 구독: ChatGPT, Claude, Perplexity 영문 가맹점명이 포함된 가맹점 결제건에 한하여 서비스 제공됨 / * 택시: 카카오T와 UT의 경우 공식 앱에서 카드를 등록하여 결제하는 건에 한하여 서비스 제공되며, 대리운전·퀵서비스·주차·기차와 같이 택시 이외의 결제 건은 서비스 제외됨 ※ 택시업종은 오프라인 결제 건에 한하여 서비스 제공됨 / * 커피: 오프라인 매장 결제, 공식앱 또는 공식 홈페이지를 통한 주문 및 결제에 한하여 서비스 제공되며, 별개의 배달앱 혹은 식당 예약앱을 통한 결제는 서비스 제외됨 / * 패스트푸드: 오프라인 결제 건에 한하여 서비스 제공됨",
+   "why": "결제 채널(오프라인·공식앱·공식 홈페이지) 조건은 범위 밖이다. 각 혜택의 description에만 남겼다. 대리운전·퀵서비스·주차·기차는 TAXI 카테고리가 아니라 카테고리 판정으로 이미 걸러진다."
+  },
+  {
+   "text": "* AI 구독: … 개발자용 API 종량제 요금 결제건은 서비스 제외됨",
+   "why": "같은 가맹점 안에서 구매 품목으로 갈리는 조건이라 상품 단위 조건에 해당한다. 대상은 가맹점까지만 내려간다."
+  },
+  {
+   "text": "⦁ 모든 서비스는 하나카드에 등록된 국내 가맹점 및 업종 기준에 따라 제공됩니다. ※ 가맹점 정보가 해당 업체가 아닌 결제대행업체(PG) 또는 간편결제 전용 가맹점으로 확인되는 경우 '결제대행업체' 또는 '간편결제' 가맹점으로 분류되어 서비스 대상에서 제외됩니다. 예시) 커피영역에서 네이버페이로 결제 시 가맹점명이 '네이버페이'인 경우, 커피영역 가맹점이 아닌 '간편결제' 가맹점으로 분류",
+   "why": "가맹점 식별이 매입 전문에 찍힌 가맹점명에 달렸다는 운영 규칙이다. 소비내역의 merchant_id가 이미 하나로 정해져 들어오므로 표현할 축이 없다."
+  },
+  {
+   "text": "⦁ 후불교통 이용금액 등 무승인거래(카드사의 승인 없이 이용금액이 카드사에 접수)의 경우 매입 확정 시점 다음날 서비스가 제공됩니다. ⦁ 정상 결제 건에 한해 서비스가 제공됩니다.(승인취소, 매입 취소 결제 건은 서비스 제공 대상에서 제외) ⦁ 매출취소 시 취소가 접수된 월에서 제공된 포인트를 차감 반영합니다. ⦁ 하나머니 적립일: 매출 접수된 다음날 하나머니가 적립됩니다.",
+   "why": "적립 지급 시점·취소 차감 시점 규칙이다. apply_timing이 DISCOUNT 전용이라 적립 지급 시점을 담을 필드가 없고, 취소 처리는 정산 흐름이 따로 맡는다."
+  },
+  {
+   "text": "트래블로그 스위치 서비스는 본인카드의 해외 결제 설정을 신용 결제 또는 외화 하나머니(체크결제)로 변경할 수 있는 서비스로 해외결제 설정을 자유롭게 변경하여 해외 이용이 가능합니다. / 해외이용 수수료 — 외화 하나머니로 설정 후 해외 이용 시, 해외이용수수료가 면제됩니다. (해외 가맹점 이용 시 해외서비스 수수료 면제, 국제브랜드 수수료 면제 / 해외 ATM 인출 면제)",
+   "why": "해외 결제 혜택이자 결제금액이 아니라 수수료에 붙는 면제라 범위 밖이다. 외화 하나머니 결제는 신용 결제가 아니어서 적립 대상도 아니다."
+  },
+  {
+   "text": "⦁ 가족카드 부가서비스의 전월/일 이용금액, 월별 적립한도는 본인카드와 합산 적용됩니다.",
+   "why": "가족카드 합산은 범위 밖이다."
+  },
+  {
+   "text": "⦁ 소수점 이하 금액은 반올림되어 적립됩니다.",
+   "why": "적립액의 반올림·절사 규칙을 담을 필드가 없다."
+  },
+  {
+   "text": "⦁ 카드 이용 시 제공되는 포인트 및 할인 혜택 등의 부가서비스는 카드 신규 출시(2026년 7월 1일) 이후 3년 이상 축소·폐지 없이 유지됩니다.",
+   "why": "혜택 유효기간은 범위 밖이다(is_active 토글로 대체)."
+  },
+  {
+   "text": "하나금융그룹 우대서비스 — 하나금융그룹의 다양한 계열사의 금융 상품을 함께 이용 시, 추가적인 금융 혜택 및 이벤트를 누리실 수 있습니다. / 브랜드 서비스 — 이 상품은 Mastercard PLATINUM 등급의 국제 브랜드 서비스가 제공됩니다.",
+   "why": "제공 내용과 대상 가맹점이 약관에 적혀 있지 않아 target_type도 혜택값도 정할 수 없다."
+  },
+  {
+   "text": "[지난달 실적 제외 대상] … PLAY/LIFE 모드로 서비스(적립) 받은 전체 매출 ※ ALLDAY/ONLINE/GLOBAL 모드로 서비스 받은 매출은 실적에 포함됩니다.",
+   "why": "PLAY/LIFE 모드는 별개 카드 상품이라 이 카드에는 해당하지 않는다. ONLINE 모드로 적립받은 매출은 실적에 포함되므로 모든 혜택의 exclude_from_performance를 N으로 두었다."
+  }
+ ],
+ "_schema_gap": [
+  {
+   "text": "⦁ 5가지 모드(Mode)는 공통적으로 모드(Mode)별 주요 혜택 적립률이 연속 3일 이상 이용 시 2배 상향 제공되는 『3일 쓰면 2배 적립』을 제공합니다. ⦁ 『3일 쓰면 2배 적립』은 연속 이용 3일 초과일부터 적용되며, 초과 연속 이용일자의 다음날까지 2배 상향된 적립률은 유지됩니다. ⦁ 『3일 쓰면 2배 적립』은 기본 적립률과 동일한 적립률을 추가 적용하여, 영역별 월 적립 한도 내에서 2배 상향된 혜택을 제공 합니다. / 3일 쓰면 2배 적립 영역별 3일 연속 이용 시 1.0%~3.0% 하나머니 적립 제공 (지난달 실적 조건 없음, 일 실적 조건 1원 이상) / [일 실적 산정 기준] ⦁ 이용 당일(국내 시간 00:00~24:00 기준) 신용 결제 국내외 일시불/할부 이용금액 기준으로 산정됩니다. [일 실적 제외 대상] ⦁ 후불교통 이용금액, 무승인거래금액(카드사의 승인 없이 이용금액이 카드사에 접수), 상품권 및 기프트카드 구매, 선불카드 및 선불전자지급수단(예시: 하나머니) 충전 금액",
+   "missing": "일 단위 실적 축(일 실적 금액·일 실적 제외 대상)과 '연속 N일 이용' 조건, 그리고 그 조건이 충족될 때 적용되는 두 번째 적립률",
+   "why": "performance_tier는 MONTH·QUARTER 축뿐이고 benefit에는 적립률 칸이 하나다. 연속 이용일을 판정할 상태도 없다. 그래서 기본 적립률(국내외 가맹점 0.5%, 온라인 간편결제 1.5%)만 담았고 3일 연속 이용 시의 2배 적립률(1.0%·3.0%)은 계산되지 않는다. 일 실적 제외 대상을 performance_exclusions에 적으면 월 실적에서까지 빠져 실적이 실제보다 낮아지므로 넣지 않았다."
+  },
+  {
+   "text": "* 『3일 쓰면 2배 적립』과 『ONLINE 적립』은 중복 제공되지 않음 단, 『ONLINE 적립』 한도를 모두 소진 후 발생하는 추가 매출은 『 3일 쓰면 2배 적립』 제공",
+   "missing": "한도 소진 시 다른 혜택으로 대체되는 규칙(폴백 혜택 지정)",
+   "why": "한도에 걸리면 혜택액이 0이 될 뿐 기본 적립률로 되돌아가지 않는다. AI 구독·디지털 구독·택시·푸드 영역의 월 한도를 넘긴 결제의 적립이 실제보다 낮게 계산된다."
+  },
+  {
+   "text": "국내 무이자할부 국내 할부 거래 가능한 가맹점에서 5만원 이상 2~3개월 결제 시 2~3개월 무이자할부 서비스 제공 (지난달 실적 조건 없음)",
+   "missing": "INSTALLMENT_FREE 혜택의 무이자 할부 개월 수 범위",
+   "why": "개월 수를 담을 컬럼이 없어 '2~3개월'을 description에만 남겼다. 계산 대상이 아니라 금액은 어긋나지 않지만 카드 상세 화면이 조건을 보여줄 수 없다."
+  },
+  {
+   "text": "적립 기준 ⦁ 적립 기준: 하나머니 (1하나머니 = 1원)",
+   "missing": "적립 단위(포인트 종류) 표기 컬럼",
+   "why": "하나머니는 1머니=1원이라 금액 필드에 그대로 넣었지만 스키마에 단위 칸이 없어 1포인트가 1원이 아닌 카드(마일리지 등)와 같은 컬럼에 섞인다. 이 카드에 한해서는 금액이 어긋나지 않는다."
+  }
+ ]
+}

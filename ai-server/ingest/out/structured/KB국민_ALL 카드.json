@@ -94,16 +94,6 @@
    "exclusion_type": "TRANSACTION_ATTR",
    "exclusion_value": "CANCELED",
    "_source": "[할인서비스 제외 대상] 취소금액"
-  },
-  {
-   "exclusion_type": "MERCHANT",
-   "exclusion_value": "결제대행업체(PG)",
-   "_source": "[기타] · 가맹점 정보가 해당 업체가 아닌 결제대행업체(PG) 또는 간편결제 전용 가맹점으로 확인되는 경우 '결제대행업체' 또는 '간편결제' 가맹점으로 분류되어 할인·적립 대상에서 제외됩니다."
-  },
-  {
-   "exclusion_type": "MERCHANT",
-   "exclusion_value": "간편결제",
-   "_source": "[기타] · 가맹점 정보가 해당 업체가 아닌 결제대행업체(PG) 또는 간편결제 전용 가맹점으로 확인되는 경우 '결제대행업체' 또는 '간편결제' 가맹점으로 분류되어 할인·적립 대상에서 제외됩니다. 예시) 음식점에서 네이버페이로 결제 시 가맹점명이 '네이버페이'인 경우 음식점 가맹점이 아닌 '간편결제' 가맹점으로 분류"
   }
  ],
  "performance_tiers": [
@@ -118,6 +108,14 @@
    "min_performance_amount": 400000,
    "shared_monthly_limit": null,
    "_source": "자동납부 할인 비고: - 전월 실적 40만원 이상시. [전월 이용실적기준] · 전월 1일 ~ 말일(승인시점 기준) 승인금액 기준 — 월 단위 구간표"
+  }
+ ],
+ "performance_grace": [
+  {
+   "period_type": "MONTH",
+   "min_performance_amount": 400000,
+   "grace_periods": 1,
+   "_source": "※ 최초 발급받은 KB ALL 카드 사용등록일(KB Pay 등 간편결제 등록 포함)로 부터 다음달 말일(실적유예 기간) 까지는 전월 이용실적 40만원 미만시에도 할인 제공됩니다."
   }
  ],
  "performance_exclusions": [
@@ -242,7 +240,7 @@
    "apply_timing": null,
    "target_type": "MERCHANT",
    "target_category_code": null,
-   "target_merchant_name": "네이버플러스",
+   "target_merchant_name": "네이버플러스 멤버십",
    "require_performance": "Y",
    "performance_period": "MONTH",
    "require_payment_type": "AUTO_TRANSFER",
@@ -265,12 +263,7 @@
    "exclusions": [
     {
      "exclusion_type": "PAYMENT_TYPE",
-     "exclusion_value": "간편결제",
-     "_source": "※ 쇼핑 멤버십, OTT 할인은 공식 홈페이지를 통한 정기 결제 건에 한함 (간편결제 및 인앱결제 등은 할인 제외)"
-    },
-    {
-     "exclusion_type": "PAYMENT_TYPE",
-     "exclusion_value": "인앱결제",
+     "exclusion_value": "SIMPLE_PAY",
      "_source": "※ 쇼핑 멤버십, OTT 할인은 공식 홈페이지를 통한 정기 결제 건에 한함 (간편결제 및 인앱결제 등은 할인 제외)"
     }
    ],
@@ -317,12 +310,7 @@
    "exclusions": [
     {
      "exclusion_type": "PAYMENT_TYPE",
-     "exclusion_value": "간편결제",
-     "_source": "※ 쇼핑 멤버십, OTT 할인은 공식 홈페이지를 통한 정기 결제 건에 한함 (간편결제 및 인앱결제 등은 할인 제외)"
-    },
-    {
-     "exclusion_type": "PAYMENT_TYPE",
-     "exclusion_value": "인앱결제",
+     "exclusion_value": "SIMPLE_PAY",
      "_source": "※ 쇼핑 멤버십, OTT 할인은 공식 홈페이지를 통한 정기 결제 건에 한함 (간편결제 및 인앱결제 등은 할인 제외)"
     }
    ],
@@ -369,12 +357,7 @@
    "exclusions": [
     {
      "exclusion_type": "PAYMENT_TYPE",
-     "exclusion_value": "간편결제",
-     "_source": "※ 쇼핑 멤버십, OTT 할인은 공식 홈페이지를 통한 정기 결제 건에 한함 (간편결제 및 인앱결제 등은 할인 제외)"
-    },
-    {
-     "exclusion_type": "PAYMENT_TYPE",
-     "exclusion_value": "인앱결제",
+     "exclusion_value": "SIMPLE_PAY",
      "_source": "※ 쇼핑 멤버십, OTT 할인은 공식 홈페이지를 통한 정기 결제 건에 한함 (간편결제 및 인앱결제 등은 할인 제외)"
     }
    ],
@@ -398,7 +381,7 @@
    "apply_timing": null,
    "target_type": "MERCHANT",
    "target_category_code": null,
-   "target_merchant_name": "유튜브",
+   "target_merchant_name": "유튜브 프리미엄",
    "require_performance": "Y",
    "performance_period": "MONTH",
    "require_payment_type": "AUTO_TRANSFER",
@@ -421,12 +404,7 @@
    "exclusions": [
     {
      "exclusion_type": "PAYMENT_TYPE",
-     "exclusion_value": "간편결제",
-     "_source": "※ 쇼핑 멤버십, OTT 할인은 공식 홈페이지를 통한 정기 결제 건에 한함 (간편결제 및 인앱결제 등은 할인 제외)"
-    },
-    {
-     "exclusion_type": "PAYMENT_TYPE",
-     "exclusion_value": "인앱결제",
+     "exclusion_value": "SIMPLE_PAY",
      "_source": "※ 쇼핑 멤버십, OTT 할인은 공식 홈페이지를 통한 정기 결제 건에 한함 (간편결제 및 인앱결제 등은 할인 제외)"
     }
    ],
@@ -473,12 +451,7 @@
    "exclusions": [
     {
      "exclusion_type": "PAYMENT_TYPE",
-     "exclusion_value": "간편결제",
-     "_source": "※ 쇼핑 멤버십, OTT 할인은 공식 홈페이지를 통한 정기 결제 건에 한함 (간편결제 및 인앱결제 등은 할인 제외)"
-    },
-    {
-     "exclusion_type": "PAYMENT_TYPE",
-     "exclusion_value": "인앱결제",
+     "exclusion_value": "SIMPLE_PAY",
      "_source": "※ 쇼핑 멤버십, OTT 할인은 공식 홈페이지를 통한 정기 결제 건에 한함 (간편결제 및 인앱결제 등은 할인 제외)"
     }
    ],
@@ -525,12 +498,7 @@
    "exclusions": [
     {
      "exclusion_type": "PAYMENT_TYPE",
-     "exclusion_value": "간편결제",
-     "_source": "※ 쇼핑 멤버십, OTT 할인은 공식 홈페이지를 통한 정기 결제 건에 한함 (간편결제 및 인앱결제 등은 할인 제외)"
-    },
-    {
-     "exclusion_type": "PAYMENT_TYPE",
-     "exclusion_value": "인앱결제",
+     "exclusion_value": "SIMPLE_PAY",
      "_source": "※ 쇼핑 멤버십, OTT 할인은 공식 홈페이지를 통한 정기 결제 건에 한함 (간편결제 및 인앱결제 등은 할인 제외)"
     }
    ],
@@ -554,7 +522,7 @@
    "apply_timing": null,
    "target_type": "MERCHANT",
    "target_category_code": null,
-   "target_merchant_name": "디즈니",
+   "target_merchant_name": "디즈니 플러스",
    "require_performance": "Y",
    "performance_period": "MONTH",
    "require_payment_type": "AUTO_TRANSFER",
@@ -577,12 +545,7 @@
    "exclusions": [
     {
      "exclusion_type": "PAYMENT_TYPE",
-     "exclusion_value": "간편결제",
-     "_source": "※ 쇼핑 멤버십, OTT 할인은 공식 홈페이지를 통한 정기 결제 건에 한함 (간편결제 및 인앱결제 등은 할인 제외)"
-    },
-    {
-     "exclusion_type": "PAYMENT_TYPE",
-     "exclusion_value": "인앱결제",
+     "exclusion_value": "SIMPLE_PAY",
      "_source": "※ 쇼핑 멤버십, OTT 할인은 공식 홈페이지를 통한 정기 결제 건에 한함 (간편결제 및 인앱결제 등은 할인 제외)"
     }
    ],
@@ -801,11 +764,6 @@
   }
  ],
  "_schema_gap": [
-  {
-   "text": "※ 최초 발급받은 KB ALL 카드 사용등록일(KB Pay 등 간편결제 등록 포함)로 부터 다음달 말일(실적유예 기간) 까지는 전월 이용실적 40만원 미만시에도 할인 제공됩니다.",
-   "missing": "카드 사용등록일(발급일) 컬럼과 실적 면제 기간 판정",
-   "why": "보유카드에 발급일·사용등록일 정보가 없어 유예 기간인지 판정할 수 없다. 지금 구조로는 실적 미달로만 계산되어 실제보다 혜택이 적게 나온다."
-  },
   {
    "text": "[할인서비스 제외 대상] ... 신차구매청구(환급) 할인 전표 전체",
    "missing": "TRANSACTION_ATTR 표준값",

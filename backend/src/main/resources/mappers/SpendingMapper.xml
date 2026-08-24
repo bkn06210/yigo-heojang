@@ -41,4 +41,37 @@
          ORDER BY SUM(e.amount) DESC, c.category_id
     </select>
 
+
+    <!--
+        거래 단위 조회 — 카드 추천 시뮬레이션의 입력.
+
+        집계가 아니라 결제 하나하나를 내린다. 건당 최대·횟수·일 한도가 결제 건수에 따라 걸려
+        총액만으로는 혜택을 구할 수 없기 때문이다.
+
+        가맹점은 LEFT JOIN이다 — 미등록 가맹점 결제는 merchant_id가 NULL이고, 그런 거래도
+        카테고리 혜택은 받을 수 있어 빼면 안 된다.
+
+        날짜 오름차순으로 내린다. 일 한도 리셋이 날짜 경계에서 일어나므로 순서가 결과를 바꾼다.
+    -->
+    <select id="findMonthlyTransactions"
+            resultType="com.wallet.engine.dao.dto.SpentTransactionRow">
+        SELECT e.payment_date       AS paymentDate,
+               e.merchant_id        AS merchantId,
+               m.merchant_code      AS merchantCode,
+               c.category_id        AS categoryId,
+               c.category_code      AS categoryCode,
+               c.parent_category_id AS parentCategoryId,
+               p.category_code      AS parentCategoryCode,
+               e.amount             AS amount,
+               e.payment_type       AS paymentType
+          FROM expense e
+          JOIN category c ON c.category_id = e.category_id
+          LEFT JOIN category p ON p.category_id = c.parent_category_id
+          LEFT JOIN merchant m ON m.merchant_id = e.merchant_id
+         WHERE e.member_id = #{memberId}
+           AND e.payment_status = 'APPROVED'
+           AND DATE_FORMAT(e.payment_date, '%Y-%m') = #{yearMonth}
+         ORDER BY e.payment_date, e.expense_id
+    </select>
+
 </mapper>

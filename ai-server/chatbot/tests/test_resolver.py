@@ -7,6 +7,8 @@ DB 없이 검증하면 정작 확인하려는 것을 못 본다. DB 가 없으�
 import pytest
 
 from chatbot.db import connection
+from chatbot.llm import Intent, IntentName
+from chatbot.router import _resolve_place
 from chatbot.resolver import (
     MATCH_ALIAS,
     MATCH_NAME,
@@ -82,7 +84,8 @@ def test_겹치지_않는_후보가_여럿이면_고르지_않는다(conn):
 def test_모호하거나_없는_표현은_못_찾은_것으로_둔다(conn):
     # '롯데'는 롯데마트·롯데백화점·롯데시네마 등에 걸린다. 지어내지 않고 되묻게 한다.
     assert not resolve_merchant(conn, "롯데").found
-    assert not resolve_merchant(conn, "메가커피").found
+    # 실재하는 브랜드라도 가맹점 마스터에 없으면 지어내지 않는다.
+    assert not resolve_merchant(conn, "컴포즈커피").found
     assert not resolve_merchant(conn, "").found
 
 
@@ -113,3 +116,38 @@ def test_별칭은_대소문자를_구분하지_않는다(conn):
 def test_부분_일치로_찾은_것도_표시가_남는다(conn):
     # 어느 경로로 찾았는지 남겨야 나중에 오매칭을 추적할 수 있다.
     assert resolve_merchant(conn, "스타벅스에서").match.matched_by == MATCH_PARTIAL
+
+
+# ── 결제할 곳 해석 (브랜드 → 업종 폴백) ──────────────────────
+
+
+def _intent(merchant_text=None, category_text=None):
+    return Intent(name=IntentName.RECOMMEND_CARD, merchant_text=merchant_text,
+                  category_text=category_text)
+
+
+def test_브랜드로_못_찾으면_같은_말을_업종으로_본다(conn):
+    # "백화점에서 어떤 카드가 좋아?"의 백화점은 업종인데 브랜드 자리로 넘어오는 일이 있다.
+    # 가맹점 표에는 '롯데백화점'처럼 브랜드만 있어, 여기서 멈추면 업종으로는 바로
+    # 찾히는 말을 되묻게 된다.
+    place, kind = _resolve_place(_intent(merchant_text="백화점"), conn)
+
+    assert kind == "업종"
+    assert place.match.name == "백화점"
+
+
+def test_후보가_갈리면_업종으로_넘기지_않고_되묻는다(conn):
+    # '이마트'와 '이마트24' 사이에서 갈린 것은 되물어야 할 상황이지
+    # 업종으로 바꿔 볼 상황이 아니다.
+    place, kind = _resolve_place(_intent(merchant_text="이마트"), conn)
+
+    assert kind == "가맹점"
+    if not place.found:
+        assert place.candidates
+
+
+def test_업종으로도_못_찾으면_가맹점_기준으로_되묻는다(conn):
+    place, kind = _resolve_place(_intent(merchant_text="없는가게이름"), conn)
+
+    assert kind == "가맹점"
+    assert not place.found

@@ -14,11 +14,13 @@ import sys
 from pathlib import Path
 from typing import Dict, List, Optional
 
+from .companies import CARD_COMPANIES
 from .load import connect
 
 _STRUCTURED_DIR = Path(__file__).resolve().parent / "out" / "structured"
 _MERCHANTS_PATH = Path(__file__).resolve().parent / "out" / "merchants.json"
 # 사람이 손으로 관리하는 입력이다. 구조화 결과와 달리 약관에서 나오지 않는다.
+_SELECTION_PATH = Path(__file__).resolve().parent / "selection.json"
 _ALIASES_PATH = Path(__file__).resolve().parent / "aliases.json"
 _OUTPUT_PATH = (
     Path(__file__).resolve().parent.parent.parent / "backend" / "db" / "91_seed_card_benefit.sql"
@@ -54,16 +56,38 @@ def load_category_ids() -> Dict[str, int]:
         conn.close()
 
 
+_UNSAFE_IN_FILENAME = re.compile(r'[\/:*?"<>|]')
+
+
+def _safe_name(name: str) -> str:
+    """파일 이름으로 저장될 때의 모양. dump_text 와 같은 규칙이어야 한다."""
+    return _UNSAFE_IN_FILENAME.sub("_", name)
+
+
 def read_cards() -> List[dict]:
     """구조화 결과를 카드 단위로 읽는다.
 
     카드명은 파일명(수집 목록 기준)을 쓴다. 약관 본문의 표기와 다를 수 있는데,
     card_term_document.source_card_name이 수집 목록 이름이라 그쪽에 맞춰야
-    나중에 원문과 카드를 이을 수 있다.
+    나중에 원문과 카드를 이을 수 있다. 산출물 안에 적힌 이름은 홍보 표기가 섞여
+    있어(“KB ALL point 카드”) 쓰지 않는다.
+
+    <b>파일명에 쓸 수 없는 글자는 되돌린다.</b> 카드명에 콜론이 들어가는 상품이 있는데
+    (My WE:SH) 파일로 저장할 때 밑줄로 바뀐다. 그대로 두면 그 카드만 약관 원문과
+    이어지지 않고, 조인이 빈 채로 넘어가 오류 없이 원문 없는 카드가 된다.
     """
+    selection = json.loads(_SELECTION_PATH.read_text(encoding="utf-8"))
+    collected = {
+        (issuer, _safe_name(name)): name
+        for issuer, names in selection.items()
+        if isinstance(names, list)
+        for name in names
+    }
+
     cards = []
     for path in sorted(_STRUCTURED_DIR.glob("*.json")):
         issuer, card_name = path.stem.split("_", 1)
+        card_name = collected.get((issuer, card_name), card_name)
         data = json.loads(path.read_text(encoding="utf-8"))
         cards.append({"issuer": issuer, "card_name": card_name, "data": data})
     return cards
@@ -86,14 +110,48 @@ def _slug(name: str) -> str:
     return re.sub(r"[^A-Z0-9_]", "", name.upper().replace(" ", "_"))[:30]
 
 
-# 수집 어댑터가 쓰는 카드사 표기 → 카드사 마스터(ID, 코드, 정식 명칭, BIN).
-# BIN은 카드번호 앞자리로 카드사를 판별하는 값이라 수집 대상이 아니고 여기에 고정으로 둔다.
-# 카드사와 BIN이 같은 파일에 있어야 참조가 어긋나지 않는다.
-CARD_COMPANIES = {
-    "KB국민": (1, "KB_CARD", "KB국민카드", "222879"),
-    "신한": (2, "SHINHAN_CARD", "신한카드", "356078"),
-    "삼성": (3, "SAMSUNG_CARD", "삼성카드", "376293"),
-}
+def expand_targets(benefits: List[dict], warn) -> List[dict]:
+    """대상 목록으로 적힌 혜택을 대상 하나당 한 행으로 펼친다.
+
+    약관에는 "OTT 10% — 넷플릭스/유튜브/웨이브/티빙/디즈니+"처럼 조건이 같고 대상만
+    여럿인 혜택이 흔하다. DB에는 대상마다 행이 따로 있어야 하지만(카테고리 하나로 뭉치면
+    열거되지 않은 가맹점까지 혜택을 받는다), 그 행들은 <b>대상 두 필드만 다르고
+    나머지는 글자 하나까지 같다.</b> 실측하면 혜택 행의 일곱 중 다섯이 그런 행이다.
+
+    그래서 구조화 산출물에는 공통 조건을 한 번만 적고 대상은 `targets` 목록으로 두며,
+    행으로 펼치는 일은 여기서 한다. 같은 값을 대상 수만큼 옮겨 적는 것은 기계가 할 일이고,
+    반복해 적을수록 한 군데를 잘못 적을 여지만 늘어난다. 실제로 한 카드에서 잘못된 실적
+    조건이 마흔여덟 행에 그대로 복사된 적이 있다 — 한 덩어리였다면 한 번 틀리고 끝났다.
+
+    `targets`가 없는 혜택은 그대로 통과한다. 대상이 하나뿐인 혜택과 이전 형식으로 만들어진
+    산출물이 모두 여기에 해당하므로, 두 형식이 한 시드에 섞여 있어도 결과가 같다.
+    """
+    expanded: List[dict] = []
+    for benefit in benefits:
+        targets = benefit.get("targets")
+        if not targets:
+            expanded.append(benefit)
+            continue
+
+        target_type = benefit.get("target_type")
+        if target_type not in ("CATEGORY", "MERCHANT"):
+            # ALL은 대상을 가리지 않는 혜택이라 목록이 성립하지 않는다. 그대로 펼치면
+            # 똑같은 전 가맹점 혜택이 목록 수만큼 생겨 혜택액이 몇 배가 된다.
+            warn(f"targets가 있으나 대상 유형이 {target_type}: {benefit.get('benefit_name')}")
+            expanded.append(benefit)
+            continue
+
+        field = "target_category_code" if target_type == "CATEGORY" else "target_merchant_name"
+        other = "target_merchant_name" if target_type == "CATEGORY" else "target_category_code"
+        for target in targets:
+            row = {key: value for key, value in benefit.items() if key != "targets"}
+            row[field] = target
+            row[other] = None
+            # 이름에 대상을 붙인다. 대상만 다른 행이 같은 이름을 갖고 있으면
+            # 시드를 눈으로 훑을 때도, 경고 메시지에서도 어느 행인지 가릴 수 없다.
+            row["benefit_name"] = f"{benefit.get('benefit_name')} - {target}"
+            expanded.append(row)
+    return expanded
 
 
 def build() -> str:
@@ -112,6 +170,9 @@ def build() -> str:
     # ── 가맹점 ──────────────────────────────────────────────
     merchant_ids: Dict[str, int] = {}
     merchant_code_ids: Dict[str, int] = {}
+    # 제외는 ID가 아니라 코드로 저장된다(benefit_exclusion.exclusion_value).
+    # 구조화 산출물은 사람이 읽는 이름을 쓰므로 여기서 코드로 바꿔야 한다.
+    merchant_codes: Dict[str, str] = {}
     rows = []
     for index, m in enumerate(merchants, start=1):
         category_id = category_ids.get(m["category_code"])
@@ -120,6 +181,7 @@ def build() -> str:
             continue
         merchant_ids[m["merchant_name"]] = index
         merchant_code_ids[m["merchant_code"]] = index
+        merchant_codes[m["merchant_name"]] = m["merchant_code"]
         rows.append(
             f"    ({index}, {sql_value(m['merchant_code'])}, "
             f"{sql_value(m['merchant_name'])}, {category_id})"
@@ -138,14 +200,18 @@ def build() -> str:
         for cid, code, name, _ in companies
     ) + ";")
     lines.append("")
-    lines.append(
-        "INSERT INTO card_bin (card_company_id, bin_prefix, bin_length, is_active) VALUES"
-    )
-    lines.append(",\n".join(
-        f"    ({cid}, {sql_value(prefix)}, {len(prefix)}, 'Y')"
-        for cid, _, _, prefix in companies
-    ) + ";")
-    lines.append("")
+    # BIN이 확인된 카드사만 넣는다. 모르는 앞자리를 지어내면 카드번호로 카드사를 잘못
+    # 판별하는데, 등록 화면에 다른 카드사 이름이 뜰 뿐 오류가 나지 않아 알아채지 못한다.
+    with_bin = [(cid, prefix) for cid, _, _, prefix in companies if prefix]
+    if with_bin:
+        lines.append(
+            "INSERT INTO card_bin (card_company_id, bin_prefix, bin_length, is_active) VALUES"
+        )
+        lines.append(",\n".join(
+            f"    ({cid}, {sql_value(prefix)}, {len(prefix)}, 'Y')"
+            for cid, prefix in with_bin
+        ) + ";")
+        lines.append("")
 
     # ── 카드 ────────────────────────────────────────────────
     card_ids: Dict[str, int] = {}
@@ -231,6 +297,33 @@ def build() -> str:
     lines.append(",\n".join(rows) + ";")
     lines.append("")
 
+    # ── 발급 초기 실적 유예 ──────────────────────────────────
+    # 구조화 산출물은 구간을 금액으로 적는다(tier_id 는 여기서 매기는 값이라 산출물이 알 수 없다).
+    # 금액으로 위에서 만든 구간을 찾아 잇는다 — 못 찾으면 조용히 빼지 말고 경고를 남긴다.
+    rows = []
+    for card in cards:
+        card_id = card_ids[card["card_name"]]
+        for grace in card["data"].get("performance_grace") or []:
+            period = grace.get("period_type") or "MONTH"
+            amount = grace.get("min_performance_amount") or 0
+            tier_id = tier_ids.get((card_id, period, amount))
+            if tier_id is None:
+                warnings.append(
+                    f"실적 유예 구간을 찾지 못함: {card['card_name']} / {period} {amount:,}원"
+                )
+                continue
+            rows.append(
+                f"    ({card_id}, {sql_value(period)}, {tier_id},"
+                f" {grace.get('grace_periods') or 1})"
+            )
+    if rows:
+        lines.append(
+            "INSERT INTO card_performance_grace"
+            " (card_id, period_type, tier_id, grace_periods) VALUES"
+        )
+        lines.append(",\n".join(rows) + ";")
+        lines.append("")
+
     # ── 실적 제외 ───────────────────────────────────────────
     rows = []
     for card in cards:
@@ -275,7 +368,11 @@ def build() -> str:
     benefit_seq = 0
     for card in cards:
         card_id = card_ids[card["card_name"]]
-        for benefit in (card["data"].get("benefits") or []):
+        benefits = expand_targets(
+            card["data"].get("benefits") or [],
+            lambda message: warnings.append(f"{card['card_name']} / {message}"),
+        )
+        for benefit in benefits:
             target_type = benefit.get("target_type")
             category_id = merchant_id = None
 
@@ -326,7 +423,7 @@ def build() -> str:
 
             benefit_rows.append(
                 "    ({}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {},"
-                " {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {})".format(
+                " {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {})".format(
                     benefit_seq, card_id,
                     sql_value(benefit.get("benefit_name")),
                     sql_value(kind), sql_value(calc), value,
@@ -352,11 +449,6 @@ def build() -> str:
                     sql_value(benefit.get("daily_limit")),
                     sql_value(benefit.get("use_shared_limit") or "N"),
                     sql_value(benefit.get("exclude_from_performance") or "N"),
-                    # 선택형 혜택(매월 택1)은 이 두 값이 있어야 그달에 고른 선택지만 적용된다.
-                    # 비우면 엔진이 "선택형이 아니다"로 보고 묶음의 모든 선택지를 동시에 켜서,
-                    # 고르지도 않은 혜택이 추천 계산과 카드 상세 화면에 함께 나온다.
-                    sql_value(benefit.get("option_group_code")),
-                    sql_value(benefit.get("option_key")),
                 )
             )
 
@@ -387,6 +479,19 @@ def build() -> str:
                         f"판정 불가 제외 제거: {card['card_name']} / {benefit.get('benefit_name')}"
                         f" / {key[0]} {key[1]}")
                     continue
+                if key[0] == "MERCHANT":
+                    # 엔진은 이 값을 merchant_code 와 비교한다. 이름을 그대로 넣으면
+                    # 영원히 일치하지 않아 제외가 통째로 무효가 되는데, 제외가 안 걸리면
+                    # 혜택이 더 나가는 방향이라 오류도 나지 않고 화면도 정상으로 보인다.
+                    code = merchant_codes.get(key[1])
+                    if code is None:
+                        warnings.append(
+                            f"제외 가맹점 없음: {card['card_name']} /"
+                            f" {benefit.get('benefit_name')} / {key[1]}")
+                        continue
+                    key = (key[0], code)
+                    if key in seen:
+                        continue
                 seen.add(key)
                 exclusion_rows.append(
                     f"    ({benefit_seq}, {sql_value(key[0])}, {sql_value(key[1])})"
@@ -399,8 +504,7 @@ def build() -> str:
         " min_txn_amount, max_eligible_amount, max_benefit_per_txn, monthly_limit,"
         " limit_group_code, monthly_count_limit, daily_count_limit, yearly_count_limit,"
         " quarterly_count_limit, quarterly_limit, yearly_limit, count_group_code,"
-        " daily_limit, use_shared_limit, exclude_from_performance,"
-        " option_group_code, option_key) VALUES"
+        " daily_limit, use_shared_limit, exclude_from_performance) VALUES"
     )
     lines.append(",\n".join(benefit_rows) + ";")
     lines.append("")

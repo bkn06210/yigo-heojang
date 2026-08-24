@@ -1,0 +1,909 @@
+{
+ "card": {
+  "card_name": "KB국민 토심이 첵첵 체크카드",
+  "card_type": "CHECK",
+  "annual_fee": 0,
+  "annual_fees": [
+   {
+    "brand": "ANY",
+    "issue_type": "ANY",
+    "variant": "ANY",
+    "total_fee": 0,
+    "base_fee": null,
+    "partner_fee": null,
+    "_source": "[발급브랜드 및 연회비] 국내전용(Local), 국내외겸용(Master, Visa) : 연회비 없음 — 세 브랜드에 금액이 하나로 묶여 제시돼 한 행으로 적었다"
+   }
+  ],
+  "_source": {
+   "annual_fee": "국내전용(Local), 국내외겸용(Master, Visa) : 연회비 없음"
+  },
+  "_needs_review": []
+ },
+ "card_exclusions": [
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "GIFT_CARD",
+   "_source": "∙ 상품권 및 선불카드 구입∙충전 금액의 경우 할인에서 제외될 수 있습니다."
+  }
+ ],
+ "performance_tiers": [
+  {
+   "period_type": "MONTH",
+   "min_performance_amount": 0,
+   "shared_monthly_limit": 0,
+   "_source": "※ 전월 이용실적 조건 : KB국민 토심이 첵첵 체크카드로 전월 30만원 이상 이용 시 제공 — 30만원 미만은 할인이 없어 통합할인한도 0"
+  },
+  {
+   "period_type": "MONTH",
+   "min_performance_amount": 300000,
+   "shared_monthly_limit": 10000,
+   "_source": "1구간 (30만원 이상 ~ 60만원 미만) / 월간 통합할인한도 1만원"
+  },
+  {
+   "period_type": "MONTH",
+   "min_performance_amount": 600000,
+   "shared_monthly_limit": 20000,
+   "_source": "2구간 (60만원 이상) / 월간 통합할인한도 2만원"
+  }
+ ],
+ "performance_grace": [
+  {
+   "period_type": "MONTH",
+   "min_performance_amount": 300000,
+   "grace_periods": 1,
+   "_source": "※ 실적조건 유예기간 적용: KB국민 토심이 첵첵 체크카드 최초 사용등록일로부터 다음달 말일까지 1구간 서비스 제공"
+  }
+ ],
+ "performance_exclusions": [
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "POSTPAID_TRANSIT",
+   "_source": "[전월 이용실적 제외 대상] 후불교통요금, 무승인 금액 (자판기, 터널통행료, 유료도로, 기차/고속버스 취소 반환수수료 등), 정부지원금 이용금액 (보육료, 유치원보조비, 바우처 이용금액 등), 포인트리 충전금액, 대학(대학원)등록금, 상품권 및 선불카드 구입(충전)금액, 연체료, 지방세(지방세, 상하수도, 세외수입), 취소금액, 각종 수수료 및 이자"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "UNAPPROVED"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "GOV_SUBSIDY"
+  },
+  {
+   "exclusion_type": "CATEGORY",
+   "exclusion_value": "TUITION"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "GIFT_CARD"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "TAX"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "CANCELED"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "FEE_INTEREST"
+  }
+ ],
+ "benefits": [
+  {
+   "benefit_name": "편의점(CU) 건당 정액 환급할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "FIXED",
+   "benefit_value": null,
+   "step_count": null,
+   "apply_timing": "CASHBACK",
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": "CU",
+   "targets": null,
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": 10000,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": null,
+   "count_group_code": null,
+   "use_shared_limit": "Y",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "편의점 영역. 건당 할인금액과 영역당 월 할인한도가 실적 구간마다 달라 tier_limits에 적었다(1구간 건당 1천원·영역당 2천원, 2구간 건당 2천원·영역당 4천원). 환급할인은 이용전표가 매입처리 완료된 후 할인금액을 카드 출금계좌로 환급하는 방식이다.",
+   "tier_limits": [
+    {
+     "min_performance_amount": 300000,
+     "monthly_limit": 2000,
+     "quarterly_limit": null,
+     "yearly_limit": null,
+     "benefit_value": 1000,
+     "_source": "1구간 (30만원 이상 ~ 60만원 미만) 할인금액 건당 1천원 / 할인한도 영역당 2천원"
+    },
+    {
+     "min_performance_amount": 600000,
+     "monthly_limit": 4000,
+     "quarterly_limit": null,
+     "yearly_limit": null,
+     "benefit_value": 2000,
+     "_source": "2구간 (60만원 이상) 할인금액 건당 2천원 / 할인한도 영역당 4천원"
+    }
+   ],
+   "exclusions": [],
+   "_source": {
+    "min_txn_amount": "∙ 이용금액 건당 1만원 이상 시",
+    "require_performance": "※ 전월 이용실적 조건 : KB국민 토심이 첵첵 체크카드로 전월 30만원 이상 이용 시 제공"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "커피(스타벅스) 건당 정액 환급할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "FIXED",
+   "benefit_value": null,
+   "step_count": null,
+   "apply_timing": "CASHBACK",
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": "스타벅스",
+   "targets": null,
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": 10000,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": null,
+   "count_group_code": null,
+   "use_shared_limit": "Y",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "커피 영역. 사이렌오더 이용분 포함. 건당 할인금액과 영역당 월 할인한도가 구간마다 달라 tier_limits에 적었다.",
+   "tier_limits": [
+    {
+     "min_performance_amount": 300000,
+     "monthly_limit": 2000,
+     "quarterly_limit": null,
+     "yearly_limit": null,
+     "benefit_value": 1000,
+     "_source": "1구간 할인금액 건당 1천원 / 할인한도 영역당 2천원"
+    },
+    {
+     "min_performance_amount": 600000,
+     "monthly_limit": 4000,
+     "quarterly_limit": null,
+     "yearly_limit": null,
+     "benefit_value": 2000,
+     "_source": "2구간 할인금액 건당 2천원 / 할인한도 영역당 4천원"
+    }
+   ],
+   "exclusions": [
+    {
+     "exclusion_type": "MERCHANT_LOCATION",
+     "exclusion_value": "IN_DEPARTMENT_STORE",
+     "_source": "∙ 백화점/대형마트 등 일부 매장 제외"
+    },
+    {
+     "exclusion_type": "MERCHANT_LOCATION",
+     "exclusion_value": "IN_LARGE_MART"
+    }
+   ],
+   "_source": {
+    "min_txn_amount": "∙ 이용금액 건당 1만원 이상 시"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "영화(CGV) 건당 정액 환급할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "FIXED",
+   "benefit_value": null,
+   "step_count": null,
+   "apply_timing": "CASHBACK",
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": "CGV",
+   "targets": null,
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": 10000,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": null,
+   "count_group_code": null,
+   "use_shared_limit": "Y",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "영화 영역. 매점 이용분은 할인 대상이 아니고, 인터넷 예매는 직영 홈페이지/App 이용분만 할인된다. 건당 할인금액과 영역당 월 할인한도가 구간마다 달라 tier_limits에 적었다.",
+   "tier_limits": [
+    {
+     "min_performance_amount": 300000,
+     "monthly_limit": 2000,
+     "quarterly_limit": null,
+     "yearly_limit": null,
+     "benefit_value": 1000,
+     "_source": "1구간 할인금액 건당 1천원 / 할인한도 영역당 2천원"
+    },
+    {
+     "min_performance_amount": 600000,
+     "monthly_limit": 4000,
+     "quarterly_limit": null,
+     "yearly_limit": null,
+     "benefit_value": 2000,
+     "_source": "2구간 할인금액 건당 2천원 / 할인한도 영역당 4천원"
+    }
+   ],
+   "exclusions": [],
+   "_source": {
+    "min_txn_amount": "∙ 이용금액 건당 1만원 이상 시"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "쇼핑(텐바이텐) 건당 정액 환급할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "FIXED",
+   "benefit_value": null,
+   "step_count": null,
+   "apply_timing": "CASHBACK",
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": "텐바이텐",
+   "targets": null,
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": 10000,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": null,
+   "count_group_code": null,
+   "use_shared_limit": "Y",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "쇼핑 영역. 직영 온라인몰/매장 이용분만 할인된다. 건당 할인금액과 영역당 월 할인한도가 구간마다 달라 tier_limits에 적었다.",
+   "tier_limits": [
+    {
+     "min_performance_amount": 300000,
+     "monthly_limit": 2000,
+     "quarterly_limit": null,
+     "yearly_limit": null,
+     "benefit_value": 1000,
+     "_source": "1구간 할인금액 건당 1천원 / 할인한도 영역당 2천원"
+    },
+    {
+     "min_performance_amount": 600000,
+     "monthly_limit": 4000,
+     "quarterly_limit": null,
+     "yearly_limit": null,
+     "benefit_value": 2000,
+     "_source": "2구간 할인금액 건당 2천원 / 할인한도 영역당 4천원"
+    }
+   ],
+   "exclusions": [],
+   "_source": {
+    "min_txn_amount": "∙ 이용금액 건당 1만원 이상 시"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "간편결제(네이버페이) 건당 정액 환급할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "FIXED",
+   "benefit_value": null,
+   "step_count": null,
+   "apply_timing": "CASHBACK",
+   "target_type": "ALL",
+   "target_category_code": null,
+   "target_merchant_name": null,
+   "targets": null,
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": "NAVER_PAY",
+   "min_txn_amount": 20000,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": "AREA_SIMPLE_PAY",
+   "count_group_code": null,
+   "use_shared_limit": "Y",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "간편결제 영역. 온라인 가맹점 이용분만 할인된다(QR/바코드 결제 제외). 네이버페이·카카오페이·SSG페이 세 결제수단이 한 영역이라 영역당 월 할인한도를 함께 쓴다.",
+   "tier_limits": [
+    {
+     "min_performance_amount": 300000,
+     "monthly_limit": 2000,
+     "quarterly_limit": null,
+     "yearly_limit": null,
+     "benefit_value": 1000,
+     "_source": "1구간 할인금액 건당 1천원 / 할인한도 영역당 2천원"
+    },
+    {
+     "min_performance_amount": 600000,
+     "monthly_limit": 4000,
+     "quarterly_limit": null,
+     "yearly_limit": null,
+     "benefit_value": 2000,
+     "_source": "2구간 할인금액 건당 2천원 / 할인한도 영역당 4천원"
+    }
+   ],
+   "exclusions": [
+    {
+     "exclusion_type": "MERCHANT",
+     "exclusion_value": "카카오T",
+     "_source": "∙ 온라인 가맹점 이용분만 할인(QR/바코드 결제, 카카오T, 택시 등 제외)"
+    },
+    {
+     "exclusion_type": "CATEGORY",
+     "exclusion_value": "TAXI"
+    }
+   ],
+   "_source": {
+    "min_txn_amount": "∙ 이용금액 건당 2만원 이상 시",
+    "limit_group_code": "간편결제 네이버/카카오/SSG페이(온라인만)가 한 영역 행으로 묶여 영역당 한도가 한 번만 제시된다"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "간편결제(카카오페이) 건당 정액 환급할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "FIXED",
+   "benefit_value": null,
+   "step_count": null,
+   "apply_timing": "CASHBACK",
+   "target_type": "ALL",
+   "target_category_code": null,
+   "target_merchant_name": null,
+   "targets": null,
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": "KAKAO_PAY",
+   "min_txn_amount": 20000,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": "AREA_SIMPLE_PAY",
+   "count_group_code": null,
+   "use_shared_limit": "Y",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "간편결제 영역. 온라인 가맹점 이용분만 할인된다(QR/바코드 결제 제외). 네이버페이·카카오페이·SSG페이 세 결제수단이 한 영역이라 영역당 월 할인한도를 함께 쓴다.",
+   "tier_limits": [
+    {
+     "min_performance_amount": 300000,
+     "monthly_limit": 2000,
+     "quarterly_limit": null,
+     "yearly_limit": null,
+     "benefit_value": 1000
+    },
+    {
+     "min_performance_amount": 600000,
+     "monthly_limit": 4000,
+     "quarterly_limit": null,
+     "yearly_limit": null,
+     "benefit_value": 2000
+    }
+   ],
+   "exclusions": [
+    {
+     "exclusion_type": "MERCHANT",
+     "exclusion_value": "카카오T"
+    },
+    {
+     "exclusion_type": "CATEGORY",
+     "exclusion_value": "TAXI"
+    }
+   ],
+   "_source": {},
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "간편결제(SSG페이) 건당 정액 환급할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "FIXED",
+   "benefit_value": null,
+   "step_count": null,
+   "apply_timing": "CASHBACK",
+   "target_type": "ALL",
+   "target_category_code": null,
+   "target_merchant_name": null,
+   "targets": null,
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": "SSG_PAY",
+   "min_txn_amount": 20000,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": "AREA_SIMPLE_PAY",
+   "count_group_code": null,
+   "use_shared_limit": "Y",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "간편결제 영역. 온라인 가맹점 이용분만 할인된다(QR/바코드 결제 제외). 네이버페이·카카오페이·SSG페이 세 결제수단이 한 영역이라 영역당 월 할인한도를 함께 쓴다.",
+   "tier_limits": [
+    {
+     "min_performance_amount": 300000,
+     "monthly_limit": 2000,
+     "quarterly_limit": null,
+     "yearly_limit": null,
+     "benefit_value": 1000
+    },
+    {
+     "min_performance_amount": 600000,
+     "monthly_limit": 4000,
+     "quarterly_limit": null,
+     "yearly_limit": null,
+     "benefit_value": 2000
+    }
+   ],
+   "exclusions": [
+    {
+     "exclusion_type": "MERCHANT",
+     "exclusion_value": "카카오T"
+    },
+    {
+     "exclusion_type": "CATEGORY",
+     "exclusion_value": "TAXI"
+    }
+   ],
+   "_source": {},
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "뷰티(올리브영) 건당 정액 환급할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "FIXED",
+   "benefit_value": null,
+   "step_count": null,
+   "apply_timing": "CASHBACK",
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": "올리브영",
+   "targets": null,
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": 20000,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": "AREA_BEAUTY",
+   "count_group_code": null,
+   "use_shared_limit": "Y",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "뷰티 영역. 약관의 뷰티 영역은 올리브영과 안경(렌즈)점 둘인데 안경(렌즈)점은 맞는 표준 카테고리가 없어 unmapped로 보냈다. 두 대상이 영역당 한도를 함께 쓰므로 묶음 코드를 남겨 뒀다.",
+   "tier_limits": [
+    {
+     "min_performance_amount": 300000,
+     "monthly_limit": 2000,
+     "quarterly_limit": null,
+     "yearly_limit": null,
+     "benefit_value": 1000,
+     "_source": "1구간 할인금액 건당 1천원 / 할인한도 영역당 2천원"
+    },
+    {
+     "min_performance_amount": 600000,
+     "monthly_limit": 4000,
+     "quarterly_limit": null,
+     "yearly_limit": null,
+     "benefit_value": 2000,
+     "_source": "2구간 할인금액 건당 2천원 / 할인한도 영역당 4천원"
+    }
+   ],
+   "exclusions": [
+    {
+     "exclusion_type": "MERCHANT_LOCATION",
+     "exclusion_value": "IN_DEPARTMENT_STORE",
+     "_source": "∙ 백화점/대형마트 등 일부 매장 제외"
+    },
+    {
+     "exclusion_type": "MERCHANT_LOCATION",
+     "exclusion_value": "IN_LARGE_MART"
+    }
+   ],
+   "_source": {
+    "min_txn_amount": "∙ 이용금액 건당 2만원 이상 시",
+    "limit_group_code": "뷰티 영역(올리브영, 안경(렌즈)점)에 영역당 한도가 한 번만 제시된다"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "서점(YES24·교보문고) 건당 정액 환급할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "FIXED",
+   "benefit_value": null,
+   "step_count": null,
+   "apply_timing": "CASHBACK",
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": null,
+   "targets": [
+    "YES24",
+    "교보문고"
+   ],
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": 20000,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": "AREA_BOOKSTORE",
+   "count_group_code": null,
+   "use_shared_limit": "Y",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "서점 영역. 온라인(직영 홈페이지/App) 이용분만 할인된다. 두 서점이 영역당 월 할인한도를 함께 쓴다.",
+   "tier_limits": [
+    {
+     "min_performance_amount": 300000,
+     "monthly_limit": 2000,
+     "quarterly_limit": null,
+     "yearly_limit": null,
+     "benefit_value": 1000,
+     "_source": "1구간 할인금액 건당 1천원 / 할인한도 영역당 2천원"
+    },
+    {
+     "min_performance_amount": 600000,
+     "monthly_limit": 4000,
+     "quarterly_limit": null,
+     "yearly_limit": null,
+     "benefit_value": 2000,
+     "_source": "2구간 할인금액 건당 2천원 / 할인한도 영역당 4천원"
+    }
+   ],
+   "exclusions": [],
+   "_source": {
+    "min_txn_amount": "∙ 이용금액 건당 2만원 이상 시",
+    "limit_group_code": "서점 YES24, 교보문고(온라인만)가 한 영역 행이라 영역당 한도가 한 번만 제시된다"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "문화(인터파크티켓) 건당 정액 환급할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "FIXED",
+   "benefit_value": null,
+   "step_count": null,
+   "apply_timing": "CASHBACK",
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": "인터파크티켓",
+   "targets": null,
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": 20000,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": null,
+   "count_group_code": null,
+   "use_shared_limit": "Y",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "문화 영역. 공연 예매 이용분만 할인된다. 건당 할인금액과 영역당 월 할인한도가 구간마다 달라 tier_limits에 적었다.",
+   "tier_limits": [
+    {
+     "min_performance_amount": 300000,
+     "monthly_limit": 2000,
+     "quarterly_limit": null,
+     "yearly_limit": null,
+     "benefit_value": 1000,
+     "_source": "1구간 할인금액 건당 1천원 / 할인한도 영역당 2천원"
+    },
+    {
+     "min_performance_amount": 600000,
+     "monthly_limit": 4000,
+     "quarterly_limit": null,
+     "yearly_limit": null,
+     "benefit_value": 2000,
+     "_source": "2구간 할인금액 건당 2천원 / 할인한도 영역당 4천원"
+    }
+   ],
+   "exclusions": [],
+   "_source": {
+    "min_txn_amount": "∙ 이용금액 건당 2만원 이상 시"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "대중교통(버스·지하철) 건당 정액 청구할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "FIXED",
+   "benefit_value": null,
+   "step_count": null,
+   "apply_timing": "BILLED",
+   "target_type": "CATEGORY",
+   "target_category_code": "PUBLIC_TRANSPORT",
+   "target_merchant_name": null,
+   "targets": null,
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": 30000,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": "AREA_TRANSPORT",
+   "count_group_code": null,
+   "use_shared_limit": "Y",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "대중교통 영역. 후불교통(시내버스, 지하철) 이용분은 청구할인으로 제공되며, 실제 이용일이 아니라 이용내역서에 기재된 이용일 기준으로 할인이 적용된다. 같은 영역의 고속·시외버스 환급할인과 영역당 월 할인한도를 함께 쓴다.",
+   "tier_limits": [
+    {
+     "min_performance_amount": 300000,
+     "monthly_limit": 2000,
+     "quarterly_limit": null,
+     "yearly_limit": null,
+     "benefit_value": 1000,
+     "_source": "1구간 할인금액 건당 1천원 / 할인한도 영역당 2천원"
+    },
+    {
+     "min_performance_amount": 600000,
+     "monthly_limit": 4000,
+     "quarterly_limit": null,
+     "yearly_limit": null,
+     "benefit_value": 2000,
+     "_source": "2구간 할인금액 건당 2천원 / 할인한도 영역당 4천원"
+    }
+   ],
+   "exclusions": [],
+   "_source": {
+    "min_txn_amount": "∙ 이용금액 건당 3만원 이상 시",
+    "limit_group_code": "대중교통 영역 한 행에 후불교통 청구할인과 고속/시외버스 환급할인이 함께 적혀 영역당 한도가 한 번만 제시된다"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "대중교통(고속·시외버스) 건당 정액 환급할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "FIXED",
+   "benefit_value": null,
+   "step_count": null,
+   "apply_timing": "CASHBACK",
+   "target_type": "CATEGORY",
+   "target_category_code": "EXPRESS_BUS",
+   "target_merchant_name": null,
+   "targets": null,
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": 30000,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": "AREA_TRANSPORT",
+   "count_group_code": null,
+   "use_shared_limit": "Y",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "대중교통 영역. 고속·시외버스는 환급할인으로 제공되며 KB국민카드 가맹점 업종 분류기준에 따라 할인이 제공된다. 같은 영역의 후불교통 청구할인과 영역당 월 할인한도를 함께 쓴다.",
+   "tier_limits": [
+    {
+     "min_performance_amount": 300000,
+     "monthly_limit": 2000,
+     "quarterly_limit": null,
+     "yearly_limit": null,
+     "benefit_value": 1000
+    },
+    {
+     "min_performance_amount": 600000,
+     "monthly_limit": 4000,
+     "quarterly_limit": null,
+     "yearly_limit": null,
+     "benefit_value": 2000
+    }
+   ],
+   "exclusions": [],
+   "_source": {},
+   "_needs_review": []
+  }
+ ],
+ "unmapped": [
+  {
+   "text": "뷰티 올리브영, 안경(렌즈)점 ∙ 이용금액 건당 2만원 이상 시 ∙ 상품권, 선불카드 구입(충전) 제외 ∙ 백화점/대형마트 등 일부 매장 제외",
+   "why": "안경(렌즈)점은 업종이지만 표준 카테고리에 안경점이 없다. BEAUTY로 넣으면 약관에 없는 화장품 업종 전체가, PERSONAL_CARE로 넣으면 미용실·마사지까지 대상이 되므로 근접 코드로 뭉개지 않고 이 대상만 보냈다. 같은 영역의 올리브영은 MERCHANT로 담았다"
+  },
+  {
+   "text": "간편결제 네이버/카카오/SSG페이 (온라인만) ∙ 온라인 가맹점 이용분만 할인(QR/ 바코드 결제, 카카오T, 택시 등 제외)",
+   "why": "카카오T·택시는 exclusions로 담았으나 '온라인 가맹점 이용분만', 'QR/바코드 결제 제외'는 결제 채널 조건이라 범위 밖이다"
+  },
+  {
+   "text": "영화 CGV ∙ 상품권 구매, 매점 이용분 제외 ∙ 인터넷 예매 시 직영 홈페이지/App 이용분만 할인",
+   "why": "매점은 가맹점 안의 상품 종류 조건이고 직영 홈페이지/App은 채널 조건이라 담을 축이 없다. 상품권은 card_exclusions의 GIFT_CARD로 담았다"
+  },
+  {
+   "text": "쇼핑 텐바이텐 ∙직영 온라인몰/매장 이용분만 할인 / 서점 YES24, 교보문고 (온라인만) ∙ 직영 홈페이지/App 이용분만 할인",
+   "why": "결제 채널 조건이라 담을 필드가 없다. description에만 남겼다"
+  },
+  {
+   "text": "문화 인터파크티켓 ∙ 공연 예매 이용분만 할인",
+   "why": "가맹점 안의 상품 종류 조건이라 담을 축이 없다"
+  },
+  {
+   "text": "대중교통 버스, 지하철 *실제 이용일이 아닌 이메일 이용내역서상 기재된 이용일 기준으로 할인 적용 *KB국민카드 가맹점 업종 분류기준에 따라 할인제공",
+   "why": "할인 적용 기준일과 카드사 내부 업종 분류 기준이다. 승인 건의 업종코드 등록 여부가 우리 데이터에 없어 판정할 수 없다"
+  },
+  {
+   "text": "∙ 각 할인서비스는 해당 가맹점이 KB국민카드의 가맹점 업종코드 상 할인대상 가맹점으로 등록된 경우에 한하여 제공됩니다. PG(결제대행) 업체 또는 할인서비스로 제공하지 않는 타 간편결제를 통한 결제 및 호텔, 백화점, 대형마트, 철도역사 등에 입점한 가맹점이나 상품권 구매 시 할인대상에서 제외될 수 있습니다.",
+   "why": "카드 전체에 걸리는 입점 위치·PG 제외인데 card_exclusions의 유형은 CATEGORY/MERCHANT/PAYMENT_TYPE/TRANSACTION_ATTR뿐이라 위치 조건을 카드 단위로 적을 자리가 없다. 약관이 개별 영역에 다시 적은 커피·뷰티에만 MERCHANT_LOCATION으로 담았다"
+  },
+  {
+   "text": "∙ KB국민 토심이 첵첵 체크카드는 본인 회원 기준으로 월간 할인한도가 제공되며, 할인한도는 매월 1일 ~ 말일까지 (승인시점 기준) 이용금액으로 적용됩니다. ∙ 할인서비스는 월간 할인한도 내에서 할인이 적용되며, 잔여한도는 이월되지 않습니다. ∙ 전표가 매입되는 순서대로 월간 통합할인한도 내에서 차감됩니다.",
+   "why": "한도 집계 주기와 차감 순서·이월 여부 규약이라 혜택 행이 아니라 엔진 동작 규칙이다"
+  },
+  {
+   "text": "∙ 할인 받은 매출을 취소한 경우 취소 전표가 실시간 접수되지 않아 할인한도가 즉시 복원되지 않을 수 있습니다.",
+   "why": "취소 시 한도 복원 시점 규정이라 담을 필드가 없다"
+  },
+  {
+   "text": "∙ 할인서비스는 제휴업체 정책에 따라 타 할인카드와 중복 할인이 제한될 수 있습니다.",
+   "why": "다른 카드와의 중복 할인 제한이라 혜택 단위 조건으로 표현되지 않는다"
+  },
+  {
+   "text": "체크카드 해외이용 시 유의사항 — 해외 이용 시(해외사이트 거래 포함) 미화(USD)기준 거래 미화금액에 접수일의 (KB국민은행) 최초 고시 전신환 매도율을 적용한 후, 국제브랜드사가 부과하는 국제브랜드수수료(Master 1%, Visa 1.1%)와 KB국민카드가 부과하는 해외서비스수수료(0.25%)를 포함하여 원화로 청구됩니다.",
+   "why": "해외 이용 수수료 안내로 혜택이 아니다. 해외 결제는 범위 밖"
+  },
+  {
+   "text": "체크카드 이용 시 출금 시점 — 일반가맹점 이용: 승인시점 출금계좌에서 즉시 출금 / 무승인·T&E업종 이용: 매출전표 매입일 출금. 승인금액 > 매입금액 차액환급, 승인금액 < 매입금액 차액 추가 출금(계좌 잔액부족 시 신용청구)",
+   "why": "체크카드의 출금·정산 절차 규정이다. 혜택 규칙이 아니라 대금 흐름이라 담을 대상이 없다"
+  },
+  {
+   "text": "[체크카드 이용제한] 매월 세번째 일요일 00:00~06:00 중에는 은행 전산시스템 점검 관련으로 이용이 제한될 수 있으며, 점검시간이 변경될 경우 별도로 고지해 드립니다.",
+   "why": "카드 이용 제한 시간 안내로 혜택 규칙이 아니다"
+  },
+  {
+   "text": "[연체이자율] 회원별/이용상품별 정상이자율 +3%p, 최고 연 20%",
+   "why": "연체이자율은 혜택이 아니다"
+  },
+  {
+   "text": "부가서비스 변경 안내 — KB국민 토심이 첵첵 체크카드(2023년 10월 12일 출시)를 이용하는 경우 제공되는 포인트 및 할인혜택 등의 부가서비스는 다음 각 호를 제외하고는 변경할 수 없습니다.",
+   "why": "부가서비스 변경 고지 절차 규정이라 혜택 데이터가 아니다"
+  }
+ ],
+ "_schema_gap": [
+  {
+   "text": "∙ 전월 1일 ~ 말일(승인시점 기준) KB국민 토심이 첵첵 체크카드 승인(이용)금액 (동일계열 카드 포함) ∙ KB국민 토심이 첵첵 체크카드 동일계열카드: KB국민 첵첵 체크카드, KB국민 위글위글 첵첵 체크카드 / [월간 통합할인한도] 체크카드별(동일계열 카드 포함) 월간 할인 받을 수 있는 최대 금액",
+   "missing": "카드 간 실적·통합할인한도 합산 그룹(계열 카드 묶음)",
+   "why": "실적과 한도는 user_card 단위로만 집계된다. 같은 계열 카드를 묶을 축이 없어 실적은 실제보다 낮게, 통합한도는 카드 수만큼 많게 계산된다"
+  },
+  {
+   "text": "[전월 이용실적 제외 대상] 후불교통요금, 무승인 금액 (자판기, 터널통행료, 유료도로, 기차/고속버스 취소 반환수수료 등), 정부지원금 이용금액 (보육료, 유치원보조비, 바우처 이용금액 등), 포인트리 충전금액, 대학(대학원)등록금, 상품권 및 선불카드 구입(충전)금액, 연체료, 지방세(지방세, 상하수도, 세외수입), 취소금액, 각종 수수료 및 이자",
+   "missing": "TRANSACTION_ATTR 표준값에 '포인트 충전금액'이 없다",
+   "why": "GIFT_CARD는 상품권·선불카드 구입/충전이라 포인트리 충전과 다르고, POINT_USED는 포인트로 결제한 금액이라 방향이 반대다. 비슷한 값으로 넣으면 다른 거래까지 실적에서 빠지므로 비워 뒀다"
+  },
+  {
+   "text": "[체크카드 직불이용한도] 카드발급 시 부여한도(기본한도) — 만12 ~ 13세 1회 3만원 / 1일 3만원 / 월간 30만원, 만14세 이상 1회 600만원 / 1일 600만원 / 월간 2천만원",
+   "missing": "카드의 직불(체크) 이용한도 — 1회·1일·월간 승인 한도 컬럼과 연령 구간",
+   "why": "card에 이용한도 컬럼이 없다. benefit의 daily_limit·monthly_limit은 혜택 한도지 결제 승인 한도가 아니라 여기에 넣으면 의미가 뒤바뀐다"
+  },
+  {
+   "text": "[후불교통기능 탑재] ∙ 버스, 지하철 등 교통이용이 가능하고, 매월 체크카드 결제계좌에서 아래의 지정된 결제일에 자동 출금됩니다. 이용일 1일 ~ 말일 / 출금일 말일 + 3영업일 ∙ 법정대리인 동의를 받은 만 12-17세 청소년은 청소년 후불 교통카드를 발급 받을 수 있으며, 전체 카드사 기준 1인1매 제한으로, 월 이용한도는 5만원입니다.",
+   "missing": "카드의 후불교통 기능 탑재 여부와 정산 주기·연령별 월 이용한도",
+   "why": "card에 기능 탑재 플래그가 없다. 혜택이 아니라 카드 기능이라 benefit으로도 담기지 않는데, 이 카드의 대중교통 할인이 후불교통 이용분을 대상으로 하고 후불교통요금은 실적에서 빠지므로(POSTPAID_TRANSIT) 기능 유무가 계산 전제에 영향을 준다"
+  },
+  {
+   "text": "체크카드 소액신용결제서비스 ∙ 소액신용결제서비스를 신청하시면 신청고객의 예금평잔 등 소액신용한도의 결제능력을 평가할 수 있는 기준에 따라 최고 30만원 이내에서 소액신용한도가 부여됩니다. ∙ 다음의 경우 신용카드 거래로 처리되며 이용 대금은 약정 결제일에 체크카드 결제계좌로 청구됩니다.",
+   "missing": "체크카드의 소액신용(하이브리드) 한도와 그 거래가 신용 거래로 처리된다는 구분",
+   "why": "card에 소액신용 한도 컬럼이 없고 expense에도 그 승인이 체크인지 신용 처리인지 구분할 축이 없다. 혜택이 아니라 결제 방식이라 benefit으로도 담기지 않는다"
+  },
+  {
+   "text": "[발급대상] 만 12세부터 발급 가능",
+   "missing": "카드 발급 연령 조건(하한)",
+   "why": "card에 발급 자격 컬럼이 없다. 미보유 카드 추천에서 나이로 거를 수 없어 자격이 안 되는 회원에게도 이 카드가 후보로 남는다"
+  },
+  {
+   "text": "∙ 체크카드 환급할인은 이용전표가 매입처리 완료 된 후 할인금액을 카드 출금계좌로 환급하는 방식입니다.",
+   "missing": "환급 시점(매입 완료 후)을 담을 축",
+   "why": "지급 방식 자체는 apply_timing=CASHBACK으로 담긴다. 다만 승인 시점에는 전액이 출금되고 나중에 되돌아오는 구조라 회원이 보는 시점이 다른데, apply_timing은 값 세 개뿐이라 그 차이를 적을 자리가 없다"
+  }
+ ]
+}

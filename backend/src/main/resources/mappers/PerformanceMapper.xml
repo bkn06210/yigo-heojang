@@ -86,4 +86,15 @@
         </foreach>
     </select>
 
+
+    <select id="findExclusionsByCardIds"
+            resultType="com.wallet.engine.dao.dto.PerformanceExclusionRow">
+        SELECT card_id AS cardId, exclusion_type, exclusion_value
+          FROM performance_exclusion
+         WHERE card_id IN
+        <foreach collection="cardIds" item="cardId" open="(" separator="," close=")">
+            #{cardId}
+        </foreach>
+    </select>
+
 </mapper>

@@ -92,6 +92,14 @@ final class UserSeedScenario {
      * 한 회원에게 전부 주지 않는 이유: 카드마다 실적 조건이 있어 15장을 모두 충족시키려면
      * 월 수백만원짜리 거래를 만들어야 한다. 나눠 주면 충족·미충족이 섞여 구간 판정이 더 잘 드러난다.
      * 회원 1이 신한카드 핏을 갖는다 — 스탬프(COUNT_STEP)와 분기 실적이 이 카드에만 있다.
+     *
+     * <b>실적을 채운 카드를 넷 둔다</b> — 신한카드 핏·삼성 iD ON(회원 1), ALL 카드·Mr.Life(회원 2).
+     * 한 장만 충족시키면 실적 조건부 혜택이 그 카드에서만 켜져, 구간별 한도·통합한도·묶음 한도가
+     * 대부분 0인 채로 남는다. 화면도 "실적을 채우면 무엇이 달라지는가"를 한 장으로만 보여주게 된다.
+     *
+     * <b>회원 3은 넷 다 미달로 둔다.</b> 충족과 미달이 한 회원 안에 섞이기만 하면 "이 회원은 왜
+     * 혜택이 적은가"를 보여줄 수 없다. 소비 규모가 작아 아무 카드도 못 채운 회원이 따로 있어야
+     * 실적 조건이 결과를 가른다는 것이 드러난다.
      */
     static List<Holding> holdings() {
         return List.of(
@@ -179,26 +187,48 @@ final class UserSeedScenario {
         b.addAuto(1, fit, "SKT", "TELECOM", 55_000, 25);
         b.add(1, fit, "CU", "CONVENIENCE_STORE", 6_800, 26, 20);
 
+        // ALL point — 회원 1의 세 번째 충족 카드(전월 30만원).
+        // 결제 화면이 추천을 3순위까지 보여주므로 한 회원이 실적을 채운 카드를 셋은 갖고 있어야
+        // 순위가 끝까지 채워진다. 둘뿐이면 3순위 자리가 실적 미달 카드로 내려가, 화면이
+        // 보여주려는 "혜택이 켜진 카드끼리의 비교"가 되지 않는다.
         String allPoint = "ALL point 카드";
         b.add(1, allPoint, null, "RESTAURANT", 28_000, 14, 19);
         b.add(1, allPoint, "GMARKET", "ONLINE_SHOPPING", 33_000, 18, 21);
+        b.add(1, allPoint, "EMART", "LARGE_MART", 108_000, 7, 16);
+        b.add(1, allPoint, "COUPANG", "ONLINE_SHOPPING", 55_000, 20, 21);
+        b.add(1, allPoint, null, "RESTAURANT", 46_000, 24, 19);
 
-        b.addAuto(1, "삼성 iD ON 카드", "NETFLIX", "SUBSCRIPTION_STREAMING", 17_000, 8);
-        b.add(1, "삼성 iD ON 카드", "CGV", "MOVIE", 15_000, 14, 18);
+        // 삼성 iD ON — 전월 30만원을 넘겨 실적 조건부 혜택이 켜지는 두 번째 카드다.
+        // 커피·배달앱·델리 세 영역에 모두 결제를 넣는다. 이 카드의 주력 혜택이
+        // "세 영역 중 이용금액이 가장 큰 하나에 30%"라, 한 영역만 쓰면 영역을 고르는 경로가 돌지 않는다.
+        String idOn = "삼성 iD ON 카드";
+        b.addAuto(1, idOn, "NETFLIX", "SUBSCRIPTION_STREAMING", 17_000, 8);
+        b.add(1, idOn, "CGV", "MOVIE", 15_000, 14, 18);
+        b.add(1, idOn, "BAEMIN", "DELIVERY", 38_000, 5, 19);
+        b.add(1, idOn, "STARBUCKS", "CAFE", 7_000, 10, 9);
+        b.add(1, idOn, "EMART", "LARGE_MART", 124_000, 17, 15);
+        b.add(1, idOn, null, "RESTAURANT", 62_000, 22, 20);
         b.add(1, "신한카드 Deep Once", null, "PUBLIC_TRANSPORT", 58_000, 2, 8);
         b.add(1, "마이핏카드(적립형)", null, "FUEL", 65_000, 12, 17);
         b.add(1, "YOU Wish 카드", null, "HOSPITAL", 42_000, 21, 10);
 
         // ── 회원 2 ── 생활·자동납부 중심
+        // Mr.Life — 전월 30만원 구간을 넘긴다. 자동납부 두 건이 규모 배수를 타지 않아
+        // 달이 바뀌어도 14만원이 고정으로 깔리고, 나머지 결제가 구간을 가른다.
         String mrLife = "신한카드 Mr.Life";
         b.add(2, mrLife, null, "SUPERMARKET", 85_000, 10, 18);
         b.add(2, mrLife, null, "HOSPITAL", 31_000, 18, 10);
+        b.add(2, mrLife, "LOTTE_MART", "LARGE_MART", 64_000, 14, 16);
         b.addAuto(2, mrLife, "KT", "TELECOM", 48_000, 25);
         b.addAuto(2, mrLife, null, "UTILITY", 96_000, 25);
 
+        // ALL 카드 — 전월 40만원을 넘긴다. 회원 2의 대표 카드라 충족 상태로 두어야
+        // 홈 화면이 보여주는 카드가 혜택이 켜진 상태로 나온다.
         b.add(2, "ALL 카드", null, "RESTAURANT", 52_000, 4, 19);
         b.add(2, "ALL 카드", "GMARKET", "ONLINE_SHOPPING", 63_000, 15, 21);
         b.add(2, "ALL 카드", "OLIVE_YOUNG", "BEAUTY", 29_000, 23, 16);
+        b.add(2, "ALL 카드", "EMART", "LARGE_MART", 118_000, 8, 15);
+        b.add(2, "ALL 카드", "SK_ENERGY", "FUEL", 68_000, 19, 11);
         b.add(2, "마이핏카드(할인형)", "STARBUCKS", "CAFE", 5_900, 9, 9);
         b.add(2, "마이핏카드(할인형)", "COFFEE_BEAN", "CAFE", 6_400, 27, 15);
         b.add(2, "삼성 iD SELECT UP 카드", null, "TAXI", 11_500, 12, 23);

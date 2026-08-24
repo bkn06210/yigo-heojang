@@ -1,0 +1,972 @@
+{
+ "card": {
+  "card_name": "THE iD. 1st",
+  "card_type": "CREDIT",
+  "annual_fee": 150000,
+  "annual_fees": [
+   {
+    "brand": "ANY",
+    "issue_type": "ANY",
+    "variant": "ANY",
+    "total_fee": 150000,
+    "base_fee": 30000,
+    "partner_fee": 120000,
+    "_source": "연회비 / 총 연회비 기본 연회비 제휴 연회비 / 해외겸용 Mastercard · 국내전용 / 15만원 3만원 12만원 — 금액 칸이 두 브랜드에 걸쳐 병합돼 있어 한 행으로 적음"
+   }
+  ],
+  "_source": {
+   "annual_fee": "총 연회비 15만원"
+  },
+  "_needs_review": []
+ },
+ "card_exclusions": [
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "DISCOUNTED",
+   "_source": "할인 제외 대상 - 삼 성카드 할인이 적용된 일시불 및 할부 이용금액 (적립 제외 대상에도 같은 조항)"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "GIFT_CARD",
+   "_source": "할인 제외 대상 - 기 프트/선불카드(포인트, 사이버머니 등 전자지급수단 포함) 구매 및 충전, 상품권 구매건 (적립 제외 대상에도 같은 조항)"
+  }
+ ],
+ "performance_tiers": [
+  {
+   "period_type": "MONTH",
+   "min_performance_amount": 0,
+   "shared_monthly_limit": null,
+   "_source": "전월 이용금액 50만원 미만 구간. 적립한도 없이 제공되는 카드라 통합 할인한도가 없어 shared_monthly_limit은 null"
+  },
+  {
+   "period_type": "MONTH",
+   "min_performance_amount": 500000,
+   "shared_monthly_limit": null,
+   "_source": "* 전월 이용금액 50만원 이상 시 제공"
+  }
+ ],
+ "performance_exclusions": [
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "CASH_ADVANCE",
+   "_source": "전월 이용금액 기준 … 단기카드대출(현금서비스) … 은 일시불 및 할부 이용금액에 해당되지 않음"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "CARD_LOAN",
+   "_source": "장기카드대출(카드론) … 은 일시불 및 할부 이용금액에 해당되지 않음"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "FEE_INTEREST",
+   "_source": "각종 수수료 및 이자(할부수수료, 카드대출 이자 등), 연체료 … 는 일시불 및 할부 이용금액에 해당되지 않음"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "ANNUAL_FEE",
+   "_source": "연회비 납부건은 일시불 및 할부 이용금액에 해당되지 않음"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "SOCIAL_INSURANCE",
+   "_source": "전월 이용금액 제외 대상 - 건 강보험/국민연금/고용보험/산재보험"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "LEVY",
+   "_source": "전월 이용금액 제외 대상 - 장애인 고용부담금"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "TAX",
+   "_source": "전월 이용금액 제외 대상 - 국세/지방세/공과금 납부건"
+  },
+  {
+   "exclusion_type": "CATEGORY",
+   "exclusion_value": "UTILITY",
+   "_source": "전월 이용금액 제외 대상 - 국세/지방세/공과금 납부건"
+  },
+  {
+   "exclusion_type": "CATEGORY",
+   "exclusion_value": "APARTMENT_FEE",
+   "_source": "전월 이용금액 제외 대상 - 아 파트 관리비"
+  },
+  {
+   "exclusion_type": "CATEGORY",
+   "exclusion_value": "RENT",
+   "_source": "전월 이용금액 제외 대상 - 부동산 임대료 납부건"
+  },
+  {
+   "exclusion_type": "CATEGORY",
+   "exclusion_value": "TUITION",
+   "_source": "전월 이용금액 제외 대상 - 유 치원 납입금, 초/중/고등학교 학교납입금, 대학 등록금 납부건"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "GIFT_CARD",
+   "_source": "전월 이용금액 제외 대상 - 기 프트/선불카드(포인트, 사이버머니 등 전자지급수단 포함) 구매 및 충전, 상품권 구매건"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "CANCELED",
+   "_source": "* 결 제 취소금액은 매출취소전표가 삼성카드에 접수된 달의 이용금액에서 차감"
+  }
+ ],
+ "benefits": [
+  {
+   "benefit_name": "프리미엄 영역 백화점 5만원 할인 기프트",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "FIXED",
+   "benefit_value": 50000,
+   "step_count": null,
+   "apply_timing": "BILLED",
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": null,
+   "targets": [
+    "신세계백화점",
+    "롯데백화점",
+    "현대백화점",
+    "갤러리아백화점"
+   ],
+   "require_performance": "N",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": 50000,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": 2,
+   "limit_group_code": "PREMIUM_GIFT_YEAR",
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "할인 대상점에서 건별 5만원 이상 결제 시 건당 5만원 결제일할인. 백화점은 오프라인 결제건에 한한다. 통합 연 할인횟수는 전년도 이용금액 600만원 이상 2회·3,600만원 이상 3회이며, 연 기준은 발급월로부터 12개월이다.",
+   "tier_limits": null,
+   "exclusions": [
+    {
+     "exclusion_type": "MERCHANT_LOCATION",
+     "exclusion_value": "IN_DEPARTMENT_STORE",
+     "_source": "* 백 화점은 오프라인 결제건에 한하며, 쇼핑 외 결제건(상품권, 주차장 등), 임대매장은 제외"
+    }
+   ],
+   "_source": {
+    "benefit_value": "프리미엄 영역 연간 최대 15만원 할인 기프트 / 할인 대상점에서 건별 50,000원 이상 결제 시 50,000원 결제일할인",
+    "yearly_count_limit": "전년도 이용금액대별 통합 연 할인횟수 / 600만원 이상 2회, 3,600만원 이상 3회 — 전년도 이용금액 구간을 판정할 축이 없어 하위 구간 값 2회를 적음",
+    "limit_group_code": "통합 연 할인횟수 — 백화점·해외·항공·호텔/리조트·온라인쇼핑몰·골프·병원 전 영역이 횟수를 함께 씀"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "프리미엄 영역 항공 5만원 할인 기프트",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "FIXED",
+   "benefit_value": 50000,
+   "step_count": null,
+   "apply_timing": "BILLED",
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": null,
+   "targets": [
+    "대한항공",
+    "제주항공",
+    "진에어",
+    "티웨이항공"
+   ],
+   "require_performance": "N",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": 50000,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": 2,
+   "limit_group_code": "PREMIUM_GIFT_YEAR",
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "할인 대상점에서 건별 5만원 이상 결제 시 건당 5만원 결제일할인. 항공은 공식 홈페이지/앱을 통한 결제건에 한하며 여행사·항공권 구매 대행 사이트 결제건은 제외된다.",
+   "tier_limits": null,
+   "exclusions": null,
+   "_source": {
+    "benefit_value": "프리미엄 영역 연간 최대 15만원 할인 기프트 / 할인 대상점에서 건별 50,000원 이상 결제 시 50,000원 결제일할인",
+    "yearly_count_limit": "전년도 이용금액대별 통합 연 할인횟수 / 600만원 이상 2회, 3,600만원 이상 3회 — 전년도 이용금액 구간을 판정할 축이 없어 하위 구간 값 2회를 적음",
+    "limit_group_code": "통합 연 할인횟수 — 백화점·해외·항공·호텔/리조트·온라인쇼핑몰·골프·병원 전 영역이 횟수를 함께 씀"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "프리미엄 영역 온라인쇼핑몰 5만원 할인 기프트",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "FIXED",
+   "benefit_value": 50000,
+   "step_count": null,
+   "apply_timing": "BILLED",
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": null,
+   "targets": [
+    "쿠팡",
+    "네이버플러스 스토어",
+    "SSG.COM",
+    "롯데ON",
+    "G마켓",
+    "옥션",
+    "11번가",
+    "삼성카드 쇼핑"
+   ],
+   "require_performance": "N",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": 50000,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": 2,
+   "limit_group_code": "PREMIUM_GIFT_YEAR",
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "할인 대상점에서 건별 5만원 이상 결제 시 건당 5만원 결제일할인.",
+   "tier_limits": null,
+   "exclusions": null,
+   "_source": {
+    "benefit_value": "프리미엄 영역 연간 최대 15만원 할인 기프트 / 할인 대상점에서 건별 50,000원 이상 결제 시 50,000원 결제일할인",
+    "yearly_count_limit": "전년도 이용금액대별 통합 연 할인횟수 / 600만원 이상 2회, 3,600만원 이상 3회 — 전년도 이용금액 구간을 판정할 축이 없어 하위 구간 값 2회를 적음",
+    "limit_group_code": "통합 연 할인횟수 — 백화점·해외·항공·호텔/리조트·온라인쇼핑몰·골프·병원 전 영역이 횟수를 함께 씀"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "프리미엄 영역 골프 5만원 할인 기프트",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "FIXED",
+   "benefit_value": 50000,
+   "step_count": null,
+   "apply_timing": "BILLED",
+   "target_type": "CATEGORY",
+   "target_category_code": "GOLF",
+   "target_merchant_name": null,
+   "targets": null,
+   "require_performance": "N",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": 50000,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": 2,
+   "limit_group_code": "PREMIUM_GIFT_YEAR",
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "골프장·골프연습장에서 건별 5만원 이상 결제 시 건당 5만원 결제일할인. 골프는 오프라인 결제건에 한한다.",
+   "tier_limits": null,
+   "exclusions": null,
+   "_source": {
+    "benefit_value": "프리미엄 영역 연간 최대 15만원 할인 기프트 / 할인 대상점에서 건별 50,000원 이상 결제 시 50,000원 결제일할인",
+    "yearly_count_limit": "전년도 이용금액대별 통합 연 할인횟수 / 600만원 이상 2회, 3,600만원 이상 3회 — 전년도 이용금액 구간을 판정할 축이 없어 하위 구간 값 2회를 적음",
+    "limit_group_code": "통합 연 할인횟수 — 백화점·해외·항공·호텔/리조트·온라인쇼핑몰·골프·병원 전 영역이 횟수를 함께 씀"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "프리미엄 영역 병원 5만원 할인 기프트",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "FIXED",
+   "benefit_value": 50000,
+   "step_count": null,
+   "apply_timing": "BILLED",
+   "target_type": "CATEGORY",
+   "target_category_code": null,
+   "target_merchant_name": null,
+   "targets": [
+    "HOSPITAL",
+    "ANIMAL_HOSPITAL"
+   ],
+   "require_performance": "N",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": 50000,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": 2,
+   "limit_group_code": "PREMIUM_GIFT_YEAR",
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "병/의원·동물병원에서 건별 5만원 이상 결제 시 건당 5만원 결제일할인. 병원은 오프라인 결제건에 한하며 요양병원·보건소는 제외된다.",
+   "tier_limits": null,
+   "exclusions": null,
+   "_source": {
+    "benefit_value": "프리미엄 영역 연간 최대 15만원 할인 기프트 / 할인 대상점에서 건별 50,000원 이상 결제 시 50,000원 결제일할인",
+    "yearly_count_limit": "전년도 이용금액대별 통합 연 할인횟수 / 600만원 이상 2회, 3,600만원 이상 3회 — 전년도 이용금액 구간을 판정할 축이 없어 하위 구간 값 2회를 적음",
+    "limit_group_code": "통합 연 할인횟수 — 백화점·해외·항공·호텔/리조트·온라인쇼핑몰·골프·병원 전 영역이 횟수를 함께 씀"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "프리미엄 영역 호텔/리조트 5만원 할인 기프트",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "FIXED",
+   "benefit_value": 50000,
+   "step_count": null,
+   "apply_timing": "BILLED",
+   "target_type": "CATEGORY",
+   "target_category_code": "LODGING",
+   "target_merchant_name": null,
+   "targets": null,
+   "require_performance": "N",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": 50000,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": 2,
+   "limit_group_code": "PREMIUM_GIFT_YEAR",
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "호텔·리조트에서 건별 5만원 이상 결제 시 건당 5만원 결제일할인. 호텔/리조트는 국내 오프라인 결제건에 한한다.",
+   "tier_limits": null,
+   "exclusions": null,
+   "_source": {
+    "benefit_value": "프리미엄 영역 연간 최대 15만원 할인 기프트 / 할인 대상점에서 건별 50,000원 이상 결제 시 50,000원 결제일할인",
+    "yearly_count_limit": "전년도 이용금액대별 통합 연 할인횟수 / 600만원 이상 2회, 3,600만원 이상 3회 — 전년도 이용금액 구간을 판정할 축이 없어 하위 구간 값 2회를 적음",
+    "limit_group_code": "통합 연 할인횟수 — 백화점·해외·항공·호텔/리조트·온라인쇼핑몰·골프·병원 전 영역이 횟수를 함께 씀",
+    "target_category_code": "호텔/리조트 - 호텔, 리조트 / * 호텔/리조트는 국내 오프라인 결제건에 한함"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "일상 음식점 1.5% 빅포인트 적립",
+   "benefit_kind": "POINT",
+   "calc_method": "RATE",
+   "benefit_value": 1.5,
+   "step_count": null,
+   "apply_timing": null,
+   "target_type": "CATEGORY",
+   "target_category_code": null,
+   "target_merchant_name": null,
+   "targets": [
+    "RESTAURANT",
+    "FAST_FOOD"
+   ],
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": null,
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "한식·양식·일식·중식·뷔페·패밀리레스토랑·간이음식점·패스트푸드 1.5% 빅포인트 적립. 적립한도 없음. 음식점은 오프라인 결제건에 한한다.",
+   "tier_limits": null,
+   "exclusions": [
+    {
+     "exclusion_type": "TRANSACTION_ATTR",
+     "exclusion_value": "INTEREST_FREE",
+     "_source": "적립 제외 대상 - 무 이자할부 이용금액"
+    }
+   ],
+   "_source": {
+    "benefit_value": "적립률 1.5% / 일상 / 음식점 한식, 양식, 일식, 중식, 뷔페, 패밀리레스토랑, 간이음식점, 패스트푸드",
+    "require_performance": "* 전월 이용금액 50만원 이상 시 제공"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "편의점·커피전문점 1.5% 빅포인트 적립",
+   "benefit_kind": "POINT",
+   "calc_method": "RATE",
+   "benefit_value": 1.5,
+   "step_count": null,
+   "apply_timing": null,
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": null,
+   "targets": [
+    "CU",
+    "GS25",
+    "세븐일레븐",
+    "이마트24",
+    "스타벅스",
+    "이디야",
+    "투썸플레이스",
+    "커피빈",
+    "블루보틀"
+   ],
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": null,
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "편의점(CU·GS25·세븐일레븐·이마트24)과 커피전문점(스타벅스·이디야커피·투썸플레이스·커피빈·블루보틀) 1.5% 빅포인트 적립. 적립한도 없음. 오프라인 결제건에 한하되 스타벅스는 사이렌오더 결제건도 혜택 제공.",
+   "tier_limits": null,
+   "exclusions": [
+    {
+     "exclusion_type": "TRANSACTION_ATTR",
+     "exclusion_value": "INTEREST_FREE",
+     "_source": "적립 제외 대상 - 무 이자할부 이용금액"
+    },
+    {
+     "exclusion_type": "MERCHANT_LOCATION",
+     "exclusion_value": "IN_DEPARTMENT_STORE",
+     "_source": "* 편 의점/커피전문점은 오프라인 결제건에 한하며, 백화점, 할인점, 쇼핑몰 등의 임대매장은 제외"
+    },
+    {
+     "exclusion_type": "MERCHANT_LOCATION",
+     "exclusion_value": "IN_LARGE_MART"
+    },
+    {
+     "exclusion_type": "MERCHANT_LOCATION",
+     "exclusion_value": "IN_SHOPPING_MALL"
+    }
+   ],
+   "_source": {
+    "benefit_value": "적립률 1.5% / 일상 / 편의점 CU, GS25, 세븐일레븐, 이마트24 · 커피전문점 스타벅스, 이디야커피, 투썸플레이스, 커피빈, 블루보틀"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "병원 1.5% 빅포인트 적립",
+   "benefit_kind": "POINT",
+   "calc_method": "RATE",
+   "benefit_value": 1.5,
+   "step_count": null,
+   "apply_timing": null,
+   "target_type": "CATEGORY",
+   "target_category_code": null,
+   "target_merchant_name": null,
+   "targets": [
+    "HOSPITAL",
+    "ANIMAL_HOSPITAL"
+   ],
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": null,
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "병/의원·동물병원 1.5% 빅포인트 적립. 적립한도 없음. 오프라인 결제건에 한하며 요양병원·보건소는 제외된다.",
+   "tier_limits": null,
+   "exclusions": [
+    {
+     "exclusion_type": "TRANSACTION_ATTR",
+     "exclusion_value": "INTEREST_FREE",
+     "_source": "적립 제외 대상 - 무 이자할부 이용금액"
+    }
+   ],
+   "_source": {
+    "benefit_value": "적립률 1.5% / 일상 / 병원 병/의원, 동물병원"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "백화점·프리미엄 아울렛 1.5% 빅포인트 적립",
+   "benefit_kind": "POINT",
+   "calc_method": "RATE",
+   "benefit_value": 1.5,
+   "step_count": null,
+   "apply_timing": null,
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": null,
+   "targets": [
+    "신세계백화점",
+    "롯데백화점",
+    "현대백화점",
+    "갤러리아백화점",
+    "신세계사이먼 프리미엄 아울렛",
+    "현대프리미엄아울렛",
+    "롯데프리미엄아울렛"
+   ],
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": null,
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "백화점·프리미엄 아울렛 1.5% 빅포인트 적립. 적립한도 없음. 오프라인 결제건에 한하며 쇼핑 외 결제건(상품권·주차장 등)은 제외된다.",
+   "tier_limits": null,
+   "exclusions": [
+    {
+     "exclusion_type": "TRANSACTION_ATTR",
+     "exclusion_value": "INTEREST_FREE",
+     "_source": "적립 제외 대상 - 무 이자할부 이용금액"
+    },
+    {
+     "exclusion_type": "MERCHANT_LOCATION",
+     "exclusion_value": "IN_DEPARTMENT_STORE",
+     "_source": "* 백 화점/프리미엄 아울렛은 오프라인 결제건에 한하며, 쇼핑 외 결제건(상품권, 주차장 등), 임대매장은 제외"
+    },
+    {
+     "exclusion_type": "MERCHANT_LOCATION",
+     "exclusion_value": "IN_SHOPPING_MALL"
+    }
+   ],
+   "_source": {
+    "benefit_value": "적립률 1.5% / 쇼핑 / 백화점 신세계백화점, 롯데백화점, 현대백화점, 갤러리아백화점 · 프리미엄 아울렛 신세계사이먼 프리미엄 아울렛, 현대프리미엄아울렛, 롯데프리미엄아울렛"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "면세점 1.5% 빅포인트 적립",
+   "benefit_kind": "POINT",
+   "calc_method": "RATE",
+   "benefit_value": 1.5,
+   "step_count": null,
+   "apply_timing": null,
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": null,
+   "targets": [
+    "신라면세점",
+    "롯데면세점",
+    "신세계면세점",
+    "동화면세점",
+    "HDC신라면세점",
+    "JDC(제주)면세점",
+    "JTO(제주)면세점"
+   ],
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": null,
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "면세점 1.5% 빅포인트 적립. 적립한도 없음. 국내 오프라인 매장 및 공식 홈페이지/앱(내국인 전용) 결제건에 한하며 임대매장·해외 오프라인 매장은 제외된다.",
+   "tier_limits": null,
+   "exclusions": [
+    {
+     "exclusion_type": "TRANSACTION_ATTR",
+     "exclusion_value": "INTEREST_FREE",
+     "_source": "적립 제외 대상 - 무 이자할부 이용금액"
+    }
+   ],
+   "_source": {
+    "benefit_value": "적립률 1.5% / 쇼핑 / 면세점 신라/롯데/신세계/동화/HDC신라/JDC(제주)/JTO(제주)면세점"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "온라인 패션몰 1.5% 빅포인트 적립",
+   "benefit_kind": "POINT",
+   "calc_method": "RATE",
+   "benefit_value": 1.5,
+   "step_count": null,
+   "apply_timing": null,
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": null,
+   "targets": [
+    "무신사",
+    "W컨셉",
+    "29CM",
+    "나이키닷컴",
+    "SSF SHOP"
+   ],
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": null,
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "온라인 패션몰 1.5% 빅포인트 적립. 적립한도 없음. 공식 홈페이지/앱을 통한 결제건에 한한다.",
+   "tier_limits": null,
+   "exclusions": [
+    {
+     "exclusion_type": "TRANSACTION_ATTR",
+     "exclusion_value": "INTEREST_FREE",
+     "_source": "적립 제외 대상 - 무 이자할부 이용금액"
+    }
+   ],
+   "_source": {
+    "benefit_value": "적립률 1.5% / 쇼핑 / 온라인 패션몰 무신사, W컨셉, 29CM, 나이키닷컴, SSF SHOP"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "항공·공연 1.5% 빅포인트 적립",
+   "benefit_kind": "POINT",
+   "calc_method": "RATE",
+   "benefit_value": 1.5,
+   "step_count": null,
+   "apply_timing": null,
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": null,
+   "targets": [
+    "대한항공",
+    "제주항공",
+    "진에어",
+    "티웨이항공",
+    "NOL 티켓"
+   ],
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": null,
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "항공·공연 1.5% 빅포인트 적립. 적립한도 없음. 공식 홈페이지/앱을 통한 결제건에 한하며 여행사·항공권 구매 대행 사이트 결제건은 제외된다.",
+   "tier_limits": null,
+   "exclusions": [
+    {
+     "exclusion_type": "TRANSACTION_ATTR",
+     "exclusion_value": "INTEREST_FREE",
+     "_source": "적립 제외 대상 - 무 이자할부 이용금액"
+    }
+   ],
+   "_source": {
+    "benefit_value": "적립률 1.5% / 여가 / 항공 대한항공, 제주항공, 진에어, 티웨이항공 · 공연 NOL 티켓"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "그 외 국내 가맹점 1% 빅포인트 적립",
+   "benefit_kind": "POINT",
+   "calc_method": "RATE",
+   "benefit_value": 1,
+   "step_count": null,
+   "apply_timing": null,
+   "target_type": "ALL",
+   "target_category_code": null,
+   "target_merchant_name": null,
+   "targets": null,
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": null,
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "적립 대상 영역에 해당하지 않는 그 외 가맹점 1% 빅포인트 적립. 적립한도 없음.",
+   "tier_limits": null,
+   "exclusions": [
+    {
+     "exclusion_type": "TRANSACTION_ATTR",
+     "exclusion_value": "INTEREST_FREE",
+     "_source": "적립 제외 대상 - 무 이자할부 이용금액"
+    },
+    {
+     "exclusion_type": "TRANSACTION_ATTR",
+     "exclusion_value": "SOCIAL_INSURANCE",
+     "_source": "적립 제외 대상 - 건 강보험/국민연금/고용보험/산재보험"
+    },
+    {
+     "exclusion_type": "TRANSACTION_ATTR",
+     "exclusion_value": "LEVY",
+     "_source": "적립 제외 대상 - 장애인 고용부담금"
+    },
+    {
+     "exclusion_type": "TRANSACTION_ATTR",
+     "exclusion_value": "TAX",
+     "_source": "적립 제외 대상 - 국세/지방세/공과금 납부건"
+    },
+    {
+     "exclusion_type": "CATEGORY",
+     "exclusion_value": "UTILITY",
+     "_source": "적립 제외 대상 - 국세/지방세/공과금 납부건"
+    },
+    {
+     "exclusion_type": "CATEGORY",
+     "exclusion_value": "RENT",
+     "_source": "적립 제외 대상 - 부 동산 임대료 납부건"
+    },
+    {
+     "exclusion_type": "CATEGORY",
+     "exclusion_value": "TUITION",
+     "_source": "적립 제외 대상 - 유 치원 납입금, 초/중/고등학교 학교납입금, 대학 등록금 납부건"
+    },
+    {
+     "exclusion_type": "CATEGORY",
+     "exclusion_value": "PUBLIC_TRANSPORT",
+     "_source": "적립 제외 대상 - 대 중교통(후불교통기능/모바일교통기능 결제건)"
+    },
+    {
+     "exclusion_type": "TRANSACTION_ATTR",
+     "exclusion_value": "POSTPAID_TRANSIT"
+    },
+    {
+     "exclusion_type": "CATEGORY",
+     "exclusion_value": "TAXI",
+     "_source": "적립 제외 대상 - 택시"
+    },
+    {
+     "exclusion_type": "CATEGORY",
+     "exclusion_value": "EXPRESS_BUS",
+     "_source": "적립 제외 대상 - 고속버스(차내 단말기 및 고속버스 앱 결제)"
+    },
+    {
+     "exclusion_type": "TRANSACTION_ATTR",
+     "exclusion_value": "UNAPPROVED",
+     "_source": "적립 제외 대상 - 고속도로 통행요금 납부건"
+    },
+    {
+     "exclusion_type": "TRANSACTION_ATTR",
+     "exclusion_value": "CARD_SERVICE_FEE",
+     "_source": "적립 제외 대상 - 문 자알림서비스, 스마트오토서비스 이용금액"
+    }
+   ],
+   "_source": {
+    "benefit_value": "적립률 1% / 그 외 가맹점"
+   },
+   "_needs_review": []
+  }
+ ],
+ "unmapped": [
+  {
+   "text": "프리미엄 영역 연간 최대 15만원 할인 기프트 / 여행 해외 - 해외 가맹점 / * 해 외는 해외겸용카드에 한해 제공",
+   "why": "해외 결제 혜택은 범위 밖(해외 가맹점 데이터가 들어오지 않아 계산 대상이 아니다)"
+  },
+  {
+   "text": "국내외 가맹점 1~3% 빅포인트 적립 / 3% 해외 - 해외 가맹점 / * 해외는 해외겸용카드에 한해 제공",
+   "why": "해외 결제 혜택은 범위 밖(해외 가맹점 데이터가 들어오지 않아 계산 대상이 아니다)"
+  },
+  {
+   "text": "공항 라운지 서비스 (The Lounge) / 국내외 공항 라운지 본인 및 동반인 이용 무료 / * 통 합 연 3회 제공(연 기준 : 발급월로부터 12개월) / * 본 인 및 동반인 이용건별 각 1회 이용으로 산정 / * 전 월 이용금액 50만원 이상 시 제공 / * 발 급월+1개월까지는 전월 이용금액 50만원 미만 시에도 제공",
+   "why": "결제 트랜잭션이 발생하지 않는 비결제 혜택이라 target_type을 정할 수 없다. ALL로 넣으면 모든 결제에 매칭되고 할인액 0원이 기록된다"
+  },
+  {
+   "text": "국제브랜드 서비스(해외겸용카드 전용) / * 이 상품은 Mastercard WORLD 등급의 국제브랜드 서비스 제공 / * 등 급별 서비스 내용은 Mastercard 홈페이지(Mastercard WORLD 등급 서비스 안내) 또는 삼성카드",
+   "why": "결제 트랜잭션이 없는 비결제 혜택이고 서비스 내용이 약관에 열거되지도 않아 금액으로 환산할 수 없다"
+  },
+  {
+   "text": "* 병 원은 오프라인 결제건에 한하며, 요양병원, 보건소는 제외",
+   "why": "요양병원·보건소는 브랜드가 아니라 기관 유형이라 MERCHANT 제외 대상으로 특정할 수 없다"
+  },
+  {
+   "text": "* 백 화점은 오프라인 결제건에 한하며, 쇼핑 외 결제건(상품권, 주차장 등), 임대매장은 제외 / * 백 화점/프리미엄 아울렛은 오프라인 결제건에 한하며, 쇼핑 외 결제건(상품권, 주차장 등), 임대매장은 제외",
+   "why": "쇼핑 외 결제건(주차장 등)은 같은 가맹점 안의 상품 단위 조건이라 범위 밖이다. 상품권은 card_exclusions의 GIFT_CARD로, 임대매장은 MERCHANT_LOCATION으로 반영했다"
+  },
+  {
+   "text": "* 면 세점은 국내 오프라인 매장 및 공식 홈페이지/앱(내국인 전용)을 통한 결제건에 한하며, 임대매장 및 해외 오프라인 매장은 제외",
+   "why": "면세점 임대매장은 MERCHANT_LOCATION 표준값(백화점·대형마트·쇼핑몰·역/공항 입점) 어디에도 대응하지 않는다"
+  },
+  {
+   "text": "* 음식점은 오프라인 결제건에 한함 / * 편 의점/커피전문점은 오프라인 결제건에 한하며 … (단, 스타벅스의 경우, 사이렌오더 결제건도 혜택 제공) / * 온라인패션몰/공연은 공식 홈페이지/앱을 통한 결제건에 한함 / * 항 공은 공식 홈페이지/앱을 통한 결제건에 한하며, 다른 여행사, 항공권 구매 대행 사이트를 통한 결제건은 제외 / * 호 텔/리조트는 국내 오프라인 결제건에 한함 / * 골 프는 오프라인 결제건에 한함",
+   "why": "오프라인·공식 홈페이지/앱 같은 결제 채널 조건은 범위 밖이다(채널을 담는 필드가 없다)"
+  },
+  {
+   "text": "* 자 체 가맹점번호로 승인 처리되는 일부 결제건(간편결제, 키오스크 등)은 할인 대상에서 제외 / * 자 체 가맹점번호로 승인 처리되는 일부 결제건(간편결제, 키오스크 등)은 적립 대상에서 제외",
+   "why": "일부 결제건이라 PAYMENT_TYPE=SIMPLE_PAY 제외로 옮기면 해당하지 않는 간편결제까지 함께 제외된다. 키오스크는 결제수단 표준값에도 없다"
+  },
+  {
+   "text": "* 해 외 온라인 거래 시 국내 가맹점으로 승인 처리되는 일부 결제건(국내 전자지급 결제대행사를 통한 결제 등)은 할인 대상에서 제외",
+   "why": "결제대행사를 거쳤는지 판정할 거래 속성이 없다"
+  },
+  {
+   "text": "- 삼 성카드와 구매캐시백 포인트 제공 계약을 체결한 일부 가맹점 의약품/유류 구매한도 대금결제건",
+   "why": "일부 가맹점이 열거되지 않아 MERCHANT 제외 대상으로 특정할 수 없다"
+  },
+  {
+   "text": "* 기 프트 이용 후 해당 카드를 이용정지 또는 해지하거나 삼성카드를 탈회하는 경우, 이용한 기프트 금액은 연회비 반환 금액에서 제외 / * 공 항 라운지 서비스 이용 후 해당 카드를 이용정지 또는 해지하거나 삼성카드를 탈회하는 경우, 이용한 금액은 연회비 반환 금액에서 제외",
+   "why": "연회비 반환 규정이라 혜택 계산 규칙이 아니다"
+  },
+  {
+   "text": "* 삼 성카드의 포인트는 빅포인트, 보너스포인트, 서비스포인트로 구분되며, 적립된 포인트는 합산하여 사용 가능(1 포인트=1원의 가치) / - 포인트가 적립된 결제건이 취소될 경우, 해당 포인트는 보유 포인트에서 자동 차감되며, 포인트 부족 시 카드 결제계좌에서 자동 출금 / - 혜 택이 적용된 결제건이 취소될 경우, 할인, 포인트 적립 등의 횟수 및 한도는 매출취소전표가 접수된 이후에 복원",
+   "why": "포인트 사용과 취소 복원 운영 규칙이라 혜택 규칙 스키마의 대상이 아니다"
+  },
+  {
+   "text": "* 카 드 이용실적이 반영되기까지, 실제 카드 이용일로부터 1~7일(영업일 기준) 정도 소요 / * 적립 혜택은 매출전표 접수 시점 순으로 적용 / * 할 인 혜택은 승인일 기준으로 적용",
+   "why": "혜택 적용 시점과 순서에 대한 운영 규칙이라 계산 규칙이 아니다"
+  },
+  {
+   "text": "* 삼 성카드의 다른 결제일할인 혜택과 중복 적용되지 않으며, 할인 혜택이 큰 금액만 적용",
+   "why": "한 결제에 혜택 하나만 고르는 엔진 규칙과 같아 별도 표현이 필요 없다"
+  }
+ ],
+ "_schema_gap": [
+  {
+   "text": "전년도 이용금액대별 통합 연 할인횟수 / 전년도 이용금액 기준 - 발 급월부터 12개월 동안 이용한 일시불 및 할부 이용금액 / 600만원 이상 2회 3,600만원 이상 3회",
+   "missing": "연 단위 실적 축(performance_tiers.period_type=YEAR)과 tier_limits의 횟수 한도 필드",
+   "why": "performance_period가 MONTH·QUARTER뿐이라 전년도 이용금액으로 구간을 판정할 수 없고, tier_limits에는 금액 한도(monthly/quarterly/yearly_limit)만 있어 구간별 횟수 2회·3회를 담을 칸이 없다. 하위 구간 값 2회를 yearly_count_limit에 적었으며 600만원 미만이면 기프트가 제공되지 않는다는 조건은 표현하지 못했다"
+  },
+  {
+   "text": "이용기간 - 발 급일로부터 12개월 * 카 드 최초 발급일을 기준으로 매년 혜택 제공 - 예 : 2025.11.1에 발급 받은 경우 발급 첫 해는 2025.11.1~2026.10.31 발급 2차년도는 2026.11.1~2027.10.31 * 이 용기간에 이용하지 않을 경우, 해당 연도 기프트는 자동 소멸되며, 다음해로 이월되지 않음",
+   "missing": "연 한도의 기산 시점(발급월 기준 연도)",
+   "why": "yearly_count_limit이 역년 기준으로 리셋된다고 전제한다. 발급월로부터 12개월 단위로 리셋되는 카드는 회원마다 초기화 시점이 달라야 하는데 그 기준을 담을 컬럼이 없다"
+  },
+  {
+   "text": "* 카 드 발급 첫 해 : 일시불 및 할부 누적 이용금액 50만원 이상 시 연 2회 혜택 제공 / * 발 급월+1개월까지는 전월 이용금액 50만원 미만 시에도 제공",
+   "missing": "카드 발급일과 발급 초기 실적 면제 규칙",
+   "why": "user_card에 발급일이 없어 발급 첫 해인지, 발급월+1개월 이내인지 판정할 수 없다"
+  },
+  {
+   "text": "* 국 내외 가맹점 1~3% 빅포인트 적립 혜택과 중복 적용 가능 / * 프리미엄 영역 연간 최대 15만원 할인 기프트 혜택과 중복 적용 가능",
+   "missing": "혜택 중복 적용 허용 플래그와 결제 건당 복수 혜택 기록",
+   "why": "한 결제에 혜택 하나만 적용하고 expense.applied_benefit_id도 단수라 5만원 할인과 1.5% 적립이 함께 지급되는 것을 표현할 수 없다. 지금 구조로는 둘 중 큰 쪽만 계산된다"
+  },
+  {
+   "text": "* 삼성카드 가맹점 업종 분류 기준에 의한 등록 가맹점에 한함 / * 삼성카드는 아래 항목을 공과금으로 분류함 - 전기요금, 사회보험료(건강보험/국민연금/고용보험/산재보험), 우편요금, 도시가스요금, 여권 발급비용, 상하수도요금, 과태료, 범칙금, 벌금, 국가/공공기관/공공단체(지방자치단체, 공공조합, 영조물, 공재단)에서 개설한 가맹점 이용금액",
+   "missing": "카드사별 업종 분류 매핑 테이블",
+   "why": "공과금(UTILITY) 같은 업종의 범위가 카드사마다 다른데 카테고리 표준이 하나뿐이라 카드사별 분류 차이를 표현할 수 없다"
+  },
+  {
+   "text": "* 전 년도 이용금액 산정은 승인일 기준으로 적용. 다만, 해외 결제건 및 무승인 결제건(예 : 대중교통, 이동통신 등 정기결제건 등)은 매출전표 접수일 기준으로 적용 / * 전 월 이용금액 산정은 승인일 기준으로 적용. 다만, 해외 결제건 및 무승인 결제건(예 : 대중교통, 이동통신 등 정기결제건 등)은 매출전표 접수일 기준으로 적용",
+   "missing": "실적 산정 기준일(승인일 / 매출전표 접수일) 구분",
+   "why": "거래 종류에 따라 실적에 잡히는 날짜가 달라지는 규칙을 담을 컬럼이 없다"
+  }
+ ]
+}

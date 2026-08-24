@@ -1,0 +1,708 @@
+{
+ "card": {
+  "card_name": "KB국민 직장인보너스 체크카드",
+  "card_type": "CHECK",
+  "annual_fee": null,
+  "annual_fees": [],
+  "_source": {},
+  "_needs_review": [
+   "annual_fee",
+   "annual_fees"
+  ]
+ },
+ "card_exclusions": [],
+ "performance_tiers": [
+  {
+   "period_type": "MONTH",
+   "min_performance_amount": 0,
+   "shared_monthly_limit": 0,
+   "_source": "전월이용실적 / 월간통합할인한도 표의 최저 구간이 '20만원 이상~ 최대 5천원'이라 20만원 미만 구간에는 통합할인한도가 없다"
+  },
+  {
+   "period_type": "MONTH",
+   "min_performance_amount": 200000,
+   "shared_monthly_limit": 5000,
+   "_source": "| 20만원 이상~ | 최대 5천원 |"
+  },
+  {
+   "period_type": "MONTH",
+   "min_performance_amount": 300000,
+   "shared_monthly_limit": 10000,
+   "_source": "| 30만원 이상~ | 최대 1만원 |"
+  },
+  {
+   "period_type": "MONTH",
+   "min_performance_amount": 500000,
+   "shared_monthly_limit": 20000,
+   "_source": "| 50만원 이상~ | 최대2만원 |"
+  },
+  {
+   "period_type": "MONTH",
+   "min_performance_amount": 1000000,
+   "shared_monthly_limit": 50000,
+   "_source": "| 100만원 이상~ | 최대5만원 |"
+  }
+ ],
+ "performance_exclusions": [
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "POSTPAID_TRANSIT",
+   "_source": "∙체크카드 전월 이용실적 전월1일~말일까지 “KB국민 직장인보너스 체크카드”로 이용한 승인금액 (이용일 기준)으로, 후불교통 및 해외이용금액은 제외됩니다."
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "OVERSEAS",
+   "_source": "같은 문장의 '해외이용금액은 제외됩니다'"
+  }
+ ],
+ "benefits": [
+  {
+   "benefit_name": "보험료 2천원 환급할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "FIXED",
+   "benefit_value": 2000,
+   "step_count": null,
+   "apply_timing": "CASHBACK",
+   "target_type": "CATEGORY",
+   "target_category_code": "INSURANCE",
+   "target_merchant_name": null,
+   "targets": null,
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": 100000,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": 1,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": null,
+   "count_group_code": null,
+   "use_shared_limit": "Y",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "보험료는 신용카드 소득공제 비대상 항목이라고 약관이 덧붙인다. 환급할인은 이용전표 매입처리가 완료된 후 할인금액을 카드 출금계좌로 환급하는 방식이다.",
+   "tier_limits": [
+    {
+     "min_performance_amount": 200000,
+     "monthly_limit": 0,
+     "quarterly_limit": null,
+     "yearly_limit": null,
+     "benefit_value": null,
+     "_source": "∙전월 이용실적 30만원 이상 시 제공 — 통합할인한도 구간표의 20만원 구간에서는 이 혜택이 제공되지 않으므로 0(혜택 없음)으로 적었다"
+    }
+   ],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "보험료 2천원 환급할인",
+    "monthly_count_limit": "∙건당 이용금액 10만원 이상 시 할인(월 1회)",
+    "require_performance": "∙전월 이용실적 30만원 이상 시 제공"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "이동통신요금 자동이체 1천원 환급할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "FIXED",
+   "benefit_value": 1000,
+   "step_count": null,
+   "apply_timing": "CASHBACK",
+   "target_type": "CATEGORY",
+   "target_category_code": "TELECOM",
+   "target_merchant_name": null,
+   "targets": null,
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": "AUTO_TRANSFER",
+   "min_txn_amount": 50000,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": 1,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": null,
+   "count_group_code": null,
+   "use_shared_limit": "Y",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "해당카드로 자동이체 등록 시에만 할인된다. 유무선 통합 청구금액을 자동이체하는 경우는 할인에서 제외되나 거래 데이터로 구분할 수 없어 조건으로 적지 않았다. 이동통신요금은 신용카드 소득공제 비대상 항목이라고 약관이 덧붙인다.",
+   "tier_limits": [
+    {
+     "min_performance_amount": 200000,
+     "monthly_limit": 0,
+     "quarterly_limit": null,
+     "yearly_limit": null,
+     "benefit_value": null,
+     "_source": "∙전월 이용실적 30만원 이상 시 제공 — 통합할인한도 구간표의 20만원 구간에서는 이 혜택이 제공되지 않으므로 0(혜택 없음)으로 적었다"
+    }
+   ],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "이동통신요금 자동이체 시 1천원 환급할인",
+    "monthly_count_limit": "∙건당 이용금액 5만원 이상 시 할인(월 1회)",
+    "require_performance": "∙전월 이용실적 30만원 이상 시 제공"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "대중교통 5% 청구할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 5,
+   "step_count": null,
+   "apply_timing": "BILLED",
+   "target_type": "CATEGORY",
+   "target_category_code": "PUBLIC_TRANSPORT",
+   "target_merchant_name": null,
+   "targets": null,
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": 1000,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": null,
+   "count_group_code": null,
+   "use_shared_limit": "Y",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "버스·지하철이 대상이며 후불교통(시내버스, 지하철)도 5% 청구할인 대상이다. 실제 이용일이 아니라 이메일 이용내역서상 기재된 이용일 기준으로 할인이 적용되고, KB국민카드 가맹점 업종 분류기준에 따라 제공된다.",
+   "tier_limits": [
+    {
+     "min_performance_amount": 200000,
+     "monthly_limit": 0,
+     "quarterly_limit": null,
+     "yearly_limit": null,
+     "benefit_value": null,
+     "_source": "∙전월 이용실적 30만원 이상 시 제공 — 통합할인한도 구간표의 20만원 구간에서는 이 혜택이 제공되지 않으므로 0(혜택 없음)으로 적었다"
+    }
+   ],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "대중교통 5% 청구할인",
+    "monthly_limit": "∙버스/지하철 월 이용금액 2만원까지 할인 — 약관의 한도가 할인금액이 아니라 대상 이용금액이라 할인율 5%를 곱해 월 할인금액 1,000원으로 적었다",
+    "require_performance": "∙전월 이용실적 30만원 이상 시 제공"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "고속·시외버스 5% 환급할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 5,
+   "step_count": null,
+   "apply_timing": "CASHBACK",
+   "target_type": "CATEGORY",
+   "target_category_code": "EXPRESS_BUS",
+   "target_merchant_name": null,
+   "targets": null,
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": null,
+   "count_group_code": null,
+   "use_shared_limit": "Y",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "KB국민카드 가맹점 업종 분류기준에 따라 할인이 제공된다. 버스·지하철에 걸린 '월 이용금액 2만원까지'는 별도 항목의 조건이라 여기에는 적용하지 않았다.",
+   "tier_limits": [
+    {
+     "min_performance_amount": 200000,
+     "monthly_limit": 0,
+     "quarterly_limit": null,
+     "yearly_limit": null,
+     "benefit_value": null,
+     "_source": "∙전월 이용실적 30만원 이상 시 제공 — 통합할인한도 구간표의 20만원 구간에서는 이 혜택이 제공되지 않으므로 0(혜택 없음)으로 적었다"
+    }
+   ],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "∙고속/시외버스 5% 환급할인",
+    "require_performance": "대중교통 항목의 ∙전월 이용실적 30만원 이상 시 제공"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "스피드메이트 엔진오일 교환 2만원 현장할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "FIXED",
+   "benefit_value": 20000,
+   "step_count": null,
+   "apply_timing": "IMMEDIATE",
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": "스피드메이트",
+   "targets": null,
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": 1,
+   "limit_group_code": null,
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "ZIC-A Bulk 기준이며 1.4톤 이상 차량과 수입차는 할인 제외, 타 할인카드 및 쿠폰과 중복 사용 불가. 이 서비스는 월간 통합할인한도 예외 적용 대상이다.",
+   "tier_limits": [
+    {
+     "min_performance_amount": 200000,
+     "monthly_limit": 0,
+     "quarterly_limit": null,
+     "yearly_limit": null,
+     "benefit_value": null,
+     "_source": "∙전월 이용실적 30만원 이상 시 제공 — 통합할인한도 구간표의 20만원 구간에서는 이 혜택이 제공되지 않으므로 0(혜택 없음)으로 적었다"
+    }
+   ],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "∙엔진오일 교환 시 2만원 현장 할인(연 1회)",
+    "yearly_count_limit": "∙엔진오일 교환 시 2만원 현장 할인(연 1회)",
+    "require_performance": "- 전월 이용실적 30만원 이상 시 제공",
+    "limit_group_code": "스피드메이트 엔진오일교환 및 정비할인, SK렌터카 할인은 월간 통합할인한도 예외 적용 서비스입니다. — 통합한도를 쓰지 않으므로 use_shared_limit이 N이다"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "스피드메이트 무료 안전점검 서비스",
+   "benefit_kind": "GIFT",
+   "calc_method": null,
+   "benefit_value": null,
+   "step_count": null,
+   "apply_timing": null,
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": "스피드메이트",
+   "targets": null,
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": null,
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "무료 제공 서비스라 금액으로 환산할 수 없다. 카드 상세 화면에 정보로만 표시한다. 이 서비스는 월간 통합할인한도 예외 적용 대상이다.",
+   "tier_limits": [
+    {
+     "min_performance_amount": 200000,
+     "monthly_limit": 0,
+     "quarterly_limit": null,
+     "yearly_limit": null,
+     "benefit_value": null,
+     "_source": "∙전월 이용실적 30만원 이상 시 제공 — 통합할인한도 구간표의 20만원 구간에서는 이 혜택이 제공되지 않으므로 0(혜택 없음)으로 적었다"
+    }
+   ],
+   "exclusions": [],
+   "_source": {
+    "require_performance": "- 전월 이용실적 30만원 이상 시 제공"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "SK렌터카 할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": null,
+   "benefit_value": null,
+   "step_count": null,
+   "apply_timing": null,
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": "SK렌터카",
+   "targets": null,
+   "require_performance": "N",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": 2,
+   "limit_group_code": null,
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "상품설명서가 '자세한 내용은 SK렌터카 고객센터(1599-9111), 홈페이지(www.skcarrental.com)를 참조'라고만 적어 할인율·할인금액·할인 방식이 원문에 없다. 지어내지 않고 비워 두었다. 전월 이용실적 조건도 이 항목에는 적혀 있지 않다. 월간 통합할인한도 예외 적용 서비스다.",
+   "tier_limits": [],
+   "exclusions": [],
+   "_source": {
+    "yearly_count_limit": "SK렌터카 할인(연 2회)",
+    "limit_group_code": "스피드메이트 엔진오일교환 및 정비할인, SK렌터카 할인은 월간 통합할인한도 예외 적용 서비스입니다."
+   },
+   "_needs_review": [
+    "calc_method",
+    "benefit_value",
+    "apply_timing",
+    "require_performance"
+   ]
+  },
+  {
+   "benefit_name": "GS칼텍스 리터당 환급할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": null,
+   "benefit_value": null,
+   "step_count": null,
+   "apply_timing": "CASHBACK",
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": "GS칼텍스",
+   "targets": null,
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": null,
+   "max_eligible_amount": 100000,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": null,
+   "count_group_code": null,
+   "use_shared_limit": "Y",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "리터당 주중 50원, 주말 60원 환급할인이다. 리터당 정액은 정률(RATE)로도 정액(FIXED)으로도 표현되지 않고 결제금액만으로는 주유 리터 수를 알 수 없어 calc_method와 benefit_value를 비워 두었다. GS칼텍스 본사 휘발유 고시가 기준이며 경유·등유는 휘발유가 기준으로 환산해 적용한다. GS칼텍스 비제휴주유소와 LPG는 제외된다.",
+   "tier_limits": [],
+   "exclusions": [],
+   "_source": {
+    "max_eligible_amount": "∙건당 이용금액 10만원/월 이용금액 30만원까지 할인 — 건당 10만원만 담았고 '월 이용금액 30만원까지'는 담을 필드가 없다",
+    "require_performance": "∙전월 이용실적 20만원 이상 시 제공"
+   },
+   "_needs_review": [
+    "calc_method",
+    "benefit_value"
+   ]
+  },
+  {
+   "benefit_name": "에버랜드 50% 환급할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 50,
+   "step_count": null,
+   "apply_timing": "CASHBACK",
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": "에버랜드",
+   "targets": null,
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": 30000,
+   "max_eligible_amount": 50000,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": null,
+   "count_group_code": null,
+   "use_shared_limit": "Y",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "현장티켓 발매에 한한다.",
+   "tier_limits": [],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "에버랜드 50% 환급할인",
+    "max_eligible_amount": "∙건당 이용금액 3만원~5만원까지 할인 — 하한 3만원은 min_txn_amount, 상한 5만원은 건당 대상금액 상한",
+    "require_performance": "∙전월 이용실적 20만원 이상 시 제공"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "아웃백 10% 환급할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 10,
+   "step_count": null,
+   "apply_timing": "CASHBACK",
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": "아웃백",
+   "targets": null,
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": 30000,
+   "max_eligible_amount": 100000,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": null,
+   "count_group_code": null,
+   "use_shared_limit": "Y",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "백화점 및 대형할인점 입점점포는 제외된다.",
+   "tier_limits": [],
+   "exclusions": [
+    {
+     "exclusion_type": "MERCHANT_LOCATION",
+     "exclusion_value": "IN_DEPARTMENT_STORE",
+     "_source": "∙백화점 및 대형할인점 입점점포 제외"
+    },
+    {
+     "exclusion_type": "MERCHANT_LOCATION",
+     "exclusion_value": "IN_LARGE_MART",
+     "_source": "∙백화점 및 대형할인점 입점점포 제외"
+    }
+   ],
+   "_source": {
+    "benefit_value": "아웃백 10% 환급할인",
+    "max_eligible_amount": "∙건당 이용금액 3만원~10만원까지 할인",
+    "require_performance": "∙전월 이용실적 20만원 이상 시 제공"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "백화점 5% 환급할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 5,
+   "step_count": null,
+   "apply_timing": "CASHBACK",
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": null,
+   "targets": [
+    "롯데백화점",
+    "신세계백화점",
+    "현대백화점"
+   ],
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": 50000,
+   "max_eligible_amount": 100000,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": "SALARYMAN_BONUS_DEPT",
+   "count_group_code": null,
+   "use_shared_limit": "Y",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "약관이 롯데·신세계·현대백화점 세 곳을 열거한다.",
+   "tier_limits": [
+    {
+     "min_performance_amount": 200000,
+     "monthly_limit": 0,
+     "quarterly_limit": null,
+     "yearly_limit": null,
+     "benefit_value": null,
+     "_source": "∙전월 이용실적 50만원 이상 시 제공 — 20만원 구간에서는 제공되지 않으므로 0(혜택 없음)"
+    },
+    {
+     "min_performance_amount": 300000,
+     "monthly_limit": 0,
+     "quarterly_limit": null,
+     "yearly_limit": null,
+     "benefit_value": null,
+     "_source": "∙전월 이용실적 50만원 이상 시 제공 — 30만원 구간에서도 제공되지 않으므로 0(혜택 없음)"
+    }
+   ],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "롯데,신세계, 현대백화점 5% 환급할인",
+    "max_eligible_amount": "∙건당 이용금액 5만원~10만원까지 할인",
+    "require_performance": "∙전월 이용실적 50만원 이상 시 제공",
+    "limit_group_code": "약관이 세 백화점을 한 줄로 묶어 조건을 한 번만 제시하므로 세 대상이 한도를 나눠 쓴다"
+   },
+   "_needs_review": []
+  }
+ ],
+ "unmapped": [
+  {
+   "text": "국세/지방세 7천원 환급할인 ∙건당 이용금액 10만원 이상 시 할인(월 1회) ∙전월 이용실적 30만원 이상 시 제공",
+   "why": "표준 카테고리에 국세·지방세에 해당하는 코드가 없다. TAX는 실적·할인 제외를 적는 TRANSACTION_ATTR 값이라 혜택 대상으로 쓸 수 없고, UTILITY(공과금)로 넣으면 약관이 말하지 않은 전기·수도 결제까지 할인 대상이 된다."
+  },
+  {
+   "text": "- 정비공임 10% 현장 할인/ 무료 안전점검 서비스",
+   "why": "정비공임 10%는 결제금액 전체가 아니라 결제 안의 공임 항목에만 붙는 상품 단위 조건이다. 결제금액에 10%를 곱하면 부품비까지 할인되어 실제보다 크게 계산된다. 무료 안전점검은 GIFT 행으로 남겼다."
+  },
+  {
+   "text": "GS칼텍스 리터당 주중 50원, 주말 60원 환급할인",
+   "why": "주중과 주말로 할인 단가가 갈리는 요일 조건은 지금 스키마가 담지 않는다. 혜택 행은 만들되 요일별로 갈리는 값은 description에만 남겼다."
+  },
+  {
+   "text": "∙유무선 통합 청구금액 자동이체 시에는 할인 제외",
+   "why": "청구서가 유선과 무선을 합친 통합 청구인지 여부가 거래 데이터에 없다. exclusion_type 어디에도 해당하는 축이 없다."
+  },
+  {
+   "text": "∙GS칼텍스 비제휴주유소, LPG 제외",
+   "why": "비제휴주유소는 같은 브랜드 안의 가맹점 구분이라 MERCHANT_LOCATION의 표준값(백화점·대형마트·쇼핑몰·교통거점 입점)에 해당하지 않고, LPG 제외는 결제 안의 상품 종류 조건이다."
+  },
+  {
+   "text": "∙현장티켓 발매에 한함",
+   "why": "현장 발매인지 온라인 예매인지는 채널 조건이라 지금 스키마가 담지 않는다."
+  },
+  {
+   "text": "- ZIC-A Bulk 기준/ 1.4톤 이상, 수입차 할인 제외 / - 타 할인카드 및 쿠폰 중복사용 불가",
+   "why": "엔진오일 제품 종류와 차량 종류는 상품 단위 조건이고, 타 할인카드·쿠폰 중복 여부는 결제 데이터에 없다."
+  },
+  {
+   "text": "∙통신사 카드 할인 또는 사이즈 업그레이드 서비스 적용 시 미적립 될 수 있음",
+   "why": "다른 제휴 할인의 동시 적용 여부는 거래 데이터에 없고, '될 수 있음'이라 확정 조건도 아니다."
+  },
+  {
+   "text": "∙포인트리 KB국민 직장인보너스 체크카드는 당사에서 제공해 드리는 포인트리가 적립되지 않습니다. (단, KB국민카드 스타샵 가맹점에서 제공하는 포인트리는 적립)",
+   "why": "혜택이 아니라 혜택이 없다는 서술이다. 카드사 기본 적립을 끄는 규칙을 담을 자리가 없고, 스타샵은 가맹점 마스터에도 없다."
+  },
+  {
+   "text": "소액신용결제서비스 ∙ 소액신용결제 서비스를 신청하시면 신청고객의 예금평잔 등 소액신용한도의 결제능력을 평가할 수 있는 기준에 따라 최고 30만원 이내에서 소액신용한도가 부여됩니다.",
+   "why": "체크카드의 결제 방식(하이브리드) 조항이라 혜택이 아니다."
+  },
+  {
+   "text": "*체크카드 국내 직불 이용한도 기본부여한도 1회 600만원 / 1일 600만원 / 월간 2,000만원, 최고한도 1회 2,000만원 / 1일 2,000만원 / 월간 5,000만원, 특별승인한도 1억원",
+   "why": "결제 가능 금액 한도이지 혜택 한도가 아니다. daily_limit·monthly_limit에 넣으면 할인 한도로 잘못 계산된다."
+  },
+  {
+   "text": "∙후불 교통 기능 탑재 버스, 지하철 등 교통이용이 가능하고, 매월 체크카드 결제계좌에서 … 미납금액에 대해서는 연체료가 부과됩니다.",
+   "why": "체크카드의 후불교통 기능 설명이라 혜택이 아니다."
+  },
+  {
+   "text": "체크카드 해외 이용 시 유의사항 … 국제브랜드사가 부과하는 국제브랜드 수수료(VISA 1%, Master 1%)와 KB국민카드가 부과하는 해외서비스 수수료(0.25%)를 포함하여 원화로 청구됩니다.",
+   "why": "해외 결제 수수료 안내이지 혜택이 아니다. 해외 결제는 추천 계산 대상에서도 빠진다."
+  },
+  {
+   "text": "[부가서비스 변경 안내] … 부가서비스를 축소·변경하는 경우로서 다른 제휴업체를 통해 동종의 유사한 부가서비스 제공이 불가한 경우 … / [연체이자율] 회원별/이용상품별 정상이자율 +3%p, 최고 연 20%",
+   "why": "약관 고지 사항이라 혜택 규칙이 아니다."
+  },
+  {
+   "text": "*발급 가능 브랜드 : 국내전용(로컬), 국내외겸용(VISA, Master)",
+   "why": "브랜드는 annual_fees의 축이지만 상품설명서에 연회비 금액이 한 줄도 없어 행을 만들 수 없다. 금액 없이 브랜드만 담을 자리가 없다."
+  },
+  {
+   "text": "∙ 할인 한도 적용기간 : 매월1일~말일 ∙ 할인되는 전표가 매입되는 순서대로 월간 통합할인한도 내에서 차감됩니다. ∙ 잔여 통합 할인 한도는 다음 달로 이월되지 않습니다.",
+   "why": "한도 집계 주기와 차감 순서·이월 여부 규약이라 혜택 행이 아니라 엔진 동작 규칙이다."
+  },
+  {
+   "text": "∙할인 서비스 적용 할인/적립이 적용된 매출 취소 시, 취소전표가 실시간 매입되지 않아 할인/적립 한도의 복원과 이에 따른 할인/적립이 즉시 적용되지 않을 수 있습니다.",
+   "why": "취소 시 한도 복원 시점 규정이라 담을 필드가 없다."
+  },
+  {
+   "text": "해피포인트 5% 현장적립",
+   "why": "해피포인트는 브랜드가 아니라 제휴 적립 가맹점망이다. 실제 결제는 파리바게뜨·배스킨라빈스 같은 개별 브랜드로 들어와 이 이름으로는 매칭되지 않는다."
+  }
+ ],
+ "_schema_gap": [
+  {
+   "text": "2. KB국민 직장인보너스 체크카드는 최초 발급 시 사용등록일로부터 60일간은 전월 이용실적이 없어도 월간통합할인한도 5천원 이내에서 국세/지방세, GS칼텍스, 에버랜드, 아웃백에서 할인 받으실 수 있습니다.",
+   "missing": "카드 사용등록일과 발급 초기 실적 면제 기간(60일), 면제 기간에 적용할 통합한도와 대상 혜택 목록",
+   "why": "user_card에 사용등록일이 없어 60일 안인지 판정할 수 없다. 게다가 면제 대상이 카드 전체가 아니라 네 혜택뿐이라 카드 단위 플래그로도 적을 수 없다. 지금 스키마로는 신규 회원이 0원 구간으로 떨어져 이 혜택들이 계산되지 않는다."
+  },
+  {
+   "text": "국세/지방세 7천원 환급할인",
+   "missing": "국세·지방세를 가리키는 표준 카테고리 코드(혜택 대상으로 쓸 수 있는 축)",
+   "why": "TAX는 실적·할인 제외를 적는 TRANSACTION_ATTR 값이라 혜택의 target으로 쓸 수 없다. 카테고리 40종에 세금 납부가 없어 이 카드의 대표 혜택 하나가 통째로 빠진다."
+  },
+  {
+   "text": "∙건당 이용금액 10만원/월 이용금액 30만원까지 할인",
+   "missing": "월 단위 대상 승인금액 한도 컬럼(예: monthly_eligible_amount)",
+   "why": "max_eligible_amount는 건당 대상금액 상한이고 monthly_limit은 할인금액 상한이다. '월 승인금액 30만원까지만 할인 대상'은 축이 달라 어느 것으로도 표현되지 않는다. 이 혜택은 리터당 정액이라 할인율을 곱해 환산할 수도 없다."
+  },
+  {
+   "text": "GS칼텍스 리터당 주중 50원, 주말 60원 환급할인",
+   "missing": "단위당 계산을 표현할 계산방식(예: calc_method='PER_UNIT' + 단위 컬럼)",
+   "why": "calc_method가 RATE·FIXED·COUNT_STEP뿐이라 '리터당 50원'을 담을 수 없고, 결제금액만으로는 주유 리터 수를 알 수 없어 할인액이 계산되지 않는다."
+  },
+  {
+   "text": "∙버스/지하철 월 이용금액 2만원까지 할인",
+   "missing": "할인금액이 아니라 '혜택 대상 이용금액'을 기준으로 하는 월 한도 필드",
+   "why": "이 카드는 대중교통 한도를 할인금액이 아니라 이용금액으로 적는다. 정률 혜택이라 5%를 곱해 monthly_limit 1,000원으로 환산해 넣었지만, 시드 숫자가 약관 숫자와 달라 대조가 어렵다."
+  },
+  {
+   "text": "해피포인트 5% 현장적립 ∙해피포인트 가맹점에서 1,000원 이상 이용 시 적립",
+   "missing": "여러 브랜드가 속한 제휴 적립망을 가리키는 대상 유형(가맹점 하나도, 업종 하나도 아니다)",
+   "why": "target_type이 CATEGORY·MERCHANT·ALL뿐이라 '해피포인트 가맹점'이라는 제휴망을 지정할 축이 없다. 약관 표기 그대로 MERCHANT 대상으로 적었지만 결제는 파리바게뜨·배스킨라빈스처럼 개별 브랜드명으로 들어오므로 이 이름으로는 매칭되지 않는다. 브랜드로 풀어 적으려면 약관에 없는 가맹점 목록을 만들어야 하고, 카테고리로 뭉개면 제휴하지 않은 매장까지 대상이 된다."
+  }
+ ]
+}

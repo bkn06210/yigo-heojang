@@ -1,7 +1,14 @@
-# 로컬 통합 실행용: Tomcat 9 + MySQL 8.0
-# 선행: WAR를 먼저 빌드해야 한다  →  ./mvnw package  (target/ROOT.war 생성)
-# 주의: docker로 실행할 땐 db.properties의 host를 localhost → mysql(아래 서비스명)로
-#       바꾼 뒤 WAR를 다시 빌드한다. (db.properties가 WAR 안에 포함되기 때문)
+# 로컬 통합 실행용: Tomcat 9 + MySQL 8.0 + 챗봇(Python)
+# 선행: WAR를 먼저 빌드해야 한다  →  ./mvnw clean package  (target/ROOT.war 생성)
+#
+# 주의: docker로 실행할 땐 db.properties의 주소를 컨테이너 이름으로 바꾼 뒤 WAR를 다시 빌드한다
+#       (db.properties가 WAR 안에 포함되기 때문).
+#         db.url            localhost:3306  → mysql:3306
+#         chatbot.base-url  127.0.0.1:8000  → http://chatbot:8000
+#       컨테이너 안에서 localhost는 "그 컨테이너 자신"이라 옆 컨테이너에 닿지 않는다.
+#
+# 브랜치를 바꾼 뒤에는 clean 부터 한다. target/에 남은 이전 브랜치의 매퍼 XML이
+# 없는 클래스를 가리키면 Spring 기동이 통째로 실패한다(모든 요청 404).
 
 services:
   mysql:
@@ -26,6 +33,26 @@ services:
     volumes:
       # 빌드된 WAR를 ROOT로 배포 → http://localhost:8080/api/health
       - ./target/ROOT.war:/usr/local/tomcat/webapps/ROOT.war
+
+  # 챗봇 서버. 가져다 쓸 이미지가 없어 ai-server/Dockerfile 로 직접 만든다.
+  #
+  # ports 를 쓰지 않는 것이 핵심이다. 이 서버는 토큰을 검증하지 않는다 —
+  # Spring 이 이미 검증한 요청만 온다는 전제 위에 서 있다. 밖에서 직접 부를 수 있으면
+  # 그 전제가 깨지므로, 같은 네트워크의 톰캣만 http://chatbot:8000 으로 닿게 둔다.
+  chatbot:
+    build: ../ai-server
+    container_name: yigo-chatbot
+    depends_on:
+      - mysql
+    # API 키는 각자 것을 쓴다. 저장소에 올라가지 않는 파일이다.
+    env_file:
+      - ../ai-server/.env
+    # 주소는 컨테이너 이름으로 덮어쓴다. .env 의 값(localhost)은 컨테이너 밖에서 돌릴 때의 것이라
+    # 여기서 이긴다 — 환경변수가 이미 있으면 .env 가 덮어쓰지 않는다.
+    environment:
+      DB_HOST: mysql
+      BACKEND_BASE_URL: http://tomcat:8080
+      CHATBOT_HOST: 0.0.0.0
 
 volumes:
   mysql-data:

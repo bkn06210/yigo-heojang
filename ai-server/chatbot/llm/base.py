@@ -25,10 +25,13 @@ class IntentName:
     BENEFIT_SUM = "BENEFIT_SUM"  # 이번 달 얼마나 할인받았나
     CARD_STATUS = "CARD_STATUS"  # 실적 달성률·남은 한도
     RECOMMEND_CARD = "RECOMMEND_CARD"  # 여기서 결제하면 어느 카드가 유리한가
+    # 위와 다르다. 위는 "이번 결제에 어느 카드를 쓸까"라 보유 카드로 한 건을 계산하고,
+    # 이쪽은 "어떤 카드를 발급할까"라 미보유 카드까지 놓고 한 달치를 계산한다.
+    RECOMMEND_NEW_CARD = "RECOMMEND_NEW_CARD"  # 내 소비에 맞는 카드를 발급할까
     TERM_QA = "TERM_QA"  # 약관 질문 (청구 시점·분실 처리 등)
     UNKNOWN = "UNKNOWN"
 
-    ALL = (BENEFIT_SUM, CARD_STATUS, RECOMMEND_CARD, TERM_QA, UNKNOWN)
+    ALL = (BENEFIT_SUM, CARD_STATUS, RECOMMEND_CARD, RECOMMEND_NEW_CARD, TERM_QA, UNKNOWN)
 
 
 @dataclass(frozen=True)
@@ -46,6 +49,10 @@ class Intent:
     card_text: Optional[str] = None
     period_text: Optional[str] = None
     amount: Optional[int] = None
+    # 약관에서 찾을 때 쓸 검색어. 사람이 쓰는 말과 약관에 적힌 말이 달라서 필요하다.
+    # "잃어버렸어요"로는 "분실" 조항이 걸리지 않는다(실측: 일치 0건).
+    # 뜻이 통하는 말끼리 이어주는 일이라 엔티티 표현 추출과 성격이 같다 — 판단이 아니다.
+    term_query: Optional[str] = None
     # 분류 근거로 삼은 표현. 되물을 때 "무엇을 못 알아들었는지" 보여주는 데 쓴다.
     raw: Dict[str, str] = field(default_factory=dict)
 

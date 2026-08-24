@@ -168,6 +168,10 @@ INSERT INTO member_term_agreement (
 -- ============================================================
 
 -- 대분류
+
+-- PR #63 이 넓힌 표준 업종. 카드 50장 시드는 쓰지 않기로 했지만 업종만 받는다 —
+-- 챗봇 분류 프롬프트가 이 목록을 그대로 쓰고 있어, 없으면 질문을 업종으로 못 옮긴다.
+-- id·표시순서가 기존과 겹치지 않아 카드·가맹점 시드는 건드리지 않는다.
 INSERT INTO category (
     category_id, category_code, category_name,
     parent_category_id, display_order
@@ -185,7 +189,8 @@ INSERT INTO category VALUES
                          (101, 'RESTAURANT', '음식점', 1, 1),
                          (102, 'CAFE', '카페', 1, 2),
                          (103, 'DELIVERY', '배달앱', 1, 3),
-                         (104, 'FAST_FOOD', '패스트푸드', 1, 4);
+                         (104, 'FAST_FOOD', '패스트푸드', 1, 4),
+                         (105, 'BAKERY_DESSERT', '제과아이스크림', 1, 5);
 
 -- 쇼핑
 INSERT INTO category VALUES
@@ -204,7 +209,9 @@ INSERT INTO category VALUES
                          (303, 'FUEL', '주유', 3, 3),
                          (304, 'PARKING_MAINTENANCE', '주차정비', 3, 4),
                          (305, 'RAILWAY', '철도', 3, 5),
-                         (306, 'EXPRESS_BUS', '고속시외버스', 3, 6);
+                         (306, 'EXPRESS_BUS', '고속시외버스', 3, 6),
+                         (307, 'PARKING', '주차장', 3, 7),
+                         (308, 'EV_CHARGING', '전기차충전', 3, 8);
 
 -- 생활
 INSERT INTO category VALUES
@@ -221,7 +228,9 @@ INSERT INTO category VALUES
                          (501, 'MOVIE', '영화', 5, 1),
                          (502, 'SUBSCRIPTION_STREAMING', '구독스트리밍', 5, 2),
                          (503, 'SPORTS_LEISURE', '스포츠레저', 5, 3),
-                         (504, 'GOLF', '골프', 5, 4);
+                         (504, 'GOLF', '골프', 5, 4),
+                         (505, 'AMUSEMENT_VENUE', '노래방PC방', 5, 5),
+                         (506, 'LODGING', '숙박', 5, 6);
 
 -- 의료
 INSERT INTO category VALUES
@@ -232,7 +241,8 @@ INSERT INTO category VALUES
 -- 교육
 INSERT INTO category VALUES
                          (701, 'ACADEMY', '학원', 7, 1),
-                         (702, 'TUITION', '학교납입금', 7, 2);
+                         (702, 'TUITION', '학교납입금', 7, 2),
+                         (703, 'LEARNING_SERVICE', '학습지', 7, 3);
 
 -- ============================================================
 -- 12. 포인트

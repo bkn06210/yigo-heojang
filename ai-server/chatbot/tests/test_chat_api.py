@@ -10,9 +10,12 @@ LLM 은 stub 이라 호출도 비용도 없고, 엔진은 가짜로 갈아끼워
 import pytest
 from fastapi.testclient import TestClient
 
-from chatbot import main
+from chatbot import main, term_index
 from chatbot.db import connection
 from chatbot.llm import IntentName
+from embedding import create_embedding_client, pack_vector
+
+embedding_client = create_embedding_client()
 
 client = TestClient(main.app)
 
@@ -26,6 +29,94 @@ def _db_available() -> bool:
 
 
 needs_db = pytest.mark.skipif(not _db_available(), reason="MySQL 연결 불가")
+
+
+@pytest.fixture
+def 약관_조각():
+    """검색이 걸릴 조문을 넣어 두고 끝나면 지운다.
+
+    약관 원문은 카드사 저작물이라 저장소에 두지 않는다. 그래서 시드만 적용한 DB 에는
+    조문이 하나도 없고, 원문이 있다고 가정한 테스트는 빈 결과를 받는다. 못 찾는 것과
+    "무관한 것은 안 준다"가 같은 모양이 되어 통과 여부가 뒤집힌다.
+
+    확인하려는 것은 검색 규칙(유사도 하한, 카드사별 한 건)이지 원문 자체가 아니므로,
+    조문을 직접 넣어 규칙만 본다.
+
+    임베딩까지 만들어 넣는다. 검색이 임베딩으로 도는데 값이 없으면 넣은 조문이 색인에
+    아예 안 잡혀, 규칙을 확인하려던 테스트가 조문이 없는 채로 통과해 버린다.
+    개발용 설정(stub)이면 호출도 비용도 없다.
+    """
+    documents = [
+        ("삼성", "개인회원 표준약관"),
+        ("신한", "개인회원 표준약관"),
+        ("KB국민", "개인회원 표준약관"),
+    ]
+    lost_card = (
+        "회원은 카드를 분실하거나 도난당한 경우 지체 없이 카드사에 분실 도난 신고를 "
+        "하여야 하며, 신고 접수 이후 발생한 부정사용 금액은 카드사가 부담합니다."
+    )
+    # 채움 조문. 전문검색 점수는 "몇 개 조각 중 몇 개에 그 낱말이 있나"로 정해져,
+    # 조각이 몇 개뿐이면 찾는 낱말이 흔한 낱말이 되어 점수가 0이 된다.
+    # 무관한 조문을 충분히 섞어야 검색이 실제와 같은 조건에서 돌아간다.
+    fillers = [
+        ("제20조(이용대금명세서)", "카드사는 매월 이용대금명세서를 회원이 지정한 방법으로 교부합니다."),
+        ("제21조(결제일 변경)", "회원은 결제일을 카드사가 정한 날짜 중에서 변경할 수 있습니다."),
+        ("제22조(이용한도)", "카드사는 회원의 신용도에 따라 이용한도를 정하고 조정할 수 있습니다."),
+        ("제23조(연회비)", "연회비는 카드 발급 시점을 기준으로 1년 단위로 청구됩니다."),
+        ("제24조(가족회원)", "본인회원은 가족회원의 카드 이용대금에 대하여 책임을 집니다."),
+        ("제25조(해외이용)", "해외 이용대금은 국제브랜드사가 정한 환율로 환산하여 청구됩니다."),
+        ("제26조(할부거래)", "할부 이용 시 할부수수료가 부과되며 수수료율은 이용대금명세서에 표시됩니다."),
+        ("제27조(포인트)", "적립된 포인트는 카드사가 정한 사용처에서 사용할 수 있습니다."),
+        ("제28조(통지)", "카드사는 회원이 신고한 주소로 각종 서류를 통지합니다."),
+    ]
+
+    inserted = []
+    with connection() as conn:
+        with conn.cursor() as cursor:
+            for issuer, name in documents:
+                cursor.execute(
+                    "INSERT INTO card_term_document"
+                    " (source_card_name, issuer, doc_type, source_url, storage_path,"
+                    "  extract_status, content_hash, fetched_at)"
+                    " VALUES (%s, %s, 'MEMBER_TERMS', 'test://terms', 'test',"
+                    "         'TEXT_OK', %s, NOW())",
+                    (name, issuer, f"test-{issuer}"),
+                )
+                document_id = cursor.lastrowid
+                inserted.append(document_id)
+
+                chunks = [("제40조(카드의 분실·도난)", lost_card)] + fillers
+                vectors = embedding_client.embed_documents([content for _, content in chunks])
+                for index, ((heading, content), vector) in enumerate(zip(chunks, vectors)):
+                    cursor.execute(
+                        "INSERT INTO card_term_chunk"
+                        " (card_term_document_id, chunk_index, heading, content,"
+                        "  embedding, embedding_model)"
+                        " VALUES (%s, %s, %s, %s, %s, %s)",
+                        (document_id, index, heading, content,
+                         pack_vector(vector), embedding_client.model_tag),
+                    )
+        conn.commit()
+
+    # 메모리에 담아둔 색인은 넣은 조문을 모른다. 다시 읽게 한다.
+    term_index.reset()
+
+    yield
+
+    with connection() as conn:
+        with conn.cursor() as cursor:
+            cursor.execute(
+                "DELETE FROM card_term_chunk WHERE card_term_document_id IN %s",
+                (tuple(inserted),),
+            )
+            cursor.execute(
+                "DELETE FROM card_term_document WHERE card_term_document_id IN %s",
+                (tuple(inserted),),
+            )
+        conn.commit()
+
+    # 지운 조문이 메모리에 남아 뒤 테스트에 걸리지 않게 한다.
+    term_index.reset()
 
 
 class FakeEngine:
@@ -85,6 +176,30 @@ class FakeEngine:
                         "paymentAmount": 3000, "benefitAmount": 500,
                         "benefitName": "편의점 적립", "paymentDate": "2026-08-11T12:00:00",
                     }],
+                },
+            ],
+        }
+
+    def card_recommendations(self):
+        return {
+            "baseYearMonth": "2026-07",
+            "currentMonthlyBenefitAmount": 12400,
+            "items": [
+                {
+                    "cardId": 34,
+                    "cardName": "삼성카드 taptap O",
+                    "cardCompanyName": "삼성카드",
+                    "monthlyGainAmount": 9000,
+                    "annualFee": 30000,
+                    "breakEvenMonths": 4,
+                },
+                {
+                    "cardId": 12,
+                    "cardName": "K-패스 하나 체크카드",
+                    "cardCompanyName": "하나카드",
+                    "monthlyGainAmount": 3200,
+                    "annualFee": 0,
+                    "breakEvenMonths": 0,
                 },
             ],
         }
@@ -154,12 +269,21 @@ def _ask(question: str) -> dict:
     return response.json()
 
 
-def test_헬스체크는_현재_LLM_제공자를_알려준다():
+def test_헬스체크는_현재_LLM_임베딩_제공자를_알려준다():
+    """지금 무엇으로 돌고 있는지가 응답에 그대로 실려야 한다.
+
+    stub 인 채로 시연에 들어가는 사고를 이 필드로 잡는다. 특히 임베딩 stub 은 답변이
+    그럴듯하게 나오고 약관 검색만 무뎌져 화면으로는 알아채기 어렵다.
+
+    특정 값으로 고정하지 않는 것은 설정이 각자 다르기 때문이다. .env 를 실제 공급자로
+    바꿔둔 사람의 테스트가 그 이유로 깨지면, 고치는 방법이 설정을 되돌리는 것이 되어
+    검증이 아니라 방해가 된다. 여기서 볼 것은 값이 실제 구현과 이어져 있는지다.
+    """
     body = client.get("/health").json()
 
     assert body["status"] == "UP"
-    # stub 인 채로 시연에 들어가는 사고를 이 필드로 잡는다.
-    assert body["llmProvider"] == "stub"
+    assert body["llmProvider"] == main._llm.provider
+    assert body["embeddingProvider"] == main._embedding.provider
 
 
 def test_못_알아들으면_지어내지_않고_되묻는다():
@@ -347,8 +471,85 @@ def test_가맹점을_짚어_물으면_그_가맹점_거래만_합산한다(fake
 
 
 @needs_db
-def test_약관_질문은_아직_못_한다고_말한다(fake_engine):
+def test_약관_질문은_원문_조항을_근거로_답한다(fake_engine, 약관_조각):
     body = _ask("카드 잃어버리면 어떻게 해?")
 
     assert body["intent"] == IntentName.TERM_QA
-    assert "약관 원문" in body["answer"]
+    # 엔진이 아니라 약관 원문에서 답이 나온다. 조문 제목이 근거로 실린다.
+    assert "분실" in body["answer"]
+    assert any("약관" in source for source in body["sources"])
+    assert body["followUpQuestion"] is None
+
+
+@needs_db
+def test_약관_검색어를_못_만들면_되묻는다(fake_engine):
+    """무엇을 찾을지 모르면 질문을 그대로 검색어로 쓰지 않는다.
+
+    일상어와 약관의 낱말이 달라, 질문을 그대로 넣으면 무관한 조항이 낮은 점수로
+    걸린다. 그걸 근거로 문장을 만들면 사용자가 틀렸다는 것을 알 방법이 없다.
+    """
+    body = _ask("약관에 우주선 관련 규정 있어?")
+
+    assert body["intent"] == IntentName.TERM_QA
+    assert body["followUpQuestion"] is not None
+
+
+@needs_db
+def test_약관_검색은_무관한_조항을_돌려주지_않는다(약관_조각):
+    """점수가 낮은 것은 못 찾은 것으로 본다.
+
+    하한이 없으면 어떤 검색어를 넣어도 뭔가는 걸린다. 그걸 근거로 문장을 만들면
+    사용자가 틀렸다는 것을 알 방법이 없어, 낱말이 안 겹치는 질문은 빈 결과로 끊는다.
+
+    실측한 사이는 약관 질문 0.422~0.560, 무관한 질문 0.204~0.263 이다. 낱말 검색으로
+    돌 때는 이 구분이 서지 않았다 — 약관에 흔한 낱말이 섞이면 뜻이 무관해도 점수가 올라,
+    "드론 항공 촬영"(16.8)이 "이용대금 연체"(4.7)보다 높게 나왔다.
+    """
+    from chatbot import terms
+    from chatbot.db import connection
+
+    with connection() as conn:
+        assert terms.search(conn, "분실 도난 신고")
+        assert terms.search(conn, "공룡 화석 발굴") == []
+
+
+@needs_db
+def test_약관_검색은_카드사마다_하나씩만_싣는다(약관_조각):
+    """개인회원 표준약관은 3사 내용이 사실상 같다.
+
+    같은 조문이 카드사 수만큼 실리면 LLM 에게 같은 글을 세 번 주는 셈이라
+    프롬프트 자리만 차지하고 답에 보태는 것이 없다.
+    """
+    from chatbot import terms
+    from chatbot.db import connection
+
+    with connection() as conn:
+        passages = terms.search(conn, "분실 도난 신고")
+
+    names = [passage.company_name for passage in passages]
+    assert len(names) == len(set(names))
+
+
+@needs_db
+def test_카드_발급_질문은_결제_추천과_다르게_분류된다(fake_engine):
+    body = _ask("내 소비에 맞는 카드 추천해줘")
+
+    # 가맹점·금액이 없고 카드를 새로 만들지 묻는다. 결제 자리가 아니다.
+    assert body["intent"] == IntentName.RECOMMEND_NEW_CARD
+
+
+@needs_db
+def test_카드_추천은_순증과_손익분기를_함께_말한다(fake_engine):
+    body = _ask("내 소비에 맞는 카드 추천해줘")
+
+    # 순증은 지금 카드로 받는 금액과의 차액이다. 서버가 찍어 넘긴 값을 그대로 쓴다.
+    assert "9,000원" in body["answer"]
+    # 연회비를 정렬에 넣지 않는 대신 몇 달이면 넘어서는지를 알려준다
+    assert "4개월" in body["answer"]
+
+
+@needs_db
+def test_연회비_없는_카드는_손익분기를_말하지_않는다(fake_engine):
+    body = _ask("내 소비에 맞는 카드 추천해줘")
+
+    assert "연회비 없음" in body["answer"]

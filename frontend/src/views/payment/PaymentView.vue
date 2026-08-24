@@ -5,7 +5,7 @@ import { storeToRefs } from 'pinia';
 import { usePaymentStore } from '@/stores/payment';
 import { useAuthStore } from '@/stores/authStore';
 import { useCardStore } from '@/stores/cardStore';
-import { createPaymentQr, getPaymentQr } from '@/api/paymentQrApi';
+import { createPaymentQr, getPaymentQr, payWithQr } from '@/api/paymentQrApi';
 import { getPayment } from '@/api/walletApi';
 import { getRecommendations } from '@/api/paymentApi';
 import { usePersonalizationStore } from '@/stores/personalization';
@@ -339,9 +339,7 @@ const getCardRecommendations = async () => {
     isRecommending.value = true;
     showRecommendationResult.value = true;
 
-    const categoryId = selectedCategory.value
-      ? personalizationStore.categories.find(cat => cat.label === selectedCategory.value)?.id
-      : null;
+    const categoryId = resolveCategoryId();
 
     const expectedAmount = (paymentAmount.value && paymentAmount.value > 0) ? paymentAmount.value : null;
 
@@ -555,11 +553,49 @@ const handleQRClose = () => {
   resetInteractionState();
 };
 
-const handleQRSuccess = () => {
-  modalState.value.qr = false;
-  resetInteractionState(); // 카드를 원래 자리로 돌려놓기
-  toastMessage.value = '결제 성공';
-  showToast.value = true;
+// 결제할 업종 ID. 라벨→ID 표를 이 파일에 또 두지 않는다 —
+// 표가 두 벌이 되면 한쪽만 고쳐져 엉뚱한 업종으로 결제가 기록된다.
+const resolveCategoryId = () => {
+  if (!selectedCategory.value) return null;
+  return personalizationStore.categories
+      .find(cat => cat.label === selectedCategory.value)?.id ?? null;
+};
+
+// QR이 스캔된 시점(모달이 success를 올려주는 자리)에 실제 결제를 실행한다.
+//
+// 여기서 서버를 부르지 않으면 QR만 발급된 채로 끝나 payment_qr이 READY로 남고,
+// 소비내역·결제원장이 만들어지지 않는다. 화면에는 "결제 성공"이 뜨는데 내역에는
+// 아무것도 없는 상태가 된다 — 실제로 그렇게 쌓여 있었다.
+const handleQRSuccess = async () => {
+  const categoryId = resolveCategoryId();
+
+  // 서버가 둘 다 필수로 받는다. 없으면 400이 떨어지므로 미리 끊고 알린다.
+  if (!qrToken.value || !categoryId) {
+    modalState.value.qr = false;
+    resetInteractionState();
+    toastMessage.value = '업종을 선택해야 결제할 수 있습니다.';
+    showToast.value = true;
+    return;
+  }
+
+  try {
+    await payWithQr(qrToken.value, {
+      merchantId: null,               // 가맹점 마스터 ID는 화면에서 확정하지 못한다
+      merchantName: selectedMerchant.value || selectedCategory.value,
+      categoryId,
+    });
+
+    toastMessage.value = '결제 성공';
+  } catch (error) {
+    // 결제가 실패했는데 성공이라고 알리면 사용자가 내역이 없는 이유를 알 수 없다.
+    console.error('QR 결제 실행 실패:', error);
+    toastMessage.value = error?.message || '결제에 실패했습니다.';
+  } finally {
+    modalState.value.qr = false;
+    resetInteractionState(); // 카드를 원래 자리로 돌려놓기
+    showToast.value = true;
+    qrToken.value = null;    // 한 번 쓴 토큰은 재사용되지 않는다
+  }
 };
 
 const handleQRCancel = () => {

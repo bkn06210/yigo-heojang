@@ -1,0 +1,611 @@
+{
+ "card": {
+  "card_name": "KB NEED Pay 카드",
+  "card_type": "CREDIT",
+  "annual_fee": 19000,
+  "annual_fees": [
+   {
+    "brand": "ANY",
+    "issue_type": "PLASTIC",
+    "variant": "ANY",
+    "total_fee": 19000,
+    "base_fee": 7000,
+    "partner_fee": 12000,
+    "_source": "구 분 국내전용(Local) / 국내외겸용(Mastercard) / 일반카드 19,000원 (기본연회비 7천원 + 제휴연회비 1만2천원) — 국내전용과 국내외겸용의 금액 칸이 하나로 병합돼 있어 브랜드를 나누지 않는다"
+   },
+   {
+    "brand": "ANY",
+    "issue_type": "MOBILE",
+    "variant": "ANY",
+    "total_fee": 13000,
+    "base_fee": 1000,
+    "partner_fee": 12000,
+    "_source": "모바일 단독카드 13,000원 (기본연회비 1천원 + 제휴연회비 1만2천원)"
+   }
+  ],
+  "_source": {
+   "annual_fee": "일반카드 19,000원 — 실물 발급이 기본 조합이라 대표값으로 삼았다"
+  },
+  "_needs_review": []
+ },
+ "card_exclusions": [
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "INTEREST_FREE",
+   "_source": "[할인서비스 제외대상] 무이자할부이용금액"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "CASH_ADVANCE",
+   "_source": "[할인서비스 제외대상] 단기카드대출(현금서비스)"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "CARD_LOAN",
+   "_source": "[할인서비스 제외대상] 장기카드대출(카드론)"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "GIFT_CARD",
+   "_source": "[할인서비스 제외대상] 상품권및 선불카드(선불전자지급수단포함) 구입·충전금액"
+  },
+  {
+   "exclusion_type": "CATEGORY",
+   "exclusion_value": "APARTMENT_FEE",
+   "_source": "[할인서비스 제외대상] 아파트관리비"
+  },
+  {
+   "exclusion_type": "CATEGORY",
+   "exclusion_value": "TUITION",
+   "_source": "[할인서비스 제외대상] 유치원/초·중·고학교납입금전체, 대학(원) 등록금"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "GOV_SUBSIDY",
+   "_source": "[할인서비스 제외대상] 정부지원금(보육료/유치원보조비/바우처이용금액등)"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "TAX",
+   "_source": "[할인서비스 제외대상] 국세, 지방세"
+  },
+  {
+   "exclusion_type": "CATEGORY",
+   "exclusion_value": "UTILITY",
+   "_source": "[할인서비스 제외대상] 공과금(전기/수도등), 도시가스"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "SOCIAL_INSURANCE",
+   "_source": "[할인서비스 제외대상] 4대 사회보험료(건강/연금/고용/산재)"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "FEE_INTEREST",
+   "_source": "[할인서비스 제외대상] 각종수수료및 이자, 연체료"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "ANNUAL_FEE",
+   "_source": "[할인서비스 제외대상] 연회비"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "POSTPAID_TRANSIT",
+   "_source": "[할인서비스 제외대상] RF후불교통요금"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "CANCELED",
+   "_source": "[할인서비스 제외대상] 취소금액"
+  }
+ ],
+ "performance_tiers": [
+  {
+   "period_type": "MONTH",
+   "min_performance_amount": 0,
+   "shared_monthly_limit": null,
+   "_source": "전월 이용실적별 월 할인한도가 '40만원 이상 80만원 미만'부터 제시되어 40만원 미만 구간에는 할인한도가 없다. 카드 통합 할인한도 조항이 없고 영역별 월 할인한도만 있어 shared_monthly_limit은 null"
+  },
+  {
+   "period_type": "MONTH",
+   "min_performance_amount": 400000,
+   "shared_monthly_limit": null,
+   "_source": "전월 이용실적별월 할인한도 / 40만원 이상 80만원 미만 — 한도가 영역별로만 제시되고 카드 통합한도는 약관에 없다"
+  },
+  {
+   "period_type": "MONTH",
+   "min_performance_amount": 800000,
+   "shared_monthly_limit": null,
+   "_source": "전월 이용실적별월 할인한도 / 80만원 이상 — 한도가 영역별로만 제시되고 카드 통합한도는 약관에 없다"
+  }
+ ],
+ "performance_exclusions": [
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "DISCOUNTED",
+   "_source": "[전월 이용실적제외 대상] 'KB NEED Pay 카드' 할인 적용 받은 매출 — 특정 혜택이 아니라 이 카드의 모든 할인에 걸린다"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "INTEREST_FREE",
+   "_source": "[전월 이용실적제외 대상] (부분)무이자할부이용금액"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "CASH_ADVANCE",
+   "_source": "[전월 이용실적제외 대상] 단기카드대출(현금서비스)"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "CARD_LOAN",
+   "_source": "[전월 이용실적제외 대상] 장기카드대출(카드론)"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "GIFT_CARD",
+   "_source": "[전월 이용실적제외 대상] 상품권및 선불카드(선불전자지급수단포함) 구입·충전금액"
+  },
+  {
+   "exclusion_type": "CATEGORY",
+   "exclusion_value": "APARTMENT_FEE",
+   "_source": "[전월 이용실적제외 대상] 아파트관리비"
+  },
+  {
+   "exclusion_type": "CATEGORY",
+   "exclusion_value": "TUITION",
+   "_source": "[전월 이용실적제외 대상] 유치원/초·중·고학교 납입금전체, 대학(원) 등록금"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "GOV_SUBSIDY",
+   "_source": "[전월 이용실적제외 대상] 정부지원금(보육료/유치원보조비/바우처이용금액등)"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "TAX",
+   "_source": "[전월 이용실적제외 대상] 국세, 지방세"
+  },
+  {
+   "exclusion_type": "CATEGORY",
+   "exclusion_value": "UTILITY",
+   "_source": "[전월 이용실적제외 대상] 공과금(전기/수도등), 도시가스"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "SOCIAL_INSURANCE",
+   "_source": "[전월 이용실적제외 대상] 4대 사회보험료(건강/연금/고용/산재)"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "FEE_INTEREST",
+   "_source": "[전월 이용실적제외 대상] 각종 수수료및 이자, 연체료"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "ANNUAL_FEE",
+   "_source": "[전월 이용실적제외 대상] 연회비"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "UNAPPROVED",
+   "_source": "[전월 이용실적제외 대상] 무승인전표(RF후불교통요금/자판기/터널 이용료/항공기내이용 등)"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "POSTPAID_TRANSIT",
+   "_source": "[전월 이용실적제외 대상] 무승인전표(RF후불교통요금/…)"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "CANCELED",
+   "_source": "[전월 이용실적제외 대상] 취소금액"
+  }
+ ],
+ "benefits": [
+  {
+   "benefit_name": "간편결제 KB Pay 15% 할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 15,
+   "step_count": null,
+   "apply_timing": null,
+   "target_type": "ALL",
+   "target_category_code": null,
+   "target_merchant_name": null,
+   "targets": null,
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": "KB_PAY",
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": 3000,
+   "daily_limit": null,
+   "monthly_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": null,
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": "SIMPLE_PAY_PICK",
+   "option_key": "KB_PAY",
+   "description": "간편결제 영역은 KB Pay·네이버페이·카카오페이·토스페이 네 가지 중 매월 하나를 고른다. 선택 변경은 신청일 기준 다음 달 1일부터 적용되며 매월 변경 가능하고, KB국민카드 홈페이지와 KB Pay 앱에서 바꿀 수 있다. 국내 할인 서비스라 국내 이용 건에만 적용된다. 월 할인한도가 전월 이용실적 구간마다 달라 본문 monthly_limit은 비우고 tier_limits에 적었다.",
+   "tier_limits": [
+    {
+     "min_performance_amount": 400000,
+     "monthly_limit": 15000,
+     "quarterly_limit": null,
+     "yearly_limit": null,
+     "benefit_value": null,
+     "_source": "KB Pay / 40만원 이상 80만원 미만 1만5천원"
+    },
+    {
+     "min_performance_amount": 800000,
+     "monthly_limit": 30000,
+     "quarterly_limit": null,
+     "yearly_limit": null,
+     "benefit_value": null,
+     "_source": "KB Pay / 80만원 이상 3만원"
+    }
+   ],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "구 분 / 할인율 / 건당 할인한도 / 전월 이용실적별월 할인한도 — 간편결제(4개중택1) KB Pay 15% 3천원 1만5천원 3만원",
+    "max_benefit_per_txn": "건당 할인한도 3천원",
+    "require_performance": "전월 이용실적별월 할인한도가 40만원 이상부터 제시되어 40만원 미만이면 할인한도가 없다"
+   },
+   "_needs_review": [
+    "apply_timing"
+   ]
+  },
+  {
+   "benefit_name": "간편결제 네이버페이 10% 할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 10,
+   "step_count": null,
+   "apply_timing": null,
+   "target_type": "ALL",
+   "target_category_code": null,
+   "target_merchant_name": null,
+   "targets": null,
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": "NAVER_PAY",
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": 2000,
+   "daily_limit": null,
+   "monthly_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": null,
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": "SIMPLE_PAY_PICK",
+   "option_key": "NAVER_PAY",
+   "description": "간편결제 영역의 네 선택지 중 하나다. 선택된 달에만 적용되며 매월 변경 가능하다. 국내 이용 건에만 적용된다.",
+   "tier_limits": [
+    {
+     "min_performance_amount": 400000,
+     "monthly_limit": 10000,
+     "quarterly_limit": null,
+     "yearly_limit": null,
+     "benefit_value": null,
+     "_source": "네이버페이 / 40만원 이상 80만원 미만 1만원"
+    },
+    {
+     "min_performance_amount": 800000,
+     "monthly_limit": 20000,
+     "quarterly_limit": null,
+     "yearly_limit": null,
+     "benefit_value": null,
+     "_source": "네이버페이 / 80만원 이상 2만원"
+    }
+   ],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "간편결제 네이버페이 10% 2천원 1만원 2만원",
+    "max_benefit_per_txn": "건당 할인한도 2천원"
+   },
+   "_needs_review": [
+    "apply_timing"
+   ]
+  },
+  {
+   "benefit_name": "간편결제 카카오페이 10% 할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 10,
+   "step_count": null,
+   "apply_timing": null,
+   "target_type": "ALL",
+   "target_category_code": null,
+   "target_merchant_name": null,
+   "targets": null,
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": "KAKAO_PAY",
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": 2000,
+   "daily_limit": null,
+   "monthly_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": null,
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": "SIMPLE_PAY_PICK",
+   "option_key": "KAKAO_PAY",
+   "description": "간편결제 영역의 네 선택지 중 하나다. 선택된 달에만 적용되며 매월 변경 가능하다. 국내 이용 건에만 적용된다.",
+   "tier_limits": [
+    {
+     "min_performance_amount": 400000,
+     "monthly_limit": 10000,
+     "quarterly_limit": null,
+     "yearly_limit": null,
+     "benefit_value": null,
+     "_source": "카카오페이 / 40만원 이상 80만원 미만 1만원"
+    },
+    {
+     "min_performance_amount": 800000,
+     "monthly_limit": 20000,
+     "quarterly_limit": null,
+     "yearly_limit": null,
+     "benefit_value": null,
+     "_source": "카카오페이 / 80만원 이상 2만원"
+    }
+   ],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "간편결제 카카오페이 10% 2천원 1만원 2만원",
+    "max_benefit_per_txn": "건당 할인한도 2천원"
+   },
+   "_needs_review": [
+    "apply_timing"
+   ]
+  },
+  {
+   "benefit_name": "온라인패션몰 5% 할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 5,
+   "step_count": null,
+   "apply_timing": null,
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": null,
+   "targets": [
+    "무신사",
+    "지그재그",
+    "W컨셉",
+    "29CM",
+    "에이블리"
+   ],
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": "KB_PAY",
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": 5000,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": "NEEDPAY_ONLINE_FASHION",
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "KB Pay로 결제한 건에만 제공된다. 약관이 다섯 곳을 열거했으므로 온라인쇼핑 카테고리가 아니라 가맹점 다섯으로 적었다. 건당 할인한도는 표에 '-'로 비어 있어 상한이 없다.",
+   "tier_limits": [],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "온라인패션몰 무신사, 지그재그, W컨셉, 29CM, 에이블리 KB Pay 이용건 5% - 5천원",
+    "monthly_limit": "월 할인한도 칸이 '40만원 이상 80만원 미만'과 '80만원 이상'에 걸쳐 5천원으로 병합돼 있어 구간에 따라 달라지지 않는다",
+    "limit_group_code": "월 할인한도 5천원이 온라인패션몰 영역 하나에 걸려 있어 다섯 가맹점이 한 한도를 함께 쓴다. 금액과 횟수의 범위가 같아 count_group_code는 비웠다"
+   },
+   "_needs_review": [
+    "apply_timing"
+   ]
+  },
+  {
+   "benefit_name": "간편결제 토스페이 10% 할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 10,
+   "step_count": null,
+   "apply_timing": null,
+   "target_type": "ALL",
+   "target_category_code": null,
+   "target_merchant_name": null,
+   "targets": null,
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": "TOSS_PAY",
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": 2000,
+   "daily_limit": null,
+   "monthly_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": null,
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": "SIMPLE_PAY_PICK",
+   "option_key": "NAVER_PAY",
+   "description": "간편결제 영역의 네 선택지 중 하나다. 선택된 달에만 적용되며 매월 변경 가능하다. 국내 이용 건에만 적용된다.",
+   "tier_limits": [
+    {
+     "min_performance_amount": 400000,
+     "monthly_limit": 10000,
+     "quarterly_limit": null,
+     "yearly_limit": null,
+     "benefit_value": null,
+     "_source": "네이버페이 / 40만원 이상 80만원 미만 1만원"
+    },
+    {
+     "min_performance_amount": 800000,
+     "monthly_limit": 20000,
+     "quarterly_limit": null,
+     "yearly_limit": null,
+     "benefit_value": null,
+     "_source": "네이버페이 / 80만원 이상 2만원"
+    }
+   ],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "간편결제 네이버페이 10% 2천원 1만원 2만원",
+    "max_benefit_per_txn": "건당 할인한도 2천원",
+    "require_payment_type": "간편결제 (4개중택1) 토스페이 10% 2천원 1만원 2만원"
+   },
+   "_needs_review": [
+    "apply_timing"
+   ]
+  },
+  {
+   "benefit_name": "디지털콘텐츠/멤버십 30% 할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 30,
+   "step_count": null,
+   "apply_timing": null,
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": null,
+   "targets": [
+    "넷플릭스",
+    "유튜브 프리미엄",
+    "디즈니 플러스",
+    "티빙",
+    "웨이브",
+    "스포티파이",
+    "네이버플러스 멤버십",
+    "컬리 컬리멤버스",
+    "배민클럽"
+   ],
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": 3000,
+   "daily_limit": null,
+   "monthly_limit": 5000,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": "NEEDPAY_DIGITAL_MEMBERSHIP",
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "약관이 아홉 곳을 열거했으므로 구독스트리밍 카테고리가 아니라 가맹점 아홉으로 적었다. 대상 가맹점에서 간편결제로 결제해 가맹점명이 결제대행업체나 간편결제로 잡히면 이 할인이 적용되지 않는다.",
+   "tier_limits": [],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "디지털콘텐츠/ 멤버십 넷플릭스, 유튜브, 디즈니플러스, 티빙, 웨이브, 스포티파이 / 네이버플러스멤버십, 컬리멤버스, 배민클럽 30% 3천원 5천원",
+    "max_benefit_per_txn": "건당 할인한도 3천원",
+    "monthly_limit": "월 할인한도 칸이 두 실적 구간에 걸쳐 5천원으로 병합돼 있어 구간에 따라 달라지지 않는다",
+    "limit_group_code": "월 할인한도 5천원이 디지털콘텐츠/멤버십 영역 하나에 걸려 있어 아홉 가맹점이 한 한도를 함께 쓴다"
+   },
+   "_needs_review": [
+    "apply_timing"
+   ]
+  }
+ ],
+ "unmapped": [
+  {
+   "text": "특별 서비스 해외 해외가맹점 2% 할인한도및전월이용실적조건없음",
+   "why": "해외 결제 혜택이라 범위 밖이다. 해외 가맹점 데이터가 없어 대상을 지정할 수 없다"
+  },
+  {
+   "text": "※ 가족카드 연회비 7,000원(기본연회비 0원, 제휴연회비 7,000원)",
+   "why": "가족카드는 브랜드·발급형태와 다른 축이라 annual_fees에 담을 칸이 없다"
+  },
+  {
+   "text": "∙ 가족카드부가서비스이용조건및제공범위는본인회원카드의 이용조건및 제공범위와동일하며합산관리됩니다.",
+   "why": "가족카드 합산은 범위 밖이다"
+  },
+  {
+   "text": "• 가맹점 정보가 해당 업체가 아닌 결제대행업체(PG) 또는 간편결제 전용 가맹점으로 확인되는 경우 '결제대행업체' 또는 '간편결제' 가맹점으로 분류됩니다. * 예시 : 디지털콘텐츠/멤버십 할인 대상 가맹점에서 카카오페이로 결제 시 가맹점명이 '카카오페이'인 경우 '간편결제'가맹점으로 분류되어 디지털 콘텐츠/멤버십 할인 서비스 적용 제외됩니다.",
+   "why": "결제 경로에 따라 가맹점명이 무엇으로 잡히는지에 달린 조항이다. 결제수단 조건도 가맹점 제외도 아니고, 매입 시 가맹점명이 어떻게 기록되는지를 알아야 판정할 수 있다"
+  },
+  {
+   "text": "• KB NEED Pay 카드 서비스는 대상 가맹점이 KB국민카드의 업종 분류기준, 지정 업종에 한하여 제공됩니다.",
+   "why": "카드사 내부 업종분류 기준이라 표준 카테고리 코드로 옮길 수 없다"
+  },
+  {
+   "text": "∙ KB NEED Pay 카드는본인회원기준으로월간할인한도가제공되며, 적용기간은매월1일~말일까지(승인시점기준)입니다.",
+   "why": "한도 집계 주기와 기준시점 규약이라 혜택 행이 아니라 엔진 동작 규칙이다"
+  },
+  {
+   "text": "• 상품서비스는 이용순서대로 월간 한도 내 할인이 적용되며, 잔여 할인한도는 이월되지 않습니다.",
+   "why": "한도 소진 순서와 이월 여부 규약이라 데이터 컬럼이 아니라 엔진 동작 규칙이다"
+  },
+  {
+   "text": "• 할인 받은 이용 건을 취소할 경우 취소전표가 실시간으로 접수되지 않아, 할인한도가 즉시 복원되지 않을 수 있습니다.",
+   "why": "취소 시 한도 복원 시점 규정이라 혜택 규칙으로 담을 필드가 없다"
+  },
+  {
+   "text": "※ 연회비는 카드발급 시점을 기준으로 1년 단위로 청구되며, 연회비 면제조건은 없습니다.",
+   "why": "연회비 면제 조건을 담는 필드가 없다"
+  },
+  {
+   "text": "∙ KB NEEDPay카드를모바일단독카드로발급받는경우국내일부및해외오프라인가맹점에서사용이제한됩니다.",
+   "why": "발급 형태에 따른 사용처 제약이다. annual_fees의 issue_type=MOBILE로 연회비만 갈릴 뿐 제약 자체를 담을 필드가 없다"
+  },
+  {
+   "text": "∙ 해외이용시(해외사이트거래포함) 미화(USD)기준거래미화금액 국제브랜드사가부과하는국제브랜드수수료(Mastercard 1.0%)와KB국민카드가부과하는해외서비스수수료(0.25%)를포함하여원화로청구됩니다.",
+   "why": "해외 결제 수수료 산출식이라 범위 밖이다"
+  }
+ ],
+ "_schema_gap": [
+  {
+   "text": "※ [국내할인서비스] 최초발급받은KB NEED Pay 카드사용등록일(KB Pay 등간편결제등록포함)로부터다음달말일(실적유예기간)까지는전월이용실적40만원미만시에도'40만원이상80만원미만' 구간월할인한도의50%까지할인제공됩니다. (단, 최초사용등록월의실적이40만원이상일경우, 다음달에해당실적구간의할인한도적용) ※ [국내할인서비스] 건당할인한도는실적유예기간동안100% 적용됩니다.",
+   "missing": "user_card의 사용등록일, 실적 유예기간, 유예 중 적용할 구간과 그 한도의 비율(50%)",
+   "why": "카드 사용등록 시점 정보가 없어 유예기간인지 판정할 수 없고, 유예 중에 어느 구간 한도를 몇 퍼센트로 적용할지 지정할 자리도 없다"
+  },
+  {
+   "text": "특별 서비스 전월실적 채워드림 전월실적1구간(40-80만원)에서5만원이하로실적이 부족할때실적을충전(인정)해주는 서비스 반기1회(연2회) 신청가능",
+   "missing": "회원의 실적 충전 신청 이력과 충전으로 인정된 금액",
+   "why": "실적 판정에 회원이 신청한 보충분을 더해야 하는데, 전월실적은 소비내역 합산으로만 도출되고 신청 이력을 담을 테이블이 없다. 반기 1회라는 신청 횟수 제한도 월 단위인 user_benefit_usage로 표현되지 않는다"
+  },
+  {
+   "text": "[할인서비스 제외대상] … 신차구매청구(환급) 할인전표 전체",
+   "missing": "TRANSACTION_ATTR 표준값에 신차구매 청구할인 전표가 없다",
+   "why": "거래 속성 표준값 목록에 해당하는 값이 없고, 새 값을 만들면 카드마다 다른 문자열이 생겨 엔진이 매칭하지 못한다"
+  }
+ ]
+}

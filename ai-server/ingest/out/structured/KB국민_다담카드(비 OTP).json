@@ -1,0 +1,1527 @@
+{
+ "card": {
+  "card_name": "KB국민 다담카드",
+  "card_type": "CREDIT",
+  "annual_fee": 20000,
+  "annual_fees": [
+   {
+    "brand": "K_WORLD",
+    "issue_type": "PLASTIC",
+    "variant": "ANY",
+    "total_fee": 15000,
+    "base_fee": 7000,
+    "partner_fee": 8000,
+    "_source": "구분 K-WORLD(UPI) 국내외겸용(VISA, Master) / KB국민 다담카드 1만5천원 (기본연회비 7천원 + 제휴연회비 8천원)"
+   },
+   {
+    "brand": "VISA",
+    "issue_type": "PLASTIC",
+    "variant": "ANY",
+    "total_fee": 20000,
+    "base_fee": 7000,
+    "partner_fee": 13000,
+    "_source": "KB국민 다담카드 국내외겸용(VISA, Master) 2만원 (기본연회비 7천원 + 제휴연회비 1만3천원) — 한 칸에 VISA·Master 두 브랜드가 함께 적혀 브랜드별로 행을 나눴다"
+   },
+   {
+    "brand": "MASTERCARD",
+    "issue_type": "PLASTIC",
+    "variant": "ANY",
+    "total_fee": 20000,
+    "base_fee": 7000,
+    "partner_fee": 13000,
+    "_source": "KB국민 다담카드 국내외겸용(VISA, Master) 2만원 (기본연회비 7천원 + 제휴연회비 1만3천원)"
+   },
+   {
+    "brand": "K_WORLD",
+    "issue_type": "MOBILE",
+    "variant": "ANY",
+    "total_fee": 9000,
+    "base_fee": 1000,
+    "partner_fee": 8000,
+    "_source": "KB국민 다담 모바일 단독카드 K-WORLD(UPI) 9천원 (기본연회비 1천원 + 제휴연회비 8천원)"
+   },
+   {
+    "brand": "VISA",
+    "issue_type": "MOBILE",
+    "variant": "ANY",
+    "total_fee": 14000,
+    "base_fee": 1000,
+    "partner_fee": 13000,
+    "_source": "KB국민 다담 모바일 단독카드 국내외겸용(VISA, Master) 1만4천원 (기본연회비 1천원 + 제휴연회비 1만3천원)"
+   },
+   {
+    "brand": "MASTERCARD",
+    "issue_type": "MOBILE",
+    "variant": "ANY",
+    "total_fee": 14000,
+    "base_fee": 1000,
+    "partner_fee": 13000,
+    "_source": "KB국민 다담 모바일 단독카드 국내외겸용(VISA, Master) 1만4천원 (기본연회비 1천원 + 제휴연회비 1만3천원)"
+   }
+  ],
+  "_source": {
+   "card_name": "KB국민 훈민정음 두번째 이야기 / 모두의 이야기를 담은 카드 / KB국민 다담카드",
+   "card_type": "KB국민 신용카드 설명서(개인) — 연체이자율·단기카드대출(현금서비스)·장기카드대출(카드론) 조항이 있는 신용카드 상품설명서",
+   "annual_fee": "실물 일반카드 국내외겸용 2만원. 연회비 면제조건 없음 — 실물 일반카드가 가장 흔한 조합이라 대표값으로 삼았다"
+  },
+  "_needs_review": []
+ },
+ "card_exclusions": [
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "INTEREST_FREE",
+   "_source": "기본 할인 서비스 및 선택 적립 서비스 제외 대상 - (부분) 무이자할부 이용금액, 상품권 및 선불카드(선불전자지급수단 포함)구입·충전금액"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "GIFT_CARD",
+   "_source": "기본 할인 서비스 및 선택 적립 서비스 제외 대상 - (부분) 무이자할부 이용금액, 상품권 및 선불카드(선불전자지급수단 포함)구입·충전금액"
+  }
+ ],
+ "performance_tiers": [
+  {
+   "period_type": "MONTH",
+   "min_performance_amount": 0,
+   "shared_monthly_limit": null,
+   "_source": "기본 할인 서비스는 전월 이용실적 30만원 이상 시 제공됩니다 — 30만원 미만 구간은 서비스가 없다. 카드 통합 할인한도 조항이 없고 서비스별 한도만 있어 shared_monthly_limit은 null"
+  },
+  {
+   "period_type": "MONTH",
+   "min_performance_amount": 300000,
+   "shared_monthly_limit": null,
+   "_source": "전월 이용실적에 따른 월 적립 한도 / 30만원 이상"
+  },
+  {
+   "period_type": "MONTH",
+   "min_performance_amount": 600000,
+   "shared_monthly_limit": null,
+   "_source": "전월 이용실적에 따른 월 적립 한도 / 60만원 이상"
+  }
+ ],
+ "performance_grace": [
+  {
+   "period_type": "MONTH",
+   "min_performance_amount": 300000,
+   "grace_periods": 1,
+   "_source": "※ 최초 카드 사용등록일로부터 다음달 말일(실적 유예기간)까지 'KB국민 다담카드' 실적이 없는 경우에도 \"30만원 이상\" 서비스 제공(단, 레저팩 '스피드메이트' 서비스는 예외)"
+  }
+ ],
+ "performance_exclusions": [
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "DISCOUNTED",
+   "_source": "이용실적 제외 대상 - KB국민 다담카드로 할인 및 적립 받은 이용금액(해당 매출 전체, 단 해외캐시백 제외) — '단 해외캐시백 제외' 예외는 해외 이용분이라 시드 대상이 아니어서 따로 표현하지 않았다"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "CASH_ADVANCE",
+   "_source": "이용실적 제외 대상 - 단기카드대출(현금서비스)"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "CARD_LOAN",
+   "_source": "이용실적 제외 대상 - 장기카드대출(카드론)"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "TAX",
+   "_source": "이용실적 제외 대상 - 각종 세금 및 공과금"
+  },
+  {
+   "exclusion_type": "CATEGORY",
+   "exclusion_value": "UTILITY",
+   "_source": "이용실적 제외 대상 - 각종 세금 및 공과금"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "GOV_SUBSIDY",
+   "_source": "이용실적 제외 대상 - 정부지원금"
+  },
+  {
+   "exclusion_type": "CATEGORY",
+   "exclusion_value": "TUITION",
+   "_source": "이용실적 제외 대상 - 대학(대학원)등록금"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "FEE_INTEREST",
+   "_source": "이용실적 제외 대상 - 각종 수수료 및 이자, 연체료"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "ANNUAL_FEE",
+   "_source": "이용실적 제외 대상 - 연회비"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "GIFT_CARD",
+   "_source": "이용실적 제외 대상 - 상품권 및 선불카드(선불전자지급수단 포함)구입·충전 금액"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "UNAPPROVED",
+   "_source": "이용실적 제외 대상 - 무승인전표(교통요금,자판기,터널통행료,항공기 내 이용 등)"
+  },
+  {
+   "exclusion_type": "TRANSACTION_ATTR",
+   "exclusion_value": "CANCELED",
+   "_source": "이용실적 제외 대상 - 취소금액"
+  }
+ ],
+ "benefits": [
+  {
+   "benefit_name": "대중교통 10% 청구할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 10,
+   "step_count": null,
+   "apply_timing": "BILLED",
+   "target_type": "CATEGORY",
+   "target_category_code": "PUBLIC_TRANSPORT",
+   "target_merchant_name": null,
+   "targets": null,
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": 5000,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": null,
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "기본 할인 서비스. 버스·지하철 요금할인은 실제 카드 사용일이 아닌 이용대금 명세서상 기재된 이용일을 기준으로 제공된다.",
+   "tier_limits": [],
+   "exclusions": [
+    {
+     "exclusion_type": "CATEGORY",
+     "exclusion_value": "EXPRESS_BUS",
+     "_source": "- 시외버스, 고속버스는 제외됩니다."
+    }
+   ],
+   "_source": {
+    "benefit_value": "• 버스, 지하철 10% 청구할인",
+    "monthly_limit": "- 월 최대 5천원까지 할인됩니다.",
+    "require_performance": "기본 할인 서비스는 전월 이용실적 30만원 이상 시 제공됩니다.",
+    "use_shared_limit": "카드 통합 할인한도 조항이 없고 서비스별 한도만 있다"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "SK주유소 리터당 60원 청구할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": null,
+   "benefit_value": null,
+   "step_count": null,
+   "apply_timing": "BILLED",
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": "SK에너지",
+   "targets": null,
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": null,
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "기본 할인 서비스. SK주유소(충전소) 리터당 60원 청구할인. 월 20만원 이용금액까지 할인 제공. 기준유가는 SK에너지 본사 고시 휘발유가이며 경유·등유·LPG는 휘발유가로 환산하여 할인율을 적용한다.",
+   "tier_limits": [],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "• SK주유소(충전소)리터당 60원 청구할인 — 리터당 정액이라 RATE·FIXED·COUNT_STEP 어디에도 담기지 않아 비웠다",
+    "require_performance": "기본 할인 서비스는 전월 이용실적 30만원 이상 시 제공됩니다."
+   },
+   "_needs_review": [
+    "calc_method",
+    "benefit_value"
+   ]
+  },
+  {
+   "benefit_name": "이동통신요금 자동납부 10% 청구할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 10,
+   "step_count": null,
+   "apply_timing": "BILLED",
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": null,
+   "targets": [
+    "SKT",
+    "KT",
+    "LG U+"
+   ],
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": "AUTO_TRANSFER",
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": 5000,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": "DADAM_TELECOM",
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "기본 할인 서비스. 이동통신요금 자동납부 등록 건에 한한다.",
+   "tier_limits": [],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "• 이동통신요금 자동납부 등록시 10% 청구할인",
+    "monthly_limit": "- 월 최대 5천원까지 할인됩니다. / - SKT, KT Olleh, LG U+",
+    "limit_group_code": "세 통신사에 월 최대 5천원 한도가 하나로 제시된다",
+    "require_performance": "기본 할인 서비스는 전월 이용실적 30만원 이상 시 제공됩니다."
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "영화 온라인 예매 건당 3,500원 청구할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "FIXED",
+   "benefit_value": 3500,
+   "step_count": null,
+   "apply_timing": "BILLED",
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": null,
+   "targets": [
+    "CGV",
+    "메가박스"
+   ],
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": 2,
+   "monthly_count_limit": 4,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": 10,
+   "limit_group_code": "DADAM_MOVIE",
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "기본 할인 서비스. 온라인 영화예매 건에 한한다(현장 예매는 대상이 아니나 결제 채널을 판정할 축이 없다).",
+   "tier_limits": [],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "• CGV/메가박스 온라인 영화예매시 승인건당 3,500원 청구 할인",
+    "daily_count_limit": "- 일 2회, 월 4회, 연간 10회 제공",
+    "limit_group_code": "CGV·메가박스에 횟수 한도가 하나로 제시된다",
+    "require_performance": "기본 할인 서비스는 전월 이용실적 30만원 이상 시 제공됩니다."
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "롯데월드 어드벤처 종합이용권 50% 현장할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 50,
+   "step_count": null,
+   "apply_timing": "IMMEDIATE",
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": "롯데월드 어드벤처",
+   "targets": null,
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": 1,
+   "monthly_count_limit": 2,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": 5,
+   "limit_group_code": null,
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "기본 할인 서비스(놀이공원 현장 할인). 종합이용권 구매 건에 한하며 한도는 회원별 일 1매·월 2매·연간 5매다.",
+   "tier_limits": [],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "- 롯데월드 어드벤처 종합이용권 50%할인",
+    "daily_count_limit": "회원별 일 1매, 월 2매, 연간 5매 할인 제공됩니다.",
+    "require_performance": "기본 할인 서비스는 전월 이용실적 30만원 이상 시 제공됩니다."
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "에버랜드 페스티벌 월드 자유이용권 50% 현장할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 50,
+   "step_count": null,
+   "apply_timing": "IMMEDIATE",
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": "에버랜드",
+   "targets": null,
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": 1,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": 10,
+   "limit_group_code": null,
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "기본 할인 서비스(놀이공원 현장 할인). 페스티벌 월드 자유이용권 구매 건에 한하며 한도는 카드별(가족카드 포함) 일 1매, 회원별 연간 10매다.",
+   "tier_limits": [],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "- 에버랜드 페스티벌 월드 자유이용권 50%할인",
+    "daily_count_limit": "* 카드별(가족카드 포함)일 1매, 회원별 연간 10매 할인 제공됩니다.",
+    "require_performance": "기본 할인 서비스는 전월 이용실적 30만원 이상 시 제공됩니다."
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "캐리비안베이 입장권 30% 현장할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "RATE",
+   "benefit_value": 30,
+   "step_count": null,
+   "apply_timing": "IMMEDIATE",
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": "캐리비안베이",
+   "targets": null,
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": 1,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": null,
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "기본 할인 서비스(놀이공원 현장 할인). 입장권 구매 건에 한하며 한도는 카드별(가족카드 포함) 일 1매다.",
+   "tier_limits": [],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "- 캐리비안베이 입장권 30% 할인",
+    "daily_count_limit": "* 카드별(가족카드 포함) 일 1매 할인 제공됩니다.",
+    "require_performance": "기본 할인 서비스는 전월 이용실적 30만원 이상 시 제공됩니다."
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "생활팩 대형마트 7% 적립",
+   "benefit_kind": "POINT",
+   "calc_method": "RATE",
+   "benefit_value": 7,
+   "step_count": null,
+   "apply_timing": null,
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": null,
+   "targets": [
+    "이마트",
+    "롯데마트",
+    "홈플러스"
+   ],
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": "DADAM_LIFE_MART",
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": "SERVICE_PACK",
+   "option_key": "LIFE",
+   "description": "선택 적립 서비스팩 5종(생활팩·쇼핑팩·교육팩·레저팩·직장인팩) 중 1개만 선택할 수 있고 중복 선택은 되지 않는다. KB국민카드 모바일 앱·홈페이지·고객센터를 통해 월 1회, 연 4회 이내 변경 가능하며 변경 신청일 기준 다음달 1일부터 제공된다.",
+   "tier_limits": [
+    {
+     "min_performance_amount": 300000,
+     "monthly_limit": 7000,
+     "quarterly_limit": null,
+     "yearly_limit": null,
+     "benefit_value": null,
+     "_source": "생활팩 / 대형마트 7% / 30만원 이상 7천원 / 60만원 이상 1만 4천원"
+    },
+    {
+     "min_performance_amount": 600000,
+     "monthly_limit": 14000,
+     "quarterly_limit": null,
+     "yearly_limit": null,
+     "benefit_value": null
+    }
+   ],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "• 대형마트 7% 포인트리 적립 - 대형마트 : 이마트, 롯데마트, 홈플러스",
+    "limit_group_code": "표의 '대형마트' 한 행에 월 적립 한도가 하나로 제시되어 세 마트가 한도를 함께 쓴다",
+    "require_performance": "선택 적립 서비스팩은 전월 이용실적 30만원 이상 시 제공되며, 전월 이용실적에 따라 월간 적립한도가 제공됩니다."
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "생활팩 백화점 5% 적립",
+   "benefit_kind": "POINT",
+   "calc_method": "RATE",
+   "benefit_value": 5,
+   "step_count": null,
+   "apply_timing": null,
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": null,
+   "targets": [
+    "롯데백화점",
+    "신세계백화점",
+    "현대백화점"
+   ],
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": "DADAM_LIFE_DEPT",
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": "SERVICE_PACK",
+   "option_key": "LIFE",
+   "description": "선택 적립 서비스팩 중 생활팩. 온라인 쇼핑몰 이용금액, 상품권 구매 및 건물 내 임대매장 이용금액은 적립 제외된다.",
+   "tier_limits": [
+    {
+     "min_performance_amount": 300000,
+     "monthly_limit": 5000,
+     "quarterly_limit": null,
+     "yearly_limit": null,
+     "benefit_value": null,
+     "_source": "생활팩 / 백화점 5% / 30만원 이상 5천원 / 60만원 이상 1만원"
+    },
+    {
+     "min_performance_amount": 600000,
+     "monthly_limit": 10000,
+     "quarterly_limit": null,
+     "yearly_limit": null,
+     "benefit_value": null
+    }
+   ],
+   "exclusions": [
+    {
+     "exclusion_type": "TRANSACTION_ATTR",
+     "exclusion_value": "GIFT_CARD",
+     "_source": "- 온라인 쇼핑몰 이용금액, 상품권 구매 및 건물 내 임대매장 이용금액은 적립 제외됩니다."
+    },
+    {
+     "exclusion_type": "MERCHANT_LOCATION",
+     "exclusion_value": "IN_SHOPPING_MALL",
+     "_source": "- 건물 내 임대매장 이용금액은 적립 제외됩니다."
+    }
+   ],
+   "_source": {
+    "benefit_value": "• 백화점 5% 포인트리 적립 - 백화점 : 롯데, 신세계, 현대",
+    "limit_group_code": "표의 '백화점' 한 행에 월 적립 한도가 하나로 제시된다",
+    "require_performance": "선택 적립 서비스팩은 전월 이용실적 30만원 이상 시 제공되며"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "생활팩 커피/베이커리/아이스크림 5% 적립",
+   "benefit_kind": "POINT",
+   "calc_method": "RATE",
+   "benefit_value": 5,
+   "step_count": null,
+   "apply_timing": null,
+   "target_type": "CATEGORY",
+   "target_category_code": null,
+   "target_merchant_name": null,
+   "targets": [
+    "CAFE",
+    "BAKERY_DESSERT"
+   ],
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": "DADAM_LIFE_CAFE",
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": "SERVICE_PACK",
+   "option_key": "LIFE",
+   "description": "선택 적립 서비스팩 중 생활팩. 약관이 커피·베이커리·아이스크림 세 업종을 한 줄로 묶어 적었고 표의 한 행에 월 적립 한도가 하나로 제시돼 두 카테고리가 한도를 함께 쓴다.",
+   "tier_limits": [
+    {
+     "min_performance_amount": 300000,
+     "monthly_limit": 5000,
+     "quarterly_limit": null,
+     "yearly_limit": null,
+     "benefit_value": null,
+     "_source": "생활팩 / 커피/베이커리/아이스크림 5% / 30만원 이상 5천원 / 60만원 이상 1만원"
+    },
+    {
+     "min_performance_amount": 600000,
+     "monthly_limit": 10000,
+     "quarterly_limit": null,
+     "yearly_limit": null,
+     "benefit_value": null
+    }
+   ],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "• 커피/베이커리/아이스크림 업종 5% 포인트리 적립",
+    "require_performance": "선택 적립 서비스팩은 전월 이용실적 30만원 이상 시 제공되며",
+    "limit_group_code": "표의 '커피/베이커리/아이스크림' 한 행에 월 적립 한도가 하나로 제시되어 두 업종이 한도를 함께 쓴다"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "쇼핑팩 온라인 쇼핑몰/홈쇼핑 7% 적립",
+   "benefit_kind": "POINT",
+   "calc_method": "RATE",
+   "benefit_value": 7,
+   "step_count": null,
+   "apply_timing": null,
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": null,
+   "targets": [
+    "G마켓",
+    "옥션",
+    "11번가",
+    "CJ온스타일",
+    "GS SHOP",
+    "현대홈쇼핑"
+   ],
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": "DADAM_SHOP_ONLINE_HOME",
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": "SERVICE_PACK",
+   "option_key": "SHOPPING",
+   "description": "선택 적립 서비스팩 5종 중 1개만 선택할 수 있고 중복 선택은 되지 않는다. 약관의 '홈쇼핑 : CJ, GS, 현대'는 각 사의 홈쇼핑 브랜드(CJ온스타일·GS SHOP·현대홈쇼핑)로 옮겼다. 온라인 쇼핑몰 내 상품권·여행·항공권·티켓·도서 이용금액은 적립 제외된다.",
+   "tier_limits": [
+    {
+     "min_performance_amount": 300000,
+     "monthly_limit": 7000,
+     "quarterly_limit": null,
+     "yearly_limit": null,
+     "benefit_value": null,
+     "_source": "쇼핑팩 / 온라인 쇼핑몰/홈쇼핑 7% / 30만원 이상 7천원 / 60만원 이상 1만 4천원"
+    },
+    {
+     "min_performance_amount": 600000,
+     "monthly_limit": 14000,
+     "quarterly_limit": null,
+     "yearly_limit": null,
+     "benefit_value": null
+    }
+   ],
+   "exclusions": [
+    {
+     "exclusion_type": "TRANSACTION_ATTR",
+     "exclusion_value": "GIFT_CARD",
+     "_source": "- 온라인 쇼핑몰 내 상품권, 여행, 항공권, 티켓, 도서 이용금액은 적립 제외됩니다."
+    }
+   ],
+   "_source": {
+    "benefit_value": "• 온라인 쇼핑몰/홈쇼핑 7% 포인트리 적립 - 온라인 쇼핑몰 : G마켓, 옥션, 11번가 - 홈쇼핑 : CJ, GS, 현대",
+    "limit_group_code": "표에서 '온라인 쇼핑몰/홈쇼핑'이 한 행이라 여섯 가맹점이 월 적립 한도를 함께 쓴다",
+    "require_performance": "선택 적립 서비스팩은 전월 이용실적 30만원 이상 시 제공되며, 전월 이용실적에 따라 월간 적립한도가 제공됩니다."
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "쇼핑팩 소셜커머스 5% 적립",
+   "benefit_kind": "POINT",
+   "calc_method": "RATE",
+   "benefit_value": 5,
+   "step_count": null,
+   "apply_timing": null,
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": null,
+   "targets": [
+    "쿠팡",
+    "티몬",
+    "위메프"
+   ],
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": "DADAM_SHOP_SOCIAL",
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": "SERVICE_PACK",
+   "option_key": "SHOPPING",
+   "description": "선택 적립 서비스팩 중 쇼핑팩. 상품권 구매 및 건물 내 임대매장 이용금액은 적립 제외된다.",
+   "tier_limits": [
+    {
+     "min_performance_amount": 300000,
+     "monthly_limit": 5000,
+     "quarterly_limit": null,
+     "yearly_limit": null,
+     "benefit_value": null,
+     "_source": "쇼핑팩 / 소셜커머스 5% / 30만원 이상 5천원 / 60만원 이상 1만원"
+    },
+    {
+     "min_performance_amount": 600000,
+     "monthly_limit": 10000,
+     "quarterly_limit": null,
+     "yearly_limit": null,
+     "benefit_value": null
+    }
+   ],
+   "exclusions": [
+    {
+     "exclusion_type": "TRANSACTION_ATTR",
+     "exclusion_value": "GIFT_CARD",
+     "_source": "* 소셜커머스, 프리미엄아울렛, ZARA/H&M 적립서비스는 온라인 쇼핑몰 이용금액, 상품권 구매 및 건물 내 임대매장 이용금액은 적립 제외"
+    },
+    {
+     "exclusion_type": "MERCHANT_LOCATION",
+     "exclusion_value": "IN_SHOPPING_MALL",
+     "_source": "건물 내 임대매장 이용금액은 적립 제외"
+    }
+   ],
+   "_source": {
+    "benefit_value": "• 소셜커머스 5% 포인트리 적립 - 소셜커머스 : 쿠팡, 티몬, 위메프",
+    "limit_group_code": "표의 '소셜커머스' 한 행에 월 적립 한도가 하나로 제시된다",
+    "require_performance": "선택 적립 서비스팩은 전월 이용실적 30만원 이상 시 제공되며"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "쇼핑팩 프리미엄 아울렛 5% 적립",
+   "benefit_kind": "POINT",
+   "calc_method": "RATE",
+   "benefit_value": 5,
+   "step_count": null,
+   "apply_timing": null,
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": null,
+   "targets": [
+    "롯데프리미엄아울렛",
+    "신세계사이먼 프리미엄 아울렛"
+   ],
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": "DADAM_SHOP_OUTLET",
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": "SERVICE_PACK",
+   "option_key": "SHOPPING",
+   "description": "선택 적립 서비스팩 중 쇼핑팩. 약관은 롯데 프리미엄 아울렛(파주·이천)과 신세계 사이먼 아울렛(파주·여주·부산)으로 지점을 한정하나 가맹점이 브랜드 단위라 지점을 구분하지 않는다. 상품권 구매 및 건물 내 임대매장 이용금액은 적립 제외된다.",
+   "tier_limits": [
+    {
+     "min_performance_amount": 300000,
+     "monthly_limit": 5000,
+     "quarterly_limit": null,
+     "yearly_limit": null,
+     "benefit_value": null,
+     "_source": "쇼핑팩 / 프리미엄 아울렛 5% / 30만원 이상 5천원 / 60만원 이상 1만원"
+    },
+    {
+     "min_performance_amount": 600000,
+     "monthly_limit": 10000,
+     "quarterly_limit": null,
+     "yearly_limit": null,
+     "benefit_value": null
+    }
+   ],
+   "exclusions": [
+    {
+     "exclusion_type": "TRANSACTION_ATTR",
+     "exclusion_value": "GIFT_CARD",
+     "_source": "* 소셜커머스, 프리미엄아울렛, ZARA/H&M 적립서비스는 온라인 쇼핑몰 이용금액, 상품권 구매 및 건물 내 임대매장 이용금액은 적립 제외"
+    },
+    {
+     "exclusion_type": "MERCHANT_LOCATION",
+     "exclusion_value": "IN_SHOPPING_MALL",
+     "_source": "건물 내 임대매장 이용금액은 적립 제외"
+    }
+   ],
+   "_source": {
+    "benefit_value": "• 프리미엄 아울렛 5% 포인트리 적립 - 롯데 프리미엄 아울렛(파주, 이천) - 신세계 사이먼 아울렛(파주, 여주, 부산)",
+    "limit_group_code": "표의 '프리미엄 아울렛' 한 행에 월 적립 한도가 하나로 제시된다",
+    "require_performance": "선택 적립 서비스팩은 전월 이용실적 30만원 이상 시 제공되며"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "쇼핑팩 ZARA/H&M 5% 적립",
+   "benefit_kind": "POINT",
+   "calc_method": "RATE",
+   "benefit_value": 5,
+   "step_count": null,
+   "apply_timing": null,
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": null,
+   "targets": [
+    "자라",
+    "H&M"
+   ],
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": "DADAM_SHOP_ZARA_HNM",
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": "SERVICE_PACK",
+   "option_key": "SHOPPING",
+   "description": "선택 적립 서비스팩 중 쇼핑팩. 상품권 구매 및 건물 내 임대매장 이용금액은 적립 제외된다.",
+   "tier_limits": [
+    {
+     "min_performance_amount": 300000,
+     "monthly_limit": 5000,
+     "quarterly_limit": null,
+     "yearly_limit": null,
+     "benefit_value": null,
+     "_source": "쇼핑팩 / ZARA/H&M 5% / 30만원 이상 5천원 / 60만원 이상 1만원"
+    },
+    {
+     "min_performance_amount": 600000,
+     "monthly_limit": 10000,
+     "quarterly_limit": null,
+     "yearly_limit": null,
+     "benefit_value": null
+    }
+   ],
+   "exclusions": [
+    {
+     "exclusion_type": "TRANSACTION_ATTR",
+     "exclusion_value": "GIFT_CARD",
+     "_source": "* 소셜커머스, 프리미엄아울렛, ZARA/H&M 적립서비스는 온라인 쇼핑몰 이용금액, 상품권 구매 및 건물 내 임대매장 이용금액은 적립 제외"
+    },
+    {
+     "exclusion_type": "MERCHANT_LOCATION",
+     "exclusion_value": "IN_SHOPPING_MALL",
+     "_source": "건물 내 임대매장 이용금액은 적립 제외"
+    }
+   ],
+   "_source": {
+    "benefit_value": "• ZARA, H&M 5% 포인트리 적립",
+    "limit_group_code": "표의 'ZARA/H&M' 한 행에 월 적립 한도가 하나로 제시된다",
+    "require_performance": "선택 적립 서비스팩은 전월 이용실적 30만원 이상 시 제공되며"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "교육팩 학원 5% 적립",
+   "benefit_kind": "POINT",
+   "calc_method": "RATE",
+   "benefit_value": 5,
+   "step_count": null,
+   "apply_timing": null,
+   "target_type": "CATEGORY",
+   "target_category_code": "ACADEMY",
+   "target_merchant_name": null,
+   "targets": null,
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": 100000,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": null,
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": "SERVICE_PACK",
+   "option_key": "EDUCATION",
+   "description": "선택 적립 서비스팩 5종 중 1개만 선택할 수 있고 중복 선택은 되지 않는다. PG(인터넷 결제)와 자동차 학원 이용금액은 제외된다.",
+   "tier_limits": [
+    {
+     "min_performance_amount": 300000,
+     "monthly_limit": 5000,
+     "quarterly_limit": null,
+     "yearly_limit": null,
+     "benefit_value": null,
+     "_source": "교육팩 / 학원 5% / 30만원 이상 5천원 / 60만원 이상 1만원"
+    },
+    {
+     "min_performance_amount": 600000,
+     "monthly_limit": 10000,
+     "quarterly_limit": null,
+     "yearly_limit": null,
+     "benefit_value": null
+    }
+   ],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "• 학원 5% 포인트리 적립",
+    "min_txn_amount": "- 이용 건당 10만원 이상 시 적립 서비스가 제공됩니다.",
+    "require_performance": "선택 적립 서비스팩은 전월 이용실적 30만원 이상 시 제공되며, 전월 이용실적에 따라 월간 적립한도가 제공됩니다."
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "교육팩 서점 5% 적립",
+   "benefit_kind": "POINT",
+   "calc_method": "RATE",
+   "benefit_value": 5,
+   "step_count": null,
+   "apply_timing": null,
+   "target_type": "CATEGORY",
+   "target_category_code": "BOOKSTORE",
+   "target_merchant_name": null,
+   "targets": null,
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": null,
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": "SERVICE_PACK",
+   "option_key": "EDUCATION",
+   "description": "선택 적립 서비스팩 중 교육팩. PG(인터넷 결제) 이용금액은 제외된다.",
+   "tier_limits": [
+    {
+     "min_performance_amount": 300000,
+     "monthly_limit": 5000,
+     "quarterly_limit": null,
+     "yearly_limit": null,
+     "benefit_value": null,
+     "_source": "교육팩 / 서점 5% / 30만원 이상 5천원 / 60만원 이상 1만원"
+    },
+    {
+     "min_performance_amount": 600000,
+     "monthly_limit": 10000,
+     "quarterly_limit": null,
+     "yearly_limit": null,
+     "benefit_value": null
+    }
+   ],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "• 서점 5% 포인트리 적립",
+    "require_performance": "선택 적립 서비스팩은 전월 이용실적 30만원 이상 시 제공되며"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "레저팩 골프 7% 적립",
+   "benefit_kind": "POINT",
+   "calc_method": "RATE",
+   "benefit_value": 7,
+   "step_count": null,
+   "apply_timing": null,
+   "target_type": "CATEGORY",
+   "target_category_code": "GOLF",
+   "target_merchant_name": null,
+   "targets": null,
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": null,
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": "SERVICE_PACK",
+   "option_key": "LEISURE",
+   "description": "선택 적립 서비스팩 5종 중 1개만 선택할 수 있고 중복 선택은 되지 않는다. 약관은 골프연습장 업종으로 한정하나 표준 카테고리에는 골프연습장을 따로 가르는 코드가 없다.",
+   "tier_limits": [
+    {
+     "min_performance_amount": 300000,
+     "monthly_limit": 7000,
+     "quarterly_limit": null,
+     "yearly_limit": null,
+     "benefit_value": null,
+     "_source": "레저팩 / 골프 7% / 30만원 이상 7천원 / 60만원 이상 1만 4천원"
+    },
+    {
+     "min_performance_amount": 600000,
+     "monthly_limit": 14000,
+     "quarterly_limit": null,
+     "yearly_limit": null,
+     "benefit_value": null
+    }
+   ],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "• 골프(골프연습장)업종 7% 포인트리 적립",
+    "require_performance": "선택 적립 서비스팩은 전월 이용실적 30만원 이상 시 제공되며, 전월 이용실적에 따라 월간 적립한도가 제공됩니다."
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "레저팩 숙박 5% 적립",
+   "benefit_kind": "POINT",
+   "calc_method": "RATE",
+   "benefit_value": 5,
+   "step_count": null,
+   "apply_timing": null,
+   "target_type": "CATEGORY",
+   "target_category_code": "LODGING",
+   "target_merchant_name": null,
+   "targets": null,
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": null,
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": "SERVICE_PACK",
+   "option_key": "LEISURE",
+   "description": "선택 적립 서비스팩 5종 중 1개만 선택할 수 있고 중복 선택은 되지 않는다. 약관은 숙박(호텔·민박·펜션)과 렌터카를 한 줄에 묶어 적었으나 렌터카는 브랜드 열거 없이 업종으로만 서술돼 대상을 특정할 수 없어 숙박만 담았다.",
+   "tier_limits": [
+    {
+     "min_performance_amount": 300000,
+     "monthly_limit": 5000,
+     "quarterly_limit": null,
+     "yearly_limit": null,
+     "benefit_value": null,
+     "_source": "레저팩 / 숙박/렌터카 5% / 30만원 이상 5천원 / 60만원 이상 1만원"
+    },
+    {
+     "min_performance_amount": 600000,
+     "monthly_limit": 10000,
+     "quarterly_limit": null,
+     "yearly_limit": null,
+     "benefit_value": null
+    }
+   ],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "• 숙박/렌터카 업종 5% 포인트리 적립(호텔,민박,펜션 업종/렌터카 업종)",
+    "target_category_code": "호텔·민박·펜션이 LODGING 에 해당한다. 같은 줄의 렌터카는 업종으로만 적혀 대상을 특정할 수 없어 뺐다",
+    "require_performance": "선택 적립 서비스팩은 전월 이용실적 30만원 이상 시 제공되며, 전월 이용실적에 따라 월간 적립한도가 제공됩니다."
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "레저팩 공연 5% 적립",
+   "benefit_kind": "POINT",
+   "calc_method": "RATE",
+   "benefit_value": 5,
+   "step_count": null,
+   "apply_timing": null,
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": null,
+   "targets": [
+    "인터파크티켓",
+    "티켓링크"
+   ],
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": "DADAM_LEISURE_SHOW",
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": "SERVICE_PACK",
+   "option_key": "LEISURE",
+   "description": "선택 적립 서비스팩 중 레저팩. 인터파크·티켓링크를 통한 공연 예매 건에 한한다.",
+   "tier_limits": [
+    {
+     "min_performance_amount": 300000,
+     "monthly_limit": 5000,
+     "quarterly_limit": null,
+     "yearly_limit": null,
+     "benefit_value": null,
+     "_source": "레저팩 / 공연 5% / 30만원 이상 5천원 / 60만원 이상 1만원"
+    },
+    {
+     "min_performance_amount": 600000,
+     "monthly_limit": 10000,
+     "quarterly_limit": null,
+     "yearly_limit": null,
+     "benefit_value": null
+    }
+   ],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "• 공연 5% 포인트리 적립 - 인터파크, 티켓링크를 통한 공연 예매에 한합니다.",
+    "limit_group_code": "표의 '공연' 한 행에 월 적립 한도가 하나로 제시된다",
+    "require_performance": "선택 적립 서비스팩은 전월 이용실적 30만원 이상 시 제공되며"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "레저팩 스피드메이트 자동차 정비 2만원 현장할인",
+   "benefit_kind": "DISCOUNT",
+   "calc_method": "FIXED",
+   "benefit_value": 20000,
+   "step_count": null,
+   "apply_timing": "IMMEDIATE",
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": "스피드메이트",
+   "targets": null,
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": 1,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": 3,
+   "limit_group_code": null,
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": "SERVICE_PACK",
+   "option_key": "LEISURE",
+   "description": "선택 적립 서비스팩 중 레저팩. 7대 정비 다빈도 항목(엔진 세정, 브레이크패드(앞) 교환, 에어컨 살균, 에어컨가스 완충, 엔진오일 교환, 에어컨/히터 필터 교환, 부동액 교환)에 한한다. 이 서비스에는 별도의 실적유예기간이 없다.",
+   "tier_limits": [],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "• 스피드메이트 자동차 정비 2만원 현장 할인(별도의 실적유예기간 없음)",
+    "monthly_count_limit": "- 7대 정비 다빈도 항목 2만원 현장 할인(월 1회,연 3회 제공)",
+    "require_performance": "선택 적립 서비스팩은 전월 이용실적 30만원 이상 시 제공되며"
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "레저팩 스피드메이트 엔진오일 무료교환",
+   "benefit_kind": "GIFT",
+   "calc_method": null,
+   "benefit_value": null,
+   "step_count": null,
+   "apply_timing": null,
+   "target_type": "MERCHANT",
+   "target_category_code": null,
+   "target_merchant_name": "스피드메이트",
+   "targets": null,
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": 1,
+   "limit_group_code": null,
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": "SERVICE_PACK",
+   "option_key": "LEISURE",
+   "description": "선택 적립 서비스팩 중 레저팩. 오일필터 및 에어클리너 교환을 연 1회 제공한다. ZIC-X7 기준, 5인 이하 가솔린 승용(엔진오일 4L) 기준이며 기준 외 차량의 추가 비용은 고객 부담, 1.3톤 초과 화물차 및 수입차는 대상에서 제외된다. 별도의 실적유예기간이 없다. 금액이 약관에 없어 계산에는 쓰지 않는다.",
+   "tier_limits": [],
+   "exclusions": [],
+   "_source": {
+    "yearly_count_limit": "• 스피드메이트 엔진오일 무료교환 서비스 (별도의 실적유예기간 없음) - 오일필터 및 에어클리너 교환(연1회 제공)",
+    "require_performance": "선택 적립 서비스팩은 전월 이용실적 30만원 이상 시 제공되며"
+   },
+   "_needs_review": [
+    "calc_method",
+    "benefit_value"
+   ]
+  },
+  {
+   "benefit_name": "직장인팩 커피 7% 적립",
+   "benefit_kind": "POINT",
+   "calc_method": "RATE",
+   "benefit_value": 7,
+   "step_count": null,
+   "apply_timing": null,
+   "target_type": "CATEGORY",
+   "target_category_code": "CAFE",
+   "target_merchant_name": null,
+   "targets": null,
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": null,
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": "SERVICE_PACK",
+   "option_key": "OFFICE_WORKER",
+   "description": "선택 적립 서비스팩 5종 중 1개만 선택할 수 있고 중복 선택은 되지 않는다. 약관이 한정한 커피전문점 업종(스타벅스·커피빈·파스쿠치 등)이 CAFE 에 해당하며, 베이커리·아이스크림은 BAKERY_DESSERT 로 갈려 있어 이 혜택에 걸리지 않는다.",
+   "tier_limits": [
+    {
+     "min_performance_amount": 300000,
+     "monthly_limit": 7000,
+     "quarterly_limit": null,
+     "yearly_limit": null,
+     "benefit_value": null,
+     "_source": "직장인팩 / 커피 7% / 30만원 이상 7천원 / 60만원 이상 1만4천원"
+    },
+    {
+     "min_performance_amount": 600000,
+     "monthly_limit": 14000,
+     "quarterly_limit": null,
+     "yearly_limit": null,
+     "benefit_value": null
+    }
+   ],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "• 커피 업종 7% 포인트리 적립 - 커피전문점 업종(스타벅스, 커피빈, 파스쿠치 등)",
+    "require_performance": "선택 적립 서비스팩은 전월 이용실적 30만원 이상 시 제공되며, 전월 이용실적에 따라 월간 적립한도가 제공됩니다."
+   },
+   "_needs_review": []
+  },
+  {
+   "benefit_name": "직장인팩 음식/편의점 5% 적립",
+   "benefit_kind": "POINT",
+   "calc_method": "RATE",
+   "benefit_value": 5,
+   "step_count": null,
+   "apply_timing": null,
+   "target_type": "CATEGORY",
+   "target_category_code": null,
+   "target_merchant_name": null,
+   "targets": [
+    "RESTAURANT",
+    "CONVENIENCE_STORE"
+   ],
+   "require_performance": "Y",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": "DADAM_OFFICE_FOOD",
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": "SERVICE_PACK",
+   "option_key": "OFFICE_WORKER",
+   "description": "선택 적립 서비스팩 중 직장인팩. 약관이 음식 업종을 일반음식점·한식·중식·일식·양식·뷔페·패밀리 레스토랑으로 열거해 RESTAURANT 에 해당하며, 패스트푸드(FAST_FOOD)와 제과·아이스크림(BAKERY_DESSERT)은 열거되지 않아 이 혜택에 걸리지 않는다. 편의점은 GS25·CU·세븐일레븐 등 업종 전체가 대상이라 CONVENIENCE_STORE 로 담았다.",
+   "tier_limits": [
+    {
+     "min_performance_amount": 300000,
+     "monthly_limit": 5000,
+     "quarterly_limit": null,
+     "yearly_limit": null,
+     "benefit_value": null,
+     "_source": "직장인팩 / 음식/편의점 5% / 30만원 이상 5천원 / 60만원 이상 1만원"
+    },
+    {
+     "min_performance_amount": 600000,
+     "monthly_limit": 10000,
+     "quarterly_limit": null,
+     "yearly_limit": null,
+     "benefit_value": null
+    }
+   ],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "• 음식/편의점 업종 5% 포인트리 적립 - 음식: 일반음식점, 한식, 중식,일식, 양식, 뷔페, 패밀리 레스토랑 업종 - 편의점 업종(GS25, CU, 세븐일레븐 등)",
+    "limit_group_code": "표의 '음식/편의점' 한 행에 월 적립 한도가 하나로 제시되어 두 업종이 한도를 함께 쓴다",
+    "require_performance": "선택 적립 서비스팩은 전월 이용실적 30만원 이상 시 제공되며, 전월 이용실적에 따라 월간 적립한도가 제공됩니다."
+   },
+   "_needs_review": []
+  }
+ ],
+ "unmapped": [
+  {
+   "text": "해외 할인 캐시백 • 해외 이용금액 5%할인 캐시백 - 월 최대 5천원까지 제공됩니다. - 할인금액은 다음달 둘째주에 결제계좌로 입금됩니다. - 해외 이용금액은 일시불 매입 완료된 금액 기준이며, 해외 매입사를 통해 KB국민카드로 결제됩니다.",
+   "why": "해외 결제 혜택은 계산 범위 밖이다. 해외 가맹점 데이터가 들어오지 않아 매칭할 대상이 없다"
+  },
+  {
+   "text": "- 가족카드 발급하고 다담카드(가족카드 포함)의 연간 결제 납부 실적 1천만원 이상 시 포인트리 3천점이 추가 적립됩니다.",
+   "why": "가족카드 합산은 범위 밖이다. 회원의 카드를 묶어 실적을 합할 축이 없다"
+  },
+  {
+   "text": "함께하는 기부 서비스 기부한 포인트리의 10%를 재적립 - KB국민 다담카드를 소지한 고객이 보유한 포인트리를 KB국민카드 홈페이지를 통해 지정 기부처에 기부 시 연간 기부한 포인트리의 10%를 재적립해 드립니다. * 연간 재적립 금액은 최대 1만원까지 제공",
+   "why": "포인트 기부는 가맹점 결제가 아니라 target_type을 정할 수 없다. 적립 기준도 결제금액이 아니라 기부한 포인트리 금액이다"
+  },
+  {
+   "text": "• CGV/메가박스 온라인 영화예매시 승인건당 3,500원 청구 할인",
+   "why": "'온라인 예매'는 결제 채널 조건이라 범위 밖이다. 혜택 행은 남기되 현장 예매를 걸러낼 축은 두지 않았다"
+  },
+  {
+   "text": "- 롯데월드 어드벤처 종합이용권 50%할인 / - 에버랜드 페스티벌 월드 자유이용권 50%할인 / - 캐리비안베이 입장권 30% 할인",
+   "why": "종합이용권·자유이용권·입장권은 가맹점 안에서 파는 상품 구분이다. 상품 단위 조건은 범위 밖이라 가맹점까지만 내렸다"
+  },
+  {
+   "text": "• 학원 5% 포인트리 적립 - PG(인터넷 결제), 자동차 학원 이용금액은 제외됩니다. / • 서점 5% 포인트리 적립 - PG(인터넷 결제)이용금액은 제외됩니다.",
+   "why": "PG(인터넷 결제)는 결제 채널 조건이라 범위 밖이고, '자동차 학원'은 학원 업종 안의 세부 구분이라 카테고리 코드로 가를 수 없다"
+  },
+  {
+   "text": "- 온라인 쇼핑몰 내 상품권, 여행, 항공권, 티켓, 도서 이용금액은 적립 제외됩니다.",
+   "why": "상품권은 TRANSACTION_ATTR로 뺐으나 여행·항공권·티켓·도서는 가맹점 안에서 파는 상품 분류다. 카테고리 코드로 옮기면 그 카테고리의 다른 가맹점까지 걸린다"
+  },
+  {
+   "text": "- 온라인 쇼핑몰 이용금액, 상품권 구매 및 건물 내 임대매장 이용금액은 적립 제외됩니다.(백화점) / * 소셜커머스, 프리미엄아울렛, ZARA/H&M 적립서비스는 온라인 쇼핑몰 이용금액, 상품권 구매 및 건물 내 임대매장 이용금액은 적립 제외",
+   "why": "'온라인 쇼핑몰 이용금액 제외'는 같은 브랜드의 온라인몰 결제를 빼라는 뜻인데 가맹점이 브랜드 단위라 온·오프라인을 구분할 축이 없다. ONLINE_SHOPPING 카테고리로 적으면 소셜커머스처럼 대상 자체가 온라인인 혜택이 통째로 사라진다"
+  },
+  {
+   "text": "• 프리미엄 아울렛 5% 포인트리 적립 - 롯데 프리미엄 아울렛(파주, 이천) - 신세계 사이먼 아울렛(파주, 여주, 부산)",
+   "why": "지점을 열거해 한정하는데 가맹점이 브랜드 단위라 지점을 구분하지 않는다. MERCHANT_LOCATION은 입점 위치를 가르는 값이라 특정 지점 열거에는 맞지 않는다"
+  },
+  {
+   "text": "- 기타 정비관련 제공 서비스 * 타이어펑크 무료 수리: 안전점검 연1회 제공) * 워셔액 무료보충, 공임 10%할인(수시 제공)",
+   "why": "'수시 제공'이라 기간·횟수 축이 없고, 공임 10% 할인은 결제금액이 아니라 정비 공임에 붙는다"
+  },
+  {
+   "text": "KB국민 다담카드의 스마트기능은 NFC 기능이 탑재된 안드로이드 스마트폰으로 이용가능합니다. KB Good Touch - 스마트폰에 카드를 터치하여 KB국민카드 앱 간편 로그인 및 다양한 맟춤 정보를 실시간으로 확인 / 스마트 OTP - 은행 거래시 스마트폰에 카드를 터치하면 일회용 OTP번호가 자동 생성 및 입력",
+   "why": "결제 혜택이 아니라 카드의 부가 기능이다"
+  },
+  {
+   "text": "KB국민카드 해외여행 패키지 3% 현장할인",
+   "why": "대상이 가맹점이 아니라 카드사 상담 창구라 결제 가맹점으로 판정할 수 없다."
+  },
+  {
+   "text": "• 숙박/렌터카 업종 5% 포인트리 적립(호텔,민박,펜션 업종/렌터카 업종) 중 렌터카",
+   "why": "약관이 브랜드를 열거하지 않고 '렌터카 업종'이라고만 적어 대상 가맹점을 특정할 수 없고, 렌터카만 가리키는 표준 카테고리도 없다. 숙박은 LODGING 으로 담았다"
+  }
+ ],
+ "_schema_gap": [
+  {
+   "text": "• SK주유소(충전소)리터당 60원 청구할인 - 월 20만원 이용금액까지 할인 제공됩니다. - 기준유가: SK에너지 본사 고시 휘발유가 경유, 등유,LPG는 휘발유가로 환산하여 할인율 적용",
+   "missing": "단위당(리터당) 계산 방식과 주유량 데이터, 그리고 월 단위 할인 대상 금액 상한",
+   "why": "calc_method가 RATE·FIXED·COUNT_STEP뿐이라 '리터당 60원'을 담을 수 없고 결제금액만으로는 주유 리터를 알 수 없다. '월 20만원 이용금액까지'는 할인액이 아니라 대상 금액의 월 상한인데 max_eligible_amount는 건당 축이라 넣을 자리가 없다"
+  },
+  {
+   "text": "※ 최초 카드 사용등록일로부터 다음달 말일(실적 유예기간)까지 'KB국민 다담카드' 실적이 없는 경우에도 \"30만원 이상\" 서비스 제공(단, 레저팩 '스피드메이트' 서비스는 예외)",
+   "missing": "user_card의 사용등록일(발급일)과 실적 유예기간, 유예 중 적용할 구간",
+   "why": "카드 등록 시점 정보가 없어 유예기간인지 판정할 수 없고, 유예 중 어느 구간을 적용할지 지정할 자리도 없다"
+  },
+  {
+   "text": "회원별 일 1매, 월 2매, 연간 5매 할인 제공됩니다. / * 카드별(가족카드 포함)일 1매, 회원별 연간 10매 할인 제공됩니다.",
+   "missing": "티켓 매수 단위 한도, 그리고 '카드별'과 '회원별'을 가르는 축",
+   "why": "*_count_limit은 결제 건수 축이라 한 결제로 여러 매를 사면 실제보다 적게 세고, 같은 혜택 안에서 일 한도는 카드별·연 한도는 회원별인 조항을 두 축으로 나눠 담을 수 없다"
+  },
+  {
+   "text": "다담 리워드 ❶ • 연간 이용실적에 따른 리워드 - KB국민 다담카드의 연간 결제 납부 실적 8백만원 이상 시 포인트리 1만점이 적립됩니다. - 결제 납부 실적 기준 : 카드 발급 초회 년도 결제 납부 실적이 8백만원 미만인 경우, 초회년도 결제 납부실적의 8백만원에 대한 비율만큼 적립(원단위 미만 반올림, 단 계산한 포인트리가 1천점 이상인 경우에만 리워드서비스 제공)",
+   "missing": "연간 실적 축의 구간표와, 특정 결제에 붙지 않는 보너스 적립을 담을 자리",
+   "why": "performance_tier의 period_type이 MONTH·QUARTER뿐이라 연간 실적 구간을 만들 수 없고, 이 적립은 어떤 결제에도 붙지 않아 target_type을 정할 수 없다"
+  },
+  {
+   "text": "다담 리워드 ❷ • 연간 이용패턴에 따른 리워드 - KB국민 다담카드로 다음 3가지 조건을 모두 충족 시 포인트리 2천점이 추가 적립됩니다. * 건당 이용금액이 100만원 이상, 이용건수 1회 이상 * 자동이체 이용건수 2건 이상 * 굿세이브(포인트 연계 할부 서비스)이용건수 1회 이상 - 연간 이용패턴에 따른 리워드 제공 기준은 전년도 1월 ~ 12월까지 조건 충족 시 제공",
+   "missing": "여러 조건을 모두 충족해야 지급되는 연 단위 보너스 조건표",
+   "why": "혜택 한 행은 대상 하나와 조건 하나로 이뤄져 'A와 B와 C를 모두 만족'을 표현할 수 없고, 지급 기준이 개별 결제가 아니라 한 해의 이용 패턴이다"
+  },
+  {
+   "text": "• 숙박/렌터카 업종 5% 포인트리 적립(호텔,민박,펜션 업종/렌터카 업종)",
+   "missing": "렌터카 카테고리 코드",
+   "why": "숙박은 LODGING 으로 담았으나 렌터카를 가리키는 코드가 없다. TRANSPORT 는 대분류라 넣으면 택시·철도 결제까지 함께 걸린다"
+  }
+ ]
+}

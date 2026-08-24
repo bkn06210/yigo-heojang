@@ -14,6 +14,8 @@ import java.math.BigDecimal;
  */
 public class BenefitRow {
 
+    // 카드 여러 장을 한 번에 조회할 때 어느 카드의 혜택인지 가른다
+    private long cardId;
     private long benefitId;
     private String benefitName;
     private String benefitKind;
@@ -310,5 +312,13 @@ public class BenefitRow {
 
     public void setTierBenefitValue(BigDecimal tierBenefitValue) {
         this.tierBenefitValue = tierBenefitValue;
+    }
+
+    public long getCardId() {
+        return cardId;
+    }
+
+    public void setCardId(long cardId) {
+        this.cardId = cardId;
     }
 }

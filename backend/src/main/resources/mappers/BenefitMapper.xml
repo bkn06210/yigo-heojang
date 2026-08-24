@@ -68,6 +68,16 @@
         ORDER BY b.benefit_id
     </select>
 
+    <!--
+      혜택별 예외와 카드 전체 예외를 함께 준다.
+
+      카드 전체 예외(card_benefit_exclusion)는 "이 카드로는 어디서 결제하든 안 되는 것"이라
+      그 카드의 모든 혜택에 걸린다. 그래서 카드 예외 한 줄을 혜택 수만큼 펼쳐 붙인다 —
+      계산기는 예외가 어디서 왔는지 몰라도 되고, 조립부도 그대로 쓴다.
+
+      펼치지 않고 카드 예외를 따로 넘기면 계산기와 조립부 양쪽에 "카드 예외" 개념이
+      새로 생긴다. 예외를 판정하는 코드가 두 벌이 되면 한쪽만 고쳐져 조용히 어긋난다.
+    -->
     <select id="findExclusions"
             resultType="com.wallet.engine.dao.dto.BenefitExclusionRow">
         SELECT x.benefit_id,
@@ -78,6 +88,165 @@
         WHERE b.card_id = #{cardId}
           AND b.is_active = 'Y'
           AND b.benefit_kind NOT IN ('GIFT', 'INSTALLMENT_FREE', 'RETROACTIVE')
+
+        UNION ALL
+
+        SELECT b.benefit_id,
+               c.exclusion_type,
+               c.exclusion_value
+        FROM card_benefit_exclusion c
+        JOIN benefit b ON b.card_id = c.card_id
+        WHERE c.card_id = #{cardId}
+          AND b.is_active = 'Y'
+          AND b.benefit_kind NOT IN ('GIFT', 'INSTALLMENT_FREE', 'RETROACTIVE')
+    </select>
+
+
+    <!--
+        선택형 혜택의 묶음·선택지 목록. 회원이 고른 기록이 아니라 카드가 제공하는 선택지다.
+
+        DISTINCT 인 것은 선택지 하나가 혜택 여러 행으로 이뤄지기 때문이다(배달팩 = 4행).
+        행마다 돌려주면 같은 선택지를 여러 번 계산하게 된다.
+    -->
+    <select id="findOptionKeys" resultType="com.wallet.engine.dao.dto.OptionKeyRow">
+        SELECT DISTINCT b.option_group_code AS optionGroupCode,
+                        b.option_key        AS optionKey
+          FROM benefit b
+         WHERE b.card_id = #{cardId}
+           AND b.is_active = 'Y'
+           AND b.option_group_code IS NOT NULL
+           AND b.option_key IS NOT NULL
+           AND b.benefit_kind NOT IN ('GIFT', 'INSTALLMENT_FREE', 'RETROACTIVE')
+         ORDER BY b.option_group_code, b.option_key
+    </select>
+
+    <!--
+        추천 후보 축소 — 그 회원이 결제한 업종·가맹점에 혜택이 걸린 미보유 카드.
+
+        대분류로도 매칭한다. 혜택이 대분류(외식)를 겨냥하면 하위 중분류(카페) 결제도 대상인데,
+        중분류 id로만 찾으면 그 카드가 후보에서 빠진다. 호출자가 두 축의 id를 함께 넘긴다.
+
+        맞는 혜택 수로 정렬하는 것은 순위가 아니라 후보 순서일 뿐이다. 실제 순위는 시뮬레이션이
+        정한다 — 혜택이 많다고 금액이 큰 것은 아니다(한도가 작을 수 있다).
+    -->
+    <select id="findCandidateCardIds" resultType="long">
+        SELECT b.card_id
+          FROM benefit b
+         WHERE b.is_active = 'Y'
+           AND b.benefit_kind NOT IN ('GIFT', 'INSTALLMENT_FREE', 'RETROACTIVE')
+           AND (
+                <if test="categoryIds != null and !categoryIds.isEmpty()">
+                    b.target_category_id IN
+                    <foreach collection="categoryIds" item="categoryId" open="(" separator="," close=")">
+                        #{categoryId}
+                    </foreach>
+                </if>
+                <if test="(categoryIds != null and !categoryIds.isEmpty())
+                          and (merchantIds != null and !merchantIds.isEmpty())">
+                    OR
+                </if>
+                <if test="merchantIds != null and !merchantIds.isEmpty()">
+                    b.target_merchant_id IN
+                    <foreach collection="merchantIds" item="merchantId" open="(" separator="," close=")">
+                        #{merchantId}
+                    </foreach>
+                </if>
+               )
+        <if test="excludeCardIds != null and !excludeCardIds.isEmpty()">
+           AND b.card_id NOT IN
+            <foreach collection="excludeCardIds" item="cardId" open="(" separator="," close=")">
+                #{cardId}
+            </foreach>
+        </if>
+         GROUP BY b.card_id
+         ORDER BY COUNT(*) DESC, b.card_id
+         LIMIT #{limit}
+    </select>
+
+
+    <!--
+        카드 여러 장의 혜택을 한 번에. 카드 수만큼 쿼리가 늘지 않게 하려는 것이다.
+
+        구간별 개별한도를 붙이는 조인 조건이 카드마다 다르다. 그래서 CASE 로 카드별 구간을
+        고른다 — 카드 목록만 IN 으로 묶으면 어느 구간의 한도를 붙일지 정할 수 없다.
+        분기 구간표가 없는 카드는 quarterTierId 가 NULL 이고, 그 카드의 분기 혜택에는
+        구간값이 붙지 않는다(원래 판정할 구간이 없다).
+    -->
+    <select id="findActiveBenefitsByCards" resultType="com.wallet.engine.dao.dto.BenefitRow">
+        SELECT b.card_id AS cardId,
+               b.benefit_id, b.benefit_name, b.benefit_kind, b.calc_method, b.benefit_value,
+               b.target_type, b.target_category_id, b.target_merchant_id,
+               b.require_performance, b.require_payment_type, b.min_txn_amount,
+               b.max_eligible_amount, b.max_benefit_per_txn, b.monthly_limit,
+               b.limit_group_code, b.monthly_count_limit, b.daily_count_limit, b.daily_limit,
+               b.quarterly_limit, b.yearly_limit, b.quarterly_count_limit, b.yearly_count_limit,
+               b.count_group_code, b.step_count, b.performance_period,
+               b.exclude_from_performance, b.option_group_code, b.option_key, b.use_shared_limit,
+               tl.tier_monthly_limit, tl.tier_quarterly_limit, tl.tier_yearly_limit,
+               tl.tier_benefit_value
+        FROM benefit b
+        LEFT JOIN benefit_tier_limit tl
+               ON tl.benefit_id = b.benefit_id
+              AND tl.tier_id =
+                  <trim prefix="CASE b.card_id" suffix="END">
+                      <foreach collection="selectors" item="selector">
+                          WHEN #{selector.cardId} THEN
+                              CASE WHEN b.performance_period = 'QUARTER'
+                                   THEN #{selector.quarterTierId}
+                                   ELSE #{selector.monthTierId} END
+                      </foreach>
+                  </trim>
+        WHERE b.is_active = 'Y'
+          AND b.benefit_kind NOT IN ('GIFT', 'INSTALLMENT_FREE', 'RETROACTIVE')
+          AND b.card_id IN
+        <foreach collection="selectors" item="selector" open="(" separator="," close=")">
+            #{selector.cardId}
+        </foreach>
+        ORDER BY b.card_id, b.benefit_id
+    </select>
+
+    <!--
+        카드 여러 장의 혜택 예외를 한 번에. 카드 전체 예외를 혜택 수만큼 펼쳐 붙이는 규칙은
+        한 장짜리 조회(findExclusions)와 같다 — 규칙이 두 벌이 되면 한쪽만 고쳐져 조용히 어긋난다.
+    -->
+    <select id="findExclusionsByCards" resultType="com.wallet.engine.dao.dto.BenefitExclusionRow">
+        SELECT b.card_id AS cardId, x.benefit_id, x.exclusion_type, x.exclusion_value
+        FROM benefit_exclusion x
+        JOIN benefit b ON b.benefit_id = x.benefit_id
+        WHERE b.is_active = 'Y'
+          AND b.benefit_kind NOT IN ('GIFT', 'INSTALLMENT_FREE', 'RETROACTIVE')
+          AND b.card_id IN
+        <foreach collection="cardIds" item="cardId" open="(" separator="," close=")">
+            #{cardId}
+        </foreach>
+
+        UNION ALL
+
+        SELECT b.card_id AS cardId, b.benefit_id, c.exclusion_type, c.exclusion_value
+        FROM card_benefit_exclusion c
+        JOIN benefit b ON b.card_id = c.card_id
+        WHERE b.is_active = 'Y'
+          AND b.benefit_kind NOT IN ('GIFT', 'INSTALLMENT_FREE', 'RETROACTIVE')
+          AND c.card_id IN
+        <foreach collection="cardIds" item="cardId" open="(" separator="," close=")">
+            #{cardId}
+        </foreach>
+    </select>
+
+    <select id="findOptionKeysByCards" resultType="com.wallet.engine.dao.dto.OptionKeyRow">
+        SELECT DISTINCT b.card_id           AS cardId,
+                        b.option_group_code AS optionGroupCode,
+                        b.option_key        AS optionKey
+          FROM benefit b
+         WHERE b.is_active = 'Y'
+           AND b.option_group_code IS NOT NULL
+           AND b.option_key IS NOT NULL
+           AND b.benefit_kind NOT IN ('GIFT', 'INSTALLMENT_FREE', 'RETROACTIVE')
+           AND b.card_id IN
+        <foreach collection="cardIds" item="cardId" open="(" separator="," close=")">
+            #{cardId}
+        </foreach>
+         ORDER BY b.card_id, b.option_group_code, b.option_key
     </select>
 
 </mapper>

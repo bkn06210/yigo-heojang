@@ -30,13 +30,23 @@ def _read_prompt(name: str) -> str:
     return (_PROMPT_DIR / name).read_text(encoding="utf-8")
 
 
+# 사람이 답을 기다리는 시간이다. 더 늘리면 화면이 멈춘 것처럼 보이고,
+# 더 줄이면 정상 응답까지 잘라 버린다.
+_REQUEST_TIMEOUT_SECONDS = 20.0
+# 일시적인 429·5xx 만 넘기면 되므로 짧게 잡는다. 여기서 오래 끌면 타임아웃보다 더 기다리게 된다.
+_MAX_RETRIES = 2
+
+
 class OpenAiLlmClient(LlmClient):
     provider = "openai"
 
     def __init__(self, api_key: str, model: str):
         if not api_key:
             raise ValueError("OPENAI_API_KEY 가 비어 있다. ai-server/.env 를 확인할 것")
-        self._client = OpenAI(api_key=api_key)
+        # 타임아웃과 재시도를 명시한다. 기본값에 맡기면 한 번 느린 호출에 화면이 붙잡히고,
+        # 일시적인 429·5xx 에도 그대로 실패한다. 챗봇은 사람이 기다리는 자리라 오래 끌 수 없다.
+        self._client = OpenAI(api_key=api_key, timeout=_REQUEST_TIMEOUT_SECONDS,
+                              max_retries=_MAX_RETRIES)
         self._model = model
         self._classify_prompt = _read_prompt("classify.md")
         self._compose_prompt = _read_prompt("compose.md")
@@ -122,4 +132,5 @@ def _to_intent(raw: Optional[str]) -> Intent:
         card_text=parsed.get("cardText"),
         period_text=parsed.get("periodText"),
         amount=parsed.get("amount"),
+        term_query=parsed.get("termQuery"),
     )

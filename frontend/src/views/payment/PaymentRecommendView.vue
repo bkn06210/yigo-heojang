@@ -2,6 +2,7 @@
 import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { getCardRecommendations } from '@/api/walletApi';
+import { createPaymentQr, payWithQr } from '@/api/paymentQrApi';
 
 import { usePaymentStore } from '@/stores/payment';
 import { useAuthStore } from '@/stores/authStore';
@@ -38,17 +39,17 @@ const cardStore = useCardStore();
 
 const { cards } = storeToRefs(cardStore);
 
-// 카테고리 ID 매핑
-const categoryIds = {
-  '카페': 102,
-  '편의점': 103,
-  '음식점': 101,
-  '마트': 104,
-  '쇼핑': 2,
-  '뷰티': 105,
-  '문화/여가': 5,
-  '교통': 3,
-  '의료': 106,
+// 업종 라벨 → 업종 ID.
+//
+// 표를 이 파일에 두지 않고 personalization 스토어의 목록에서 찾는다.
+// 여기에 표를 따로 두면 스토어와 두 벌이 되는데, 실제로 그렇게 어긋나 있었다 —
+// 편의점을 고르면 '배달앱'(103), 마트는 '패스트푸드'(104), 뷰티는 '제과아이스크림'(105)로
+// 나갔고, 의료(106)는 아예 없는 업종이라 결제가 404로 죽었다.
+// 값이 틀려도 화면은 멀쩡해서 눈에 띄지 않는다.
+const resolveCategoryId = () => {
+  if (!selectedCategory.value) return null;
+  return personalizationStore.categories
+      .find(cat => cat.label === selectedCategory.value)?.id ?? null;
 };
 
 // 혜택 종류 매핑
@@ -108,6 +109,9 @@ const isPasswordModalAnimating = ref(false);
 
 // QR 모달
 const showQRModal = ref(false);
+
+// 서버가 발급한 QR 토큰. 결제 실행에 그대로 실어 보낸다.
+const qrToken = ref(null);
 const isQRModalAnimating = ref(false);
 const qrSeconds = ref(60);
 let qrTimer = null;
@@ -254,7 +258,7 @@ const recommendCard = async () => {
   try {
     const payload = {
       expectedAmount: Number(paymentAmount.value),
-      categoryId: categoryIds[selectedCategory.value] || undefined,
+      categoryId: resolveCategoryId() ?? undefined,
       paymentType: 'CARD',
     };
     console.log('카드 추천 payload:', payload);
@@ -383,29 +387,64 @@ const clickPayment = () => {
 
 
 
-// 비밀번호 인증 성공
-const onPasswordSuccess = () => {
-
-
+// 비밀번호 인증 성공 → QR 발급
+//
+// 여기서 서버에 QR을 발급받아 실제 토큰을 화면에 띄운다. 예전에는 모달만 열고
+// 서버를 부르지 않아, 화면에는 QR이 보이는데 서버에는 아무 기록도 없었다.
+const onPasswordSuccess = async () => {
   showPasswordModal.value = false;
-
   isPasswordModalAnimating.value = false;
 
   paymentStore.setPaymentInfo(
-
     selectedCard.value,
-
     paymentAmount.value,
-
     membershipBenefit.value
-
   );
 
-  showQRModal.value = true;
-  isQRModalAnimating.value = true;
-  startQRTimer();
+  try {
+    const qr = await createPaymentQr(selectedCard.value.id, paymentAmount.value);
+    qrToken.value = qr.qrToken || qr.token;
 
+    showQRModal.value = true;
+    isQRModalAnimating.value = true;
+    startQRTimer();
+  } catch (error) {
+    console.error('QR 발급 실패:', error);
+    alert(error?.message || 'QR 발급에 실패했습니다.');
+  }
+};
 
+// QR이 스캔된 시점에 실제 결제를 실행한다.
+//
+// 이 호출이 빠지면 QR만 발급된 채 끝나 payment_qr이 READY로 남고,
+// 소비내역·결제원장이 만들어지지 않는다. 화면에는 결제가 된 것처럼 보이는데
+// 결제내역에는 아무것도 없는 상태가 된다.
+const onQrSuccess = async () => {
+  const categoryId = resolveCategoryId();
+
+  // 서버가 categoryId와 merchantName을 둘 다 필수로 받는다.
+  if (!qrToken.value || !categoryId) {
+    cancelPayment();
+    alert('업종을 선택해야 결제할 수 있습니다.');
+    return;
+  }
+
+  try {
+    await payWithQr(qrToken.value, {
+      merchantId: null,          // 가맹점 마스터 ID는 화면에서 확정하지 못한다
+      merchantName: selectedMerchant.value || selectedCategory.value,
+      categoryId,
+    });
+
+    router.push('/transactions');   // 방금 만들어진 내역을 바로 확인시킨다
+  } catch (error) {
+    // 실패를 성공처럼 넘기면 내역이 없는 이유를 알 수 없다.
+    console.error('QR 결제 실행 실패:', error);
+    alert(error?.message || '결제에 실패했습니다.');
+  } finally {
+    qrToken.value = null;           // 한 번 쓴 토큰은 재사용되지 않는다
+    cancelPayment();
+  }
 };
 
 
@@ -873,9 +912,10 @@ const refreshPayment = async () => {
 
   <!-- QR 모달 -->
   <PaymentQRModal v-if="showQRModal"
+                  :qr-token="qrToken"
                   @close="cancelPayment"
                   @timeout="cancelPayment"
-                  @success="cancelPayment" />
+                  @success="onQrSuccess" />
 
 <BottomNavigation/>
 

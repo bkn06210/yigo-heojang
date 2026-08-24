@@ -1,0 +1,125 @@
+{
+ "card": {
+  "card_name": "롯데체크카드",
+  "card_type": "CHECK",
+  "annual_fee": 0,
+  "annual_fees": [
+   {
+    "brand": "LOCAL",
+    "issue_type": "ANY",
+    "variant": "ANY",
+    "total_fee": 0,
+    "base_fee": null,
+    "partner_fee": null,
+    "_source": "·연회비 : 국내 없음, 해외겸용(비자, 은련) 없음 / 연회비 면제 평생 연회비가 면제됩니다."
+   },
+   {
+    "brand": "VISA",
+    "issue_type": "ANY",
+    "variant": "ANY",
+    "total_fee": 0,
+    "base_fee": null,
+    "partner_fee": null,
+    "_source": null
+   },
+   {
+    "brand": "UNIONPAY",
+    "issue_type": "ANY",
+    "variant": "ANY",
+    "total_fee": 0,
+    "base_fee": null,
+    "partner_fee": null,
+    "_source": null
+   }
+  ],
+  "_source": {
+   "annual_fee": "·연회비 : 국내 없음, 해외겸용(비자, 은련) 없음 — 모든 조합이 0원이라 대표값이 하나로 정해진다."
+  },
+  "_needs_review": []
+ },
+ "card_exclusions": [],
+ "performance_tiers": [
+  {
+   "period_type": "MONTH",
+   "min_performance_amount": 0,
+   "shared_monthly_limit": null,
+   "_source": "문서에 전월 이용실적 조건도 통합 할인한도 조항도 없다. 판정이 가능하도록 0원 구간만 두고, 통합한도 개념이 없으므로 shared_monthly_limit은 null이다."
+  }
+ ],
+ "performance_exclusions": [],
+ "benefits": [
+  {
+   "benefit_name": "전 가맹점 L.POINT 적립",
+   "benefit_kind": "POINT",
+   "calc_method": "RATE",
+   "benefit_value": 0.2,
+   "step_count": null,
+   "apply_timing": null,
+   "target_type": "ALL",
+   "target_category_code": null,
+   "target_merchant_name": null,
+   "targets": null,
+   "require_performance": "N",
+   "performance_period": "MONTH",
+   "require_payment_type": null,
+   "min_txn_amount": null,
+   "max_eligible_amount": null,
+   "max_benefit_per_txn": null,
+   "daily_limit": null,
+   "monthly_limit": null,
+   "quarterly_limit": null,
+   "yearly_limit": null,
+   "daily_count_limit": null,
+   "monthly_count_limit": null,
+   "quarterly_count_limit": null,
+   "yearly_count_limit": null,
+   "limit_group_code": null,
+   "count_group_code": null,
+   "use_shared_limit": "N",
+   "exclude_from_performance": "N",
+   "option_group_code": null,
+   "option_key": null,
+   "description": "전국 가맹점에서 롯데카드 제공 L.POINT 0.2% 적립. 적립 한도·최소 결제금액·실적 조건이 문서에 없어 모두 비워 두었다.",
+   "tier_limits": [],
+   "exclusions": [],
+   "_source": {
+    "benefit_value": "● 전국 가맹점에서 롯데카드 제공 L.POINT 0.2% 적립",
+    "require_performance": "이용실적 조건 문장이 없어 N으로 둔다."
+   },
+   "_needs_review": []
+  }
+ ],
+ "unmapped": [
+  {
+   "text": "할부 결제, 단기카드대출(현금서비스), 장기카드대출(카드론) 이용불가",
+   "why": "혜택 규칙이 아니라 체크카드의 이용 기능 제한이다. 결제 금액에 붙는 할인·적립이 아니어서 benefit으로 담을 것이 없다."
+  },
+  {
+   "text": "● 이용한도: 1일 600만원, 월 2,000만원 이용한도 부여 / ● 이용한도 상향 요청: 1588-8300을 통해 상향 신청 가능",
+   "why": "혜택 한도가 아니라 카드 자체의 결제 이용한도다. benefit의 *_limit은 혜택 지급액 상한이라 여기에 넣으면 의미가 달라진다."
+  },
+  {
+   "text": "● 후불교통카드 월 이용한도는 5만원이며, 이용한도 초과 시 교통카드 사용이 불가능합니다. 다만, 교통카드 이용내역 및 금액 정산체계로 인해 일시적으로 이용한도를 초과하여 사용할 수 있습니다.",
+   "why": "후불교통 결제 자체의 이용한도이지 혜택이 아니다. 청소년 후불교통 발급대상(만 12세~만 18세)도 회원 자격 조건이라 담을 자리가 없다."
+  },
+  {
+   "text": "체크카드 이용 제한시간 — 제휴 은행의 전산시스템 점검으로 아래의 시간에는 체크카드 이용이 제한됩니다. (우리은행 00:00~00:20, 신한은행 00:00~00:30 등)",
+   "why": "은행 전산 점검에 따른 이용 가능 시간대 안내다. 시간대 조건은 지금 스키마가 담지 않는 범위이며 혜택 조건도 아니다."
+  },
+  {
+   "text": "[해외 가맹점 이용] - 해외 VISA 전 가맹점(온라인가맹점 포함)에서 일시불 거래만 가능합니다. - 해외 이용 시 미화(USD)기준 이용 금액에 국제브랜드사가 부과하는 수수료(VISA 1%)를 포함하여 접수일의 환율 적용 후 롯데카드가 부과하는 해외 이용 수수료(0.2%)를 포함한 금액으로 출금됩니다. [해외 ATM 이용] - 예금 인출 시 해외 이용 수수료(VISA : 인출금액의 1% + USD 3.0, 은련(Unionpay) : 건당 USD 2.5)가 포함되어 출금됩니다.",
+   "why": "해외 이용 시 부과되는 수수료 계산식이다. 혜택이 아니라 비용이고, 해외 결제는 지금 범위 밖이다."
+  },
+  {
+   "text": "※ 단, SKYPASS/플래티넘/SUPER PLUS/APGA/Business 체크카드의 경우 연회비가 부과됩니다.",
+   "why": "이 카드가 아니라 다른 체크카드 상품에 대한 단서다. 부과 금액도 적혀 있지 않아 연회비 행으로 만들 근거가 없다."
+  }
+ ],
+ "_schema_gap": [
+  {
+   "text": "● SK주유소(LPG 제외)에서 리터당 50포인트 롯데 SK주유포인트 적립",
+   "missing": "단위당 계산(리터당 N포인트)을 담는 calc_method와 주유량 데이터, 그리고 원이 아닌 단위(롯데 SK주유포인트)의 적립값",
+   "why": "calc_method가 결제금액 기준의 RATE·FIXED와 횟수 기준의 COUNT_STEP뿐이라 리터당 계산을 적을 수 없고, 결제 데이터에 주유량이 들어오지도 않는다. 적립 단위도 원이 아닌 별도 포인트라 다른 카드의 할인액과 금액으로 비교할 수 없다. LPG 제외 단서까지 함께 빠진다."
+  }
+ ]
+}

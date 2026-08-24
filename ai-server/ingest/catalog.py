@@ -13,7 +13,9 @@ from pathlib import Path
 from typing import Dict, List
 
 from .collect.base import Collector, DocumentRef
+from .collect.hana import HanaCollector
 from .collect.kb import KbCollector
+from .collect.lotte import LotteCollector
 from .collect.samsung import SamsungCollector
 from .collect.shinhan import ShinhanCollector
 
@@ -21,7 +23,13 @@ _OUTPUT_PATH = Path(__file__).resolve().parent / "out" / "catalog.json"
 
 
 def collectors() -> List[Collector]:
-    return [SamsungCollector(), ShinhanCollector(), KbCollector()]
+    return [
+        SamsungCollector(),
+        ShinhanCollector(),
+        KbCollector(),
+        LotteCollector(),
+        HanaCollector(),
+    ]
 
 
 def build_catalog() -> Dict[str, List[dict]]:
