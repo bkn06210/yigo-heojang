@@ -4,25 +4,42 @@
 텍스트라 두 곳에서 규칙이 갈릴 위험이 없고, 엔진이 내려줄 수 있는 모양도 아니다.
 그래서 이것만 DB 를 직접 읽는다.
 
-찾는 방법은 전문검색(FULLTEXT)이다. 한글은 띄어쓰기로 단어가 갈리지 않아 ngram 파서로
-글자 두 개씩 색인해 두었다. 뜻으로 찾는 임베딩을 함께 쓰면 더 정확하지만, 지금 키에
-임베딩 모델 권한이 없어 낱말 검색만 쓴다. 대신 분류 단계에서 사용자의 말을 약관 낱말로
-바꿔 넘겨받는다 — "잃어버렸어요"를 그대로 넣으면 한 건도 걸리지 않는다.
+찾는 방법은 임베딩이다. 문장을 숫자 배열로 바꿔 두고 뜻이 가까운 것을 고른다.
+낱말 검색(FULLTEXT)에서 옮겨온 이유는 점수가 "뜻이 맞나"가 아니라 "글자가 얼마나
+겹치나"였기 때문이다. 실측에서 뜻이 정반대인 두 질문이 같은 조문을 거의 같은 점수로
+집었다 — "카드를 잃어버렸어요" 22.46점, "카드 없애고 싶은데" 22.36점, 둘 다 분실 조항.
+질문에 '카드'만 들어가면 '카드'가 많이 나오는 조각이 올라오는 구조라, 점수 하한으로
+걸러지지도 않았다.
+
+낱말 검색을 후보 추리기로 남기는 안도 재봤으나 버렸다. 질문 셋 중 둘에서 정답이
+상위 30건 안에 아예 없어, 뒤에 무엇을 붙여도 찾을 수 없었다.
 """
 
 from dataclasses import dataclass
 from typing import List, Optional, Sequence
 
+from embedding import create_embedding_client
+
+from . import term_index
+
 # 답변에 실을 조항 수. 늘리면 프롬프트만 길어지고 답이 흐려진다.
 _MAX_PASSAGES = 3
 
-# 이 점수에 못 미치면 못 찾은 것으로 본다.
+# 이 값에 못 미치면 못 찾은 것으로 본다. 코사인 유사도라 -1 ~ 1 범위다.
 #
-# 하한이 없으면 무관한 조항이 0.04 점으로 걸려 나온다. 그 상태로 답을 만들면
-# "카드 없애고 싶은데"에 분실 조항을 근거로 그럴듯한 문장이 나가는데, 사용자는
-# 틀렸다는 것을 알 방법이 없다. 실측에서 맞는 조항은 5점을 넘었고 무관한 것은
-# 0.1 미만이라 사이가 넓다.
-_MIN_SCORE = 1.0
+# 하한이 없으면 어떤 질문에도 뭔가는 걸려 나온다. 그 상태로 답을 만들면 무관한 조항을
+# 근거로 그럴듯한 문장이 나가는데, 사용자는 틀렸다는 것을 알 방법이 없다.
+#
+# 실측한 사이:
+#   약관 질문(분실·연회비·해지·할부·한도)  0.422 ~ 0.560
+#   무관한 질문(날씨·저녁 메뉴·코딩)       0.204 ~ 0.263
+# 가운데를 잡아 양쪽으로 0.07 이상 여유를 둔다. 질문 아홉 개로 잰 값이라
+# 확정이 아니라 출발점이다 — 오탐·누락이 보이면 이 값을 옮긴다.
+_MIN_SCORE = 0.35
+
+# 색인에서 몇 건을 받아 볼지. 카드사마다 하나만 남기고 세 건을 고르므로 넉넉해야 한다.
+# 같은 조문이 카드사 수만큼 복사돼 있어 상위가 한 조문으로 채워지는 일이 흔하다.
+_CANDIDATES = 30
 
 # 한 조항을 몇 글자까지 실을지. 조문 하나가 1,200자까지 가므로 셋을 다 실으면
 # 프롬프트가 길어진다. 앞부분에 핵심이 오는 구조라 뒤를 자른다.
@@ -30,20 +47,6 @@ _MAX_PASSAGE_CHARS = 700
 
 # 카드사가 달라도 개인회원 표준약관은 내용이 사실상 같다. 상위 세 건이 3사의 같은
 # 조문으로 채워지면 LLM 에게 같은 글을 세 번 주는 셈이라, 카드사마다 하나만 남긴다.
-_SEARCH_SQL = """
-SELECT d.card_company_id,
-       COALESCE(cc.company_name, d.issuer) AS company_name,
-       d.source_card_name,
-       c.heading,
-       c.content,
-       MATCH(c.content) AGAINST (%s IN NATURAL LANGUAGE MODE) AS score
-FROM card_term_chunk c
-JOIN card_term_document d ON d.card_term_document_id = c.card_term_document_id
-LEFT JOIN card_company cc ON cc.card_company_id = d.card_company_id
-WHERE MATCH(c.content) AGAINST (%s IN NATURAL LANGUAGE MODE)
-ORDER BY score DESC
-LIMIT 30
-"""
 
 
 @dataclass(frozen=True)
@@ -68,11 +71,22 @@ def search(
     if not query or not query.strip():
         return []
 
-    with conn.cursor() as cursor:
-        cursor.execute(_SEARCH_SQL, (query, query))
-        rows = cursor.fetchall()
+    # 문서를 색인할 때와 같은 모델로 질문을 바꿔야 거리 비교가 성립한다.
+    query_vector = _client().embed_query(query)
+    rows = term_index.get_index(conn).rank(query_vector, _CANDIDATES)
 
     return _pick(rows, company_ids)
+
+
+_embedding_client = None
+
+
+def _client():
+    """임베딩 어댑터. 한 번 만들어 두고 계속 쓴다."""
+    global _embedding_client
+    if _embedding_client is None:
+        _embedding_client = create_embedding_client()
+    return _embedding_client
 
 
 def _pick(rows, company_ids: Optional[Sequence[int]]) -> List[Passage]:

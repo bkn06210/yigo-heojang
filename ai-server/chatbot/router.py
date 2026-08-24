@@ -399,9 +399,23 @@ def _where(place: Resolution) -> str:
 
 
 def _resolve_place(intent: Intent, conn) -> Tuple[Resolution, str]:
-    """결제할 곳. 브랜드가 먼저이고, 없으면 업종으로 본다."""
+    """결제할 곳. 브랜드가 먼저이고, 없으면 업종으로 본다.
+
+    브랜드로 못 찾으면 같은 표현을 업종으로 한 번 더 본다. "백화점에서 어떤 카드가 좋아?"의
+    백화점은 업종인데 브랜드 자리로 넘어오는 일이 있고, 가맹점 표에는 `롯데백화점`처럼
+    브랜드만 있어 그대로 두면 업종으로는 바로 찾히는 말을 되묻게 된다.
+
+    <b>후보가 여럿이라 갈린 경우는 넘기지 않는다.</b> `이마트`와 `이마트24` 사이에서 갈린
+    것은 되물어야 할 상황이지 업종으로 바꿔 볼 상황이 아니다. 아예 못 찾은 때만 넘긴다.
+    """
     if intent.merchant_text:
-        return resolve_merchant(conn, intent.merchant_text), "가맹점"
+        merchant = resolve_merchant(conn, intent.merchant_text)
+        if merchant.found or merchant.candidates:
+            return merchant, "가맹점"
+        category = resolve_category(conn, intent.merchant_text)
+        if category.found:
+            return category, "업종"
+        return merchant, "가맹점"
     return resolve_category(conn, intent.category_text), "업종"
 
 

@@ -12,8 +12,11 @@
 여러 번 적용해도 결과가 같다. 두 테이블을 비우고 다시 넣으므로, 이전에 들어 있던
 지난 회차 문서가 남아 뒤섞이지 않는다.
 
+조각의 임베딩까지 담는다. 약관 검색이 임베딩으로만 돌기 때문에 원문만 넘기면
+받는 쪽에서 약관 Q&A 가 여전히 죽어 있다.
+
     python -m ingest.dump_terms            파일 생성
-    mysql -u root -p wallet < <파일>       받는 쪽에서 적용
+    mysql -u root -p wallet < <파일>       받는 쪽에서 적용 (번호 순서상 맨 뒤)
 """
 
 import sys
@@ -24,26 +27,29 @@ from .load import connect
 
 _OUTPUT_PATH = (
     Path(__file__).resolve().parent.parent.parent
-    / "backend" / "db" / "local" / "93_card_term.sql"
+    / "backend" / "db" / "local" / "95_card_term.sql"
 )
 
 # 뽑는 순서가 곧 적용 순서다. 조각이 문서를 참조하므로 문서가 먼저 들어가야 한다.
 _TABLES = ("card_term_document", "card_term_chunk")
 
-# 임베딩은 뽑지 않는다. 조각에서 언제든 다시 만들 수 있는 파생물인데 BLOB이라 파일만 크게 만든다.
-# 검색은 임베딩이 없어도 전문검색으로 동작한다.
-_SKIP_COLUMNS = {"card_term_chunk": {"embedding", "embedding_model"}}
+# 임베딩까지 함께 뽑는다. 파생물이라 받는 쪽에서 다시 만들 수도 있지만, 그러려면 사람마다
+# 임베딩 공급자 키가 있어야 하고 중간에 끊기면 절반만 색인된 상태가 된다. 그 상태는 챗봇이
+# 정상으로 뜨고 어떤 질문만 못 찾는 모양이라 원인이 데이터라는 것을 알아채기 어렵다.
+_SKIP_COLUMNS = {}
 
 _HEADER = """-- ============================================================
--- 93_card_term.sql — 카드 약관 원문과 조문 조각
+-- 95_card_term.sql — 카드 약관 원문과 조문 조각
 --
 -- 저장소에 올리지 않는다. 카드사 약관 원문이라 공개 저장소에 넣으면 재배포가 된다.
 -- 이 파일은 ingest/dump_terms.py 가 만들고, 팀 안에서 따로 주고받는다.
 --
--- 적용: schema.sql 이 만들어진 DB에 이 파일 하나만 넣으면 챗봇 약관 Q&A 가 동작한다.
---       수집 파이프라인(ingest.run)을 돌릴 필요가 없다.
+-- 실행 순서: schema.sql -> data.sql -> 91 -> 92 -> 93 -> 94 -> 이 파일
+--            문서가 카드사 마스터를 참조하므로 최소한 91 다음이어야 한다.
+--            수집 파이프라인(ingest.run)을 돌릴 필요가 없다.
 --
--- 임베딩은 들어 있지 않다 — 조각에서 다시 만들 수 있고, 없어도 전문검색으로 답한다.
+-- 조각의 임베딩까지 들어 있다. 약관 검색이 임베딩으로만 돌아서, 이 값이 없으면
+-- 챗봇이 정상으로 뜬 채 약관 질문에만 "찾지 못했다"고 답한다.
 -- ============================================================
 
 SET NAMES utf8mb4;
@@ -105,6 +111,22 @@ def dump_table(cursor, table: str) -> tuple:
     return lines, len(rows)
 
 
+def embedding_state() -> tuple:
+    """임베딩이 몇 개나 들어 있고 어떤 모델로 만들었는지."""
+    conn = connect()
+    try:
+        with conn.cursor() as cursor:
+            cursor.execute(
+                "SELECT COUNT(*), COUNT(embedding),"
+                " GROUP_CONCAT(DISTINCT embedding_model ORDER BY embedding_model)"
+                " FROM card_term_chunk"
+            )
+            total, embedded, models = cursor.fetchone()
+    finally:
+        conn.close()
+    return embedded or 0, total or 0, (models or "").split(",") if models else []
+
+
 def build() -> tuple:
     conn = connect()
     try:
@@ -130,6 +152,13 @@ def main() -> None:
         print("약관 원문이 DB에 없다. ingest.run 또는 ingest.load_local 로 채운 뒤 다시 실행해라.")
         sys.exit(1)
 
+    embedded, total, models = embedding_state()
+    if not embedded:
+        # 원문만 든 파일은 받는 쪽에서 약관 질문에만 조용히 실패한다. 만들지 않는다.
+        print(f"조각 {total}개에 임베딩이 하나도 없다."
+              " python -m ingest.build_embeddings 로 색인한 뒤 다시 실행해라.")
+        sys.exit(1)
+
     _OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
     _OUTPUT_PATH.write_text(sql, encoding="utf-8")
 
@@ -137,8 +166,19 @@ def main() -> None:
     print(f"저장: {_OUTPUT_PATH}  ({size_mb:.2f}MB)")
     for table, count in counts.items():
         print(f"  {table}: {count}행")
+    print(f"  임베딩: {embedded}/{total}개 · 모델 {', '.join(models)}")
+
+    if embedded < total:
+        # 절반만 든 파일을 모르고 넘기면 받는 쪽에서 어떤 질문만 답이 안 나온다.
+        print()
+        print(f"⚠ 조각 {total - embedded}개에 임베딩이 없다. 그 조각은 검색에 잡히지 않는다")
+    if len(models) > 1:
+        # 좌표계가 다른 값이 한 표에 섞이면 어느 쪽이 가까운지가 무의미해진다.
+        print()
+        print("⚠ 모델이 섞여 있다. build_embeddings 로 한 모델에 맞춘 뒤 다시 뽑아라")
     print("\n이 파일은 저장소에 올리지 않는다. 팀 안에서 따로 전달해라.")
-    print("받는 쪽 적용:  mysql -u root -p wallet < 93_card_term.sql")
+    print("받는 쪽 적용:  시드 SQL 을 번호 순으로 넣은 다음"
+          "  mysql -u root -p wallet < 95_card_term.sql")
 
 
 if __name__ == "__main__":

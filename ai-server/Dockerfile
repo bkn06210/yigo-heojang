@@ -14,6 +14,8 @@ COPY chatbot/requirements.txt chatbot/requirements.txt
 RUN pip install --no-cache-dir -r chatbot/requirements.txt
 
 COPY chatbot/ chatbot/
+# 약관 검색이 쓰는 임베딩 어댑터. 수집 파이프라인도 같은 것을 쓰므로 chatbot 밖에 있다.
+COPY embedding/ embedding/
 
 # 컨테이너 안에서는 0.0.0.0 으로 연다. 컨테이너마다 IP가 달라 127.0.0.1 로 묶으면
 # 옆 컨테이너(톰캣)가 닿지 못한다. 밖으로 노출되지 않는 것은 compose 에서 포트를
