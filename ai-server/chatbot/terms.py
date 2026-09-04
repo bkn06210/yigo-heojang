@@ -73,7 +73,7 @@ def search(
 
     # 문서를 색인할 때와 같은 모델로 질문을 바꿔야 거리 비교가 성립한다.
     query_vector = _client().embed_query(query)
-    rows = term_index.get_index(conn).rank(query_vector, _CANDIDATES)
+    rows = term_index.get_index(conn).rank(conn, query_vector, _CANDIDATES)
 
     return _pick(rows, company_ids)
 
