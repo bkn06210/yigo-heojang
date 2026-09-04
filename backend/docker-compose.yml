@@ -44,6 +44,17 @@ services:
       # 빌드된 WAR를 ROOT로 배포 → http://localhost:8080/api/health
       - ./target/ROOT.war:/usr/local/tomcat/webapps/ROOT.war
 
+  # 약관 조각 벡터 색인. 챗봇의 TERM_INDEX=qdrant 일 때만 쓴다 — 기본(numpy)이면 없어도 된다.
+  # 벡터의 원본은 MySQL 이고 여기는 복사본이라, 볼륨이 날아가도 ingest.sync_qdrant 로 다시 채운다.
+  # 6333 을 호스트에 여는 것은 MySQL 과 같은 이유다 — 동기화 스크립트와 로컬 챗봇이 밖에서 붙는다.
+  qdrant:
+    image: qdrant/qdrant:v1.19.1
+    container_name: yigo-qdrant
+    ports:
+      - '6333:6333'
+    volumes:
+      - qdrant-data:/qdrant/storage
+
   # 챗봇 서버. 가져다 쓸 이미지가 없어 ai-server/Dockerfile 로 직접 만든다.
   #
   # ports 를 쓰지 않는 것이 핵심이다. 이 서버는 토큰을 검증하지 않는다 —
@@ -54,6 +65,7 @@ services:
     container_name: yigo-chatbot
     depends_on:
       - mysql
+      - qdrant
     # API 키는 각자 것을 쓴다. 저장소에 올라가지 않는 파일이다.
     env_file:
       - ../ai-server/.env
@@ -63,7 +75,9 @@ services:
       DB_HOST: mysql
       BACKEND_BASE_URL: http://tomcat:8080
       CHATBOT_HOST: 0.0.0.0
+      QDRANT_URL: http://qdrant:6333
 
 volumes:
   mysql-data:
   redis-data:
+  qdrant-data:

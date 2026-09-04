@@ -35,6 +35,7 @@ python -m ingest.run              수집 → card_term_document   (카드사 사
 python -m ingest.build_chunks     조문 단위로 자름 → card_term_chunk
 python -m embedding.check       임베딩 설정 점검 (호출 1건, 색인 전에 먼저)
 python -m ingest.build_embeddings 조각에 임베딩 (EMBEDDING_PROVIDER 로 공급자 선택)
+python -m ingest.sync_qdrant      MySQL 의 벡터를 Qdrant 로 복사 (TERM_INDEX=qdrant 일 때만)
 python -m ingest.seed             혜택 시드 SQL 생성
 ```
 
@@ -43,7 +44,11 @@ python -m ingest.seed             혜택 시드 SQL 생성
 
 `build_embeddings` 는 값이 없거나 다른 모델로 만든 조각만 골라 부른다. 중간에 끊겨도
 다시 돌리면 이어서 채우고, 공급자나 차원을 바꾸면 좌표계가 달라지므로 전부 다시 만든다.
-임베딩이 없어도 검색은 동작한다 — 낱말 검색만으로 돌고 정확도만 떨어진다.
+임베딩이 없으면 약관 검색이 빈 결과를 낸다 — 챗봇은 뜨지만 약관 질문에만 답을 못 한다.
+
+`sync_qdrant` 는 임베딩을 새로 만들지 않는다. MySQL 에 이미 있는 벡터를 Qdrant 로 복사할
+뿐이라 API 키가 필요 없다. 같은 id 는 덮어쓰고 MySQL 에서 사라진 조각은 Qdrant 에서도
+지우므로 몇 번을 돌려도 결과가 같다. 컬렉션은 임베딩 모델 태그별로 따로 생긴다.
 
 ## 실패는 멈추지 않고 모아서 알린다
 
