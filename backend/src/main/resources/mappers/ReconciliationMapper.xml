@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 상태 대사용 조회. resultType 자동 매핑에 의존한다(mapUnderscoreToCamelCase=true).
+     전부 SELECT이고, 기간 전체를 한 번에 읽는다 — 조회 수가 회원·카드 수에 따라 늘지 않는다.
+
+     소비내역의 기간 조건은 payment_date를 가공하지 않고 [시작, 끝) 범위로 건다. 컬럼에 함수를 씌우면
+     (DATE_FORMAT(payment_date) = '2026-08') 인덱스를 쓸 수 없어 기간이 좁아도 전체를 훑는다.
+     연월 문자열은 SELECT·GROUP BY에서만 만든다. -->
+<mapper namespace="com.wallet.engine.dao.ReconciliationMapper">
+
+    <!-- 회원 범위. 상태 테이블에 member_id가 없어 모든 조회가 user_card 소유자로 좁힌다 -->
+    <sql id="memberScope">
+        <if test="memberId != null">
+            AND uc.member_id = #{memberId}
+        </if>
+    </sql>
+
+    <!-- base_year_month가 'YYYY-MM' 고정 폭이라 문자열 BETWEEN이 곧 연월 범위 비교다 -->
+    <select id="findStoredStates"
+            resultType="com.wallet.engine.dao.dto.CardMonthlyStateRow">
+        SELECT s.user_card_id,
+               s.base_year_month,
+               s.prev_performance_amount,
+               s.current_performance_amount,
+               s.shared_limit_used
+        FROM user_card_monthly_state s
+        JOIN user_card uc ON uc.user_card_id = s.user_card_id
+        WHERE s.base_year_month BETWEEN #{fromYearMonth} AND #{toYearMonth}
+        <include refid="memberScope"/>
+    </select>
+
+    <select id="findStoredUsages"
+            resultType="com.wallet.engine.dao.dto.ReconciliationUsageRow">
+        SELECT u.user_card_id,
+               u.benefit_id,
+               u.base_year_month,
+               u.used_amount,
+               u.used_count,
+               b.calc_method
+        FROM user_benefit_usage u
+        JOIN user_card uc ON uc.user_card_id = u.user_card_id
+        JOIN benefit b    ON b.benefit_id = u.benefit_id
+        WHERE u.base_year_month BETWEEN #{fromYearMonth} AND #{toYearMonth}
+        <include refid="memberScope"/>
+    </select>
+
+    <!-- 혜택이 적용된 소비내역의 월 합계.
+         · 취소 건을 WHERE로 버리지 않고 조건부 집계로 뺀다. 버리면 "전부 취소된 묶음"이 결과에서
+           사라져, 취소가 역산되지 않은 상태가 "원본 없는 상태"로 잘못 분류된다.
+         · 혜택 미적용 거래는 INNER JOIN에서 빠진다(applied_benefit_id가 NULL).
+         · use_shared_limit·calc_method는 혜택마다 하나라 묶음 키에 넣어도 묶음이 쪼개지지 않는다. -->
+    <select id="findAppliedBenefitSums"
+            resultType="com.wallet.engine.dao.dto.ReconciliationBenefitSumRow">
+        SELECT e.user_card_id,
+               b.benefit_id,
+               DATE_FORMAT(e.payment_date, '%Y-%m') AS base_year_month,
+               COALESCE(SUM(CASE WHEN e.payment_status &lt;&gt; 'CANCELED' THEN e.discount_amount END), 0)
+                                                    AS discount_amount,
+               COUNT(CASE WHEN e.payment_status &lt;&gt; 'CANCELED' THEN 1 END)
+                                                    AS applied_count,
+               b.use_shared_limit,
+               b.calc_method
+        FROM expense e
+        JOIN user_card uc ON uc.user_card_id = e.user_card_id
+        JOIN benefit b    ON b.benefit_id = e.applied_benefit_id
+        WHERE e.payment_date &gt;= #{fromInclusive}
+          AND e.payment_date &lt; #{toExclusive}
+        <include refid="memberScope"/>
+        GROUP BY e.user_card_id,
+                 b.benefit_id,
+                 DATE_FORMAT(e.payment_date, '%Y-%m'),
+                 b.use_shared_limit,
+                 b.calc_method
+    </select>
+
+    <!-- 실적 재계산용 거래. 컬럼은 전월실적 재합산(PerformanceMapper.findTransactionsInPeriod)과 같고
+         묶음 키(user_card_id·card_id·연월)만 더했다 — 두 조회가 다른 컬럼으로 판정하면 같은 거래의
+         실적 인정 여부가 경로에 따라 갈린다.
+         취소 건을 포함해 읽는다. 계산기가 거르며, 포함해야 "그 달 소비내역이 전부 취소됐다"와
+         "소비내역이 아예 없다"가 구분된다. -->
+    <select id="findTransactions"
+            resultType="com.wallet.engine.dao.dto.ReconciliationTransactionRow">
+        SELECT e.user_card_id,
+               uc.card_id,
+               DATE_FORMAT(e.payment_date, '%Y-%m') AS base_year_month,
+               e.expense_id,
+               e.amount,
+               e.payment_status,
+               c.category_code                      AS category_code,
+               p.category_code                      AS parent_category_code,
+               e.payment_type,
+               e.is_interest_free,
+               e.discount_amount,
+               b.exclude_from_performance
+        FROM expense e
+        JOIN user_card uc    ON uc.user_card_id = e.user_card_id
+        JOIN category c      ON c.category_id = e.category_id
+        LEFT JOIN category p ON p.category_id = c.parent_category_id
+        LEFT JOIN benefit b  ON b.benefit_id = e.applied_benefit_id
+        WHERE e.payment_date &gt;= #{fromInclusive}
+          AND e.payment_date &lt; #{toExclusive}
+        <include refid="memberScope"/>
+    </select>
+
+</mapper>
