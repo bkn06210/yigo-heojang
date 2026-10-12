@@ -14,10 +14,12 @@
 
 import json
 import logging
+import time
 from pathlib import Path
 from typing import Any, Dict, Optional
 
-from openai import BadRequestError, OpenAI
+from deadline import can_retry, timeout_for
+from openai import APIConnectionError, BadRequestError, InternalServerError, OpenAI, RateLimitError
 
 from .base import Answer, Intent, IntentName, LlmClient
 
@@ -31,10 +33,15 @@ def _read_prompt(name: str) -> str:
 
 
 # 사람이 답을 기다리는 시간이다. 더 늘리면 화면이 멈춘 것처럼 보이고,
-# 더 줄이면 정상 응답까지 잘라 버린다.
+# 더 줄이면 정상 응답까지 잘라 버린다. 요청 마감이 걸려 있으면 남은 시간이 더 짧을 때 그쪽을 쓴다.
 _REQUEST_TIMEOUT_SECONDS = 20.0
 # 일시적인 429·5xx 만 넘기면 되므로 짧게 잡는다. 여기서 오래 끌면 타임아웃보다 더 기다리게 된다.
 _MAX_RETRIES = 2
+_RETRY_BACKOFF_SECONDS = 0.5
+
+# 다시 보내면 나을 수 있는 실패. 연결 실패·타임아웃(APITimeoutError 가 APIConnectionError 의
+# 하위 형이다)·한도 초과·서버 오류다. 요청이 잘못된 400 계열은 다시 보내도 같다.
+_RETRYABLE_ERRORS = (APIConnectionError, RateLimitError, InternalServerError)
 
 
 class OpenAiLlmClient(LlmClient):
@@ -45,8 +52,10 @@ class OpenAiLlmClient(LlmClient):
             raise ValueError("OPENAI_API_KEY 가 비어 있다. ai-server/.env 를 확인할 것")
         # 타임아웃과 재시도를 명시한다. 기본값에 맡기면 한 번 느린 호출에 화면이 붙잡히고,
         # 일시적인 429·5xx 에도 그대로 실패한다. 챗봇은 사람이 기다리는 자리라 오래 끌 수 없다.
-        self._client = OpenAI(api_key=api_key, timeout=_REQUEST_TIMEOUT_SECONDS,
-                              max_retries=_MAX_RETRIES)
+        #
+        # 재시도는 SDK 에 맡기지 않고(max_retries=0) _create 에서 한다. SDK 는 요청 마감을 몰라
+        # 시도마다 타임아웃을 새로 받으므로, 세 번이면 20초 × 3 = 60초를 기다린다.
+        self._client = OpenAI(api_key=api_key, timeout=_REQUEST_TIMEOUT_SECONDS, max_retries=0)
         self._model = model
         self._classify_prompt = _read_prompt("classify.md")
         self._compose_prompt = _read_prompt("compose.md")
@@ -88,7 +97,7 @@ class OpenAiLlmClient(LlmClient):
             params["temperature"] = temperature
 
         try:
-            response = self._client.chat.completions.create(**params)
+            response = self._create(params, label)
         except BadRequestError as error:
             if not self._supports_temperature or "temperature" not in str(error):
                 raise
@@ -96,10 +105,30 @@ class OpenAiLlmClient(LlmClient):
             logger.info("temperature 미지원 모델로 판단해 생략한다: %s", self._model)
             self._supports_temperature = False
             params.pop("temperature", None)
-            response = self._client.chat.completions.create(**params)
+            response = self._create(params, label)
 
         _log_usage(label, response)
         return response.choices[0].message.content
+
+    def _create(self, params: Dict[str, Any], label: str):
+        """요청 마감 안에서만 호출하고, 남은 시간이 있을 때만 다시 시도한다.
+
+        시도마다 타임아웃을 남은 시간으로 줄인다. 남은 시간이 너무 짧으면 보내지 않고
+        DeadlineExceeded 를 던진다 — 답이 올 수 없는 요청에 토큰을 쓰지 않는다.
+        """
+        for attempt in range(_MAX_RETRIES + 1):
+            try:
+                return self._client.chat.completions.create(
+                    **params, timeout=timeout_for(_REQUEST_TIMEOUT_SECONDS))
+            except _RETRYABLE_ERRORS as error:
+                backoff = _RETRY_BACKOFF_SECONDS * (attempt + 1)
+                if attempt == _MAX_RETRIES or not can_retry(backoff):
+                    raise
+                # 질문·프롬프트는 남기지 않는다. 어느 단계에서 무슨 오류였는지만 있으면 된다.
+                logger.warning("LLM %s 실패(%s), 재시도 %d회차",
+                               label, type(error).__name__, attempt + 1)
+                time.sleep(backoff)
+        raise RuntimeError("LLM 호출에 실패했다")
 
 
 def _log_usage(label: str, response) -> None:

@@ -12,8 +12,10 @@ from dataclasses import dataclass
 from typing import Any, Dict, Optional
 
 import httpx
+from deadline import timeout_for
 
 # 사람이 답을 기다리는 화면이라 오래 붙잡지 않는다. 엔진 조회는 밀리초 단위로 끝난다.
+# 요청 마감이 걸려 있으면 남은 시간이 더 짧을 때 그쪽을 쓴다.
 _TIMEOUT_SECONDS = 5.0
 
 
@@ -86,8 +88,10 @@ class EngineClient:
 
     def _request(self, method: str, path: str, **kwargs) -> Dict[str, Any]:
         headers = {"Authorization": self.authorization} if self.authorization else {}
+        # 마감까지 남은 시간이 너무 짧으면 보내지 않고 DeadlineExceeded 를 던진다.
+        timeout = timeout_for(_TIMEOUT_SECONDS)
         try:
-            with httpx.Client(base_url=self.base_url, timeout=_TIMEOUT_SECONDS) as client:
+            with httpx.Client(base_url=self.base_url, timeout=timeout) as client:
                 response = client.request(method, path, headers=headers, **kwargs)
         except httpx.RequestError as error:
             # 백엔드가 안 떠 있는 경우다. 사용자에게는 조회 실패로만 보인다.

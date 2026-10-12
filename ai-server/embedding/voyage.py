@@ -10,6 +10,7 @@ import time
 from typing import Any, Dict, List, Sequence
 
 import httpx
+from deadline import can_retry, timeout_for
 
 from .base import EmbeddingClient, Vector
 
@@ -92,11 +93,19 @@ class VoyageEmbeddingClient(EmbeddingClient):
         return vectors
 
     def _post(self, payload: Dict[str, Any], timeout: float) -> Dict[str, Any]:
+        """요청 마감이 걸려 있으면(챗봇 질문) 남은 시간 안에서만 시도한다.
+
+        색인 배치에는 마감이 없어 원래 타임아웃과 재시도를 그대로 쓴다.
+        """
         headers = {"Authorization": f"Bearer {self._api_key}"}
 
         for attempt in range(_MAX_RETRIES + 1):
+            backoff = _RETRY_BACKOFF_SECONDS * (attempt + 1)
+            # 남은 시간이 너무 짧으면 여기서 DeadlineExceeded 가 나가고 요청은 보내지 않는다.
+            attempt_timeout = timeout_for(timeout)
             try:
-                response = httpx.post(self._api_url, headers=headers, json=payload, timeout=timeout)
+                response = httpx.post(self._api_url, headers=headers, json=payload,
+                                      timeout=attempt_timeout)
                 response.raise_for_status()
                 return response.json()
             except httpx.HTTPStatusError as error:
@@ -104,16 +113,17 @@ class VoyageEmbeddingClient(EmbeddingClient):
                 # 모델명 오타인지가 전부 본문에 적혀 오므로 함께 남긴다.
                 detail = _detail(error.response)
                 # 요청 자체가 잘못된 경우(모델명 오타·차원 미지원)는 다시 보내도 같다.
-                if not _retryable(error.response.status_code) or attempt == _MAX_RETRIES:
+                if (not _retryable(error.response.status_code) or attempt == _MAX_RETRIES
+                        or not can_retry(backoff)):
                     raise EmbeddingApiError(error.response.status_code, detail) from error
                 logger.warning("임베딩 호출 %s, 재시도 %d회차 — %s",
                                error.response.status_code, attempt + 1, detail)
             except httpx.TransportError:
-                if attempt == _MAX_RETRIES:
+                if attempt == _MAX_RETRIES or not can_retry(backoff):
                     raise
                 logger.warning("임베딩 호출 실패(연결), 재시도 %d회차", attempt + 1)
 
-            time.sleep(_RETRY_BACKOFF_SECONDS * (attempt + 1))
+            time.sleep(backoff)
 
         raise RuntimeError("임베딩 호출에 실패했다")
 

@@ -20,6 +20,8 @@
         <mybatis.spring.version>2.1.2</mybatis.spring.version>
 
         <jedis.version>5.2.0</jedis.version>
+        <!-- 2.x는 JDK 17 이상. Spring Boot 없이 쓰는 core 모듈만 받는다 -->
+        <resilience4j.version>2.4.0</resilience4j.version>
     </properties>
 
     <dependencies>
@@ -213,6 +215,19 @@
             <groupId>redis.clients</groupId>
             <artifactId>jedis</artifactId>
             <version>${jedis.version}</version>
+        </dependency>
+
+        <!-- 챗봇 서버 장애 격리. 차단기(circuit breaker)와 동시 호출 상한(bulkhead).
+             spring-boot 스타터가 아니라 core 모듈이라 애노테이션·자동 설정 없이 객체로 만들어 쓴다. -->
+        <dependency>
+            <groupId>io.github.resilience4j</groupId>
+            <artifactId>resilience4j-circuitbreaker</artifactId>
+            <version>${resilience4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.github.resilience4j</groupId>
+            <artifactId>resilience4j-bulkhead</artifactId>
+            <version>${resilience4j.version}</version>
         </dependency>
     </dependencies>
 

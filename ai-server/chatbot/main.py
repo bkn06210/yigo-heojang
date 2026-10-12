@@ -11,6 +11,10 @@ memberId 만 바꿔 남의 소비내역을 물어볼 수 있다.
 
 판단과 계산은 그 사이 어디에도 없다. LLM 은 말을 알아듣고 문장을 쓰는 두 자리에만 있다.
 
+질문 한 건에는 마감시간이 있다(CHAT_DEADLINE_SECONDS). 그 안에서 어느 단계가 실패하거나
+시간이 모자라도 500 대신 그 단계에 맞는 대체 답변을 200 으로 돌려준다 — 믿을 수 있는 문장을
+못 만들면 지어내지 않고 조회 결과나 안내 문구를 보여준다.
+
 실행:
     uvicorn chatbot.main:app --reload   (ai-server 폴더에서)
 """
@@ -18,6 +22,7 @@ memberId 만 바꿔 남의 소비내역을 물어볼 수 있다.
 import logging
 from typing import Optional
 
+from deadline import DeadlineExceeded, request_deadline
 from embedding import EmbeddingClient, create_embedding_client
 from fastapi import FastAPI, Header
 
@@ -48,6 +53,12 @@ _LLM_DOWN_MESSAGE = (
     "지금은 답변을 만들지 못했습니다. 잠시 후 다시 물어봐 주세요."
 )
 
+# 값을 모으는 단계(DB·임베딩·약관 색인·엔진)가 실패했을 때 보여줄 말.
+# 확보한 값이 없어 조회 결과로 대신할 수도 없다. 위와 같은 이유로 200 으로 내려준다.
+_LOOKUP_DOWN_MESSAGE = (
+    "지금은 필요한 정보를 조회하지 못했습니다. 잠시 후 다시 물어봐 주세요."
+)
+
 
 @app.get("/health", response_model=HealthResponse)
 def health() -> HealthResponse:
@@ -69,11 +80,24 @@ def chat(
     # Spring 이 원래 요청의 헤더를 그대로 넘겨준다. 챗봇은 열어보지 않고 엔진 호출에 다시 쓴다.
     authorization: Optional[str] = Header(default=None),
 ) -> ChatResponse:
+    # 마감은 요청을 받은 순간부터 잰다. 이 안에서 나가는 LLM·임베딩·엔진·DB 호출은 모두
+    # 남은 시간만큼만 기다리므로, Spring 이 기다려 주는 동안 무엇이든 돌려보낼 수 있다.
+    with request_deadline(_settings.chat_deadline_seconds):
+        return _answer(request, authorization)
+
+
+def _answer(request: ChatRequest, authorization: Optional[str]) -> ChatResponse:
+    """질문 하나에 답한다. 단계마다 실패했을 때 돌려줄 것이 다르다.
+
+        의도 분류 실패 → 안내 문구      무엇을 물었는지 모른다
+        조회 실패      → 안내 문구      확보한 값이 없다
+        답변 생성 실패 → 조회 결과 그대로  값은 있고 문장만 못 만들었다
+    """
     try:
         intent = _merge(_llm.classify(request.question), request.pending_context)
-    except Exception:
+    except Exception as error:
         # 무엇을 물었는지조차 알 수 없으므로 조회로 넘어갈 수 없다
-        logger.exception("의도 분류 실패")
+        _log_failure("의도 분류", None, error)
         return ChatResponse(answer=_LLM_DOWN_MESSAGE, intent=IntentName.UNKNOWN)
 
     if intent.name == IntentName.UNKNOWN:
@@ -83,9 +107,15 @@ def chat(
             follow_up_question=_UNKNOWN_FOLLOW_UP,
         )
 
-    engine = EngineClient(base_url=_settings.backend_base_url, authorization=authorization)
-    with connection() as conn:
-        result = route(intent, conn, engine)
+    try:
+        engine = EngineClient(base_url=_settings.backend_base_url, authorization=authorization)
+        with connection() as conn:
+            result = route(intent, conn, engine)
+    except Exception as error:
+        # DB·임베딩·약관 색인·엔진 중 무엇이 실패했든 답의 재료가 없다. 엔진의 예상된 실패
+        # (401·5xx 등)는 route 안에서 되묻는 문장으로 바뀌고, 여기 오는 것은 그 밖의 전부다.
+        _log_failure("조회", intent.name, error)
+        return ChatResponse(answer=_LOOKUP_DOWN_MESSAGE, intent=intent.name)
 
     pending = _to_pending(intent) if result.follow_up else None
 
@@ -101,9 +131,10 @@ def chat(
 
     try:
         answer = _llm.compose(request.question, result.context)
-    except Exception:
-        # 조회는 끝났으니 값은 있다. 문장만 못 만든 것이라 조회 결과를 그대로 보여준다
-        logger.exception("답변 생성 실패 (intent=%s)", intent.name)
+    except Exception as error:
+        # 조회는 끝났으니 값은 있다. 문장만 못 만든 것이라 조회 결과를 그대로 보여준다.
+        # 마감이 얼마 안 남았을 때도 여기로 온다 — LLM 을 부르지 않고 바로 돌려준다.
+        _log_failure("답변 생성", intent.name, error)
         return ChatResponse(
             answer=fallback_answer(result.context),
             intent=intent.name,
@@ -133,6 +164,18 @@ def chat(
         follow_up_question=result.follow_up,
         pending_context=pending,
     )
+
+
+def _log_failure(stage: str, intent_name: Optional[str], error: Exception) -> None:
+    """실패를 남긴다. 질문 원문은 개인정보라 남기지 않는다.
+
+    마감시간 초과는 의존성이 느리다는 신호이지 코드 결함이 아니라 스택 없이 한 줄로 남긴다.
+    그 밖의 실패는 원인을 찾아야 하므로 스택까지 남긴다.
+    """
+    if isinstance(error, DeadlineExceeded):
+        logger.warning("%s 마감시간 초과 (intent=%s): %s", stage, intent_name, error)
+    else:
+        logger.exception("%s 실패 (intent=%s)", stage, intent_name)
 
 
 def _merge(fresh: Intent, pending: Optional[PendingContext]) -> Intent:

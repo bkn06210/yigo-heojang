@@ -31,6 +31,10 @@ class Settings:
     # 아무도 토큰을 확인하지 않은 채 남의 소비내역을 물어볼 수 있다.
     host: str
     port: int
+    # 질문 한 건에 쓸 수 있는 시간. Spring 의 읽기 타임아웃(chatbot.read-timeout-millis=25초)보다
+    # 짧아야 한다. 길면 Spring 이 이미 끊고 503 을 낸 뒤에도 여기서 LLM 을 계속 불러 토큰만 쓴다.
+    # 5초 차이는 마감에 걸렸을 때 대체 답변을 만들어 돌려보내는 몫이다.
+    chat_deadline_seconds: float
 
 
 @lru_cache(maxsize=1)
@@ -43,4 +47,5 @@ def get_settings() -> Settings:
         backend_base_url=os.getenv("BACKEND_BASE_URL", "http://localhost:8080"),
         host=os.getenv("CHATBOT_HOST", "127.0.0.1"),
         port=int(os.getenv("CHATBOT_PORT", "8000")),
+        chat_deadline_seconds=float(os.getenv("CHAT_DEADLINE_SECONDS", "20")),
     )

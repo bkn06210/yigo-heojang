@@ -7,8 +7,10 @@
 
 from typing import Any, Dict, List
 
+import httpx
 import pytest
 
+from deadline import request_deadline
 from embedding.voyage import VoyageEmbeddingClient
 
 
@@ -137,3 +139,49 @@ class TestDefenses:
             VoyageEmbeddingClient(
                 api_key="", model="voyage-4-lite", dimension=1024, api_url=_API_URL
             )
+
+
+class TimingOutApi:
+    """매번 시간 초과로 실패한다. 받은 타임아웃을 적어 둔다."""
+
+    def __init__(self):
+        self.timeouts: List[float] = []
+        # 재시도 사이에 실제로 쉬면 테스트가 몇 초씩 걸린다. 쉰 시간만 적어 둔다.
+        self.slept: List[float] = []
+
+    def __call__(self, url, headers=None, json=None, timeout=None):
+        self.timeouts.append(timeout)
+        raise httpx.ReadTimeout("응답 없음", request=httpx.Request("POST", url))
+
+
+class TestDeadline:
+    """질문 임베딩은 챗봇 요청의 마감 안에서만 시도한다. 색인 배치는 마감이 없어 그대로다."""
+
+    @pytest.fixture
+    def timing_out(self, monkeypatch):
+        fake = TimingOutApi()
+        monkeypatch.setattr("embedding.voyage.httpx.post", fake)
+        monkeypatch.setattr("embedding.voyage.time.sleep", fake.slept.append)
+        return fake
+
+    def test_마감이_없으면_원래_타임아웃과_재시도를_그대로_쓴다(self, timing_out):
+        with pytest.raises(httpx.ReadTimeout):
+            _client().embed_documents(["약관 본문"])
+
+        assert timing_out.timeouts == [60.0, 60.0, 60.0]
+        assert timing_out.slept == [2.0, 4.0]
+
+    def test_마감이_있으면_남은_시간만큼만_기다린다(self, timing_out):
+        with request_deadline(2.5), pytest.raises(httpx.ReadTimeout):
+            _client().embed_query("분실 신고")
+
+        # 원래 10초를 기다릴 자리지만 마감까지 2.5초뿐이다.
+        assert timing_out.timeouts[0] <= 2.5
+
+    def test_쉬고_나서_다시_시도할_시간이_없으면_재시도하지_않는다(self, timing_out):
+        # 2초 쉬고 나면 0.5초가 남는데, 그 시간에 새로 보낸 요청은 대개 끝나지 못한다.
+        with request_deadline(2.5), pytest.raises(httpx.ReadTimeout):
+            _client().embed_query("분실 신고")
+
+        assert len(timing_out.timeouts) == 1
+        assert timing_out.slept == []
