@@ -1,5 +1,7 @@
 package com.wallet.engine.service;
 
+import com.wallet.engine.dao.BenefitMapper;
+import com.wallet.engine.dao.dto.BenefitExclusionRow;
 import com.wallet.engine.dto.RecommendationItem;
 import com.wallet.engine.dto.RecommendationRequest;
 import com.wallet.engine.dto.RecommendationResponse;
@@ -16,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.sql.DataSource;
 import java.time.LocalDate;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -31,6 +34,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  *   ③ 일 소진은 last_applied_date가 기준일과 다르면 0으로 접힌다
  *   ④ 구간별 개별한도(benefit_tier_limit)가 판정된 구간 기준으로 적용된다
  *   ⑤ 증정(GIFT)은 조회 단계에서 빠져 추천 대상이 되지 않는다
+ *   ⑥ 카드 전체 예외는 한 줄로 조회되고, 그 카드의 모든 혜택에 걸린다
  *
  * 클래스 이름이 *Test라 surefire가 실행한다(*IT는 failsafe 몫이라 안 돈다).
  * @Transactional으로 픽스처를 넣고 테스트마다 롤백하므로 시드 데이터에 의존·오염되지 않는다.
@@ -45,6 +49,9 @@ class RecommendationServiceIntegrationTest {
 
     @Autowired
     private RecommendationService recommendationService;
+
+    @Autowired
+    private BenefitMapper benefitMapper;
 
     private JdbcTemplate jdbc;
 
@@ -225,6 +232,67 @@ class RecommendationServiceIntegrationTest {
         assertThat(lowCard.benefitKind()).isNull();
         assertThat(lowCard.expectedBenefit()).isZero();
         assertThat(lowCard.reason()).isEqualTo("적용 가능한 혜택 없음");
+    }
+
+    @Test
+    @DisplayName("카드 전체 예외는 그 카드의 모든 혜택에 걸리고 다른 카드에는 걸리지 않는다")
+    void 카드_전체_예외는_그_카드의_모든_혜택에_걸린다() {
+        // 10% 카드에 혜택을 하나 더 둔다 — 카드 전체 예외가 첫 혜택에만 붙으면 이 혜택이 대신 적용된다
+        jdbc.update(
+                "INSERT INTO benefit (card_id, benefit_name, benefit_kind, calc_method, benefit_value, apply_timing, "
+                        + "target_type, require_performance, use_shared_limit, is_active) "
+                        + "VALUES (?, '전 가맹점 1% 할인', 'DISCOUNT', 'RATE', 1.00, 'BILLED', 'ALL', 'N', 'N', 'Y')",
+                highCardId);
+        jdbc.update("INSERT INTO card_benefit_exclusion (card_id, exclusion_type, exclusion_value) "
+                + "VALUES (?, 'CATEGORY', 'IT_REC_CAFE')", highCardId);
+
+        RecommendationResponse response = recommendationService.recommend(
+                memberId, request(starbucksMerchantId, 10_000L), TODAY);
+
+        RecommendationItem highCard = response.recommendations().stream()
+                .filter(item -> item.userCardId() == highUserCardId)
+                .findFirst().orElseThrow();
+        assertThat(highCard.expectedBenefit()).isZero();
+        assertThat(highCard.reason()).isEqualTo("적용 가능한 혜택 없음");
+
+        // 같은 업종 혜택을 가진 다른 카드는 그대로 받는다
+        RecommendationItem lowCard = response.recommendations().stream()
+                .filter(item -> item.userCardId() == lowUserCardId)
+                .findFirst().orElseThrow();
+        assertThat(lowCard.expectedBenefit()).isEqualTo(500L);
+    }
+
+    @Test
+    @DisplayName("카드 전체 예외는 혜택 수만큼 펼쳐지지 않고 저장된 행 그대로 조회된다")
+    void 카드_전체_예외는_한_줄로_조회된다() {
+        // 혜택이 둘인 카드에 카드 전체 예외 하나 — 펼치면 두 줄, 그대로면 한 줄이다
+        jdbc.update(
+                "INSERT INTO benefit (card_id, benefit_name, benefit_kind, calc_method, benefit_value, apply_timing, "
+                        + "target_type, require_performance, use_shared_limit, is_active) "
+                        + "VALUES (?, '전 가맹점 1% 할인', 'DISCOUNT', 'RATE', 1.00, 'BILLED', 'ALL', 'N', 'N', 'Y')",
+                highCardId);
+        jdbc.update("INSERT INTO card_benefit_exclusion (card_id, exclusion_type, exclusion_value) "
+                + "VALUES (?, 'CATEGORY', 'IT_REC_CAFE')", highCardId);
+        jdbc.update("INSERT INTO benefit_exclusion (benefit_id, exclusion_type, exclusion_value) "
+                + "VALUES (?, 'PAYMENT_TYPE', 'IT_REC_PAY')", highBenefitId);
+
+        // 카드 목록 조회와 한 장 조회가 같은 모양의 행을 줘야 조립 단계가 한 벌로 붙일 수 있다
+        for (List<BenefitExclusionRow> rows : List.of(
+                benefitMapper.findExclusionsByCards(List.of(highCardId, lowCardId)),
+                benefitMapper.findExclusions(highCardId))) {
+            assertThat(rows).hasSize(2);
+            assertThat(rows).allSatisfy(row -> assertThat(row.getCardId()).isEqualTo(highCardId));
+
+            BenefitExclusionRow cardWide = rows.stream().filter(BenefitExclusionRow::isCardWide)
+                    .findFirst().orElseThrow();
+            assertThat(cardWide.getBenefitId()).isNull();
+            assertThat(cardWide.getExclusionValue()).isEqualTo("IT_REC_CAFE");
+
+            BenefitExclusionRow own = rows.stream().filter(row -> !row.isCardWide())
+                    .findFirst().orElseThrow();
+            assertThat(own.getBenefitId()).isEqualTo(highBenefitId);
+            assertThat(own.getExclusionValue()).isEqualTo("IT_REC_PAY");
+        }
     }
 
     // ── 픽스처 ─────────────────────────────────────────────────────────────

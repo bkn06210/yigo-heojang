@@ -4,6 +4,9 @@
 -- 어떻게 늘어나는지 보려는 것이라, 카드 구성은 포함 관계로 둔다(2장 ⊂ 10장 ⊂ 20장).
 -- 카드 수 외의 조건이 섞이지 않게 하기 위해서다.
 --
+-- 넷째 회원(lt-c50)은 카드를 전부 보유한다. 부하를 거는 대상이 아니라 전후 응답 대조용이다 —
+-- 대조가 지나가는 카드가 20장뿐이면 나머지 카드에만 있는 혜택·예외 조합은 확인되지 않는다.
+--
 -- 이메일 도메인 @loadtest.local 이 표시다. teardown.sql 이 같은 표시로 지운다.
 -- 시드 데이터는 읽기만 하고 고치지 않는다.
 --
@@ -19,7 +22,8 @@ SET @password_hash = '$2a$10$V6GvmShSEhEfHdxiPSmsL.qddb5/VXDsDuV6BE/b4TBbb1psg02
 INSERT INTO member (email, password_hash, name, nickname, member_status)
 VALUES ('lt-c02@loadtest.local', @password_hash, '부하측정', 'lt-c02', 'ACTIVE'),
        ('lt-c10@loadtest.local', @password_hash, '부하측정', 'lt-c10', 'ACTIVE'),
-       ('lt-c20@loadtest.local', @password_hash, '부하측정', 'lt-c20', 'ACTIVE');
+       ('lt-c20@loadtest.local', @password_hash, '부하측정', 'lt-c20', 'ACTIVE'),
+       ('lt-c50@loadtest.local', @password_hash, '부하측정', 'lt-c50', 'ACTIVE');
 
 -- 카드 id 1~39 중 홀수 20장. 카드사·혜택 수가 고루 섞이도록 연속 구간 대신 건너뛰며 고른다
 INSERT INTO user_card (member_id, card_id, masked_card_number)
@@ -29,7 +33,8 @@ SELECT m.member_id, c.card_id, '0000-****-****-0000'
     ON (m.email = 'lt-c02@loadtest.local' AND c.card_id IN (1, 3))
     OR (m.email = 'lt-c10@loadtest.local' AND c.card_id IN (1, 3, 5, 7, 9, 11, 13, 15, 17, 19))
     OR (m.email = 'lt-c20@loadtest.local' AND c.card_id IN (1, 3, 5, 7, 9, 11, 13, 15, 17, 19,
-                                                           21, 23, 25, 27, 29, 31, 33, 35, 37, 39));
+                                                           21, 23, 25, 27, 29, 31, 33, 35, 37, 39))
+    OR (m.email = 'lt-c50@loadtest.local');
 
 -- 직전월 누적 실적. 카드마다 달라야 여러 실적 구간(과 구간별 개별한도)이 판정된다
 INSERT INTO user_card_monthly_state (user_card_id, base_year_month, prev_performance_amount,
@@ -78,6 +83,22 @@ SELECT uc.user_card_id, @base_month, b.option_group_code, MIN(b.option_key)
    AND b.option_group_code IS NOT NULL
    AND b.option_key IS NOT NULL
  GROUP BY uc.user_card_id, b.option_group_code;
+
+-- 직전월 소비내역. 소비 기반 카드 추천은 직전월 결제를 근거로 삼아, 없으면 빈 응답만 나오고
+-- 전후 응답 대조가 그 경로를 지나가지 못한다. 가맹점 셋 중 하나꼴로 한 건씩 두고 금액·날짜를
+-- 가맹점마다 다르게 해 여러 업종·한도 조건이 걸리게 한다. 결제 직전 추천은 소비내역을 읽지 않는다
+INSERT INTO expense (member_id, user_card_id, category_id, merchant_id, merchant_name, amount,
+                     payment_date, input_type, payment_type)
+SELECT m.member_id, first_card.user_card_id, mer.category_id, mer.merchant_id, mer.merchant_name,
+       5000 + MOD(mer.merchant_id * 7919, 60000),
+       TIMESTAMP(CONCAT(@prev_month, '-01 12:00:00')) + INTERVAL MOD(mer.merchant_id, 27) DAY,
+       'MANUAL', 'CARD'
+  FROM member m
+  JOIN (SELECT member_id, MIN(user_card_id) AS user_card_id
+          FROM user_card
+         GROUP BY member_id) first_card ON first_card.member_id = m.member_id
+  JOIN merchant mer ON MOD(mer.merchant_id, 3) = 0
+ WHERE m.email LIKE '%@loadtest.local';
 
 SELECT m.email, m.member_id, COUNT(uc.user_card_id) AS cards
   FROM member m

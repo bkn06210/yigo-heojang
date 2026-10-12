@@ -75,7 +75,7 @@ class HeldCardQueryCountTest {
         Mappers mappers = Mappers.holding(cardCount);
         CardStatusService service = new CardStatusService(
                 mappers.userCard(), mappers.cardState(), mappers.performance(), mappers.benefit(),
-                new CardStateAssembler(), new PerformanceInputAssembler(),
+                new CardStateAssembler(), new BenefitCandidateAssembler(), new PerformanceInputAssembler(),
                 new CardMonthlyStatusBuilder(), new CardStatusOverviewBuilder(), mappers.spending());
 
         service.getOverview(MEMBER_ID, YearMonth.from(TODAY));

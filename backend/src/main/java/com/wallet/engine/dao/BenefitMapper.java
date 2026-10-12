@@ -39,7 +39,12 @@ public interface BenefitMapper {
                                         @Param("monthTierId") long monthTierId,
                                         @Param("quarterTierId") Long quarterTierId);
 
-    /** 카드의 활성 혜택에 걸린 제외 규칙을 조회한다. benefitId로 그룹핑해 각 혜택에 붙인다. */
+    /**
+     * 카드의 활성 혜택에 걸린 제외 규칙과 카드 전체 제외 규칙을 조회한다.
+     *
+     * 카드 전체 규칙은 혜택 수만큼 펼치지 않고 한 줄씩(benefitId가 null) 준다.
+     * 혜택마다 붙이는 일은 BenefitCandidateAssembler가 한다.
+     */
     List<BenefitExclusionRow> findExclusions(@Param("cardId") long cardId);
 
     /**
@@ -68,7 +73,7 @@ public interface BenefitMapper {
      */
     List<BenefitRow> findActiveBenefitsByCards(@Param("selectors") List<CardTierSelector> selectors);
 
-    /** 카드 여러 장의 혜택 예외를 한 번에. 카드 전체 예외를 혜택 수만큼 펼쳐 붙이는 규칙은 같다 */
+    /** 카드 여러 장의 혜택 예외를 한 번에. 행의 모양은 한 장짜리 조회와 같다(카드 전체 예외는 benefitId가 null) */
     List<BenefitExclusionRow> findExclusionsByCards(@Param("cardIds") List<Long> cardIds);
 
     /** 카드 여러 장의 선택형 묶음·선택지를 한 번에 */

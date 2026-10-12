@@ -5,8 +5,14 @@
 다른 쪽을 재면 그 흔들림이 전후 차이로 둔갑하므로, 조건 하나마다 전·후를 붙여서 재고 이를
 여러 번 반복해 중앙값을 쓴다. 반복마다 먼저 재는 쪽을 바꿔 순서 효과(예열·캐시)도 상쇄한다.
 
-측정 중간에 컨테이너별 CPU 사용률을 한 번 찍어 둔다. 처리량이 막혔을 때 앱 서버·DB·부하 도구 중
-어디가 포화됐는지 가르는 근거다.
+측정 구간에 컨테이너별 CPU 사용률을 세 번 찍어 둔다. 처리량이 막혔을 때 앱 서버·DB·부하 도구 중
+어디가 포화됐는지 가르는 근거다. 측정 대상이 아닌 컨테이너의 사용률도 함께 남겨, 그 회차가 배경
+부하에 CPU를 빼앗겼는지 나중에 가릴 수 있게 한다. 처리량이 그렇게 흔들릴 때 전후를 견주는 기준은
+요청당 CPU 시간이다(load_test.py 가 앱 서버·DB 컨테이너의 누적 CPU 시간을 구간 앞뒤로 읽는다).
+
+배경 부하가 일정한 주기로 오르내리면 측정 구간을 그 주기보다 길게 잡는다(--duration). 구간이
+주기보다 짧으면 어떤 회차는 조용한 때만, 어떤 회차는 바쁜 때만 재게 되고, 대상을 번갈아 재는
+간격이 그 주기와 맞물리면 한쪽 버전만 계속 조용한 때에 걸린다.
 
     python run_matrix.py --members lt-c02,lt-c10,lt-c20 --concurrency 1,10,50,100 --rounds 3 \
         --out results/recommend.jsonl
@@ -36,9 +42,10 @@ def container_ip(container: str, network: str) -> str:
     return output
 
 
-def sample_cpu(containers: list[str]) -> dict[str, float]:
+def sample_cpu() -> dict[str, float]:
+    """실행 중인 컨테이너 전부의 CPU 사용률. 측정 대상이 아닌 컨테이너까지 읽어 배경 부하를 함께 남긴다."""
     output = subprocess.run(
-        ["docker", "stats", "--no-stream", "--format", "{{.Name}}|{{.CPUPerc}}", *containers],
+        ["docker", "stats", "--no-stream", "--format", "{{.Name}}|{{.CPUPerc}}"],
         capture_output=True, text=True).stdout
     usage = {}
     for line in output.splitlines():
@@ -54,16 +61,22 @@ def run_once(args: argparse.Namespace, version: str, base_url: str, container: s
                "--base-url", base_url, "--email", email, "--endpoint", args.endpoint,
                "--concurrency", str(concurrency), "--processes", str(args.processes),
                "--duration", str(args.duration),
-               "--warmup", str(args.warmup), "--app-db-host", app_db_host, "--label", version]
+               "--warmup", str(args.warmup), "--app-db-host", app_db_host, "--label", version,
+               "--cpu-containers", f"app={container},mysql={args.mysql_container}"]
 
-    cpu: dict[str, float] = {}
+    samples: list[dict[str, float]] = []
 
-    def sample_mid_run() -> None:
-        # 로그인·예열이 끝나고 측정 구간 한가운데쯤
-        time.sleep(1 + args.warmup + args.duration * 0.4)
-        cpu.update(sample_cpu([container, args.mysql_container]))
+    def sample_during_run() -> None:
+        # 로그인·예열이 끝난 뒤 측정 구간의 앞·가운데·뒤. 한 번만 찍으면 몇 초 간격으로 오르내리는
+        # 배경 부하를 놓치거나 한쪽 버전에만 겹쳐 찍힌다
+        started = time.perf_counter()
+        for ratio in (0.15, 0.45, 0.75):
+            time.sleep(max(0.0, 1 + args.warmup + args.duration * ratio - (time.perf_counter() - started)))
+            sample = sample_cpu()
+            if sample:
+                samples.append(sample)
 
-    sampler = threading.Thread(target=sample_mid_run, daemon=True)
+    sampler = threading.Thread(target=sample_during_run, daemon=True)
     sampler.start()
     completed = subprocess.run(command, capture_output=True, text=True)
     sampler.join(timeout=10)
@@ -73,7 +86,18 @@ def run_once(args: argparse.Namespace, version: str, base_url: str, container: s
     result = json.loads(completed.stdout.strip().splitlines()[-1])
     result["version"] = version
     result["round"] = round_number
-    result["cpuPercent"] = {"app": cpu.get(container), "mysql": cpu.get(args.mysql_container)}
+    # others 는 측정과 무관한 컨테이너들이 쓰던 CPU 합의 평균이다. 크면 그 회차는 CPU를 빼앗긴 것이다
+    measured = {container, args.mysql_container}
+
+    def middle(name: str):
+        values = sorted(sample[name] for sample in samples if name in sample)
+        return values[len(values) // 2] if values else None
+
+    result["cpuPercent"] = {
+        "app": middle(container), "mysql": middle(args.mysql_container),
+        "others": round(sum(sum(percent for name, percent in sample.items() if name not in measured)
+                            for sample in samples) / len(samples), 1) if samples else None,
+    }
     return result
 
 
@@ -119,7 +143,9 @@ def main() -> None:
                     print(f"[{round_number}] {version:6} {email:24} c={concurrency:<3} "
                           f"tps={result['tps']:7.1f} p50={result['p50Ms']:7.1f} p95={result['p95Ms']:7.1f} "
                           f"p99={result['p99Ms']:7.1f} err={result['errorRate']} "
-                          f"sel/req={queries.get('selectPerRequest')} db/req={queries.get('dbTimeMsPerRequest')}ms "
+                          f"sel/req={queries.get('selectPerRequest')} rows/req={queries.get('rowsSentPerRequest')} "
+                          f"db/req={queries.get('dbTimeMsPerRequest')}ms "
+                          f"cpuMs/req={result.get('cpuMsPerRequest')} "
                           f"cpu={result['cpuPercent']} client={result['clientCpuMaxPercent']}%", flush=True)
 
 

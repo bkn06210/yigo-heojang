@@ -14,7 +14,8 @@ import java.math.BigDecimal;
  */
 public class BenefitRow {
 
-    // 카드 여러 장을 한 번에 조회할 때 어느 카드의 혜택인지 가른다
+    // 어느 카드의 혜택인지. 카드 여러 장을 한 번에 조회할 때 가르는 키이자,
+    // 카드 전체 예외를 붙일 때 맞춰보는 키라 한 장만 조회할 때도 채운다
     private long cardId;
     private long benefitId;
     private String benefitName;

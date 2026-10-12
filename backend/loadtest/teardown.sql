@@ -2,7 +2,7 @@
 --
 -- 로그인이 refresh_token 행을 남기므로 그것도 지운다. 외래키 순서대로 자식부터 지우며,
 -- 측정 중 다른 경로(알림 배치 등)가 행을 만들었을 수 있어 member·user_card 를 참조하는
--- 테이블은 전부 훑는다. 마지막 SELECT 가 모두 0이어야 깨끗하게 지워진 것이다.
+-- 테이블은 전부 훑는다. 마지막 SELECT 들이 모두 0이어야 깨끗하게 지워진 것이다.
 
 CREATE TEMPORARY TABLE loadtest_member AS
 SELECT member_id FROM member WHERE email LIKE '%@loadtest.local';
@@ -10,6 +10,8 @@ SELECT member_id FROM member WHERE email LIKE '%@loadtest.local';
 CREATE TEMPORARY TABLE loadtest_user_card AS
 SELECT user_card_id FROM user_card WHERE member_id IN (SELECT member_id FROM loadtest_member);
 
+DELETE FROM expense
+ WHERE member_id IN (SELECT member_id FROM loadtest_member);
 DELETE FROM user_benefit_usage
  WHERE user_card_id IN (SELECT user_card_id FROM loadtest_user_card);
 DELETE FROM user_card_benefit_selection
@@ -32,6 +34,11 @@ SELECT (SELECT COUNT(*) FROM member WHERE email LIKE '%@loadtest.local') AS memb
          WHERE user_card_id IN (SELECT user_card_id FROM loadtest_user_card)) AS user_cards,
        (SELECT COUNT(*) FROM refresh_token
          WHERE member_id IN (SELECT member_id FROM loadtest_member)) AS refresh_tokens;
+
+-- 임시 테이블은 한 문장에서 두 번 열 수 없어 따로 센다
+SELECT COUNT(*) AS expenses
+  FROM expense
+ WHERE member_id IN (SELECT member_id FROM loadtest_member);
 
 DROP TEMPORARY TABLE loadtest_user_card;
 DROP TEMPORARY TABLE loadtest_member;

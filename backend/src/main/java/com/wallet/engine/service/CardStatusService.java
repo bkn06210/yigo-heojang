@@ -2,6 +2,7 @@ package com.wallet.engine.service;
 
 import com.wallet.common.ErrorCode;
 import com.wallet.common.exception.BusinessException;
+import com.wallet.engine.assembler.BenefitCandidateAssembler;
 import com.wallet.engine.assembler.CardStateAssembler;
 import com.wallet.engine.assembler.PerformanceInputAssembler;
 import com.wallet.engine.calculator.PerformanceTierResolver;
@@ -66,6 +67,7 @@ public class CardStatusService {
     private final PerformanceMapper performanceMapper;
     private final BenefitMapper benefitMapper;
     private final CardStateAssembler cardStateAssembler;
+    private final BenefitCandidateAssembler benefitCandidateAssembler;
     private final PerformanceInputAssembler performanceInputAssembler;
     private final CardMonthlyStatusBuilder statusBuilder;
     private final CardStatusOverviewBuilder overviewBuilder;
@@ -79,6 +81,7 @@ public class CardStatusService {
                              PerformanceMapper performanceMapper,
                              BenefitMapper benefitMapper,
                              CardStateAssembler cardStateAssembler,
+                             BenefitCandidateAssembler benefitCandidateAssembler,
                              PerformanceInputAssembler performanceInputAssembler,
                              CardMonthlyStatusBuilder statusBuilder,
                              CardStatusOverviewBuilder overviewBuilder,
@@ -88,6 +91,7 @@ public class CardStatusService {
         this.performanceMapper = performanceMapper;
         this.benefitMapper = benefitMapper;
         this.cardStateAssembler = cardStateAssembler;
+        this.benefitCandidateAssembler = benefitCandidateAssembler;
         this.performanceInputAssembler = performanceInputAssembler;
         this.statusBuilder = statusBuilder;
         this.overviewBuilder = overviewBuilder;
@@ -197,12 +201,12 @@ public class CardStatusService {
         // 카드 id로 나눠 담아도 되는 것은 한 회원이 같은 카드를 두 장 보유할 수 없어서다
         // (user_card의 member_id·card_id 유일 제약). 카드가 곧 보유카드 한 장이다.
         // 혜택별 개별한도는 구간마다 다르므로 판정된 구간 기준으로 조회한다.
-        Map<Long, List<BenefitRow>> benefitsByCard = benefitMapper
-                .findActiveBenefitsByCards(judgements.stream().map(CardJudgement::tierSelector).toList())
-                .stream()
+        List<BenefitRow> benefitRows = benefitMapper
+                .findActiveBenefitsByCards(judgements.stream().map(CardJudgement::tierSelector).toList());
+        Map<Long, List<BenefitRow>> benefitsByCard = benefitRows.stream()
                 .collect(Collectors.groupingBy(BenefitRow::getCardId));
         Map<Long, Set<String>> excludedCategories = excludedCategoriesByBenefit(
-                cards.stream().map(UserCardRow::getCardId).toList());
+                benefitRows, cards.stream().map(UserCardRow::getCardId).toList());
 
         List<CardMonthlyStatus> statuses = new ArrayList<>(cards.size());
         // 혜택 id는 카드가 달라도 겹치지 않으므로 카드별로 나누지 않고 한 표에 모은다.
@@ -277,13 +281,21 @@ public class CardStatusService {
      * <b>업종 축만 추린다.</b> 브리핑이 맞춰보는 상대가 업종별 소비 집계라, 결제수단·가맹점·거래속성
      * 제외는 대조할 값 자체가 없다(그 축들은 결제 시점에 BenefitMatcher가 판정한다).
      * 혜택 id는 카드가 달라도 겹치지 않으므로 카드별로 나누지 않고 한 표에 담는다.
+     *
+     * 카드 전체 예외를 혜택마다 붙이는 일은 조립기에 맡긴다. 결제 시점 계산과 같은 코드로 붙여야
+     * "계산에서는 제외인데 브리핑은 권하는" 어긋남이 생기지 않는다.
      */
-    private Map<Long, Set<String>> excludedCategoriesByBenefit(List<Long> cardIds) {
-        return benefitMapper.findExclusionsByCards(cardIds).stream()
-                .filter(row -> ExclusionType.CATEGORY.name().equals(row.getExclusionType()))
-                .collect(Collectors.groupingBy(
-                        BenefitExclusionRow::getBenefitId,
-                        Collectors.mapping(BenefitExclusionRow::getExclusionValue, Collectors.toSet())));
+    private Map<Long, Set<String>> excludedCategoriesByBenefit(List<BenefitRow> benefitRows, List<Long> cardIds) {
+        Map<Long, List<BenefitExclusionRow>> exclusionRowsByBenefit = benefitCandidateAssembler
+                .exclusionRowsByBenefit(benefitRows, benefitMapper.findExclusionsByCards(cardIds));
+
+        Map<Long, Set<String>> excludedCategories = new HashMap<>();
+        exclusionRowsByBenefit.forEach((benefitId, exclusionRows) -> excludedCategories.put(benefitId,
+                exclusionRows.stream()
+                        .filter(row -> ExclusionType.CATEGORY.name().equals(row.getExclusionType()))
+                        .map(BenefitExclusionRow::getExclusionValue)
+                        .collect(Collectors.toSet())));
+        return excludedCategories;
     }
 
     /** 기준월 누적 실적인정액. 그 달에 아직 결제가 없으면 행이 없고, 그때 0은 오류가 아니라 정답이다. */

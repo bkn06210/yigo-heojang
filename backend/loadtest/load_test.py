@@ -11,7 +11,7 @@ HTTP 클라이언트를 표준 라이브러리(asyncio 스트림)로 직접 쓴�
 보내고 응답만 읽는 최소 구현을 쓰고, 가상 사용자를 여러 프로세스로 나눌 수 있게 했다.
 결과의 clientCpuMaxPercent 가 100에 가까우면 --processes 를 늘린다.
 
-요청당 쿼리 수는 MySQL performance_schema 의 호스트별 문장 집계를 측정 구간 앞뒤로 읽어 뺀다.
+요청당 쿼리 수와 돌려받은 행 수는 MySQL performance_schema 의 호스트별 문장 집계를 측정 구간 앞뒤로 읽어 뺀다.
 호스트(=앱 서버의 IP)로 거르는 것은 같은 DB를 쓰는 다른 프로세스(테스트 등)의 문장이
 섞이지 않게 하려는 것이다. 앞뒤를 읽는 동안에는 모든 가상 사용자가 멈춰 있어 경계에 걸친 요청이 없다.
 
@@ -28,6 +28,7 @@ import json
 import math
 import multiprocessing
 import socket
+import subprocess
 import time
 import urllib.request
 from datetime import datetime
@@ -184,17 +185,18 @@ def mysql_connection(args: argparse.Namespace):
                            password=args.mysql_password, database="performance_schema")
 
 
-def read_statement_counts(args: argparse.Namespace) -> dict[str, tuple[int, int]]:
-    """앱 서버 호스트가 지금까지 실행한 문장 수와 누적 실행 시간(피코초), 이벤트 종류별."""
+def read_statement_counts(args: argparse.Namespace) -> dict[str, tuple[int, int, int]]:
+    """앱 서버 호스트가 지금까지 실행한 문장 수·누적 실행 시간(피코초)·돌려받은 행 수, 이벤트 종류별."""
     connection = mysql_connection(args)
     try:
         with connection.cursor() as cursor:
             cursor.execute(
-                "SELECT EVENT_NAME, COUNT_STAR, SUM_TIMER_WAIT"
+                "SELECT EVENT_NAME, COUNT_STAR, SUM_TIMER_WAIT, SUM_ROWS_SENT"
                 "  FROM events_statements_summary_by_host_by_event_name"
                 " WHERE HOST = %s AND COUNT_STAR > 0",
                 (args.app_db_host,))
-            return {name: (int(count), int(wait)) for name, count, wait in cursor.fetchall()}
+            return {name: (int(count), int(wait), int(rows_sent))
+                    for name, count, wait, rows_sent in cursor.fetchall()}
     finally:
         connection.close()
 
@@ -219,9 +221,9 @@ def read_other_hosts_statements(args: argparse.Namespace) -> int:
         connection.close()
 
 
-def read_digests(args: argparse.Namespace) -> dict[str, tuple[str, int, int, int]]:
+def read_digests(args: argparse.Namespace) -> dict[str, tuple[str, int, int, int, int]]:
     """
-    쿼리 유형(digest)별 누적 실행 수·시간·읽은 행 수.
+    쿼리 유형(digest)별 누적 실행 수·시간·읽은 행 수·돌려준 행 수.
 
     이 표는 호스트 구분이 없어 같은 DB를 쓰는 다른 프로세스의 쿼리가 섞일 수 있다.
     그래서 요청당 수치는 호스트별 표로 내고, 이 표는 "어떤 쿼리가 무거운가"를 보는 데만 쓴다.
@@ -230,19 +232,20 @@ def read_digests(args: argparse.Namespace) -> dict[str, tuple[str, int, int, int
     try:
         with connection.cursor() as cursor:
             cursor.execute(
-                "SELECT DIGEST, LEFT(DIGEST_TEXT, 90), COUNT_STAR, SUM_TIMER_WAIT, SUM_ROWS_EXAMINED"
+                "SELECT DIGEST, LEFT(DIGEST_TEXT, 90), COUNT_STAR, SUM_TIMER_WAIT, SUM_ROWS_EXAMINED,"
+                "       SUM_ROWS_SENT"
                 "  FROM events_statements_summary_by_digest"
                 " WHERE SCHEMA_NAME = 'wallet'")
-            return {digest: (text, int(count), int(wait), int(examined))
-                    for digest, text, count, wait, examined in cursor.fetchall()}
+            return {digest: (text, int(count), int(wait), int(examined), int(sent))
+                    for digest, text, count, wait, examined, sent in cursor.fetchall()}
     finally:
         connection.close()
 
 
 def top_digests(before: dict, after: dict, requests: int, limit: int) -> list[dict]:
     rows = []
-    for digest, (text, count, wait, examined) in after.items():
-        _, count0, wait0, examined0 = before.get(digest, (text, 0, 0, 0))
+    for digest, (text, count, wait, examined, sent) in after.items():
+        _, count0, wait0, examined0, sent0 = before.get(digest, (text, 0, 0, 0, 0))
         if count - count0 <= 0:
             continue
         rows.append({
@@ -250,35 +253,61 @@ def top_digests(before: dict, after: dict, requests: int, limit: int) -> list[di
             "perRequest": round((count - count0) / requests, 2),
             "dbMsPerRequest": round((wait - wait0) / 1e9 / requests, 3),
             "rowsExaminedPerCall": round((examined - examined0) / (count - count0), 1),
+            "rowsSentPerCall": round((sent - sent0) / (count - count0), 1),
         })
     rows.sort(key=lambda row: row["dbMsPerRequest"], reverse=True)
     return rows[:limit]
 
 
-def per_request_statements(before: dict[str, tuple[int, int]], after: dict[str, tuple[int, int]],
+def per_request_statements(before: dict[str, tuple[int, int, int]], after: dict[str, tuple[int, int, int]],
                            requests: int) -> dict:
     """
-    측정 구간의 문장 수·DB 실행 시간을 요청 수로 나눈다.
+    측정 구간의 문장 수·DB 실행 시간·돌려받은 행 수를 요청 수로 나눈다.
 
     DB 실행 시간은 MySQL 이 문장을 처리한 시간의 합이다. 응답시간에서 이 값을 빼면
     앱(자바)·네트워크·커넥션 대기에 쓴 시간이 남는다 — 병목이 DB 쪽인지 앱 쪽인지 가르는 기준이다.
+
+    돌려받은 행 수는 앱이 자바 객체로 바꿔야 하는 양이다. 쿼리 수가 같아도 이 값이 크면
+    드라이버가 행을 읽고 매퍼가 객체를 만드는 데 앱 서버의 CPU가 든다.
     """
     if not requests:
         return {}
-    zero = (0, 0)
-    diff = {name: (after[name][0] - before.get(name, zero)[0], after[name][1] - before.get(name, zero)[1])
+    zero = (0, 0, 0)
+    diff = {name: tuple(after[name][index] - before.get(name, zero)[index] for index in range(3))
             for name in after}
     diff = {name: value for name, value in diff.items() if value[0] > 0}
     selects = diff.get("statement/sql/select", zero)[0]
-    total_count = sum(count for count, _ in diff.values())
-    total_wait_ps = sum(wait for _, wait in diff.values())
+    total_count = sum(count for count, _, _ in diff.values())
+    total_wait_ps = sum(wait for _, wait, _ in diff.values())
+    total_rows_sent = sum(rows_sent for _, _, rows_sent in diff.values())
     return {
         "selectPerRequest": round(selects / requests, 2),
         "statementsPerRequest": round(total_count / requests, 2),
+        "rowsSentPerRequest": round(total_rows_sent / requests, 1),
         "dbTimeMsPerRequest": round(total_wait_ps / 1e9 / requests, 3),
         "byEvent": {name.split("/", 1)[1]: round(count / requests, 2)
-                    for name, (count, _) in sorted(diff.items())},
+                    for name, (count, _, _) in sorted(diff.items())},
     }
+
+
+# ── 컨테이너 CPU ─────────────────────────────────────────────────────────────
+
+def read_container_cpu_seconds(containers: dict[str, str]) -> dict[str, float]:
+    """
+    컨테이너가 기동 후 지금까지 쓴 CPU 시간(초). cgroup 누적값이라 측정 구간 앞뒤로 읽어 뺀다.
+
+    처리량(TPS)은 같은 PC의 다른 작업이 코어를 가져가면 그대로 깎인다. 요청 하나를 처리하는 데 쓴
+    CPU 시간은 코어를 빼앗겨도 거의 변하지 않으므로, 배경 부하가 있는 환경에서 전후를 견줄 때는
+    이 값이 더 믿을 만하다.
+    """
+    seconds = {}
+    for label, container in containers.items():
+        output = subprocess.run(["docker", "exec", container, "cat", "/sys/fs/cgroup/cpu.stat"],
+                                capture_output=True, text=True).stdout
+        for line in output.splitlines():
+            if line.startswith("usage_usec"):
+                seconds[label] = int(line.split()[1]) / 1e6
+    return seconds
 
 
 # ── 측정 진행(부모 프로세스) ─────────────────────────────────────────────────
@@ -316,10 +345,12 @@ def measure(args: argparse.Namespace) -> dict:
     counts_before = read_statement_counts(args) if args.app_db_host else None
     others_before = read_other_hosts_statements(args) if args.app_db_host else None
     digests_before = read_digests(args) if args.digest_top else None
+    cpu_before = read_container_cpu_seconds(args.cpu_containers)
     barrier.wait()  # 측정 시작
     started = time.perf_counter()
     barrier.wait()  # 측정 끝
     elapsed = time.perf_counter() - started
+    cpu_after = read_container_cpu_seconds(args.cpu_containers)
     counts_after = read_statement_counts(args) if args.app_db_host else None
     others_after = read_other_hosts_statements(args) if args.app_db_host else None
     digests_after = read_digests(args) if args.digest_top else None
@@ -357,6 +388,10 @@ def measure(args: argparse.Namespace) -> dict:
         result["otherHostsStatementsPerSec"] = round((others_after - others_before) / elapsed, 1)
     if digests_before is not None and completed:
         result["topDigests"] = top_digests(digests_before, digests_after, completed, args.digest_top)
+    if cpu_before and completed:
+        result["cpuMsPerRequest"] = {
+            label: round((cpu_after[label] - cpu_before[label]) * 1000 / completed, 3)
+            for label in cpu_before if label in cpu_after}
     return result
 
 
@@ -386,6 +421,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--mysql-password", default="root")
     parser.add_argument("--digest-top", type=int, default=0,
                         help="DB 시간이 큰 쿼리 유형 상위 N개를 함께 낸다(0이면 생략)")
+    parser.add_argument("--cpu-containers", default="",
+                        help="요청당 CPU 시간을 잴 컨테이너. '이름표=컨테이너' 를 쉼표로. 예: app=loadtest-after,mysql=yigo-mysql")
     parser.add_argument("--label", default="")
     parser.add_argument("--out", default=None, help="결과를 JSON 한 줄로 덧붙일 파일")
     args = parser.parse_args()
@@ -395,6 +432,7 @@ def parse_args() -> argparse.Namespace:
         args.merchant_ids = list(range(low, high + 1))
     else:
         args.merchant_ids = [int(value) for value in args.merchant_ids.split(",")]
+    args.cpu_containers = dict(entry.split("=", 1) for entry in args.cpu_containers.split(",") if entry)
     return args
 
 
