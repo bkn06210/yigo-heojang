@@ -83,6 +83,33 @@ public interface SettlementMapper {
     // ─────────────────────────────────────────────────────────────────────────
 
     /**
+     * (카드, 기준월) 상태 행을 없으면 만들고 배타 잠금을 잡는다. 같은 카드의 결제 가산을
+     * 한 줄로 세워, 두 결제가 같은 잔여 한도를 보고 둘 다 혜택을 주는 일을 막는다.
+     * 값은 바꾸지 않는다 — prev는 새 행일 때만 채워지고, 소진 가산은 {@link #upsertMonthlyStateAdd}가 한다.
+     *
+     * @param prevPerformanceAmount 새 행을 만들 때 채울 전월실적. 기존 행이면 무시된다
+     */
+    void lockMonthlyState(@Param("userCardId") long userCardId,
+                          @Param("baseYearMonth") String baseYearMonth,
+                          @Param("prevPerformanceAmount") long prevPerformanceAmount);
+
+    /** 잠근 상태 행의 통합한도 사용액을 커밋된 최신 값으로 읽는다. {@link #lockMonthlyState} 뒤에 부른다. */
+    long findSharedLimitUsedForUpdate(@Param("userCardId") long userCardId,
+                                      @Param("baseYearMonth") String baseYearMonth);
+
+    /**
+     * {@link #findUsagesByUserCard}의 잠금 읽기판 — 한도 판정 입력용.
+     * 일반 SELECT는 트랜잭션 스냅샷을 읽어, 먼저 끝난 같은 카드 결제의 소진이 안 보일 수 있다.
+     */
+    List<BenefitUsageRow> findUsagesByUserCardForUpdate(@Param("userCardId") long userCardId,
+                                                        @Param("baseYearMonth") String baseYearMonth);
+
+    /** {@link #findPeriodUsagesByUserCard}의 잠금 읽기판 — 분기·연 한도 판정 입력용. */
+    List<BenefitPeriodUsageRow> findPeriodUsagesByUserCardForUpdate(@Param("userCardId") long userCardId,
+                                                                    @Param("fromYearMonth") String fromYearMonth,
+                                                                    @Param("toYearMonth") String toYearMonth);
+
+    /**
      * 카드 월 상태에 실적·통합한도 소진을 더한다. 기준월 행이 없으면 만들면서
      * prev_performance_amount를 이월값으로 채운다(월 롤오버). 있으면 두 소진값만 누적한다
      * (prev는 월 중에 바뀌지 않으므로 갱신하지 않는다).

@@ -123,6 +123,10 @@ public class SettlementService {
                 performanceInputAssembler.toTiers(tierRows, PerformancePeriod.MONTH), prevPerformanceAmount);
         PerformanceStatus quarterStatus = judgeQuarter(command.userCardId(), tierRows, month);
 
+        // 같은 카드의 결제 가산을 한 줄로 세운다. 이 잠금이 없으면 동시에 들어온 두 결제가
+        // 같은 잔여 한도를 읽고 둘 다 혜택을 줘 월 한도를 넘긴다(누적 UPDATE 자체는 유실이 없어도 판정이 겹친다)
+        settlementMapper.lockMonthlyState(command.userCardId(), baseYearMonth, prevPerformanceAmount);
+
         // 대상·혜택·현재 소진 로드 → 혜택 계산(확정 금액)
         PaymentTarget target = resolveTarget(command);
         List<BenefitRow> benefitRows = benefitMapper.findActiveBenefits(
@@ -365,15 +369,17 @@ public class SettlementService {
     private CardState loadCardState(long userCardId, String baseYearMonth,
                                     PerformanceStatus status, PerformanceStatus quarterStatus,
                                     LocalDate appliedDate) {
-        MonthlyStatusRow baseRow = settlementMapper.findMonthlyStatus(userCardId, baseYearMonth);
-        long sharedLimitUsed = baseRow != null ? baseRow.getSharedLimitUsed() : 0L;
-        List<BenefitUsageRow> usageRows = settlementMapper.findUsagesByUserCard(userCardId, baseYearMonth);
+        // 한도 판정 입력은 전부 잠금 읽기다 — 잠금을 기다리는 동안 앞 결제가 커밋해도
+        // 일반 SELECT는 트랜잭션 스냅샷(호출자의 첫 SELECT 시점)을 읽어 그 소진이 빠진다.
+        // lockMonthlyState가 행을 보장하므로 기준월 행은 항상 있다
+        long sharedLimitUsed = settlementMapper.findSharedLimitUsedForUpdate(userCardId, baseYearMonth);
+        List<BenefitUsageRow> usageRows = settlementMapper.findUsagesByUserCardForUpdate(userCardId, baseYearMonth);
 
         // 분기·연 한도는 저장값이 없어 월 소진 행을 그 기간만큼 합산해 얻는다
         YearMonth baseMonth = YearMonth.parse(baseYearMonth);
-        List<BenefitPeriodUsageRow> quarterUsageRows = settlementMapper.findPeriodUsagesByUserCard(
+        List<BenefitPeriodUsageRow> quarterUsageRows = settlementMapper.findPeriodUsagesByUserCardForUpdate(
                 userCardId, UsagePeriod.quarterStart(baseMonth).toString(), baseYearMonth);
-        List<BenefitPeriodUsageRow> yearUsageRows = settlementMapper.findPeriodUsagesByUserCard(
+        List<BenefitPeriodUsageRow> yearUsageRows = settlementMapper.findPeriodUsagesByUserCardForUpdate(
                 userCardId, UsagePeriod.yearStart(baseMonth).toString(), baseYearMonth);
 
         return new CardState(

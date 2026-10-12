@@ -93,8 +93,7 @@
 
     <!-- 카드 한 장의 기준월 소진 행 전체. 현황 benefits[]는 used_amount만 쓰고,
          가산의 CardState 조립은 일 소진 컬럼까지 쓴다(같은 read 재사용). -->
-    <select id="findUsagesByUserCard"
-            resultType="com.wallet.engine.dao.dto.BenefitUsageRow">
+    <sql id="usagesByUserCard">
         SELECT u.user_card_id,
                u.benefit_id,
                u.used_amount,
@@ -105,12 +104,25 @@
         FROM user_benefit_usage u
         WHERE u.user_card_id = #{userCardId}
           AND u.base_year_month = #{baseYearMonth}
+    </sql>
+
+    <select id="findUsagesByUserCard"
+            resultType="com.wallet.engine.dao.dto.BenefitUsageRow">
+        <include refid="usagesByUserCard"/>
+    </select>
+
+    <!-- 결제 가산의 한도 판정용. 잠금 읽기는 트랜잭션 스냅샷이 아니라 커밋된 최신 값을 읽는다 —
+         호출자가 앞서 일반 SELECT를 했으면 REPEATABLE READ 스냅샷이 그때 고정돼,
+         먼저 끝난 결제의 소진이 일반 SELECT로는 보이지 않는다. -->
+    <select id="findUsagesByUserCardForUpdate"
+            resultType="com.wallet.engine.dao.dto.BenefitUsageRow">
+        <include refid="usagesByUserCard"/>
+        FOR UPDATE
     </select>
 
     <!-- 분기·연 한도 판정용 합산. base_year_month가 'YYYY-MM' 고정 폭이라
          문자열 BETWEEN이 곧 연월 범위 비교다. -->
-    <select id="findPeriodUsagesByUserCard"
-            resultType="com.wallet.engine.dao.dto.BenefitPeriodUsageRow">
+    <sql id="periodUsagesByUserCard">
         SELECT u.user_card_id,
                u.benefit_id,
                SUM(u.used_amount) AS used_amount,
@@ -119,6 +131,42 @@
         WHERE u.user_card_id = #{userCardId}
           AND u.base_year_month BETWEEN #{fromYearMonth} AND #{toYearMonth}
         GROUP BY u.user_card_id, u.benefit_id
+    </sql>
+
+    <select id="findPeriodUsagesByUserCard"
+            resultType="com.wallet.engine.dao.dto.BenefitPeriodUsageRow">
+        <include refid="periodUsagesByUserCard"/>
+    </select>
+
+    <select id="findPeriodUsagesByUserCardForUpdate"
+            resultType="com.wallet.engine.dao.dto.BenefitPeriodUsageRow">
+        <include refid="periodUsagesByUserCard"/>
+        FOR UPDATE
+    </select>
+
+    <!-- 결제 가산의 첫 쓰기. (카드, 기준월) 행을 없으면 만들고 배타 잠금을 잡는다 —
+         같은 카드의 다른 결제는 이 트랜잭션이 끝날 때까지 여기서 기다린다(한도 판정 직렬화).
+         · 행이 없는 월초에 SELECT … FOR UPDATE로 잠그면 갭 잠금이라 두 결제가 동시에 통과한다.
+           INSERT로 행을 먼저 보장해야 레코드 잠금이 된다.
+         · user_card 행은 잠그지 않는다 — expense INSERT의 외래키 검사가 그 행에 공유 잠금을 걸어,
+           두 결제가 공유→배타로 올리려다 교착된다.
+         · 값은 바꾸지 않는다. prev는 새 행일 때만 들어가고, 소진 가산은 upsertMonthlyStateAdd가 한다. -->
+    <insert id="lockMonthlyState">
+        INSERT INTO user_card_monthly_state
+            (user_card_id, base_year_month, prev_performance_amount,
+             current_performance_amount, shared_limit_used)
+        VALUES (#{userCardId}, #{baseYearMonth}, #{prevPerformanceAmount}, 0, 0)
+        ON DUPLICATE KEY UPDATE user_card_id = user_card_id
+    </insert>
+
+    <!-- 잠근 행의 통합한도 사용액. 조인 없이 읽는다 — FOR UPDATE는 조인한 테이블 행까지 잠가,
+         카드 마스터를 잠그면 같은 카드 상품을 쓰는 다른 회원 결제까지 줄을 선다. -->
+    <select id="findSharedLimitUsedForUpdate" resultType="long">
+        SELECT s.shared_limit_used
+        FROM user_card_monthly_state s
+        WHERE s.user_card_id = #{userCardId}
+          AND s.base_year_month = #{baseYearMonth}
+        FOR UPDATE
     </select>
 
     <!-- 전분기 실적. 저장된 집계값을 읽을 뿐 거래를 재합산하지 않는다.
