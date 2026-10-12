@@ -19,6 +19,8 @@ import java.math.BigDecimal;
  */
 public final class BenefitRule {
 
+    private static final BigDecimal MAX_RATE_PERCENT = new BigDecimal("100");
+
     private final long benefitId;
     private final BenefitKind benefitKind;
     private final CalcMethod calcMethod;
@@ -58,6 +60,25 @@ public final class BenefitRule {
                 && (builder.stepCount == null || builder.stepCount <= 0)) {
             throw new IllegalArgumentException("COUNT_STEP은 stepCount가 1 이상이어야 한다: " + builder.stepCount);
         }
+        // 아래 값들은 테이블에 CHECK 제약이 없어 잘못 들어와도 DB가 막지 않는다. 여기서 막지 않으면
+        // 100을 넘는 요율은 결제금액 전액 할인으로, 음수 한도는 "한도 소진"으로 에러 없이 계산된다.
+        if (builder.benefitValue.signum() < 0) {
+            throw new IllegalArgumentException("benefitValue는 음수일 수 없다: " + builder.benefitValue);
+        }
+        if (builder.calcMethod == CalcMethod.RATE && builder.benefitValue.compareTo(MAX_RATE_PERCENT) > 0) {
+            throw new IllegalArgumentException("정률 혜택의 요율은 100%를 넘을 수 없다: " + builder.benefitValue);
+        }
+        requireNotNegative("minTxnAmount", builder.minTxnAmount);
+        requireNotNegative("maxEligibleAmount", builder.maxEligibleAmount);
+        requireNotNegative("maxBenefitPerTxn", builder.maxBenefitPerTxn);
+        requireNotNegative("monthlyLimit", builder.monthlyLimit);
+        requireNotNegative("dailyLimit", builder.dailyLimit);
+        requireNotNegative("quarterlyLimit", builder.quarterlyLimit);
+        requireNotNegative("yearlyLimit", builder.yearlyLimit);
+        requireNotNegative("monthlyCountLimit", builder.monthlyCountLimit);
+        requireNotNegative("dailyCountLimit", builder.dailyCountLimit);
+        requireNotNegative("quarterlyCountLimit", builder.quarterlyCountLimit);
+        requireNotNegative("yearlyCountLimit", builder.yearlyCountLimit);
         this.benefitId = builder.benefitId;
         this.benefitKind = builder.benefitKind;
         this.calcMethod = builder.calcMethod;
@@ -77,6 +98,13 @@ public final class BenefitRule {
         this.quarterlyCountLimit = builder.quarterlyCountLimit;
         this.yearlyCountLimit = builder.yearlyCountLimit;
         this.useSharedLimit = builder.useSharedLimit;
+    }
+
+    /** 상한·조건 값의 null은 "제약 없음"이라 통과시킨다. 0은 "혜택 없음"이라 유효하다 */
+    private static void requireNotNegative(String fieldName, Number value) {
+        if (value != null && value.longValue() < 0) {
+            throw new IllegalArgumentException(fieldName + "는 음수일 수 없다: " + value);
+        }
     }
 
     public static Builder builder() {

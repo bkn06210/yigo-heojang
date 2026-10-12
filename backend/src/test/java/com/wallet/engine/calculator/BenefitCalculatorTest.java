@@ -440,6 +440,37 @@ class BenefitCalculatorTest {
 
             assertThat(result.benefitAmount()).isEqualTo(500L);
         }
+
+        @Test
+        void 대상금액_상한에_걸려_덜_받으면_그_상한이_기록된다() {
+            // 2,000원의 10%는 200원인데 1,000원까지만 대상이라 100원이다. 깎였으면 깎은 상한이 남아야 한다
+            BenefitRule rule = rateRule().maxEligibleAmount(1000L).build();
+
+            BenefitResult result = calculator.calculate(rule, context().paymentAmount(2000L).build());
+
+            assertThat(result.benefitAmount()).isEqualTo(100L);
+            assertThat(result.appliedCap()).isEqualTo(CapType.MAX_ELIGIBLE_AMOUNT);
+        }
+
+        @Test
+        void 대상금액_상한에_못_미치면_상한_기록이_없다() {
+            BenefitRule rule = rateRule().maxEligibleAmount(30000L).build();
+
+            BenefitResult result = calculator.calculate(rule, context().paymentAmount(20000L).build());
+
+            assertThat(result.benefitAmount()).isEqualTo(2000L);
+            assertThat(result.appliedCap()).isEqualTo(CapType.NONE);
+        }
+
+        @Test
+        void 대상금액_상한과_건당_최대가_함께_걸리면_먼저_검사한_대상금액_상한을_기록한다() {
+            BenefitRule rule = rateRule().maxEligibleAmount(30000L).maxBenefitPerTxn(2000L).build();
+
+            BenefitResult result = calculator.calculate(rule, context().paymentAmount(50000L).build());
+
+            assertThat(result.benefitAmount()).isEqualTo(2000L);
+            assertThat(result.appliedCap()).isEqualTo(CapType.MAX_ELIGIBLE_AMOUNT);
+        }
     }
 
     @Nested

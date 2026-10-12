@@ -156,6 +156,11 @@ public final class BenefitCalculator {
 
         // 정액 혜택이 결제금액을 넘는 경우를 막는다 (정률은 수학적으로 넘을 수 없음)
         result = result.clampTo(eligibleAmount, CapType.PAYMENT_AMOUNT);
+        // 대상금액 상한은 금액을 직접 깎지 않고 율을 곱할 금액을 줄여서 깎는다. 그래서 다른 상한처럼
+        // 클램프에서 저절로 기록되지 않는다 — 여기서 남기지 않으면 덜 받았는데도 "깎은 상한 없음"이 된다.
+        if (reachesMaxEligibleAmount(rule, context)) {
+            result = result.recordedAs(CapType.MAX_ELIGIBLE_AMOUNT);
+        }
         result = result.clampTo(rule.getMaxBenefitPerTxn(), CapType.MAX_BENEFIT_PER_TXN);
         result = result.clampTo(remaining(rule.getDailyLimit(), context.getDailyUsedAmount()), CapType.DAILY_LIMIT);
         result = result.clampTo(remaining(rule.getMonthlyLimit(), context.getMonthlyUsedAmount()), CapType.MONTHLY_LIMIT);
@@ -190,12 +195,19 @@ public final class BenefitCalculator {
         if (!context.isAmountEstimated()) {
             return false;
         }
-        // 대상금액 상한에 걸리면 계산 기반이 상수가 되므로 결과도 고정된다
-        if (rule.getMaxEligibleAmount() != null
-                && context.getPaymentAmount() - context.getUsedPointAmount() >= rule.getMaxEligibleAmount()) {
-            return false;
-        }
+        // 대상금액 상한에 걸리면 계산 기반이 상수가 되므로 결과도 고정된다 — 그 경우도 상한으로 기록돼 있다
         return clamped.capType() == CapType.NONE;
+    }
+
+    /**
+     * 정률 혜택의 대상금액이 상한에 닿았는가. 닿은 것(같음)도 포함한다 —
+     * 결제금액이 더 커져도 혜택액이 늘지 않는다는 점에서 다른 상한의 "도달"과 같은 상태다.
+     * 정액·스탬프형은 율을 곱하지 않아 대상금액 상한이 금액을 정하지 않는다.
+     */
+    private boolean reachesMaxEligibleAmount(BenefitRule rule, CalcContext context) {
+        return rule.getCalcMethod() == CalcMethod.RATE
+                && rule.getMaxEligibleAmount() != null
+                && context.getPaymentAmount() - context.getUsedPointAmount() >= rule.getMaxEligibleAmount();
     }
 
     /**
@@ -215,6 +227,11 @@ public final class BenefitCalculator {
             // 동률이면 먼저 검사한 상한을 남긴다
             CapType recorded = (capType == CapType.NONE) ? candidate : capType;
             return new ClampResult(capValue, recorded);
+        }
+
+        /** 금액은 그대로 두고 걸린 상한만 남긴다. 이미 기록된 상한이 있으면 그쪽이 먼저다 */
+        ClampResult recordedAs(CapType candidate) {
+            return capType == CapType.NONE ? new ClampResult(amount, candidate) : this;
         }
     }
 }

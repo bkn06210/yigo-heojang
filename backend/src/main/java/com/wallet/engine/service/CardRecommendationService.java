@@ -50,13 +50,17 @@ import java.util.stream.Collectors;
  *
  * <b>무엇을 계산하는가</b>
  * <pre>
- * X = 지금 보유 카드들로 지난달 결제를 최적 배분 → 총 혜택
- * Y = 보유 카드 + 후보 한 장으로 최적 배분      → 총 혜택
- * 순증 = Y − X
+ * X = 지금 보유 카드들로 지난달 결제를 결제마다 가장 유리한 카드로 냈을 때 → 총 혜택
+ * Y = 보유 카드 + 후보 한 장으로 같은 방식으로 냈을 때                     → 총 혜택
+ * 순증 = Y − X  (Y가 X보다 작으면 0)
  * </pre>
  *
- * 후보를 안 써도 되므로 순증은 음수가 될 수 없다. "카페는 늘지만 마트는 주는" 손해가 구조적으로
- * 생기지 않고, 얼마를 그 카드로 옮길지 가정할 필요도 없다 — 배분을 계산이 정한다.
+ * 얼마를 그 카드로 옮길지 가정할 필요가 없다 — 배분을 계산이 정한다. 한 업종에서 이기는 카드가
+ * 다른 업종의 결제까지 가져가지 않으므로 "카페는 늘지만 마트는 주는" 손해가 섞이지 않는다.
+ *
+ * 다만 배분은 결제 화면과 같은 방식(그 순간 혜택이 가장 큰 카드)이라 가능한 배분 중 최선이라는
+ * 보장은 없다. 후보가 눈앞의 작은 혜택으로 결제를 가져가 보유 카드의 스탬프가 차지 않는 경우처럼
+ * Y가 X보다 작게 나오기도 한다. 그런 후보는 순증을 0으로 보고 추천하지 않는다.
  *
  * <b>실적을 무엇으로 보는가</b> — 지난달 소비 전부를 그 카드로 결제했다고 보고 판정한다.
  * 아직 쓰지 않은 카드에는 실적 이력이 없고, 배분 결과로 실적을 정하면 배분과 실적이 서로를
@@ -189,10 +193,10 @@ public class CardRecommendationService {
 
             List<SimulatedCard> withCandidate = new ArrayList<>(heldSimulated);
             withCandidate.add(candidate);
-            long gain = portfolioSimulator.simulate(withCandidate, payments).totalBenefitAmount()
-                    - current.totalBenefitAmount();
-            if (gain <= 0) {
-                // 이 카드로 옮길 만한 결제가 없다. 순증 0을 목록에 넣으면 고를 이유 없는 카드가 섞인다
+            long gain = portfolioSimulator.simulate(withCandidate, payments).gainOver(current);
+            if (gain == 0) {
+                // 더해도 총 혜택이 늘지 않는 카드다 — 옮길 만한 결제가 없거나, 옮기면 오히려 줄어든다.
+                // 목록에 넣으면 고를 이유 없는 카드가 섞인다
                 continue;
             }
             CardCatalogRow row = catalog.get(candidateCardId);

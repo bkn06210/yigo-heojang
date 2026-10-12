@@ -11,11 +11,11 @@ import java.util.List;
  * 나지 않는다. 그리고 이 앱은 결제할 때마다 최적 카드를 추천하므로, 그 전제로 계산해야
  * 화면이 실제로 안내할 결과와 같아진다.
  *
- * 카드를 한 장 추가했을 때의 순증은 두 번 돌려 빼면 나온다.
+ * 카드를 한 장 추가했을 때의 순증은 두 번 돌려 빼면 나온다({@link #gainOver}).
  * <pre>
  * 보유 카드만            → X
  * 보유 카드 + 후보 한 장 → Y
- * 순증 = Y − X          (후보를 안 써도 되니 Y는 X보다 작아질 수 없다)
+ * 순증 = Y − X          (Y가 X보다 작으면 0)
  * </pre>
  *
  * @param totalBenefitAmount 총 혜택액(원)
@@ -29,6 +29,22 @@ public record PortfolioSimulation(long totalBenefitAmount, List<CardShare> share
 
     public static PortfolioSimulation empty() {
         return new PortfolioSimulation(0L, List.of());
+    }
+
+    /**
+     * 이 결과가 기준 결과보다 얼마나 많은가 — 카드를 더했을 때의 순증. 더 적으면 0이다.
+     *
+     * 카드를 더한 쪽이 더 적게 나올 수 있다. 결제마다 그 순간 혜택이 가장 큰 카드를 고르기 때문에,
+     * 새 카드가 눈앞의 100원으로 결제를 가져가면 원래 카드가 채우던 스탬프나 아껴 둘 한도가 어긋난다.
+     * 그런 카드는 더하지 않는 편이 낫고 더하지 않는 선택은 언제나 가능하므로, 더한 효과를 0으로 본다.
+     *
+     * @param baseline 카드를 더하기 전의 결과
+     */
+    public long gainOver(PortfolioSimulation baseline) {
+        if (baseline == null) {
+            throw new IllegalArgumentException("기준 결과는 필수다");
+        }
+        return Math.max(0L, totalBenefitAmount - baseline.totalBenefitAmount);
     }
 
     /** 카드 하나가 가져간 몫. appliedPaymentCount는 그 카드로 혜택을 받은 결제 건수다 */
