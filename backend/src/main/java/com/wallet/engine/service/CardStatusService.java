@@ -15,6 +15,7 @@ import com.wallet.engine.dao.dto.BenefitRow;
 import com.wallet.engine.dao.dto.BenefitUsageRow;
 import com.wallet.engine.dao.dto.CardMonthlyStateRow;
 import com.wallet.engine.dao.dto.CardPerformanceSumRow;
+import com.wallet.engine.dao.dto.CardTierSelector;
 import com.wallet.engine.dao.dto.OptionSelectionRow;
 import com.wallet.engine.dao.dto.PerformanceTierRow;
 import com.wallet.engine.dao.dto.UserCardRow;
@@ -45,7 +46,9 @@ import java.util.stream.Collectors;
  * 보유카드 조회 (개별 조회면 여기서 1장으로 좁힌다)
  *   ├ 상태·소진 일괄 조회 (회원 1회)
  *   ├ 실적구간   일괄 조회 (회원 1회)
- *   └ 카드마다: 전월실적 → 구간 판정 → 그 구간의 혜택 조회 → 현황 조립
+ *   ├ 카드마다: 전월실적 → 구간 판정           (DB 조회 없음)
+ *   ├ 혜택·예외 일괄 조회 (카드별 판정 구간을 실어 1회씩)
+ *   └ 카드마다: 현황 조립
  * </pre>
  *
  * <b>두 API가 같은 경로를 쓴다.</b> 개별 조회는 카드 목록을 1장으로 좁힐 뿐 조립 로직이 같다.
@@ -141,8 +144,9 @@ public class CardStatusService {
     /**
      * 카드별 현황을 조립한다.
      *
-     * 상태·소진·실적구간은 회원 단위로 한 번에 읽어 카드 수와 무관하게 쿼리 수를 고정한다.
-     * 혜택 조회만 카드별로 남는데, 조회 키인 tierId가 카드마다 실적 판정을 거쳐야 나오기 때문이다.
+     * 상태·소진·실적구간은 회원 단위로, 혜택·예외는 카드 목록 단위로 한 번에 읽어 카드 수와
+     * 무관하게 쿼리 수를 고정한다. 혜택 조회 키인 tierId는 카드마다 실적 판정을 거쳐야 나오므로,
+     * 판정을 먼저 전부 끝내고 카드별 구간을 함께 넘긴다.
      *
      * @param onlyUserCardId 개별 조회면 그 카드 ID, 전체 조회면 null
      */
@@ -181,27 +185,44 @@ public class CardStatusService {
                 .collect(Collectors.toMap(
                         CardPerformanceSumRow::getUserCardId, CardPerformanceSumRow::getPerformanceAmount));
 
+        // 실적 판정이 먼저다 — 혜택 조회에 카드별 구간 ID가 필요하다
+        List<CardJudgement> judgements = new ArrayList<>(cards.size());
+        for (UserCardRow card : cards) {
+            judgements.add(judgeCard(card, baseYearMonth, previousYearMonth,
+                    statesByUserCard.getOrDefault(card.getUserCardId(), List.of()),
+                    tiersByCard.getOrDefault(card.getCardId(), List.of()),
+                    quarterPerformanceByUserCard.getOrDefault(card.getUserCardId(), 0L)));
+        }
+
+        // 카드 id로 나눠 담아도 되는 것은 한 회원이 같은 카드를 두 장 보유할 수 없어서다
+        // (user_card의 member_id·card_id 유일 제약). 카드가 곧 보유카드 한 장이다.
+        // 혜택별 개별한도는 구간마다 다르므로 판정된 구간 기준으로 조회한다.
+        Map<Long, List<BenefitRow>> benefitsByCard = benefitMapper
+                .findActiveBenefitsByCards(judgements.stream().map(CardJudgement::tierSelector).toList())
+                .stream()
+                .collect(Collectors.groupingBy(BenefitRow::getCardId));
+        Map<Long, Set<String>> excludedCategories = excludedCategoriesByBenefit(
+                cards.stream().map(UserCardRow::getCardId).toList());
+
         List<CardMonthlyStatus> statuses = new ArrayList<>(cards.size());
         // 혜택 id는 카드가 달라도 겹치지 않으므로 카드별로 나누지 않고 한 표에 모은다.
         Map<Long, BriefingBenefitTarget> benefitTargets = new HashMap<>();
-        for (UserCardRow card : cards) {
-            statuses.add(buildStatus(card, baseYearMonth, previousYearMonth,
+        for (CardJudgement judgement : judgements) {
+            UserCardRow card = judgement.card();
+            statuses.add(buildStatus(judgement, baseYearMonth,
                     statesByUserCard.getOrDefault(card.getUserCardId(), List.of()),
                     usagesByUserCard.getOrDefault(card.getUserCardId(), List.of()),
-                    tiersByCard.getOrDefault(card.getCardId(), List.of()),
-                    quarterPerformanceByUserCard.getOrDefault(card.getUserCardId(), 0L),
                     selectionsByUserCard.getOrDefault(card.getUserCardId(), Map.of()),
-                    benefitTargets));
+                    benefitsByCard.getOrDefault(card.getCardId(), List.of()),
+                    excludedCategories, benefitTargets));
         }
         return new StatusBundle(statuses, benefitTargets);
     }
 
-    /** 카드 한 장의 현황. 조회한 값을 계산기에 물려주기만 하고 새 계산 규칙은 두지 않는다. */
-    private CardMonthlyStatus buildStatus(UserCardRow card, String baseYearMonth, String previousYearMonth,
-                                          List<CardMonthlyStateRow> stateRows, List<BenefitUsageRow> usageRows,
-                                          List<PerformanceTierRow> tierRows, long quarterPerformanceAmount,
-                                          Map<String, String> selectedOptionKeys,
-                                          Map<Long, BriefingBenefitTarget> benefitTargets) {
+    /** 카드 한 장의 실적 판정 — 전월 축과 전분기 축. 조회해 둔 값만 쓰고 DB를 부르지 않는다. */
+    private CardJudgement judgeCard(UserCardRow card, String baseYearMonth, String previousYearMonth,
+                                    List<CardMonthlyStateRow> stateRows, List<PerformanceTierRow> tierRows,
+                                    long quarterPerformanceAmount) {
         long prevPerformanceAmount = cardStateAssembler.resolvePrevPerformanceAmount(
                 stateRows, baseYearMonth, previousYearMonth);
 
@@ -217,17 +238,23 @@ public class CardStatusService {
         PerformanceStatus quarterStatus = quarterTiers.isEmpty()
                 ? null
                 : tierResolver.judge(quarterTiers, quarterPerformanceAmount);
+        return new CardJudgement(card, prevPerformanceAmount, tiers, status, quarterStatus);
+    }
 
-        // 혜택별 개별한도는 구간마다 다르므로 판정된 구간 기준으로 조회한다
-        List<BenefitRow> benefitRows = benefitMapper.findActiveBenefits(
-                card.getCardId(), status.tierId(), quarterStatus == null ? null : quarterStatus.tierId());
+    /** 카드 한 장의 현황. 조회한 값을 계산기에 물려주기만 하고 새 계산 규칙은 두지 않는다. */
+    private CardMonthlyStatus buildStatus(CardJudgement judgement, String baseYearMonth,
+                                          List<CardMonthlyStateRow> stateRows, List<BenefitUsageRow> usageRows,
+                                          Map<String, String> selectedOptionKeys,
+                                          List<BenefitRow> benefitRows,
+                                          Map<Long, Set<String>> excludedCategories,
+                                          Map<Long, BriefingBenefitTarget> benefitTargets) {
+        UserCardRow card = judgement.card();
         Map<Long, Long> usedAmountByBenefit = usageRows.stream()
                 .collect(Collectors.toMap(BenefitUsageRow::getBenefitId, BenefitUsageRow::getUsedAmount));
 
         // 업종을 겨냥한 혜택만 담는다. 전 가맹점·특정 가맹점 혜택은 소비 업종과 맞춰볼 기준이 없다.
         // 제외 업종을 함께 담는 이유는, 대상만 보고 권하면 "교통 10%, 단 고속버스 제외" 같은 혜택을
         // 고속버스 소비를 근거로 권하게 되기 때문이다.
-        Map<Long, Set<String>> excludedCategories = excludedCategoriesByBenefit(card.getCardId());
         for (BenefitRow benefit : benefitRows) {
             if (benefit.getTargetCategoryId() != null) {
                 benefitTargets.put(benefit.getBenefitId(), new BriefingBenefitTarget(
@@ -238,19 +265,21 @@ public class CardStatusService {
 
         return statusBuilder.build(
                 card.getUserCardId(), card.getCardName(), baseYearMonth,
-                prevPerformanceAmount, currentPerformanceAmount(stateRows, baseYearMonth),
+                judgement.prevPerformanceAmount(), currentPerformanceAmount(stateRows, baseYearMonth),
                 sharedLimitUsed(stateRows, baseYearMonth),
-                tiers, benefitRows, usedAmountByBenefit, selectedOptionKeys, quarterStatus);
+                judgement.monthTiers(), benefitRows, usedAmountByBenefit, selectedOptionKeys,
+                judgement.quarterStatus());
     }
 
     /**
-     * 카드의 혜택별 제외 업종 코드.
+     * 카드들의 혜택별 제외 업종 코드.
      *
      * <b>업종 축만 추린다.</b> 브리핑이 맞춰보는 상대가 업종별 소비 집계라, 결제수단·가맹점·거래속성
      * 제외는 대조할 값 자체가 없다(그 축들은 결제 시점에 BenefitMatcher가 판정한다).
+     * 혜택 id는 카드가 달라도 겹치지 않으므로 카드별로 나누지 않고 한 표에 담는다.
      */
-    private Map<Long, Set<String>> excludedCategoriesByBenefit(long cardId) {
-        return benefitMapper.findExclusions(cardId).stream()
+    private Map<Long, Set<String>> excludedCategoriesByBenefit(List<Long> cardIds) {
+        return benefitMapper.findExclusionsByCards(cardIds).stream()
                 .filter(row -> ExclusionType.CATEGORY.name().equals(row.getExclusionType()))
                 .collect(Collectors.groupingBy(
                         BenefitExclusionRow::getBenefitId,
@@ -277,5 +306,21 @@ public class CardStatusService {
                 .filter(row -> baseYearMonth.equals(row.getBaseYearMonth()))
                 .findFirst()
                 .orElse(null);
+    }
+
+    /**
+     * 실적 판정까지 끝난 카드 한 장. 혜택 조회에 앞서 전 카드의 구간을 확정해 두는 자리다.
+     *
+     * @param monthTiers    전월 축 구간표. 현황의 달성률·남은실적 계산에 그대로 쓴다
+     * @param quarterStatus 분기 구간표가 없는 카드면 null
+     */
+    private record CardJudgement(UserCardRow card, long prevPerformanceAmount,
+                                 List<PerformanceTier> monthTiers, PerformanceStatus status,
+                                 PerformanceStatus quarterStatus) {
+
+        CardTierSelector tierSelector() {
+            return new CardTierSelector(card.getCardId(), status.tierId(),
+                    quarterStatus == null ? null : quarterStatus.tierId());
+        }
     }
 }

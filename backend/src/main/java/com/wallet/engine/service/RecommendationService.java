@@ -12,11 +12,13 @@ import com.wallet.engine.dao.CardStateMapper;
 import com.wallet.engine.dao.PaymentTargetMapper;
 import com.wallet.engine.dao.PerformanceMapper;
 import com.wallet.engine.dao.UserCardMapper;
+import com.wallet.engine.dao.dto.BenefitExclusionRow;
 import com.wallet.engine.dao.dto.BenefitPeriodUsageRow;
 import com.wallet.engine.dao.dto.BenefitRow;
 import com.wallet.engine.dao.dto.BenefitUsageRow;
 import com.wallet.engine.dao.dto.CardMonthlyStateRow;
 import com.wallet.engine.dao.dto.CardPerformanceSumRow;
+import com.wallet.engine.dao.dto.CardTierSelector;
 import com.wallet.engine.dao.dto.OptionSelectionRow;
 import com.wallet.engine.dao.dto.PaymentTargetRow;
 import com.wallet.engine.dao.dto.PerformanceTierRow;
@@ -54,15 +56,19 @@ import java.util.stream.Collectors;
  * 보유카드 조회
  *   ├ 상태·소진 일괄 조회 (회원 1회)
  *   ├ 실적구간  일괄 조회 (회원 1회)
- *   └ 카드마다: 전월실적 → 구간 판정 → 혜택 조회 → 카드 계산 → 최적 혜택 1개
+ *   ├ 카드마다: 전월실적 → 구간 판정          (DB 조회 없음)
+ *   ├ 혜택·예외 일괄 조회 (카드별 판정 구간을 실어 1회씩)
+ *   └ 카드마다: 카드 계산 → 최적 혜택 1개
  *        정렬(혜택액 내림차순, 동점이면 userCardId 오름차순) → 순위 부여
  * </pre>
  *
  * <b>전월실적은 저장된 집계값을 읽는다</b> — 지난달 거래를 다시 합산하지 않는다.
  * 재합산은 스냅샷 생성·보정 경로(PerformanceSnapshotService)의 몫이며 여기서 호출하지 않는다.
  *
- * 조회를 회원 단위로 묶은 것은 보유카드가 늘어도 쿼리 수가 고정되게 하기 위함이다.
- * 다만 혜택 조회만은 카드별로 남는다 — 조회 키인 tierId가 카드마다 실적 판정을 거쳐야 나오기 때문이다.
+ * 조회를 회원·카드 목록 단위로 묶은 것은 보유카드가 늘어도 쿼리 수가 고정되게 하기 위함이다.
+ * 혜택 조회 키인 tierId는 카드마다 실적 판정을 거쳐야 나오므로, 판정을 먼저 전부 끝내고
+ * 카드별 구간을 함께 넘겨 한 번에 읽는다. 카드마다 조회하면 결제 한 번에 쿼리가 카드 수의
+ * 두 배만큼 늘고, 쿼리마다 드는 파싱·왕복 비용이 응답시간과 DB 부하에 그대로 쌓인다.
  */
 @Service
 public class RecommendationService {
@@ -158,9 +164,10 @@ public class RecommendationService {
                 .findTiersByCardIds(cards.stream().map(UserCardRow::getCardId).distinct().toList()).stream()
                 .collect(Collectors.groupingBy(PerformanceTierRow::getCardId));
 
-        List<CardOutcome> outcomes = new ArrayList<>();
+        // 실적 판정이 먼저다 — 혜택 조회에 카드별 구간 ID가 필요하다
+        List<CardJudgement> judgements = new ArrayList<>(cards.size());
         for (UserCardRow card : cards) {
-            outcomes.add(evaluateCard(card, paymentRequest, today, baseYearMonth, previousYearMonth,
+            judgements.add(judgeCard(card, today, baseYearMonth, previousYearMonth,
                     statesByUserCard.getOrDefault(card.getUserCardId(), List.of()),
                     usagesByUserCard.getOrDefault(card.getUserCardId(), List.of()),
                     quarterUsagesByUserCard.getOrDefault(card.getUserCardId(), List.of()),
@@ -169,18 +176,37 @@ public class RecommendationService {
                     quarterPerformanceByUserCard.getOrDefault(card.getUserCardId(), 0L),
                     tiersByCard.getOrDefault(card.getCardId(), List.of())));
         }
+
+        // 카드 id로 나눠 담아도 되는 것은 한 회원이 같은 카드를 두 장 보유할 수 없어서다
+        // (user_card의 member_id·card_id 유일 제약). 카드가 곧 보유카드 한 장이다.
+        // 판정된 구간의 개별한도를 함께 가져온다. 매칭 여부로 거르지 않는 이유는 묶음 한도 합산이다.
+        Map<Long, List<BenefitRow>> benefitsByCard = benefitMapper
+                .findActiveBenefitsByCards(judgements.stream().map(CardJudgement::tierSelector).toList())
+                .stream()
+                .collect(Collectors.groupingBy(BenefitRow::getCardId));
+        Map<Long, List<BenefitExclusionRow>> exclusionsByCard = benefitMapper
+                .findExclusionsByCards(cards.stream().map(UserCardRow::getCardId).toList()).stream()
+                .collect(Collectors.groupingBy(BenefitExclusionRow::getCardId));
+
+        List<CardOutcome> outcomes = new ArrayList<>(judgements.size());
+        for (CardJudgement judgement : judgements) {
+            long cardId = judgement.card().getCardId();
+            outcomes.add(evaluateCard(judgement, paymentRequest,
+                    benefitsByCard.getOrDefault(cardId, List.of()),
+                    exclusionsByCard.getOrDefault(cardId, List.of())));
+        }
         return RecommendationResponse.of(toRankedItems(outcomes));
     }
 
-    /** 카드 한 장의 실적 판정 → 혜택 계산. 여기까지는 순위를 모른다. */
-    private CardOutcome evaluateCard(UserCardRow card, PaymentRequest paymentRequest, LocalDate today,
-                                     String baseYearMonth, String previousYearMonth,
-                                     List<CardMonthlyStateRow> stateRows, List<BenefitUsageRow> usageRows,
-                                     List<BenefitPeriodUsageRow> quarterUsageRows,
-                                     List<BenefitPeriodUsageRow> yearUsageRows,
-                                     Map<String, String> selectedOptionKeys,
-                                     long quarterPerformanceAmount,
-                                     List<PerformanceTierRow> tierRows) {
+    /** 카드 한 장의 실적 판정과 계산용 상태. 조회해 둔 값만 쓰고 DB를 부르지 않는다. */
+    private CardJudgement judgeCard(UserCardRow card, LocalDate today,
+                                    String baseYearMonth, String previousYearMonth,
+                                    List<CardMonthlyStateRow> stateRows, List<BenefitUsageRow> usageRows,
+                                    List<BenefitPeriodUsageRow> quarterUsageRows,
+                                    List<BenefitPeriodUsageRow> yearUsageRows,
+                                    Map<String, String> selectedOptionKeys,
+                                    long quarterPerformanceAmount,
+                                    List<PerformanceTierRow> tierRows) {
         long prevPerformanceAmount = cardStateAssembler.resolvePrevPerformanceAmount(
                 stateRows, baseYearMonth, previousYearMonth);
 
@@ -193,18 +219,21 @@ public class RecommendationService {
         CardState cardState = cardStateAssembler.toCardState(
                 stateRows, baseYearMonth, usageRows, quarterUsageRows, yearUsageRows,
                 selectedOptionKeys, status, quarterStatus, today);
+        return new CardJudgement(card, status, quarterStatus, cardState);
+    }
 
-        // 판정된 구간의 개별한도를 함께 가져온다. 매칭 여부로 거르지 않는 이유는 묶음 한도 합산이다.
-        List<BenefitRow> benefitRows = benefitMapper.findActiveBenefits(
-                card.getCardId(), status.tierId(), quarterStatus == null ? null : quarterStatus.tierId());
-        List<BenefitCandidate> candidates = benefitCandidateAssembler.toCandidates(
-                benefitRows, benefitMapper.findExclusions(card.getCardId()));
+    /** 카드 한 장의 혜택 계산. 여기까지는 순위를 모른다. */
+    private CardOutcome evaluateCard(CardJudgement judgement, PaymentRequest paymentRequest,
+                                     List<BenefitRow> benefitRows, List<BenefitExclusionRow> exclusionRows) {
+        List<BenefitCandidate> candidates = benefitCandidateAssembler.toCandidates(benefitRows, exclusionRows);
+        CardState cardState = judgement.cardState();
 
         CardBenefitSelection selection = cardBenefitSelector.select(candidates, cardState, paymentRequest);
         // 동적 전환 판정용 가상 계산 — 이 결과는 응답 금액에 쓰지 않고 순위 비교에만 쓴다
         CardBenefitSelection idealSelection =
                 cardBenefitSelector.select(candidates, withoutUsage(cardState), paymentRequest);
 
+        UserCardRow card = judgement.card();
         return new CardOutcome(card.getUserCardId(), card.getCardName(), selection, idealSelection,
                 buildReason(selection, benefitRows));
     }
@@ -366,6 +395,20 @@ public class RecommendationService {
             throw new BusinessException(ErrorCode.INPUT_INVALID);
         }
         return expectedAmount;
+    }
+
+    /**
+     * 실적 판정까지 끝난 카드 한 장. 혜택 조회에 앞서 전 카드의 구간을 확정해 두는 자리다.
+     *
+     * @param quarterStatus 분기 구간표가 없는 카드면 null
+     */
+    private record CardJudgement(UserCardRow card, PerformanceStatus status,
+                                 PerformanceStatus quarterStatus, CardState cardState) {
+
+        CardTierSelector tierSelector() {
+            return new CardTierSelector(card.getCardId(), status.tierId(),
+                    quarterStatus == null ? null : quarterStatus.tierId());
+        }
     }
 
     /**
