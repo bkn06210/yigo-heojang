@@ -155,6 +155,17 @@
                  )
     </insert>
 
+    <select id="selectPaidRecord" resultType="com.wallet.payment.dto.PaymentQrPaidRecord">
+        SELECT p.payment_id    AS paymentId,
+               p.expense_id    AS expenseId,
+               e.merchant_id   AS merchantId,
+               e.merchant_name AS merchantName,
+               e.category_id   AS categoryId
+        FROM payment p
+                 JOIN expense e ON e.expense_id = p.expense_id
+        WHERE p.payment_id = #{paymentId}
+    </select>
+
     <update id="markQrUsed">
         UPDATE payment_qr
         SET

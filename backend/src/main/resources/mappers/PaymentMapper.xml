@@ -105,6 +105,37 @@
 
     </insert>
 
+    <!-- 결제 트랜잭션의 첫 쓰기. 같은 키가 처리 중이면 PK 잠금에서 기다리고,
+         그 트랜잭션이 커밋하면 중복 키 오류, 롤백하면 이 INSERT가 성공해 이번 요청이 결제한다. -->
+    <insert id="insertIdempotencyKey">
+        INSERT INTO payment_idempotency (member_id, idempotency_key, request_hash)
+        VALUES (#{userId}, #{idempotencyKey}, #{requestHash})
+    </insert>
+
+    <update id="updateIdempotencyPayment">
+        UPDATE payment_idempotency
+        SET payment_id = #{paymentId}
+        WHERE member_id = #{userId}
+          AND idempotency_key = #{idempotencyKey}
+    </update>
+
+    <!-- FOR SHARE OF pi: 키 행만 잠근다. 결제·소비내역 행까지 잠글 이유가 없다.
+         잠금 읽기라 트랜잭션 스냅샷이 아닌 커밋된 최신 값을 읽는다. -->
+    <select id="selectIdempotencyRecordForShare"
+            resultType="com.wallet.payment.dto.PaymentIdempotencyRecord">
+        SELECT pi.request_hash       AS requestHash,
+               pi.payment_id         AS paymentId,
+               p.expense_id          AS expenseId,
+               e.applied_benefit_id  AS appliedBenefitId,
+               e.discount_amount     AS discountAmount
+        FROM payment_idempotency pi
+                 LEFT JOIN payment p ON p.payment_id = pi.payment_id
+                 LEFT JOIN expense e ON e.expense_id = p.expense_id
+        WHERE pi.member_id = #{userId}
+          AND pi.idempotency_key = #{idempotencyKey}
+        FOR SHARE OF pi
+    </select>
+
     <select id="selectDefaultPointWallet"
             resultType="com.wallet.payment.dto.PaymentPointWalletResponse">
 

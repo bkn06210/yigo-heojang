@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
@@ -28,12 +29,13 @@ public class PaymentController {
     @PostMapping("/api/payments")
     public ResponseEntity<ApiResponse<PaymentProcessResponse>> processPayment(
             HttpServletRequest servletRequest,
+            @RequestHeader(value = "Idempotency-Key", required = false) String idempotencyKey,
             @RequestBody PaymentRequest request
     ) {
         Long userId = (Long) servletRequest.getAttribute(AUTHENTICATED_MEMBER_ID);
 
         PaymentProcessResponse data =
-                paymentService.processPayment(userId, request);
+                paymentService.processPayment(userId, request, idempotencyKey);
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(ApiResponse.success("결제가 완료되었습니다.", data));

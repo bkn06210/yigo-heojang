@@ -1,6 +1,7 @@
 package com.wallet.payment.mapper;
 
 import com.wallet.payment.dto.PaymentQrInsertParam;
+import com.wallet.payment.dto.PaymentQrPaidRecord;
 import com.wallet.payment.dto.PaymentQrPayParam;
 import com.wallet.payment.dto.PaymentQrRecord;
 import org.apache.ibatis.annotations.Mapper;
@@ -37,6 +38,8 @@ public interface PaymentQrMapper {
     void insertExpenseByQr(PaymentQrPayParam param);
 
     void insertPaymentByQr(PaymentQrPayParam param);
+
+    PaymentQrPaidRecord selectPaidRecord(@Param("paymentId") Long paymentId);
 
     int markQrUsed(
             @Param("qrToken") String qrToken,

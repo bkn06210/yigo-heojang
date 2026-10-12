@@ -49,6 +49,7 @@ DROP TABLE IF EXISTS user_card_benefit_selection;
 DROP TABLE IF EXISTS user_card_monthly_state;
 DROP TABLE IF EXISTS recommend_input;
 DROP TABLE IF EXISTS payment_qr;
+DROP TABLE IF EXISTS payment_idempotency;
 DROP TABLE IF EXISTS payment;
 DROP TABLE IF EXISTS expense;
 DROP TABLE IF EXISTS card_benefit_exclusion;
@@ -915,6 +916,22 @@ CREATE TABLE payment (
     CONSTRAINT fk_payment_expense  FOREIGN KEY (expense_id)   REFERENCES expense (expense_id),
     CONSTRAINT fk_payment_merchant FOREIGN KEY (merchant_id)  REFERENCES merchant (merchant_id)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT '결제 (Mock/실결제 공용)';
+
+-- 결제 요청의 멱등 키. 응답을 못 받은 클라이언트가 같은 요청을 다시 보내도 결제는 한 번만 일어나고
+-- 처음 결과를 그대로 돌려준다. 키 행을 결제 트랜잭션 첫 쓰기로 넣어, 동시에 온 같은 키는
+-- PK 잠금에서 기다렸다가 먼저 끝난 결제를 재응답한다.
+-- request_hash: 같은 키로 내용이 다른 결제를 보내면 재시도가 아니라 클라이언트 오류라 거절한다.
+CREATE TABLE payment_idempotency (
+    member_id       BIGINT      NOT NULL COMMENT '회원 ID',
+    idempotency_key VARCHAR(64) NOT NULL COMMENT '클라이언트가 결제 시도마다 만든 키(Idempotency-Key 헤더)',
+    request_hash    CHAR(64)    NOT NULL COMMENT '결제 요청 내용의 SHA-256',
+    payment_id      BIGINT      NULL COMMENT '처리된 결제 ID. 키를 넣은 트랜잭션이 결제 뒤 채운다',
+    created_at      DATETIME    NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '생성일시',
+    PRIMARY KEY (member_id, idempotency_key),
+    KEY idx_payment_idempotency_payment (payment_id),
+    CONSTRAINT fk_payment_idempotency_member  FOREIGN KEY (member_id)  REFERENCES member (member_id),
+    CONSTRAINT fk_payment_idempotency_payment FOREIGN KEY (payment_id) REFERENCES payment (payment_id)
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT '결제 요청 멱등 키';
 
 -- 사용자가 추천을 요청하며 입력한 값의 기록.
 -- 추천 "결과"는 저장하지 않는다 — 카드 한도 소진 상태에 따라 매번 달라져
