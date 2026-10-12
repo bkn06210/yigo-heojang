@@ -89,6 +89,25 @@ class SettlementServiceIntegrationTest {
     }
 
     @Test
+    @DisplayName("결제 가산: 무이자할부 결제는 무이자할부를 제외한 혜택을 받지 않는다")
+    void 무이자할부_결제는_무이자할부_제외_혜택을_받지_않는다() {
+        insertState(BASE_MONTH, 350_000, 0, 0);
+        jdbc.update("INSERT INTO benefit_exclusion (benefit_id, exclusion_type, exclusion_value) "
+                + "VALUES (?, 'TRANSACTION_ATTR', 'INTEREST_FREE')", cafeBenefitId);
+
+        PaymentSettlementResult interestFree = settlementService.applyPayment(new SettlementCommand(
+                userCardId, cardId, cafeCategoryId, starbucksMerchantId,
+                10_000, "CARD", true, LocalDateTime.parse("2026-08-15T12:00:00")));
+        PaymentSettlementResult lumpSum = settlementService.applyPayment(
+                command(10_000, "2026-08-15T13:00:00"));
+
+        assertThat(interestFree.appliedBenefitId()).isNull();
+        assertThat(interestFree.discountAmount()).isZero();
+        assertThat(lumpSum.discountAmount()).isEqualTo(1_000L);
+        assertThat(usageVal("used_amount")).isEqualTo(1_000L);
+    }
+
+    @Test
     @DisplayName("월 롤오버: 기준월 행이 없으면 만들며 직전월 누적을 전월실적으로 이월한다")
     void 기준월_행이_없으면_생성하며_전월실적을_이월한다() {
         // 직전월(2026-07) 행만 있다. 당월누적 35만이 새 행의 prev로 이월돼야 실적 조건 혜택이 산다

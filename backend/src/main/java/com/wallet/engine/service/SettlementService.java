@@ -135,7 +135,8 @@ public class SettlementService {
                 benefitRows, benefitMapper.findExclusions(command.cardId()));
         CardState cardState = loadCardState(
                 command.userCardId(), baseYearMonth, status, quarterStatus, appliedDate);
-        PaymentRequest request = PaymentRequest.confirmed(target, command.amount(), command.paymentType());
+        PaymentRequest request = PaymentRequest.confirmed(
+                target, command.amount(), command.paymentType(), command.interestFree());
         CardBenefitSelection selection = cardBenefitSelector.select(candidates, cardState, request);
 
         long discount = selection.benefitAmount();
@@ -278,7 +279,8 @@ public class SettlementService {
                 loadOptionSelections(expense.getUserCardId(), baseYearMonth));
 
         PaymentRequest request = PaymentRequest.confirmed(
-                toPaymentTarget(expense), expense.getAmount(), expense.getPaymentType());
+                toPaymentTarget(expense), expense.getAmount(), expense.getPaymentType(),
+                "Y".equals(expense.getIsInterestFree()));
         return cardBenefitSelector.select(candidates, stateWithoutUsage, request).stampedBenefitIds();
     }
 

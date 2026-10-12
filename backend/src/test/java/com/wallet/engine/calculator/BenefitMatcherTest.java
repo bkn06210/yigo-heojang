@@ -177,11 +177,34 @@ class BenefitMatcherTest {
         }
 
         @Test
-        void 거래속성_제외는_추천_시점에_해석하지_않는다() {
+        void 추천_시점에는_일시불로_보고_무이자할부_제외에_걸리지_않는다() {
             BenefitCandidate candidate =
                     diningBenefitExcluding(new BenefitExclusion(ExclusionType.TRANSACTION_ATTR, "INTEREST_FREE"));
 
             assertThat(matcher.matches(candidate, request(starbucksPayment(), null))).isTrue();
+        }
+
+        @Test
+        void 정산_시점의_무이자할부_결제는_무이자할부_제외에_걸린다() {
+            BenefitCandidate candidate =
+                    diningBenefitExcluding(new BenefitExclusion(ExclusionType.TRANSACTION_ATTR, "INTEREST_FREE"));
+
+            PaymentRequest interestFree = PaymentRequest.confirmed(starbucksPayment(), 10000L, "CARD", true);
+            PaymentRequest lumpSum = PaymentRequest.confirmed(starbucksPayment(), 10000L, "CARD", false);
+
+            assertThat(matcher.matches(candidate, interestFree)).isFalse();
+            assertThat(matcher.matches(candidate, lumpSum)).isTrue();
+        }
+
+        @Test
+        void 판정할_데이터가_없는_거래속성은_제외하지_않는다() {
+            // expense에 해외이용 여부가 없어, 해외 제외 혜택도 국내 결제처럼 적용된다
+            BenefitCandidate candidate =
+                    diningBenefitExcluding(new BenefitExclusion(ExclusionType.TRANSACTION_ATTR, "OVERSEAS"));
+
+            PaymentRequest interestFree = PaymentRequest.confirmed(starbucksPayment(), 10000L, "CARD", true);
+
+            assertThat(matcher.matches(candidate, interestFree)).isTrue();
         }
 
         @Test

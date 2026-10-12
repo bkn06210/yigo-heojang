@@ -22,6 +22,8 @@ import java.util.Objects;
  */
 public final class BenefitMatcher {
 
+    private static final String INTEREST_FREE = "INTEREST_FREE";
+
     public boolean matches(BenefitCandidate candidate, PaymentRequest request) {
         if (candidate == null || request == null) {
             throw new IllegalArgumentException("candidate와 request는 필수다");
@@ -52,9 +54,16 @@ public final class BenefitMatcher {
                     || exclusion.value().equals(target.getParentCategoryCode());
             case MERCHANT -> exclusion.value().equals(target.getMerchantCode());
             case PAYMENT_TYPE -> exclusion.value().equals(request.paymentType());
-            // 무이자할부·해외이용 같은 거래 속성은 추천 시점에 확정되지 않는다.
-            // 일시불 일반 거래를 기본으로 보고 넘어가며, 정산 시점에 실제 속성으로 다시 판정한다.
-            case TRANSACTION_ATTR -> false;
+            case TRANSACTION_ATTR -> hitsTransactionAttribute(exclusion.value(), request);
         };
+    }
+
+    /**
+     * 거래 속성 제외. expense가 구분해 주는 속성은 무이자할부뿐이라 그것만 판정한다.
+     * 해외이용·상품권 같은 나머지는 판정할 데이터가 없어 제외하지 않는다.
+     * 추천 시점엔 할부 방식이 정해지지 않아 일시불로 보고, 정산 시점엔 실제 값으로 판정한다.
+     */
+    private boolean hitsTransactionAttribute(String attribute, PaymentRequest request) {
+        return INTEREST_FREE.equals(attribute) && request.interestFree();
     }
 }

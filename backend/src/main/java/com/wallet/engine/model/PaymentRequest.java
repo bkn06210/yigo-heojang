@@ -8,13 +8,15 @@ package com.wallet.engine.model;
  * @param usedPointAmount 포인트 사용분. amount가 차감 후 값이라 항상 0이지만 계산식의 자리는 유지한다
  * @param paymentType     결제수단(CARD, SIMPLE_PAY 등). null이면 결제수단 조건이 걸린 혜택은 제외된다
  * @param amountEstimated 금액이 구간 대표값이면 true(추천), 확정 금액이면 false(정산 재계산)
+ * @param interestFree    무이자할부 여부. 추천 시점엔 할부 방식이 정해지지 않아 일시불(false)로 본다
  */
 public record PaymentRequest(
         PaymentTarget target,
         long paymentAmount,
         long usedPointAmount,
         String paymentType,
-        boolean amountEstimated
+        boolean amountEstimated,
+        boolean interestFree
 ) {
 
     public PaymentRequest {
@@ -26,13 +28,14 @@ public record PaymentRequest(
         }
     }
 
-    /** 추천 흐름용 — 금액이 구간 대표값(예상)인 결제 */
+    /** 추천 흐름용 — 금액이 구간 대표값(예상)인 결제. 할부 방식이 정해지지 않아 일시불로 본다 */
     public static PaymentRequest estimated(PaymentTarget target, long paymentAmount, String paymentType) {
-        return new PaymentRequest(target, paymentAmount, 0L, paymentType, true);
+        return new PaymentRequest(target, paymentAmount, 0L, paymentType, true, false);
     }
 
-    /** 정산 흐름용 — 금액이 확정된 결제 */
-    public static PaymentRequest confirmed(PaymentTarget target, long paymentAmount, String paymentType) {
-        return new PaymentRequest(target, paymentAmount, 0L, paymentType, false);
+    /** 정산 흐름용 — 금액과 할부 방식이 확정된 결제 */
+    public static PaymentRequest confirmed(PaymentTarget target, long paymentAmount, String paymentType,
+                                           boolean interestFree) {
+        return new PaymentRequest(target, paymentAmount, 0L, paymentType, false, interestFree);
     }
 }
